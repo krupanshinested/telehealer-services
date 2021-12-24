@@ -75,6 +75,7 @@ import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
 import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantListFragment;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
+import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -364,6 +365,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 break;
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();
+                break;
+            case R.id.new_device_setup:
+                startActivity(new Intent(this, NewDeviceSupportActivity.class));
                 break;
             case R.id.patient_payments: {
                 bundle = new Bundle();

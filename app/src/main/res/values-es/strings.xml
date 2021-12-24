@@ -1561,5 +1561,6 @@
     <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
     <string name="visit_questionary">Visit  Questionnaire</string>
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
+    <string name="str_new_device_setup">New Device Support</string>
 
 </resources>

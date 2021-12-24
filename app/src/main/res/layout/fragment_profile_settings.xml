@@ -212,9 +212,17 @@
                     android:id="@+id/logs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hideSpiltter="true"
                     app:icon="@drawable/setting_logs_icon"
                     app:title="@string/logs" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/new_device_setup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/medical_assistant_icon"
+                    app:title="@string/setup_new_devices" />
+
 
                 <View
                     android:layout_width="fill_parent"

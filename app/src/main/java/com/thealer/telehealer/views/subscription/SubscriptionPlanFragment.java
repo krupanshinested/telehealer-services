@@ -162,7 +162,6 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
 
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
