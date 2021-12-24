@@ -433,7 +433,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/cl_history"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="20dp"

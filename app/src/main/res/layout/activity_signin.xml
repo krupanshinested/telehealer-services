@@ -127,7 +127,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/margin_default"
                     android:src="@drawable/passcode"
-                    android:tint="@color/app_gradient_start" />
+                    app:tint="@color/app_gradient_start" />
 
                 <TextView
                     android:id="@+id/quick_login_tv"

@@ -217,7 +217,7 @@ public class AboutFragment extends BaseFragment {
                         doctorDetailView.setVisibility(View.VISIBLE);
                         patientDetailView.setVisibility(View.GONE);
                         phoneCv.setVisibility(View.GONE);
-                        clVitalHistory.setVisibility(View.GONE);
+                        rvVitalHistory.setVisibility(View.GONE);
                         clHistory.setVisibility(View.GONE);
 
 
@@ -421,7 +421,7 @@ public class AboutFragment extends BaseFragment {
             tvVitalEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showRemotePatientMonitoring();
+                    showRemotePatientMonitoring(userDetail.getUser_guid());
                 }
             });
 
@@ -466,8 +466,11 @@ public class AboutFragment extends BaseFragment {
             }
         }
     }
-    private void showRemotePatientMonitoring() {
+    private void showRemotePatientMonitoring(String user_guid) {
         RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ArgumentKeys.USER_GUID, user_guid);
+        remotePatientMonitoringFragment.setArguments(bundle);
         showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
     }
     private void manageVitalHistory() {
@@ -482,9 +485,9 @@ public class AboutFragment extends BaseFragment {
 
             if (userDetail.getVitals() != null && userDetail.getVitals().size() > 0) {
                 vitalHistoryAdapter.setDataAdapter(userDetail.getVitals());
-                clVitalHistory.setVisibility(View.VISIBLE);
+                rvVitalHistory.setVisibility(View.VISIBLE);
             } else {
-                clVitalHistory.setVisibility(View.GONE);
+                rvVitalHistory.setVisibility(View.GONE);
             }
 
             if(userDetail.getHistory() !=null && userDetail.getHistory().size()>0){
@@ -495,7 +498,7 @@ public class AboutFragment extends BaseFragment {
             }
 
         }else {
-            clVitalHistory.setVisibility(View.GONE);
+            rvVitalHistory.setVisibility(View.GONE);
             clHistory.setVisibility(View.GONE);
         }
     }
