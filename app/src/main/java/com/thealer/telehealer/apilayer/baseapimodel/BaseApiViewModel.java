@@ -47,6 +47,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import id.zelory.compressor.Compressor;
 import io.reactivex.ObservableTransformer;
@@ -74,6 +76,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     private static List<BaseViewInterface> baseViewInterfaceList = new ArrayList<>();
     private static boolean isRefreshToken = false;
     private static boolean isQuickLoginReceiverEnabled = false;
+    private static Timer timer;
 
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
         @Override
@@ -107,6 +110,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
      * @param baseViewInterface
      */
 
+    Handler handlerRefreshToken = new Handler();
+    Runnable runnableRefreshToken;
+
     public void fetchToken(BaseViewInterface baseViewInterface) {
         Runnable runnable = new Runnable() {
             @Override
@@ -115,7 +121,25 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     Log.e(TAG, "run: auth empty");
                     baseViewInterface.onStatus(true);
                 } else {
-
+//                    try {
+//                        handlerRefreshToken.removeCallbacks(runnableRefreshToken);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    handlerRefreshToken.postDelayed(runnableRefreshToken = new Runnable() {
+//                        public void run() {
+//
+//                            if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty())
+//                                if (!Constants.DisplayQuickLogin) {
+//                                    Constants.DisplayQuickLogin = true;
+//                                    try {
+//                                        getApplication().startActivity(new Intent(getApplication(), QuickLoginActivity.class));
+//                                    } catch (Exception e) {
+//                                        getApplication().startActivity(new Intent(getApplication(), QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+//                                    }
+//                                }
+//                        }
+//                    }, Constants.IdealTime);
 
                     /**
                      * if auth token expired
@@ -151,6 +175,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_NONE ||
                     appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_PASSWORD) {
                 isQuickLoginReceiverEnabled = false;
+                Log.e("Error Quick login","Error Quick login"+ appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
                 goToSigninActivity();
             } else {
                 if (!Utils.isInternetEnabled(application)) {
@@ -161,15 +186,17 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     try {
                         if (!Constants.DisplayQuickLogin) {
                             Constants.DisplayQuickLogin = true;
-                            getApplication().getApplicationContext().startActivity(new Intent( getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true));
+                            getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true));
                         }
                     } catch (Exception e) {
-                        getApplication().getApplicationContext().startActivity(new Intent( getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        getApplication().getApplicationContext().startActivity(new Intent(getApplication().getApplicationContext(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_REFRESH_TOKEN, true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
                 }
             }
-        }else{
-            if(errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
+        } else {
+            Log.e("Error Quick login","Error Quick login error message"+ errorModel.getMessage());
+
+            if (errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
                     errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token)))
                 goToSigninActivity();
         }
@@ -188,6 +215,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         Log.e(TAG, "onSuccess: refreshed token");
                         Utils.updateLastLogin();
                         Utils.storeLastActiveTime();
+                        Constants.ErrorFlag = false;
                         SigninApiResponseModel signinApiResponseModel = (SigninApiResponseModel) baseApiResponseModel;
                         if (signinApiResponseModel.isSuccess()) {
                             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
@@ -393,6 +421,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
                 Log.e(TAG, "onError: " + new Gson().toJson(httpException));
                 Log.e(TAG, "onError: " + response);
+                Log.e(TAG, "onError: Token" + httpException.code());
 
                 errorModel.setStatusCode(httpException.code());
                 errorModel.setResponse(response);
@@ -405,23 +434,28 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     case 401:
                         //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
                         // so we need to loggout the user and put to login screen
-                        isE401 = true;
                         if (!isRefreshToken) {
                             isQuickLoginReceiverEnabled = true;
                             makeRefreshTokenApiCall();
                         } else {
-                            handleUnAuth(errorModel);
-                            errorModelLiveData.setValue(errorModel);
+                            if (Constants.ErrorFlag == false) {
+                                Constants.ErrorFlag = true;
+                                handleUnAuth(errorModel);
+                                errorModelLiveData.setValue(errorModel);
+                            }
+
                         }
-
-
                         break;
                     case 403:
-                        errorModelLiveData.setValue(errorModel);
-                        if (isRefreshToken) {
-                            baseViewInterfaceList.clear();
-                            goToSigninActivity();
+                        if (Constants.ErrorFlag == false) {
+                            Constants.ErrorFlag = true;
+                            errorModelLiveData.setValue(errorModel);
+                            if (isRefreshToken) {
+                                baseViewInterfaceList.clear();
+                                goToSigninActivity();
+                            }
                         }
+
                         break;
                     case 500:
                         //If server is down, then will get this error code,here we are checking wheteher there is an active
