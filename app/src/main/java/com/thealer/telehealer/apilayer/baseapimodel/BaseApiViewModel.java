@@ -110,9 +110,6 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
      * @param baseViewInterface
      */
 
-    Handler handlerRefreshToken = new Handler();
-    Runnable runnableRefreshToken;
-
     public void fetchToken(BaseViewInterface baseViewInterface) {
         Runnable runnable = new Runnable() {
             @Override
@@ -121,25 +118,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     Log.e(TAG, "run: auth empty");
                     baseViewInterface.onStatus(true);
                 } else {
-//                    try {
-//                        handlerRefreshToken.removeCallbacks(runnableRefreshToken);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    handlerRefreshToken.postDelayed(runnableRefreshToken = new Runnable() {
-//                        public void run() {
-//
-//                            if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty())
-//                                if (!Constants.DisplayQuickLogin) {
-//                                    Constants.DisplayQuickLogin = true;
-//                                    try {
-//                                        getApplication().startActivity(new Intent(getApplication(), QuickLoginActivity.class));
-//                                    } catch (Exception e) {
-//                                        getApplication().startActivity(new Intent(getApplication(), QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-//                                    }
-//                                }
-//                        }
-//                    }, Constants.IdealTime);
+
 
                     /**
                      * if auth token expired
@@ -160,9 +139,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     baseViewInterfaceList.add(baseViewInterface);
                     baseViewInterface.onStatus(true);
                     Log.e(TAG, "run: list size " + baseViewInterfaceList.size());
+
                 }
             }
         };
+
         new Handler().post(runnable);
 
     }
@@ -207,7 +188,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         Log.e(TAG, "makeRefreshTokenApiCall: api called");
         isRefreshToken = true;
         getAuthApiService()
-                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), false, BuildConfig.VERSION_NAME, true)
+                .refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), false, BuildConfig.VERSION_NAME,true)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                     @Override
@@ -431,7 +412,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         errorModelLiveData.setValue(errorModel);
                     }
                     break;
-                    case 401:
+                    case 401:// Authorization token expired
                         //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
                         // so we need to loggout the user and put to login screen
                         if (!isRefreshToken) {

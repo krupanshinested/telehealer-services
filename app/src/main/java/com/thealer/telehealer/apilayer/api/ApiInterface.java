@@ -268,7 +268,7 @@ public interface ApiInterface {
     @POST("api/logout")
     Observable<BaseApiResponseModel> signOut();
 
-    @GET("api/whoami-v2")
+    @GET("api/whoami")
     Observable<WhoAmIApiResponseModel> whoAmI(@Query(DOC_GUID) String docGuId);
 
     @GET("api/associations-v2")
@@ -298,14 +298,14 @@ public interface ApiInterface {
     @GET("api/correspondence-history")
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/unconnected-users-v2")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(ROLE) String role, @Query(SPECIALITY) String speciality);
+    @GET("api/unconnected-users")
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
     @GET("api/designations")
     Observable<DesignationResponseModel> getDesignationList();
 
     @POST("api/requests-v2")
-    Observable<BaseApiResponseModel> addConnection(@HeaderMap Map<String,String> headers,@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/requests")
     Observable<BaseApiResponseModel> addPatientDocConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
@@ -328,8 +328,12 @@ public interface ApiInterface {
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/vitals/thresholds/{userGuid}")
-    Observable<VitalThresholdModel> getVitalsThreshold(@Path("userGuid") String userGuid);
+    @GET("api/vitals/thresholds/{id}")
+    Observable<VitalThresholdModel> getVitalsThreshold(@Path(ID) String id, @Query(USER_GUID) String guid);
+
+    @GET("api/vitals/thresholds")
+    Observable<VitalThresholdModel> getAllVitalsThreshold();
+
 
     @POST("api/vitals/thresholds")
     Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
@@ -383,7 +387,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
     @POST("api/vitals-v2")
-    Observable<VitalsCreateApiResponseModel> createVital(@HeaderMap Map<String,String> headers,@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/bulk-upload/vitals")
@@ -441,7 +445,7 @@ public interface ApiInterface {
     Observable<Response<ResponseBody>> getPdfFile(@Url String fileUrl);
 
     @POST("refresh")
-    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version,@Query("checkTokenExp") boolean isTokenExp);
+    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version, @Query("checkTokenExp") boolean isTokenExp);
 
     @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<OrdersBaseApiResponseModel> createRadiology(@HeaderMap Map<String,String>  headers,@Query(SYNC_CREATE) boolean sync_create, @Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
