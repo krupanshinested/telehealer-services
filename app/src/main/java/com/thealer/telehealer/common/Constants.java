@@ -188,11 +188,11 @@ public class Constants {
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
     public  static  boolean DisplayQuickLogin = false;
-    public static final long IdealTime=2*60*1000;
-    public static long ExpireTime=5*60*1000;
+    public static final long IdealTime=30*60*1000;
+    public static long ExpireTime=24*60*60*1000;
     public static boolean isFromBackground=true;
     public static final int TotalCount=3;
-
+    public static boolean ErrorFlag = false;
 
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";
