@@ -95,7 +95,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
         signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
         attachObserver(signinApiViewModel);
-
+        Constants.ErrorFlag = false;
 
         signinApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
