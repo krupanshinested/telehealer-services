@@ -136,9 +136,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     baseViewInterfaceList.add(baseViewInterface);
                     baseViewInterface.onStatus(true);
                     Log.e(TAG, "run: list size " + baseViewInterfaceList.size());
+
                 }
             }
         };
+
         new Handler().post(runnable);
 
     }
@@ -397,12 +399,15 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 errorModel.setStatusCode(httpException.code());
                 errorModel.setResponse(response);
                 boolean isE401 = false;
+
+                Log.d("Error Token", "Error Token" + httpException.code());
+
                 switch (httpException.code()) {
                     case 400: {
                         errorModelLiveData.setValue(errorModel);
                     }
                     break;
-                    case 401:
+                    case 401:// Authorization token expired
                         //If server returns 401 then it means, the auth token whatever used for the api call is invalid,
                         // so we need to loggout the user and put to login screen
                         isE401 = true;
@@ -410,18 +415,25 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                             isQuickLoginReceiverEnabled = true;
                             makeRefreshTokenApiCall();
                         } else {
-                            handleUnAuth(errorModel);
-                            errorModelLiveData.setValue(errorModel);
+                            if (Constants.ErrorCodeFlag == false) {
+                                Constants.ErrorCodeFlag = true;
+                                handleUnAuth(errorModel);
+                                errorModelLiveData.setValue(errorModel);
+                            }
                         }
 
 
                         break;
-                    case 403:
+                    case 403: // refresh token expired
+                        //If server returns 403 then it means, the refresh token has expired,
+                        // so we need to put to Quick login screen
                         errorModelLiveData.setValue(errorModel);
                         if (isRefreshToken) {
                             baseViewInterfaceList.clear();
-                            goToSigninActivity();
-                        }
+                            if (Constants.ErrorCodeFlag == false) {
+                                Constants.ErrorCodeFlag = true;
+                                goToSigninActivity();
+                            }                        }
                         break;
                     case 500:
                         //If server is down, then will get this error code,here we are checking wheteher there is an active

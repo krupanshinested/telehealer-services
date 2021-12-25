@@ -893,6 +893,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         checkNotification();
         application.addShortCuts();
 
+        Constants.ErrorCodeFlag = false;
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
             showHelpScreen();

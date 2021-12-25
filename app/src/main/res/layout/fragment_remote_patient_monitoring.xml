@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/appbar_layout"
+        layout="@layout/appbar_app_color_title_back_next" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsw_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/card_view_background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/save_btn"
+        app:layout_constraintTop_toBottomOf="@+id/appbar_layout">
+
+        <LinearLayout
+            android:id="@+id/container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/card_view_background"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:id="@+id/general_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/remote_patient_monitoring_cell_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    app:settings_title="@string/rpm_title" />
+                <TextView
+                    android:id="@+id/rpm_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/rpm_desc"
+                    android:textSize="16sp"
+                    android:visibility="visible" />
+
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/notification_cell_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="true"
+                    android:layout_marginTop="20dp"
+                    app:settings_title="@string/notifications_alert" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/vitals_threshold_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:visibility="visible"/>
+        </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/save_btn"
+        style="@style/button_app_background_white_text"
+        android:text="@string/save"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:padding="15dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

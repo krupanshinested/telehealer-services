@@ -86,6 +86,7 @@ import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResp
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
@@ -293,7 +294,7 @@ public interface ApiInterface {
     @GET("api/unconnected-users")
     Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
-    @POST("api/requests")
+    @POST("api/requests-v2")
     Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/associations")
@@ -313,6 +314,15 @@ public interface ApiInterface {
 
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
+
+    @GET("api/vitals/thresholds/{id}")
+    Observable<VitalThresholdModel> getVitalsThreshold(@Path(ID) String id, @Query(USER_GUID) String guid);
+
+    @GET("api/vitals/thresholds")
+    Observable<VitalThresholdModel> getAllVitalsThreshold();
+
+    @POST("api/vitals/thresholds")
+    Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
 
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
@@ -421,7 +431,7 @@ public interface ApiInterface {
     Observable<Response<ResponseBody>> getPdfFile(@Url String fileUrl);
 
     @POST("refresh")
-    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version,@Query("checkTokenExp") boolean isTokenExp);
+    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version, @Query("checkTokenExp") boolean isTokenExp);
 
     @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create, @Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
