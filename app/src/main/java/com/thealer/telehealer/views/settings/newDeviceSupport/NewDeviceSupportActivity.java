@@ -1,5 +1,7 @@
 package com.thealer.telehealer.views.settings.newDeviceSupport;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,38 +20,48 @@ import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.OnItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewDeviceSupportActivity extends BaseActivity implements View.OnClickListener {
     private ImageView backIv;
     private TextView toolbarTitle;
     private CustomRecyclerView newDeviceCrv;
-
+    private List<NewDeviceApiResponseModel.ResultBean> deviceList = new ArrayList<>();
     private NewDeviceApiViewModel newDeviceApiViewModel;
     private NewDeviceApiResponseModel newDeviceApiResponseModel;
     private NewDeviceSupportAdapter newDeviceSupportAdapter;
-
+    Activity activity;
     private int page = 1;
     private boolean isApiRequested = false;
 
     private void initObservers() {
+        activity = this;
         newDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
         newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    newDeviceApiResponseModel = (NewDeviceApiResponseModel) baseApiResponseModel;
-                    if (newDeviceApiResponseModel.getCount() > 0) {
-//                        newDeviceSupportAdapter.setData(newDeviceApiResponseModel.getResult(), page);
-                        newDeviceCrv.showOrhideEmptyState(false);
-                    } else {
-                        newDeviceCrv.showOrhideEmptyState(true);
-                    }
+                    try {
+                        newDeviceApiResponseModel = (NewDeviceApiResponseModel) baseApiResponseModel;
 
-                    newDeviceCrv.setNextPage(newDeviceApiResponseModel.getNext());
-                    isApiRequested = false;
-                    newDeviceCrv.setScrollable(true);
-                    newDeviceCrv.hideProgressBar();
-                    newDeviceCrv.getSwipeLayout().setRefreshing(false);
+                        if (newDeviceApiResponseModel.getCount() > 0) {
+                            //                        newDeviceSupportAdapter.setData(newDeviceApiResponseModel.getResult(), page);
+                            newDeviceCrv.showOrhideEmptyState(false);
+                        } else {
+                            newDeviceCrv.showOrhideEmptyState(true);
+                        }
+
+                        newDeviceCrv.setNextPage(newDeviceApiResponseModel.getNext());
+                        isApiRequested = false;
+                        newDeviceCrv.setScrollable(true);
+                        newDeviceCrv.hideProgressBar();
+                        newDeviceCrv.getSwipeLayout().setRefreshing(false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -105,7 +117,13 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
             }
         });
 
-        newDeviceSupportAdapter = new NewDeviceSupportAdapter(this);
+        newDeviceSupportAdapter = new NewDeviceSupportAdapter(this, deviceList, new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(int position, Bundle bundle) {
+                startActivity(new Intent(activity, NewDeviceDetailActivity.class));
+            }
+        });
 
         newDeviceCrv.getRecyclerView().setAdapter(newDeviceSupportAdapter);
 

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/appbar_back_with_title_app_color" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_10sdp"
+            android:padding="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="@dimen/_5sdp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/txtSubmit"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_15sdp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/deviceTv"
+                            android:layout_width="@dimen/_120sdp"
+                            android:layout_height="@dimen/_100sdp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:src="@drawable/drawable_ic_play"
+                            tools:src="@tools:sample/avatars" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/str_new_device_dummy_desc" />
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_10sdp"
+                            android:background="@drawable/device_id_background"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:hint="@string/enter_device_id"
+                            android:maxLines="1"
+                            android:padding="@dimen/_10sdp"
+                            android:textColorHint="@color/colorBlack" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/str_new_device_dummy_desc" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/device_id_background"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/_7sdp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/device_link"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/open_sans_semibold"
+                                android:gravity="center|left"
+                                android:maxLines="1"
+                                android:text="@string/str_new_device_dummy_desc"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/_11ssp"
+                                tools:text="@string/str_new_device_dummy_desc" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/copy_device_link"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/copy_btn_background"
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center"
+                                android:paddingHorizontal="@dimen/_12sdp"
+                                android:paddingVertical="@dimen/_4sdp"
+                                android:text="@string/key_copy"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="@dimen/_11ssp"
+                                tools:text="@string/key_copy" />
+
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatCheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/app_gradient_start"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:paddingStart="@dimen/_5sdp"
+                            android:text="@string/key_checkbox_device_text"
+                            android:textSize="@dimen/_12sdp" />
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtSubmit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/_13sdp"
+                    android:textColor="@color/bt_white"
+                    android:text="@string/submit"
+                    tools:text="@string/submit"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/submit_btn_background" />
+
+            </RelativeLayout>
+
+
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

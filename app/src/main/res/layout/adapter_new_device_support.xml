@@ -11,10 +11,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_10sdp"
+            android:layout_margin="@dimen/_7sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
             android:padding="@dimen/_5sdp"
             app:cardElevation="@dimen/_5sdp">
 
@@ -28,6 +29,7 @@
                     android:layout_height="60dp"
                     android:layout_alignParentLeft="true"
                     android:gravity="center"
+                    android:src="@drawable/drawable_ic_play"
                     tools:src="@tools:sample/avatars"/>
 
                 <LinearLayout
@@ -46,6 +48,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:ems="3"
+                        android:text="Bioland Blood glucose meter"
                         android:textSize="@dimen/_12ssp"
                         android:gravity="center|left"
                         android:maxLines="1"
@@ -58,6 +61,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_2sdp"
                         android:ellipsize="end"
+                        android:text="Wireless Plus Oximeter"
                         android:ems="3"
                         android:textSize="@dimen/_12ssp"
                         android:gravity="center|left"
@@ -70,7 +74,7 @@
             </RelativeLayout>
 
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
 

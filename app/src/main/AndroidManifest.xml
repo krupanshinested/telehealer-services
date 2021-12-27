@@ -236,6 +236,10 @@
             android:name=".views.settings.newDeviceSupport.NewDeviceSupportActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".views.settings.newDeviceSupport.NewDeviceDetailActivity"
+            android:screenOrientation="portrait" />
+
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
             android:enabled="true">

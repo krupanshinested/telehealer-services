@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters.VitalDeviceListAdapter;
+import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import java.util.ArrayList;
@@ -129,7 +131,7 @@ public class VitalDeviceListFragment extends BaseFragment {
         recyclerView = baseView.findViewById(R.id.device_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(), connectedDevice, unconnectedDevice,measurementType);
+        VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(), connectedDevice, unconnectedDevice, measurementType);
         this.vitalDeviceListAdapter = vitalDeviceListAdapter;
         recyclerView.setAdapter(vitalDeviceListAdapter);
 
@@ -147,6 +149,9 @@ public class VitalDeviceListFragment extends BaseFragment {
                 switch (dataSource.getDataSubType()) {
                     case VitalDeviceListAdapter.set_up_device:
                         onActionCompleteInterface.onCompletionResult(RequestID.SET_UP_DEVICE, true, bundle);
+                        break;
+                    case VitalDeviceListAdapter.set_up_telihealth_device:
+                        startActivity(new Intent(getActivity(), NewDeviceSupportActivity.class));
                         break;
                     case VitalDeviceListAdapter.manual_entry_type:
 

@@ -38,6 +38,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static final int manual_entry_type = 1;
     public static final int device_type = 2;
     public static final int set_up_device = 3;
+    public static final int set_up_telihealth_device = 5;
     public static final int google_fit_sources = 4;
 
     private Context context;
@@ -80,6 +81,8 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         sources.add(new DataSource(null,empty_space,"",none));
         sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manual_input),manual_entry_type));
+        sources.add(new DataSource(null,empty_space,"",none));
+        sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.str_new_device_setup),set_up_telihealth_device));
 
         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             sources.add(new DataSource(null,empty_space,"",none));

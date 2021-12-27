@@ -45,7 +45,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription;
+            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription,newDeviceSetup;
 
     private View signOut;
 
@@ -116,8 +116,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
         educational_video = baseView.findViewById(R.id.educational_video);
-        versionTv
-                = (TextView) baseView.findViewById(R.id.version_tv);
+        versionTv = (TextView) baseView.findViewById(R.id.version_tv);
+        newDeviceSetup = (ProfileCellView) baseView.findViewById(R.id.new_device_setup);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
 
         lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
@@ -170,6 +170,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         subscription.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
+        newDeviceSetup.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());

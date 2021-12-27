@@ -16,6 +16,7 @@ import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiRespons
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.common.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +31,13 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private Context context;
     private List<NewDeviceApiResponseModel.ResultBean> resultBean;
-    private List<NewDeviceAdapterModel> adapterModelList;
+    private List<NewDeviceAdapterModel> adapterModelList ;
+    OnItemClickListener onItemClickListener;
 
-    public NewDeviceSupportAdapter(Context context) {
+    public NewDeviceSupportAdapter(Context context, List<NewDeviceApiResponseModel.ResultBean> deviceList, OnItemClickListener onClickListener) {
         this.context = context;
         adapterModelList = new ArrayList<>();
+        onItemClickListener = onClickListener;
     }
 
     @NonNull
@@ -48,9 +51,16 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         ItemHolder itemHolder = (ItemHolder) holder;
-        NewDeviceApiResponseModel.ResultBean resultBean = adapterModelList.get(position).getItem();
+//        NewDeviceApiResponseModel.ResultBean resultBean = adapterModelList.get(position).getItem();
 
 //        Utils.setImageWithGlide(context, itemHolder.userAvatarCiv, userAvatar, context.getDrawable(R.drawable.profile_placeholder), true, true);
+
+        itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClickListener.onItemClick(holder.getAdapterPosition(), null);
+            }
+        });
     }
 
     @Override
@@ -59,11 +69,6 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
 //    }
     public int getItemCount() {
         return 5;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return adapterModelList.get(position).getType();
     }
 
     public void setData(List<NewDeviceApiResponseModel.ResultBean> result, int page) {

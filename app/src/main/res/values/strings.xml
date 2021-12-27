@@ -1647,6 +1647,11 @@
     <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
     <string name="visit_questionary">Visit Questionnaire</string>
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
-    <string name="str_new_device_setup">New Device Support</string>
+    <string name="str_new_device_setup">Setup New Tellihealth Device</string>
+    <string name="str_new_device_dummy_desc">Telli Health’s 4G Blood Pressure Monitor is the most accurate 4G cellular device on the market and one of the easiest to use. This device combines the traditional testing kit (with multiple components) into one simple device with cellular-enabled 4G technology. This device is easy-to-use, durable, reliable and accurate.</string>
+    <string name="enter_device_id">Enter Device ID</string>
+    <string name="key_copy">Copy</string>
+    <string name="key_checkbox_device_text">I have declare........</string>
+
 
 </resources>
