@@ -217,7 +217,7 @@ public class AboutFragment extends BaseFragment {
                         doctorDetailView.setVisibility(View.VISIBLE);
                         patientDetailView.setVisibility(View.GONE);
                         phoneCv.setVisibility(View.GONE);
-                        rvVitalHistory.setVisibility(View.GONE);
+                        clVitalHistory.setVisibility(View.GONE);
                         clHistory.setVisibility(View.GONE);
 
 
