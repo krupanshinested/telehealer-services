@@ -421,8 +421,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                             isQuickLoginReceiverEnabled = true;
                             makeRefreshTokenApiCall();
                         } else {
-                            if (Constants.ErrorCodeFlag == false) {
-                                Constants.ErrorCodeFlag = true;
+                            if (Constants.ErrorFlag == false) {
+                                Constants.ErrorFlag = true;
                                 handleUnAuth(errorModel);
                                 errorModelLiveData.setValue(errorModel);
                             }
