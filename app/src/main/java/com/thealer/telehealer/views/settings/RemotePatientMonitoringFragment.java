@@ -173,7 +173,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         rpmCellView = view.findViewById(R.id.remote_patient_monitoring_cell_view);
         notificationCellView = view.findViewById(R.id.notification_cell_view);
         saveBtn = (AppCompatTextView) view.findViewById(R.id.save_btn);
-        saveBtn.setVisibility(View.VISIBLE);
+        saveBtn.setVisibility(View.GONE);
         editTv.setText(getString(R.string.edit));
         editTv.setVisibility(View.VISIBLE);
         toolbarTitle.setText(R.string.vital_chart);
