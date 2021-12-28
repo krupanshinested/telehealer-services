@@ -17,21 +17,14 @@ public class NewDeviceApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void getAccessLog(int page, boolean isShowProgress) {
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if (status) {
-                    getAuthApiService().getAccessLogs(page, Constants.PAGINATION_SIZE, "GET")
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                }
-                            });
-                }
-            }
-        });
+    public void getDevicelist() {
+        fetchToken(status -> getPublicApiService().getDeviceList()
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(true)) {
+                    @Override
+                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                    }
+                }));
     }
 }

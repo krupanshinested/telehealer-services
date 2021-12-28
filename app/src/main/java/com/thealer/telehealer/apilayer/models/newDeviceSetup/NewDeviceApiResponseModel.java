@@ -1,137 +1,139 @@
 package com.thealer.telehealer.apilayer.models.newDeviceSetup;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import java.util.ArrayList;
 
-import android.net.Uri;
+public class NewDeviceApiResponseModel extends BaseApiResponseModel {
 
-import com.thealer.telehealer.apilayer.models.PaginationApiResponseModel;
+    private String code;
 
-import java.io.Serializable;
-import java.util.List;
+    private ArrayList<Data> data;
 
-public class NewDeviceApiResponseModel extends PaginationApiResponseModel {
-
-    private List<ResultBean> result;
-
-    public List<ResultBean> getResult() {
-        return result;
+    public String getCode() {
+        return code;
     }
 
-    public void setResult(List<ResultBean> result) {
-        this.result = result;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public static class ResultBean {
+    public ArrayList<Data> getData() {
+        return data;
+    }
 
-        private int request_log_id;
-        private String method;
-        private String install_type;
-        private int response_http_status;
-        private String endpoint;
-        private String timestamp;
-        private UserBean user;
-        private List<com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean> accessed_users;
+    public void setData(ArrayList<Data> data) {
+        this.data = data;
+    }
 
-        public int getRequest_log_id() {
-            return request_log_id;
+    public static class Data {
+
+        private String image;
+
+        private String product_info_link;
+
+        private String is_active;
+
+        private String updated_at;
+
+        private String name;
+
+        private String GUID;
+
+        private String description;
+
+        private String product_info_link_1;
+
+        private String created_at;
+
+        private String id;
+
+        private String deleted_at;
+
+        public String getImage() {
+            return image;
         }
 
-        public void setRequest_log_id(int request_log_id) {
-            this.request_log_id = request_log_id;
+        public void setImage(String image) {
+            this.image = image;
         }
 
-        public String getMethod() {
-            return method;
+        public String getProduct_info_link() {
+            return product_info_link;
         }
 
-        public void setMethod(String method) {
-            this.method = method;
+        public void setProduct_info_link(String product_info_link) {
+            this.product_info_link = product_info_link;
         }
 
-        public String getInstall_type() {
-            return install_type;
+        public String getIs_active() {
+            return is_active;
         }
 
-        public void setInstall_type(String install_type) {
-            this.install_type = install_type;
+        public void setIs_active(String is_active) {
+            this.is_active = is_active;
         }
 
-        public int getResponse_http_status() {
-            return response_http_status;
+        public String getUpdated_at() {
+            return updated_at;
         }
 
-        public void setResponse_http_status(int response_http_status) {
-            this.response_http_status = response_http_status;
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
         }
 
-        public String getEndpoint() {
-            return endpoint;
+        public String getName() {
+            return name;
         }
 
-        public void setEndpoint(String endpoint) {
-            this.endpoint = endpoint;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        public String getTimestamp() {
-            return timestamp;
+        public String getGUID() {
+            return GUID;
         }
 
-        public void setTimestamp(String timestamp) {
-            this.timestamp = timestamp;
+        public void setGUID(String GUID) {
+            this.GUID = GUID;
         }
 
-        public UserBean getUser() {
-            return user;
+        public String getDescription() {
+            return description;
         }
 
-        public void setUser(UserBean user) {
-            this.user = user;
+        public void setDescription(String description) {
+            this.description = description;
         }
 
-        public String getType() {
-            if (endpoint != null) {
-
-                Uri uri = Uri.parse(getEndpoint());
-                return uri.getPathSegments().get(0);
-            }
-            return null;
+        public String getProduct_info_link_1() {
+            return product_info_link_1;
         }
 
-        public List<com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean> getAccessed_users() {
-            return accessed_users;
+        public void setProduct_info_link_1(String product_info_link_1) {
+            this.product_info_link_1 = product_info_link_1;
         }
 
-        public void setAccessed_users(List<com.thealer.telehealer.apilayer.models.commonResponseModel.UserBean> accessed_users) {
-            this.accessed_users = accessed_users;
+        public String getCreated_at() {
+            return created_at;
         }
 
-        public static class UserBean implements Serializable {
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
 
-            private int user_id;
-            private String user_guid;
-            private String email;
+        public String getId() {
+            return id;
+        }
 
-            public int getUser_id() {
-                return user_id;
-            }
+        public void setId(String id) {
+            this.id = id;
+        }
 
-            public void setUser_id(int user_id) {
-                this.user_id = user_id;
-            }
+        public String getDeleted_at() {
+            return deleted_at;
+        }
 
-            public String getUser_guid() {
-                return user_guid;
-            }
-
-            public void setUser_guid(String user_guid) {
-                this.user_guid = user_guid;
-            }
-
-            public String getEmail() {
-                return email;
-            }
-
-            public void setEmail(String email) {
-                this.email = email;
-            }
+        public void setDeleted_at(String deleted_at) {
+            this.deleted_at = deleted_at;
         }
     }
 }

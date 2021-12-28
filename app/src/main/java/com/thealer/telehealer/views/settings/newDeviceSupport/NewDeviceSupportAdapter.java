@@ -30,11 +30,11 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int TYPE_ITEM = 2;
 
     private Context context;
-    private List<NewDeviceApiResponseModel.ResultBean> resultBean;
-    private List<NewDeviceAdapterModel> adapterModelList ;
+    private List<NewDeviceApiResponseModel.Data> resultBean;
+    private List<NewDeviceAdapterModel> adapterModelList;
     OnItemClickListener onItemClickListener;
 
-    public NewDeviceSupportAdapter(Context context, List<NewDeviceApiResponseModel.ResultBean> deviceList, OnItemClickListener onClickListener) {
+    public NewDeviceSupportAdapter(Context context, List<NewDeviceApiResponseModel.Data> deviceList, OnItemClickListener onClickListener) {
         this.context = context;
         adapterModelList = new ArrayList<>();
         onItemClickListener = onClickListener;
@@ -51,50 +51,29 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         ItemHolder itemHolder = (ItemHolder) holder;
-//        NewDeviceApiResponseModel.ResultBean resultBean = adapterModelList.get(position).getItem();
+        NewDeviceApiResponseModel.Data resultBean = adapterModelList.get(position).getItem();
 
-//        Utils.setImageWithGlide(context, itemHolder.userAvatarCiv, userAvatar, context.getDrawable(R.drawable.profile_placeholder), true, true);
+        Utils.setImageWithGlide(context, itemHolder.deviceTv, resultBean.getImage(), context.getDrawable(R.drawable.add_provider), true, true);
 
-        itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onItemClickListener.onItemClick(holder.getAdapterPosition(), null);
-            }
-        });
+        itemHolder.deviceName.setText(""+resultBean.getName());
+        itemHolder.deviceDescription.setText(""+resultBean.getDescription());
+        itemHolder.itemView.setOnClickListener(view -> onItemClickListener.onItemClick(holder.getAdapterPosition(), null));
     }
 
     @Override
-//    public int getItemCount() {
-//        return adapterModelList.size();
-//    }
     public int getItemCount() {
-        return 5;
+        return adapterModelList.size();
     }
+//    public int getItemCount() {
+//        return 5;
+//    }
 
-    public void setData(List<NewDeviceApiResponseModel.ResultBean> result, int page) {
-        if (page == 1) {
-            resultBean = result;
-        } else {
-            resultBean.addAll(result);
-        }
-
-        Collections.sort(resultBean, new Comparator<NewDeviceApiResponseModel.ResultBean>() {
-            @Override
-            public int compare(NewDeviceApiResponseModel.ResultBean o1, NewDeviceApiResponseModel.ResultBean o2) {
-                return Utils.getDateFromString(o2.getTimestamp()).compareTo(Utils.getDateFromString(o1.getTimestamp()));
-            }
-        });
-
+    public void setData(List<NewDeviceApiResponseModel.Data> result) {
+        resultBean = result;
         adapterModelList.clear();
-
         for (int i = 0; i < resultBean.size(); i++) {
-            if (i == 0 || !Utils.getDayMonthYear(resultBean.get(i).getTimestamp()).equals(Utils.getDayMonthYear(resultBean.get(i - 1).getTimestamp()))) {
-                adapterModelList.add(new NewDeviceAdapterModel(TYPE_HEADER, Utils.getDayMonthYear(resultBean.get(i).getTimestamp())));
-            }
-
             adapterModelList.add(new NewDeviceAdapterModel(TYPE_ITEM, resultBean.get(i)));
         }
-
         notifyDataSetChanged();
     }
 
@@ -126,14 +105,14 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
     private class NewDeviceAdapterModel {
         private int type;
         private String date;
-        private NewDeviceApiResponseModel.ResultBean item;
+        private NewDeviceApiResponseModel.Data item;
 
         public NewDeviceAdapterModel(int type, String date) {
             this.type = type;
             this.date = date;
         }
 
-        public NewDeviceAdapterModel(int type, NewDeviceApiResponseModel.ResultBean item) {
+        public NewDeviceAdapterModel(int type, NewDeviceApiResponseModel.Data item) {
             this.type = type;
             this.item = item;
         }
@@ -154,11 +133,11 @@ public class NewDeviceSupportAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.date = date;
         }
 
-        public NewDeviceApiResponseModel.ResultBean getItem() {
+        public NewDeviceApiResponseModel.Data getItem() {
             return item;
         }
 
-        public void setItem(NewDeviceApiResponseModel.ResultBean item) {
+        public void setItem(NewDeviceApiResponseModel.Data item) {
             this.item = item;
         }
     }

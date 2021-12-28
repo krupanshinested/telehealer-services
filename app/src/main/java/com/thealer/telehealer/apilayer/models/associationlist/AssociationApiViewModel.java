@@ -43,7 +43,9 @@ public class AssociationApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getAssociationList(@NonNull String search, boolean showProgress, String doctorGuid) {
+    public void
+
+    getAssociationList(@NonNull String search, boolean showProgress, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

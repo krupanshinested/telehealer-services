@@ -539,7 +539,6 @@ public class Utils {
         return "";
     }
 
-
     public static Date getDateFromString(String dateString) {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         dateFormat.setTimeZone(UtcTimezone);

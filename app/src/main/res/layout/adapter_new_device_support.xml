@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_toEndOf="@+id/deviceTv"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
 
@@ -63,7 +63,7 @@
                         android:ellipsize="end"
                         android:text="Wireless Plus Oximeter"
                         android:ems="3"
-                        android:textSize="@dimen/_12ssp"
+                        android:textSize="@dimen/_11ssp"
                         android:gravity="center|left"
                         android:maxLines="1"
                         android:textColor="@color/colorBlack"
