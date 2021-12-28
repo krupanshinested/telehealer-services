@@ -473,7 +473,7 @@
                 android:gravity="center|left"
                 android:textColor="@color/app_gradient_start"
                 android:text="@string/edit"
-                android:textSize="@dimen/title_size"
+                android:textSize="@dimen/text_sub_title_size"
                 app:layout_constraintTop_toBottomOf="@+id/tv_vital"
                 app:layout_constraintEnd_toEndOf="parent"/>
             <androidx.recyclerview.widget.RecyclerView
