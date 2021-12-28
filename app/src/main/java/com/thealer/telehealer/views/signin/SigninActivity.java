@@ -126,7 +126,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-
+        Constants.ErrorFlag = false;
         signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
         whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(signinApiViewModel);

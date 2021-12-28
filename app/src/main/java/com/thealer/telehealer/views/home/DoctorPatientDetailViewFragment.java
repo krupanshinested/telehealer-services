@@ -865,7 +865,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
                             bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
-
                             SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
                             schedulesListFragment.setArguments(bundle);
                             addFragment(getString(R.string.schedules), schedulesListFragment);
