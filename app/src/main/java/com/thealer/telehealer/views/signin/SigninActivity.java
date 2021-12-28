@@ -12,6 +12,7 @@ import android.net.Network;
 import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -126,7 +127,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-        Constants.ErrorFlag = false;
+
         signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
         whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserver(signinApiViewModel);
@@ -297,7 +298,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                 onNetworkAvailable(false);
             }
         };
-
+        new Handler().postDelayed(() -> runOnUiThread(() -> Constants.ErrorFlag = false),1000);
     }
 
     private void checkSignalKeys() {

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.LinearLayout;
 
@@ -95,7 +96,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
 
         signinApiViewModel = new ViewModelProvider(this).get(SigninApiViewModel.class);
         attachObserver(signinApiViewModel);
-        Constants.ErrorFlag = false;
 
         signinApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -123,9 +123,6 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
               finish();
             }
         });
-
-
-
         if (savedInstanceState != null) {
             isViewShown = savedInstanceState.getBoolean(IS_VIEW_SHOWN);
         }
@@ -133,6 +130,8 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
             initView();
         }
         appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, true);
+        new Handler().postDelayed(() -> runOnUiThread(() -> Constants.ErrorFlag = false),1000);
+
     }
 
     @Override
