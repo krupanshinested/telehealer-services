@@ -20,7 +20,10 @@ public class Constants {
     public final static int PARTIAL_DELAY_TIME = 500;
     public final static int ERROR_TIMEOUT = 5000;
     public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 30000;
-
+    public static boolean isCallEnable = true;
+    public static boolean isScheduleEnable = true;
+    public static boolean isChatEnable = true;
+    public static boolean isInviteEnable = true;
 
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
 

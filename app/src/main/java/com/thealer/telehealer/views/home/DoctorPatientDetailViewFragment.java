@@ -170,10 +170,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
             orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
     private List<String> designationList = new ArrayList<>();
-    private boolean isCallEnable = true;
-    private boolean isScheduleEnable = true;
-    private boolean isChatEnable = true;
-    private boolean isInviteEnable = true;
 
     @Override
     public void onAttach(Context context) {
@@ -190,17 +186,24 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         attachObserverInterface.attachObserver(getUsersApiViewModel);
         attachObserverInterface.attachObserver(userPermissionApiViewModel);
         connectionListApiViewModel.getDesignationList();
+
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
+                Log.d("Data Model","Data Model first "+resultBean.getPermissions());
+
                 patientId = resultBean.getUser_id();
-                if(UserType.isUserAssistant()) {
-                    doctorModel=resultBean;
-                    isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
-                    isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
-                    isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                if (UserType.isUserAssistant()) {
+                    doctorModel = resultBean;
+                    if(doctorModel.getPermissions().size() > 0){
+                        Constants.isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                        Constants.isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+                        Constants.isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                    }
+
+                    Log.d("Data Model","Data Model user api");
                     manageSAPermission();
                 }
                 if (doctorGuid != null) {
@@ -352,12 +355,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                if(baseApiResponseModel != null && baseApiResponseModel.isSuccess())
-                    if(baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.MAKE_CALLS_CODE))
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess())
+                    if (baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.MAKE_CALLS_CODE))
                         setUpMakeCall();
-                    else if(baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.CHAT_CODE))
+                    else if (baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.CHAT_CODE))
                         setUpMakeCall();
-                    else if(baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.ADD_VITALS_CODE))
+                    else if (baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.ADD_VITALS_CODE))
                         visitVitalFragment();
             }
         });
@@ -421,7 +424,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             Log.d("enableOrDisableCall", "true");
             enableOrDisableCall(true);
         }
-        manageSAPermission();
+//        manageSAPermission();
     }
 
     @Override
@@ -462,33 +465,35 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
 
         userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
-        manageSAPermission();
+//        manageSAPermission();
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Bundle bundle = getArguments();
                 switch (menuItem.getItemId()) {
                     case R.id.menu_chat:
-                        if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
-                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHAT_CODE);
-                            if(isPermissionAllowed){
+//                        if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                        if (UserType.isUserAssistant() && doctorModel != null) {
+                            boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                            if (isPermissionAllowed && Constants.isChatEnable) {
                                 setUpChat(bundle);
-                            }else{
+                            } else {
                                 Utils.displayPermissionMsg(getContext());
                             }
-                        }else {
+                        } else {
                             setUpChat(bundle);
                         }
                         break;
                     case R.id.menu_schedules:
-                        if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
-                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.SCHEDULING_CODE);
-                            if(isPermissionAllowed){
+//                        if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                        if (UserType.isUserAssistant() && doctorModel != null) {
+                            boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+                            if (isPermissionAllowed && Constants.isScheduleEnable) {
                                 manageSchedule();
-                            }else{
+                            } else {
                                 Utils.displayPermissionMsg(getContext());
                             }
-                        }else {
+                        } else {
                             manageSchedule();
                         }
                         break;
@@ -496,14 +501,15 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         if (CallManager.shared.isActiveCallPresent()) {
                             return false;
                         } else {
-                            if(UserType.isUserAssistant() && doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0) {
-                                boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.MAKE_CALLS_CODE);
-                                if(isPermissionAllowed){
+//                            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                            if (UserType.isUserAssistant() && doctorModel != null) {
+                                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                                if (isPermissionAllowed && Constants.isCallEnable) {
                                     setUpMakeCall();
-                                }else{
+                                } else {
                                     Utils.displayPermissionMsg(getContext());
                                 }
-                            }else
+                            } else
                                 setUpMakeCall();
                         }
                         break;
@@ -528,7 +534,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!isInviteEnable){
+                    if (!Constants.isInviteEnable) {
                         Utils.displayPermissionMsg(getActivity());
                         return;
                     }
@@ -603,21 +609,48 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
 
     private void manageSAPermission() {
-        if(UserType.isUserAssistant()){
-            if(doctorModel!=null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size()>0){
-                MenuItem callMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_call);
-                MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
-                MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
+        Log.d("Data Model","Data Model permission "+Constants.isCallEnable+" "+Constants.isScheduleEnable+" "+ Constants.isChatEnable);
 
-                Utils.changeMenuIconColor(getContext(),callMenuItem,
-                        isCallEnable ? R.color.app_gradient_start :R.color.colorGrey);
 
-                Utils.changeMenuIconColor(getContext(),scheduleMenuItem,
-                        isScheduleEnable ? R.color.app_gradient_start :R.color.colorGrey);
+        if (UserType.isUserAssistant()) {
+            MenuItem callMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_call);
+            MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
+            MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
+//            if (doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+            if (doctorModel != null) {
 
-                Utils.changeMenuIconColor(getContext(),chatMenuItem,
-                        isChatEnable ? R.color.app_gradient_start :R.color.colorGrey);
+                //TODO : Call Menu item
+                try {
+                    callMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), Constants.isCallEnable ? R.color.app_gradient_start : R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(callMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(Constants.isCallEnable ? getActivity().getColor(R.color.app_gradient_start) : getContext().getColor(R.color.colorGrey)), 0, s.length(), 0);
+                    callMenuItem.setTitle(s);
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Schedule Menu item
+                try {
+                    scheduleMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), Constants.isScheduleEnable ? R.color.app_gradient_start : R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(scheduleMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(Constants.isScheduleEnable ? getActivity().getColor(R.color.app_gradient_start) : getContext().getColor(R.color.colorGrey)), 0, s.length(), 0);
+                    scheduleMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Chat Menu item
+                try {
+                    chatMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), Constants.isChatEnable ? R.color.app_gradient_start : R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(chatMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(Constants.isChatEnable ? getActivity().getColor(R.color.app_gradient_start) : getContext().getColor(R.color.colorGrey)), 0, s.length(), 0);
+                    chatMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -766,7 +799,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     }
 
     private void getUserDetail(Set<String> guidSet) {
-        if (!isUserDataFetched) {
+//        if (!isUserDataFetched) {
+
+
             GetUserDetails
                     .getInstance(getActivity())
                     .getDetails(guidSet)
@@ -774,21 +809,24 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 @Override
                 public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
                     if (userDetailHashMap != null) {
-                        isUserDataFetched = true;
+//                        isUserDataFetched = true;
 
                         for (String guid : guidSet) {
                             CommonUserApiResponseModel model = userDetailHashMap.get(guid);
                             if (model != null) {
                                 switch (model.getRole()) {
                                     case Constants.ROLE_DOCTOR:
-                                        doctorModel = model;
-                                        /*if(UserType.isUserAssistant()) {
-                                            isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
-                                            isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
-                                            isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
-                                            manageSAPermission();
-                                        }*/
+//
+//
+                                        Log.d("Data Model","Data Model"+doctorModel.getPermissions() + UserType.isUserAssistant());
+//                                        if(UserType.isUserAssistant()) {
+//                                            isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+//                                            isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+//                                            isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+//                                            manageSAPermission();
+//                                        }
                                         if (UserType.isUserPatient() && resultBean == null) {
+                                            doctorModel = model;
                                             resultBean = doctorModel;
                                         }
                                         break;
@@ -803,7 +841,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     }
                 }
             });
-        }
+//        }
     }
 
     private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
@@ -857,10 +895,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         if (UserType.isUserAssistant()) {
             if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
                 addFab.show();
-                isInviteEnable = Utils.checkPermissionStatus(resultBean.getPermissions(), ArgumentKeys.INVITE_OTHERS_CODE);
+                Constants.isInviteEnable = Utils.checkPermissionStatus(resultBean.getPermissions(), ArgumentKeys.INVITE_OTHERS_CODE);
 
                 addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
-                        isInviteEnable ? R.color.app_gradient_start : R.color.colorGrey)));
+                        Constants.isInviteEnable ? R.color.app_gradient_start : R.color.colorGrey)));
             } else {
                 addFab.hide();
             }
@@ -1011,7 +1049,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             addFragment(getString(R.string.about), aboutFragment);
                             break;
                         case vitalTab:
-                                visitVitalFragment();
+                            visitVitalFragment();
                             break;
                         case schedulesTab:
                             bundle = new Bundle();
