@@ -32,6 +32,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean recording_enabled = false;
     private String appt_start_time;
     private String appt_end_time;
+    private List<VitalBean> vitals;
 
     public CommonUserApiResponseModel() {
     }
@@ -49,6 +50,15 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.history = history;
         this.app_details = appDetail;
         this.user_detail = user_detail;
+    }
+
+
+    public List<VitalBean> getVitals() {
+        return vitals;
+    }
+
+    public void setVitals(List<VitalBean> vitals) {
+        this.vitals = vitals;
     }
 
     public String getDoctorDisplayName() {
@@ -83,6 +93,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
             return getDefaultDisplayName();
         }
     }
+
 
     public String getDoctorAddress() {
 

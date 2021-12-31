@@ -12,6 +12,7 @@ import android.net.Network;
 import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -52,6 +53,7 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Signal.SignalKeyManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -64,6 +66,7 @@ import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -143,6 +146,16 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                             UserDetailPreferenceManager.deleteAllPreference();
                         }
 
+                        String prevEmail=appPreference.getString(PreferenceConstants.USER_EMAIL);
+                        String currentEmail =emailEt.getText().toString();
+
+                        //TODO - Uncomment If condition if you do not want to create pin every time on login for same User.
+//                        if(!prevEmail.equalsIgnoreCase("") && !currentEmail.equalsIgnoreCase("") && !prevEmail.equalsIgnoreCase(currentEmail)) {
+                            appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
+                            isQuickLogin =false;
+                            appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
+//                        }
+
                         setQuickLoginView();
 
                         if (rememberCb.isChecked()) {
@@ -218,7 +231,13 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.isLocked()) {
+                    if(errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
+                            errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token))){
+                        UserDetailPreferenceManager.invalidateUser();
+                        PubnubUtil.shared.unsubscribe();
+                        EventRecorder.updateUserId(null);
+                        setQuickLoginText(false, null);
+                    } else if (errorModel.isLocked()) {
                         UserDetailPreferenceManager.invalidateUser();
                         setQuickLoginView();
 
@@ -279,7 +298,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                 onNetworkAvailable(false);
             }
         };
-
+        new Handler().postDelayed(() -> runOnUiThread(() -> Constants.ErrorFlag = false),1000);
     }
 
     private void checkSignalKeys() {

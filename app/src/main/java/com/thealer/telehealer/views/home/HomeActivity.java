@@ -890,9 +890,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     protected void onResume() {
         super.onResume();
+        Constants.ErrorFlag = false;
         checkNotification();
         application.addShortCuts();
-
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
             showHelpScreen();

@@ -1491,5 +1491,35 @@
     <string name="wrong_password">Wrong password.  %s attempt left.</string>
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
+    <string name="str_refresh_token_expired">Refresh token expired.</string>
+    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
+    <string name="lbl_remote_patient_monitoring">Remote Patient Monitoring</string>
+    <string name="rpm_desc">Receive alerts and provide tailored feedback to your patients for pre-defined physological parameters.</string>
+    <string name="notifications_alert">Notification Alerts</string>
+    <string name="mgdl">mg/dL</string>
+    <string name="msg_to_patient">Message to Patient</string>
+    <string name="bpm">bpm</string>
+    <string name="percentage">%</string>
+    <string name="mmhg">mm Hg</string>
+    <string name="fahrenheit">℉</string>
+    <string name="lbs">lbs</string>
+    <string name="relative">relative</string>
+    <string name="dash">-</string>
+    <string name="mark_as_abnormal">Mark as abnormal/elevated</string>
+    <string name="add_value">Add Value</string>
+    <string name="slash">/</string>
+    <string name="str_please_enter_value_higher_than_lower_limit">Please select higher value than lower limit.</string>
+    <string name="str_please_enter_threshold_msg">Please enter threshold messages.</string>
+    <string name="str_notification_threshold_msg">"When enabled, notifications will always be sent to the provider/staff when the patient captures vitals data that fall in a range indicated by you to be elevated or abnormal. \n \n Notes:\n 1. Notifications will not be sent when vitals data is captured or entered directly by the provider/staff on behalf of the patient\n 2. Notifications will not be sent if historical data is synced in “bulk” directly from a supported health device (e.g. iHealth Track) or from Apple Health/Google Fit, except for any vitals data reported the same day. "</string>
+    <string name="bhi_italic"><![CDATA[<i>(BHI)</i>]]></string>
+    <string name="vital_chart">Vitals Chart</string>
+    <string name="str_enter_valid_range">Enter Valid Range</string>
+    <string name="please_fill_up_details">Please enter all values</string>
+    <string name="str_vital">Vitals</string>
+    <string name="str_rpm">RPM</string>
+    <string name="str_rpm_status">RPM (%s)</string>
+    <string name="str_enable">Enable</string>
+    <string name="str_disable">Disable</string>
+    <string name="recorded_on">Recorded on %s</string>
 
 </resources>

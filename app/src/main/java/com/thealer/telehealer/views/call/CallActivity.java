@@ -111,6 +111,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -247,7 +249,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
         activeCall = CallManager.shared.getActiveCallToShow();
 
-        otherPersonDetail = activeCall.getOtherPersonDetail();
+        if(activeCall != null)
+            otherPersonDetail = activeCall.getOtherPersonDetail();
 
         stopNotificationService();
 
@@ -277,21 +280,25 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         triggerAnswer = getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER, false);
         initView();
 
-        if (activeCall.getConnectedDate() != null) {
-            long lastSuccess = activeCall.getConnectedDate().getTime();
-            long elapsedRealtimeOffset = System.currentTimeMillis() - SystemClock.elapsedRealtime();
-            recording_tv.setBase(lastSuccess - elapsedRealtimeOffset);
-            callDidStarted();
-        } else {
-            recording_tv.stop();
-            if (!activeCall.getCallType().equals(OpenTokConstants.education)) {
-                profile_background.startRippleAnimation();
+        if(activeCall != null) {
+            if (activeCall.getConnectedDate() != null) {
+                long lastSuccess = activeCall.getConnectedDate().getTime();
+                long elapsedRealtimeOffset = System.currentTimeMillis() - SystemClock.elapsedRealtime();
+                recording_tv.setBase(lastSuccess - elapsedRealtimeOffset);
+                callDidStarted();
+            } else {
+                recording_tv.stop();
+                if (!activeCall.getCallType().equals(OpenTokConstants.education)) {
+                    profile_background.startRippleAnimation();
+                }
             }
         }
 
         updateMinimizeButton(Constants.idle);
 
-        activeCall.setup(getRemoteView(), getLocalView());
+        if(activeCall != null)
+            activeCall.setup(getRemoteView(), getLocalView());
+
         updateCallQuality(currentCallQuality);
 
         final Class<? extends Service> service = CallMinimizeService.class;
@@ -312,7 +319,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
             }
         }
-
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
@@ -555,7 +561,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             minimize.setVisibility(View.GONE);
         } else {
 
-            if (activeCall.getCallType().equals(OpenTokConstants.video) && UserType.isUserPatient() && state == Constants.measuring) {
+            if (activeCall != null && activeCall.getCallType() != null  && activeCall.getCallType().equals(OpenTokConstants.video) && UserType.isUserPatient() && state == Constants.measuring) {
                 minimize.setVisibility(View.GONE);
             } else {
                 minimize.setVisibility(View.VISIBLE);
@@ -637,7 +643,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             hang_iv.setVisibility(View.VISIBLE);
             showVitalHeader();
 
-            if (activeCall.getCallType().equals(OpenTokConstants.audio)) {
+            if (activeCall != null && activeCall.getCallType().equals(OpenTokConstants.audio)) {
                 profile_iv.setVisibility(View.VISIBLE);
             }
 
@@ -646,7 +652,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void setToggleTimer() {
-        if (activeCall.getConnectedDate() == null) {
+        if (activeCall != null && activeCall.getConnectedDate() == null) {
             return;
         }
 
@@ -677,105 +683,109 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
     private void updateState(int currentState) {
         Log.d("CallActivity", "updateState " + currentState);
-        activeCall.setCallState(currentState);
-        updateUI();
+        if(activeCall != null )
+            activeCall.setCallState(currentState);
+
+            updateUI();
+
     }
 
     private void updateUI() {
-        switch (activeCall.getCallState()) {
-            case OpenTokConstants.waitingForUserAction:
+        if(activeCall != null ) {
+            switch (activeCall.getCallState()) {
+                case OpenTokConstants.waitingForUserAction:
 
-                if (activeCall.getCallType().equals(OpenTokConstants.education)) {
-                    hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
-                    hang_iv.setVisibility(View.GONE);
-                    answer_iv.setVisibility(View.GONE);
-                    call_type_tv.setText("");
-                    incoming_view.setVisibility(View.GONE);
-                    moveHangButtonToCenter();
-                } else {
-                    hang_iv.setVisibility(View.VISIBLE);
-                    answer_iv.setVisibility(View.VISIBLE);
-
-                    if (activeCall.isVideoCall()) {
-                        call_type_tv.setText(String.format(getString(R.string.telehealer_video), getString(R.string.app_name)));
+                    if (activeCall.getCallType().equals(OpenTokConstants.education)) {
+                        hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
+                        hang_iv.setVisibility(View.GONE);
+                        answer_iv.setVisibility(View.GONE);
+                        call_type_tv.setText("");
+                        incoming_view.setVisibility(View.GONE);
+                        moveHangButtonToCenter();
                     } else {
-                        call_type_tv.setText(String.format(getString(R.string.telehealer_audio), getString(R.string.app_name)));
+                        hang_iv.setVisibility(View.VISIBLE);
+                        answer_iv.setVisibility(View.VISIBLE);
+
+                        if (activeCall.isVideoCall()) {
+                            call_type_tv.setText(String.format(getString(R.string.telehealer_video), getString(R.string.app_name)));
+                        } else {
+                            call_type_tv.setText(String.format(getString(R.string.telehealer_audio), getString(R.string.app_name)));
+                        }
+
+                        incoming_view.setVisibility(View.VISIBLE);
+
+                        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                        answer_iv.startAnimation(shake);
                     }
 
-                    incoming_view.setVisibility(View.VISIBLE);
-
-                    Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-                    answer_iv.startAnimation(shake);
-                }
-
-                top_option.setVisibility(View.GONE);
-                recording_view.setVisibility(View.GONE);
-                vitalsView.setVisibility(View.GONE);
-                patient_disclaimer.setVisibility(View.GONE);
-
-                smallView.setVisibility(View.GONE);
-                bigView.setVisibility(View.GONE);
-
-                user_info_lay.setVisibility(View.GONE);
-
-                if (otherPersonDetail != null) {
-                    display_name.setText(otherPersonDetail.getDisplayName());
-                }
-
-                break;
-            case OpenTokConstants.outGoingCallGoingOn:
-
-                if (activeCall.getCallType().equals(OpenTokConstants.education)) {
-                    hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
-                    hang_iv.setVisibility(View.GONE);
-                    call_type_tv.setText("");
-                    moveHangButtonToCenter();
-                    profile_iv.setVisibility(View.GONE);
-                } else {
-                    hang_iv.setVisibility(View.VISIBLE);
-                }
-
-                answer_iv.clearAnimation();
-
-                top_option.setVisibility(View.VISIBLE);
-                recording_view.setVisibility(View.VISIBLE);
-
-                if (activeCall.isVideoCall() && !callRequest.isForGuestUser()) {
-                    vitalsView.setVisibility(View.VISIBLE);
-                } else {
+                    top_option.setVisibility(View.GONE);
+                    recording_view.setVisibility(View.GONE);
                     vitalsView.setVisibility(View.GONE);
-                }
+                    patient_disclaimer.setVisibility(View.GONE);
 
-                smallView.setVisibility(View.VISIBLE);
-                bigView.setVisibility(View.VISIBLE);
+                    smallView.setVisibility(View.GONE);
+                    bigView.setVisibility(View.GONE);
 
-                answer_iv.setVisibility(View.GONE);
+                    user_info_lay.setVisibility(View.GONE);
 
-                user_info_lay.setVisibility(View.VISIBLE);
-                incoming_view.setVisibility(View.GONE);
+                    if (otherPersonDetail != null) {
+                        display_name.setText(otherPersonDetail.getDisplayName());
+                    }
 
-                moveHangButtonToCenter();
-            case OpenTokConstants.incomingCallGoingOn:
-                animation();
-                break;
-        }
+                    break;
+                case OpenTokConstants.outGoingCallGoingOn:
 
-        if (activeCall.getCallState() != OpenTokConstants.waitingForUserAction) {
-            if (UserType.isUserPatient() && !activeCall.getPatientDisclaimerDismissed()) {
-                patient_disclaimer.setVisibility(View.VISIBLE);
-            } else {
-                patient_disclaimer.setVisibility(View.GONE);
+                    if (activeCall.getCallType().equals(OpenTokConstants.education)) {
+                        hang_iv.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
+                        hang_iv.setVisibility(View.GONE);
+                        call_type_tv.setText("");
+                        moveHangButtonToCenter();
+                        profile_iv.setVisibility(View.GONE);
+                    } else {
+                        hang_iv.setVisibility(View.VISIBLE);
+                    }
+
+                    answer_iv.clearAnimation();
+
+                    top_option.setVisibility(View.VISIBLE);
+                    recording_view.setVisibility(View.VISIBLE);
+
+                    if (activeCall.isVideoCall() && !callRequest.isForGuestUser()) {
+                        vitalsView.setVisibility(View.VISIBLE);
+                    } else {
+                        vitalsView.setVisibility(View.GONE);
+                    }
+
+                    smallView.setVisibility(View.VISIBLE);
+                    bigView.setVisibility(View.VISIBLE);
+
+                    answer_iv.setVisibility(View.GONE);
+
+                    user_info_lay.setVisibility(View.VISIBLE);
+                    incoming_view.setVisibility(View.GONE);
+
+                    moveHangButtonToCenter();
+                case OpenTokConstants.incomingCallGoingOn:
+                    animation();
+                    break;
             }
 
-            updateUIForAudioVideo();
-        }
+            if (activeCall.getCallState() != OpenTokConstants.waitingForUserAction) {
+                if (UserType.isUserPatient() && !activeCall.getPatientDisclaimerDismissed()) {
+                    patient_disclaimer.setVisibility(View.VISIBLE);
+                } else {
+                    patient_disclaimer.setVisibility(View.GONE);
+                }
 
-        if (!callRequest.getCallSettings().isRecording_enabled()) {
-            findViewById(R.id.recording_dot_parent).setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.recording_dot_parent).setVisibility(View.VISIBLE);
-        }
+                updateUIForAudioVideo();
+            }
 
+            if (!callRequest.getCallSettings().isRecording_enabled()) {
+                findViewById(R.id.recording_dot_parent).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.recording_dot_parent).setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void animation() {
@@ -844,7 +854,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void showOtherPersonDetails() {
-        if (activeCall.getCallType().equals(OpenTokConstants.education)) {
+        if (activeCall != null && activeCall.getCallType().equals(OpenTokConstants.education)) {
             name_tv.setText(callRequest.getEducationTitle());
             user_info_tv.setText(callRequest.getEducationDescription());
         } else if (otherPersonDetail != null) {
@@ -855,10 +865,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     }
 
     private void switchToVideo() {
-        activeCall.startPublishVideo();
-        activeCall.setCallType(OpenTokConstants.video);
-        updateUIForAudioVideo();
-        activeCall.setup(getRemoteView(), getLocalView());
+        if(activeCall != null) {
+            activeCall.startPublishVideo();
+            activeCall.setCallType(OpenTokConstants.video);
+            updateUIForAudioVideo();
+            activeCall.setup(getRemoteView(), getLocalView());
+        }
     }
 
     private void updateUIForAudioVideo() {
@@ -1567,14 +1579,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     EventRecorder.recordCallUpdates("audio_to_video_accepted", null);
-                    activeCall.updateVideoSwapRequest(true);
+                    if(activeCall != null)
+                        activeCall.updateVideoSwapRequest(true);
                     switchToVideo();
                 }
             }, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     EventRecorder.recordCallUpdates("audio_to_video_rejected", null);
-                    activeCall.updateVideoSwapRequest(false);
+                    if(activeCall != null)
+                        activeCall.updateVideoSwapRequest(false);
                 }
             });
         } else {
@@ -1769,16 +1783,16 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         errorModelObserver = new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-
-                if (errorModel != null && TextUtils.isEmpty(errorModel.getMessage())) {
+                if (errorModel != null && (errorModel.getMessage() != null || !errorModel.getMessage().isEmpty())  ) {
                     String message = errorModel.getMessage();
-
-                    currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            activeCall.endCall(OpenTokConstants.other);
-                        }
-                    }, null);
+                    if(message != null) {
+                        currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                activeCall.endCall(OpenTokConstants.other);
+                            }
+                        }, null);
+                    }
                 }
 
             }

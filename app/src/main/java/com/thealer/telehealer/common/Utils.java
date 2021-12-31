@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -93,6 +94,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,6 +107,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import config.AppConfig;
@@ -1823,13 +1826,21 @@ public class Utils {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
                 long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+                long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
                 if (currentTimeInMillis == lastActiveTime)
                     lastActiveTime = timestamp.getTime();
 
                 if (lastActiveTime == 0) {
                     lastActiveTime = timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                } else if (timestamp.getTime() > currentTimeInMillis) {
+                }else if(timestamp.getTime()>= expiryTimeInMillis){
+                    UserDetailPreferenceManager.invalidateUser();
+                    PubnubUtil.shared.unsubscribe();
+
+                    EventRecorder.updateUserId(null);
+
+                    context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                } else if (timestamp.getTime()>= currentTimeInMillis) {
                     lastActiveTime=timestamp.getTime();
                     appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                     if (!Constants.DisplayQuickLogin) {
@@ -1999,6 +2010,59 @@ public class Utils {
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat(UTCFormat, Locale.getDefault());
         return simpleDateFormat.format(calendar.getTimeInMillis());
+    }
+
+
+    public static class DecimalDigitsInputFilter implements InputFilter {
+
+        private final int digitsBeforeZero;
+        private final int digitsAfterZero;
+        private Pattern mPattern;
+
+        public DecimalDigitsInputFilter(int digitsBeforeZero, int digitsAfterZero) {
+            this.digitsBeforeZero = digitsBeforeZero;
+            this.digitsAfterZero = digitsAfterZero;
+            applyPattern(digitsBeforeZero, digitsAfterZero);
+        }
+
+        private void applyPattern(int digitsBeforeZero, int digitsAfterZero) {
+            mPattern = Pattern.compile("[0-9]{0," + (digitsBeforeZero - 1) + "}+((\\.[0-9]{0," + (digitsAfterZero - 1) + "})?)|(\\.)?");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (dest.toString().contains(".") || source.toString().contains("."))
+                applyPattern(digitsBeforeZero + 2, digitsAfterZero);
+            else
+                applyPattern(digitsBeforeZero, digitsAfterZero);
+
+            Matcher matcher = mPattern.matcher(dest);
+            if (!matcher.matches())
+                return "";
+            return null;
+        }
+
+    }
+
+    public static double get2Decimal(String decimalString) {
+            if(isNumeric(decimalString)){
+                return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
+            }else{
+                return 00.00;
+            }
+
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
 }

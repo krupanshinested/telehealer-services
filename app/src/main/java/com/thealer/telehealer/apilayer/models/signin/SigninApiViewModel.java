@@ -51,6 +51,7 @@ public class SigninApiViewModel extends BaseApiViewModel {
                     @Override
                     public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                         Utils.updateLastLogin();
+                        Utils.storeLastActiveTime();
                         baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                         EventRecorder.updateVersion();
                     }

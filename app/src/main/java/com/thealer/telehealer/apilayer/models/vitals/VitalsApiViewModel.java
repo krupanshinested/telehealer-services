@@ -1,7 +1,6 @@
 package com.thealer.telehealer.apilayer.models.vitals;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -11,13 +10,11 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.PDFUrlResponse;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.home.orders.OrderConstant;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,20 +67,18 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getVitalPdf(String type,String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void getVitalPdf(String type, String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getVitalPDF(type,filter, startDate, endDate, user_guid, doctorGuid, true)
+                    getAuthApiService().getVitalPDF(type, filter, startDate, endDate, user_guid, doctorGuid, true)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<PDFUrlResponse>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(PDFUrlResponse baseApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
-
-
                             });
                 }
             }
@@ -91,7 +86,7 @@ public class VitalsApiViewModel extends BaseApiViewModel {
     }
 
 
-    public void getUserFilteredVitals(String type,String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void getUserFilteredVitals(String type, String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -139,7 +134,7 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                     String vitals = gson.toJson(createVitalApiRequestModel);
 
                     MultipartBody.Part file = MultipartBody.Part.createFormData("request_input", "request_input.txt",
-                            RequestBody.create(MediaType.parse("text/plain"),vitals.getBytes()));
+                            RequestBody.create(MediaType.parse("text/plain"), vitals.getBytes()));
 
                     getAuthApiService().createBulkVital(file, doctorGuid)
                             .compose(applySchedulers())
@@ -172,6 +167,53 @@ public class VitalsApiViewModel extends BaseApiViewModel {
                                     ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
 
                                     baseApiArrayListMutableLiveData.setValue(apiResponseModels);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void getVitalThreshold(boolean isShowProgress, String userGuid) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    if (userGuid.isEmpty())
+                        getAuthApiService().getAllVitalsThreshold()
+                                .compose(applySchedulers())
+                                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                    @Override
+                                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                    }
+                                });
+                    else
+                        getAuthApiService().getVitalsThreshold(userGuid, userGuid)
+                                .compose(applySchedulers())
+                                .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                    @Override
+                                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                    }
+                                });
+                }
+            }
+        });
+    }
+
+    public void updateVitalThreshold(VitalThresholdModel.Result vitalThresholdModel) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().updateVitalsThreshold(vitalThresholdModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
                             });
                 }
