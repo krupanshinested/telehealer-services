@@ -23,6 +23,8 @@ public class Constants {
     public static boolean isCallEnable = true;
     public static boolean isScheduleEnable = true;
     public static boolean isChatEnable = true;
+    public static boolean isVitalsAddEnable = true;
+    public static boolean isVitalsViewEnable = true;
     public static boolean isInviteEnable = true;
 
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";

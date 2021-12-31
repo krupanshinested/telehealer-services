@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -672,6 +674,16 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         vitalDetailCrv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
 
+        if (UserType.isUserAssistant()){
+            if(!Constants.isVitalsViewEnable){
+                Utils.displayPermissionMsg(getContext());
+            }
+            if(!Constants.isVitalsAddEnable){
+                addFab.setClickable(false);
+                addFab.setEnabled(false);
+                addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
+                        Constants.isVitalsAddEnable ? R.color.app_gradient_start : R.color.colorGrey)));            }
+        }
         if (getArguments() != null) {
 
             isGetType = getArguments().getBoolean(ArgumentKeys.IS_GET_TYPE, false);

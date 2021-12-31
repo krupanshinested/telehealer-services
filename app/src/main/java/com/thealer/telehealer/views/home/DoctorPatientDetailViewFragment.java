@@ -201,6 +201,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         Constants.isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
                         Constants.isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
                         Constants.isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                        Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                        Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
                     }
 
                     Log.d("Data Model","Data Model user api");
@@ -1156,7 +1158,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     }
 
     private void visitVitalFragment() {
-        VitalsListFragment vitalsFragment = new VitalsListWithGoogleFitFragment();
+
+        VitalsListFragment vitalsFragment = new VitalsListFragment();
         addFragment(getString(R.string.vitals), vitalsFragment);
     }
 

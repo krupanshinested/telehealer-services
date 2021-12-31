@@ -115,6 +115,9 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
         if(i==0) {
             if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
                 boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+                Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+
                 bundle.putBoolean(ArgumentKeys.isPermissionAllowed,isPermissionAllowed);
                 /*if (!isPermissionAllowed) {
                     Utils.displayPermissionMsg(activity);
@@ -162,6 +165,9 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
         if(i==0) {
             if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
                 boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+
                 if(!isPermissionAllowed){
                     viewHolder.listIv.setColorFilter(ContextCompat.getColor(activity,R.color.colorGrey), PorterDuff.Mode.SRC_IN);
                     viewHolder.listTv.setTextColor(ContextCompat.getColor(activity,R.color.colorGrey));

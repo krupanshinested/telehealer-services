@@ -217,6 +217,9 @@ public class RecentFragment extends BaseFragment {
                         }
                         if(UserType.isUserAssistant() && doctorDetail.getPermissions()!= null && doctorDetail.getPermissions().size()>0){
                             boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorDetail.getPermissions(),ArgumentKeys.VIEW_CALLS_CODE);
+                            Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorDetail.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                            Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorDetail.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+
                             if(isPermissionAllowed){
                                 recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
                             }else{

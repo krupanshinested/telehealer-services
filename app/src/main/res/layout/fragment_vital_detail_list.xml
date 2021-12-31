@@ -93,10 +93,10 @@
                     android:layout_height="20dp"
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/info"
-                    android:tint="@color/app_gradient_start"
                     app:layout_constraintBottom_toBottomOf="@+id/item_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/item_title_tv" />
+                    app:layout_constraintTop_toTopOf="@+id/item_title_tv"
+                    app:tint="@color/app_gradient_start" />
 
                 <View
                     android:layout_width="match_parent"
