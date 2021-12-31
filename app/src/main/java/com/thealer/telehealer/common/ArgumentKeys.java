@@ -287,6 +287,8 @@ public class ArgumentKeys {
     public static final String ITEM_CLICK_PARENT_POS = "ITEM_CLICK_PARENT_POS";
     public static final String IS_FROM_PARENT = "IS_FROM_PARENT";
     public static final String IS_INVITED_VISIBLE = "IS_INVITED_VISIBLE";
+    public static final String DEVICE_TITLE = "title";
+    public static final String HEALTH_CARE_ID = "health_care_id";
 
     public static final String PlanID="plan_id";
     public static final String BillingCycle="billing_cycle";

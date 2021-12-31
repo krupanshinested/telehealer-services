@@ -15,12 +15,10 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
-import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
-import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.common.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +89,11 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
 
         newDeviceCrv.getSwipeLayout().setOnRefreshListener(() -> getNewDeviceSetup());
 
-        newDeviceSupportAdapter = new NewDeviceSupportAdapter(this, deviceList, (position, bundle) -> startActivity(new Intent(activity, NewDeviceDetailActivity.class)));
-
+        newDeviceSupportAdapter = new NewDeviceSupportAdapter(this, deviceList, (position, bundle) -> {
+            startActivity(new Intent(activity, NewDeviceDetailActivity.class)
+                    .putExtra(ArgumentKeys.HEALTH_CARE_ID,deviceList.get(position).getId())
+                    .putExtra(ArgumentKeys.DEVICE_TITLE,deviceList.get(position).getName()));
+        });
         newDeviceCrv.getRecyclerView().setAdapter(newDeviceSupportAdapter);
 
         getNewDeviceSetup();

@@ -820,7 +820,7 @@ public class Utils {
         return "";
     }
 
-    public  static  void displayPermissionMsg(Context context){
+    public static void displayPermissionMsg(Context context) {
         try {
             showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
                     null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -834,10 +834,30 @@ public class Utils {
                             dialog.dismiss();
                         }
                     });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public static void displayAlertMessage(Context context) {
+        try {
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
+                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String getCurrentFomatedTime() {
 
         DateFormat outDateFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
@@ -853,22 +873,22 @@ public class Utils {
             return Html.fromHtml(htmlString);
         }*/
         // remove leading <br/>
-        while (htmlString.startsWith("<br/>")){
+        while (htmlString.startsWith("<br/>")) {
 
             htmlString = htmlString.replaceFirst("<br/>", "");
         }
 
         // remove trailing <br/>
-        while (htmlString.endsWith("<br/>")){
+        while (htmlString.endsWith("<br/>")) {
 
-            htmlString =  htmlString.replaceAll("<br/>$", "");
+            htmlString = htmlString.replaceAll("<br/>$", "");
         }
 
         // reduce multiple \n in the processed HTML string
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-            return Html.fromHtml(htmlString,  FROM_HTML_MODE_COMPACT);
-        }else{
+            return Html.fromHtml(htmlString, FROM_HTML_MODE_COMPACT);
+        } else {
 
             return Html.fromHtml(htmlString);
         }
@@ -1938,41 +1958,40 @@ public class Utils {
 
     public static void checkIdealTime(Context context) {
         if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
-                long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
-                long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
-                if (currentTimeInMillis == lastActiveTime)
-                    lastActiveTime = timestamp.getTime();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+            long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+            long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
+            if (currentTimeInMillis == lastActiveTime)
+                lastActiveTime = timestamp.getTime();
 
-                if (lastActiveTime == 0) {
-                    lastActiveTime = timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                }else if(timestamp.getTime()>= expiryTimeInMillis){
-                    UserDetailPreferenceManager.invalidateUser();
-                    PubnubUtil.shared.unsubscribe();
+            if (lastActiveTime == 0) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            } else if (timestamp.getTime() >= expiryTimeInMillis) {
+                UserDetailPreferenceManager.invalidateUser();
+                PubnubUtil.shared.unsubscribe();
 
-                    EventRecorder.updateUserId(null);
+                EventRecorder.updateUserId(null);
 
-                    context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-                } else if (timestamp.getTime()>= currentTimeInMillis) {
-                    lastActiveTime=timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                    if (!Constants.DisplayQuickLogin) {
-                        Constants.DisplayQuickLogin = true;
-                        try {
-                            context.startActivity(new Intent(context, QuickLoginActivity.class));
-                        } catch (Exception e) {
-                            context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                        }
+                context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            } else if (timestamp.getTime() >= currentTimeInMillis) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                if (!Constants.DisplayQuickLogin) {
+                    Constants.DisplayQuickLogin = true;
+                    try {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    } catch (Exception e) {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
-                } else {
-                    lastActiveTime = timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 }
+            } else {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            }
         }
     }
-
 
 
     public static void showMultichoiseItemSelectAlertDialog(@NonNull Context
@@ -2011,7 +2030,7 @@ public class Utils {
     }
 
     public static boolean isRefreshTokenExpire() {
-        if(!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
             if (lastActiveTime == 0) {
@@ -2021,42 +2040,44 @@ public class Utils {
 
             long expireTime = lastActiveTime + Constants.ExpireTime;
             return timestamp.getTime() > expireTime;
-        }else{
+        } else {
             return false;
         }
     }
+
     public static boolean checkPermissionStatus(List<PermissionBean> lstPermissions, String permissionCode) {
-        for(PermissionBean currentPermission:lstPermissions){
-            if(currentPermission.getPermission()!=null && currentPermission.getPermission().getCode().equals(permissionCode)){
-                return currentPermission.getValue()!= null ? currentPermission.getValue(): false;
-            }else{
-                    if (currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
-                        List<PermissionBean> lstChildPermission = currentPermission.getChildren();
-                        for (PermissionBean currentChildPermission : lstChildPermission) {
-                            if (currentChildPermission != null && currentChildPermission.getPermission() != null &&
-                                    currentChildPermission.getPermission().getCode().equals(permissionCode)) {
-                                if(!currentPermission.getValue()) {
-                                    return false;
-                                }
-                                return currentChildPermission.getValue() != null ? currentChildPermission.getValue() : false;
+        for (PermissionBean currentPermission : lstPermissions) {
+            if (currentPermission.getPermission() != null && currentPermission.getPermission().getCode().equals(permissionCode)) {
+                return currentPermission.getValue() != null ? currentPermission.getValue() : false;
+            } else {
+                if (currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
+                    List<PermissionBean> lstChildPermission = currentPermission.getChildren();
+                    for (PermissionBean currentChildPermission : lstChildPermission) {
+                        if (currentChildPermission != null && currentChildPermission.getPermission() != null &&
+                                currentChildPermission.getPermission().getCode().equals(permissionCode)) {
+                            if (!currentPermission.getValue()) {
+                                return false;
                             }
+                            return currentChildPermission.getValue() != null ? currentChildPermission.getValue() : false;
                         }
                     }
+                }
             }
         }
         return true;
     }
+
     public static void changeMenuIconColor(Context context, MenuItem menuItem, int currentColor) {
 
         try {
             SpannableString s = new SpannableString(menuItem.getTitle());
             s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
             menuItem.setTitle(s);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        menuItem.getIcon().setColorFilter(ContextCompat.getColor(context,currentColor), PorterDuff.Mode.SRC_IN);
+        menuItem.getIcon().setColorFilter(ContextCompat.getColor(context, currentColor), PorterDuff.Mode.SRC_IN);
     }
 
     public interface OnMultipleChoiceInterface {
@@ -2109,6 +2130,7 @@ public class Utils {
         comboImage.drawBitmap(sc, fr.getWidth(), 0f, null);
         return comboBitmap;
     }
+
     public static Boolean isAuthExpired() {
         try {
             JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
@@ -2119,6 +2141,7 @@ public class Utils {
             return true;
         }
     }
+
     public static void validUserToLogin(Context context) {
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
@@ -2193,11 +2216,11 @@ public class Utils {
     }
 
     public static double get2Decimal(String decimalString) {
-            if(isNumeric(decimalString)){
-                return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
-            }else{
-                return 00.00;
-            }
+        if (isNumeric(decimalString)) {
+            return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
+        } else {
+            return 00.00;
+        }
 
     }
 

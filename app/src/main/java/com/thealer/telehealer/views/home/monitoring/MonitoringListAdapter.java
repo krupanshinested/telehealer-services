@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
-import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,6 +26,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.monitoring.diet.DietDetailFragment;
 import com.thealer.telehealer.views.home.monitoring.diet.DietUserListingFragment;
+import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 
 import java.util.Arrays;
@@ -129,7 +129,7 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
         if (titleList.get(i).equals(activity.getString(R.string.vitals))) {
             if (UserType.isUserPatient()) {
 
-                fragment = new VitalsListWithGoogleFitFragment();
+                fragment = new VitalsListFragment();
                 bundle.putBoolean(Constants.IS_FROM_HOME, true);
                 fragment.setArguments(bundle);
 

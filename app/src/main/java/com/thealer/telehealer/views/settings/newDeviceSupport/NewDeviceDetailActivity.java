@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,34 +14,36 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiResponseModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
+
+import okhttp3.internal.Util;
 
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener {
     private ImageView backIv;
     private TextView toolbarTitle;
-    private CustomRecyclerView newDeviceCrv;
+    private AppCompatEditText edtDeviceId;
+    private NewDeviceSetApiViewModel newDeviceSetApiViewModel;
+    private NewDeviceSetApiResponseModel newDeviceSetApiResponseModel;
 
-    private NewDeviceApiViewModel newDeviceApiViewModel;
-    private NewDeviceApiResponseModel newDeviceApiResponseModel;
-    private NewDeviceSupportAdapter newDeviceSupportAdapter;
-
-    private int page = 1;
-    private boolean isApiRequested = false;
-
+    private String healthCareId = "";
+    private String title = "";
     private void initObservers() {
-        newDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
-        newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+        newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
+        newDeviceSetApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
 
             }
         });
     }
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,18 +55,19 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
     private void initView() {
 
-        backIv = (ImageView) findViewById(R.id.back_iv);
-        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        if(getIntent().getExtras() != null){
+            healthCareId = getIntent().getStringExtra(ArgumentKeys.HEALTH_CARE_ID);
+            title = getIntent().getStringExtra(ArgumentKeys.DEVICE_TITLE);
+        }
+        backIv = findViewById(R.id.back_iv);
+        edtDeviceId = findViewById(R.id.edt_device_id);
+        toolbarTitle = findViewById(R.id.toolbar_title);
         backIv.setOnClickListener(this);
-        toolbarTitle.setText(getString(R.string.str_new_device_setup));
-        getNewDeviceSetupDetail(true);
+        toolbarTitle.setText(title);
     }
 
-    private void getNewDeviceSetupDetail(boolean isShowProgress) {
-//        if (!isApiRequested) {
-//            isApiRequested = true;
-//            newDeviceApiViewModel.getAccessLog(page, isShowProgress);
-//        }
+    private void setNewDevice() {
+        newDeviceSetApiViewModel.setDevice(healthCareId, edtDeviceId.getText().toString().trim());
     }
 
     @Override
@@ -71,6 +75,13 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.back_iv:
                 onBackPressed();
+                break;
+            case R.id.txtSubmit:
+                if (edtDeviceId.getText().toString().isEmpty()) {
+                    Utils.displayAlertMessage(this);
+                }
+                else
+                    setNewDevice();
                 break;
         }
     }

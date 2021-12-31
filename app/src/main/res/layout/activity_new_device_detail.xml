@@ -63,6 +63,7 @@
                             tools:text="@string/str_new_device_dummy_desc" />
 
                         <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/edt_device_id"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="@dimen/_10sdp"
@@ -125,15 +126,6 @@
                                 tools:text="@string/key_copy" />
 
                         </LinearLayout>
-
-                        <androidx.appcompat.widget.AppCompatCheckBox
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/app_gradient_start"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:paddingStart="@dimen/_5sdp"
-                            android:text="@string/key_checkbox_device_text"
-                            android:textSize="@dimen/_12sdp" />
 
                     </LinearLayout>
 
