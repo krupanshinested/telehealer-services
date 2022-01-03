@@ -140,6 +140,8 @@ public class EmptyStateUtil {
                 return context.getString(R.string.EMPTY_TRANSACTIONS);
             case EmptyViewConstants.EMPTY_THRESHOLD:
                 return context.getString(R.string.EMPTY_DOCTOR_VITAL_SEARCH_TITLE);
+            case EmptyViewConstants.EMPTY_DEVICELIST:
+                return context.getString(R.string.EMPTY_DEVICE);
             default:
                 return null;
         }
@@ -293,7 +295,9 @@ public class EmptyStateUtil {
             case EmptyViewConstants.EMPTY_WAITING_ROOM:
                 return context.getString(R.string.NO_PATIENT_IN_WAITINGROOM);
             case EmptyViewConstants.EMPTY_THRESHOLD:
-                return  context.getString(R.string.vital_empty_non_pateint);
+                return context.getString(R.string.vital_empty_non_pateint);
+            case EmptyViewConstants.EMPTY_DEVICELIST:
+                return "";
             default:
                 return null;
         }
@@ -412,6 +416,8 @@ public class EmptyStateUtil {
                 return R.drawable.emptystate_no_patient;
             case EmptyViewConstants.EMPTY_THRESHOLD:
                 return R.drawable.emptystate_no_vitals;
+            case EmptyViewConstants.EMPTY_DEVICELIST:
+                return R.drawable.emptystate_no_patient;
             default:
                 return 0;
         }

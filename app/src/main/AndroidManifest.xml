@@ -235,7 +235,9 @@
         <activity
             android:name=".views.settings.newDeviceSupport.NewDeviceSupportActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".views.settings.newDeviceSupport.MyDeviceListActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.newDeviceSupport.NewDeviceDetailActivity"
             android:screenOrientation="portrait" />

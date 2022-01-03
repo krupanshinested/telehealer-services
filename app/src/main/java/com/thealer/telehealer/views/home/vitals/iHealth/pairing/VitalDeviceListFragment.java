@@ -36,6 +36,7 @@ import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters.VitalDeviceListAdapter;
+import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
 import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
@@ -151,7 +152,7 @@ public class VitalDeviceListFragment extends BaseFragment {
                         onActionCompleteInterface.onCompletionResult(RequestID.SET_UP_DEVICE, true, bundle);
                         break;
                     case VitalDeviceListAdapter.set_up_telihealth_device:
-                        startActivity(new Intent(getActivity(), NewDeviceSupportActivity.class));
+                        startActivity(new Intent(getActivity(), MyDeviceListActivity.class));
                         break;
                     case VitalDeviceListAdapter.manual_entry_type:
 

@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
@@ -20,6 +21,7 @@ import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +47,10 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
 
                         if (newDeviceApiResponseModel.getData().size() > 0) {
                             newDeviceSupportAdapter.setData(newDeviceApiResponseModel.getData());
+                            deviceList = newDeviceApiResponseModel.getData();
                             newDeviceCrv.showOrhideEmptyState(false);
                         } else {
+                            newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_DEVICELIST);
                             newDeviceCrv.showOrhideEmptyState(true);
                         }
                         newDeviceCrv.hideProgressBar();
@@ -77,7 +81,7 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
         backIv.setOnClickListener(this);
         toolbarTitle.setText(getString(R.string.str_new_device_setup));
 
-        newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_CALL_LOGS);
+        newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_DEVICELIST);
 
         newDeviceCrv.showOrhideEmptyState(false);
 
@@ -90,9 +94,10 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
         newDeviceCrv.getSwipeLayout().setOnRefreshListener(() -> getNewDeviceSetup());
 
         newDeviceSupportAdapter = new NewDeviceSupportAdapter(this, deviceList, (position, bundle) -> {
+            Gson gson = new Gson();
+            String json = gson.toJson(deviceList.get(position));
             startActivity(new Intent(activity, NewDeviceDetailActivity.class)
-                    .putExtra(ArgumentKeys.HEALTH_CARE_ID,deviceList.get(position).getId())
-                    .putExtra(ArgumentKeys.DEVICE_TITLE,deviceList.get(position).getName()));
+                    .putExtra(ArgumentKeys.DEVICE_DETAILS, json));
         });
         newDeviceCrv.getRecyclerView().setAdapter(newDeviceSupportAdapter);
 

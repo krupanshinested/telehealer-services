@@ -220,6 +220,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:hideSpiltter="true"
+                    android:visibility="gone"
                     android:paddingBottom="@dimen/_5sdp"
                     app:icon="@drawable/medical_assistant_icon"
                     app:title="@string/str_new_device_setup" />

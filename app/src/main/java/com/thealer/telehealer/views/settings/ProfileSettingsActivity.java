@@ -72,9 +72,11 @@ import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 import com.thealer.telehealer.views.settings.Interface.BundleReceiver;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
+import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantListFragment;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
+import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
 import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
@@ -116,7 +118,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private RelativeLayout collapseBackgroundRl;
     private TextView nextTv;
     private ImageView userProfileIv, genderIv;
-
+    private ProfileCellView newDeviceSetup;
     private String detailTitle = "";
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
@@ -194,6 +196,12 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
         statusCiv.setVisibility(View.GONE);
         favoriteIv.setVisibility(View.GONE);
+        newDeviceSetup = (ProfileCellView) findViewById(R.id.new_device_setup);
+
+        if (UserType.isUserDoctor())
+            newDeviceSetup.setVisibility(View.VISIBLE);
+        else
+            newDeviceSetup.setVisibility(View.GONE);
 
         nextTv = findViewById(R.id.next_tv);
 
@@ -367,7 +375,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showMedicalAssistantList();
                 break;
             case R.id.new_device_setup:
-                startActivity(new Intent(this, NewDeviceSupportActivity.class));
+                startActivity(new Intent(this, MyDeviceListActivity.class));
                 break;
             case R.id.patient_payments: {
                 bundle = new Bundle();

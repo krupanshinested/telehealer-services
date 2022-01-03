@@ -90,6 +90,7 @@
 
 
                         <LinearLayout
+                            android:id="@+id/linkLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_10sdp"
@@ -106,7 +107,6 @@
                                 android:fontFamily="@font/open_sans_semibold"
                                 android:gravity="center|left"
                                 android:maxLines="1"
-                                android:text="@string/str_new_device_dummy_desc"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/_11ssp"
                                 tools:text="@string/str_new_device_dummy_desc" />
@@ -127,6 +127,20 @@
 
                         </LinearLayout>
 
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description_vital"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc2"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/str_new_device_dummy_desc2" />
+
                     </LinearLayout>
 
                 </androidx.core.widget.NestedScrollView>
@@ -144,6 +158,7 @@
                     android:text="@string/submit"
                     tools:text="@string/submit"
                     android:layout_alignParentBottom="true"
+                    android:backgroundTint="@color/app_gradient_start"
                     android:background="@drawable/submit_btn_background" />
 
             </RelativeLayout>

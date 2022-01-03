@@ -3,15 +3,19 @@ package com.thealer.telehealer.views.settings.newDeviceSupport;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiResponseModel;
@@ -29,12 +33,17 @@ import okhttp3.internal.Util;
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener {
     private ImageView backIv;
     private TextView toolbarTitle;
+    private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital;
     private AppCompatEditText edtDeviceId;
+    private AppCompatTextView txtSubmit;
+    private LinearLayout linkLayout;
     private NewDeviceSetApiViewModel newDeviceSetApiViewModel;
-    private NewDeviceSetApiResponseModel newDeviceSetApiResponseModel;
-
+    private MyDeviceListApiResponseModel.Data myDeviceDetail;
+    private NewDeviceSetApiResponseModel.Data deviceDetail;
     private String healthCareId = "";
-    private String title = "";
+    private String title = "", description = "";
+    private boolean deviceFlag = false;
+
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
         newDeviceSetApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -55,15 +64,43 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
     private void initView() {
 
-        if(getIntent().getExtras() != null){
-            healthCareId = getIntent().getStringExtra(ArgumentKeys.HEALTH_CARE_ID);
-            title = getIntent().getStringExtra(ArgumentKeys.DEVICE_TITLE);
+        Gson gson = new Gson();
+        if (getIntent().getExtras() != null) {
+            String myDevice = getIntent().getStringExtra(ArgumentKeys.DEVICE_DETAILS);
+            deviceFlag = getIntent().getBooleanExtra(ArgumentKeys.DEVICE_FLAG, false);
+
+            if(!deviceFlag){
+                deviceDetail = gson.fromJson(myDevice, NewDeviceSetApiResponseModel.Data.class);
+                healthCareId = deviceDetail.getId();
+                title = deviceDetail.getName();
+                description = deviceDetail.getDescription();
+            }else{
+                myDeviceDetail = gson.fromJson(myDevice, MyDeviceListApiResponseModel.Data.class);
+                healthCareId = myDeviceDetail.getHealthcare_device().getId();
+                title = myDeviceDetail.getHealthcare_device().getName();
+                description = myDeviceDetail.getHealthcare_device().getDescription();
+            }
         }
+
         backIv = findViewById(R.id.back_iv);
+        deviceDescriptionVital = findViewById(R.id.device_description_vital);
+        linkLayout = findViewById(R.id.linkLayout);
+        txtSubmit = findViewById(R.id.txtSubmit);
         edtDeviceId = findViewById(R.id.edt_device_id);
         toolbarTitle = findViewById(R.id.toolbar_title);
+        deviceDescription2 = findViewById(R.id.device_description2);
+        deviceDescription1 = findViewById(R.id.device_description1);
         backIv.setOnClickListener(this);
         toolbarTitle.setText(title);
+        deviceDescription2.setText(description);
+
+        if (deviceFlag) {
+            edtDeviceId.setVisibility(View.GONE);
+            txtSubmit.setVisibility(View.GONE);
+            deviceDescription1.setVisibility(View.GONE);
+            linkLayout.setVisibility(View.GONE);
+            deviceDescriptionVital.setVisibility(View.GONE);
+        }
     }
 
     private void setNewDevice() {
@@ -79,8 +116,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             case R.id.txtSubmit:
                 if (edtDeviceId.getText().toString().isEmpty()) {
                     Utils.displayAlertMessage(this);
-                }
-                else
+                } else
                     setNewDevice();
                 break;
         }

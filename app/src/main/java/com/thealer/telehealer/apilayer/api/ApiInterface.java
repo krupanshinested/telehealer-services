@@ -48,6 +48,7 @@ import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiRe
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
@@ -694,6 +695,10 @@ public interface ApiInterface {
 
     @POST("api/user-devices")
     Observable<NewDeviceApiResponseModel> setDeviceStore(@Query(HEALTHCARE_DEVICE_ID) String healthcare_device_id, @Query(DEVICE_ID) String device_id);
+
+    @GET("api/user-devices")
+    Observable<MyDeviceListApiResponseModel> getMyDeviceList();
+
 
     @GET("api/educational-video")
     Observable<EducationalVideoResponse> getEducationalVideo(@Query(SEARCH_TITLE_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String user_guid, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
