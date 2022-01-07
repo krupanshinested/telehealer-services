@@ -39,22 +39,22 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
     }
 
     public void getDesignationList(){
-        fetchToken(new BaseViewInterface() {
-            @Override
-            public void onStatus(boolean status) {
-                if(status){
-                    getAuthApiService().getDesignationList()
-                            .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(false)){
-
-                                @Override
-                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
-                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
-                                }
-                            });
-                }
-            }
-        });
+//        fetchToken(new BaseViewInterface() {
+//            @Override
+//            public void onStatus(boolean status) {
+//                if(status){
+//                    getAuthApiService().getDesignationList()
+//                            .compose(applySchedulers())
+//                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(false)){
+//
+//                                @Override
+//                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+//                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+//                                }
+//                            });
+//                }
+//            }
+//        });
     }
 }
 

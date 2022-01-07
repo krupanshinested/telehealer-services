@@ -198,10 +198,10 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
         favoriteIv.setVisibility(View.GONE);
         newDeviceSetup = (ProfileCellView) findViewById(R.id.new_device_setup);
 
-        if (UserType.isUserDoctor())
-            newDeviceSetup.setVisibility(View.VISIBLE);
-        else
-            newDeviceSetup.setVisibility(View.GONE);
+//        if (UserType.isUserDoctor())
+//            newDeviceSetup.setVisibility(View.VISIBLE);
+//        else
+//            newDeviceSetup.setVisibility(View.GONE);
 
         nextTv = findViewById(R.id.next_tv);
 
