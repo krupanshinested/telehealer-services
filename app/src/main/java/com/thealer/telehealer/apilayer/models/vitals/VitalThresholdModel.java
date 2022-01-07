@@ -3,6 +3,7 @@ package com.thealer.telehealer.apilayer.models.vitals;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,15 @@ public class VitalThresholdModel extends BaseApiResponseModel {
         public List<VitalsCron> vitals_cron = null;
         public Boolean is_rpm_enabled;
         public Boolean is_notify_on_capture;
+        public ArrayList<String> users = new ArrayList<>();
+
+        public ArrayList<String> getUsers() {
+            return users;
+        }
+
+        public void setUsers(ArrayList<String> users) {
+            this.users = users;
+        }
 
         public List<String> getUsers() {
             return users;

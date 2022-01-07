@@ -54,7 +54,7 @@
     <string name="resend">Resend</string>
     <string name="select_your_role">Select your role</string>
     <string name="doctor">PROVIDER</string>
-    <string name="medical_assistant">Support Staff</string>
+    <string name="medical_assistant">Medical Assistants</string>
     <string name="title">Title</string>
     <string name="degree">Degree</string>
     <string name="image_of_certification">Image of certification</string>
@@ -1572,6 +1572,14 @@
     <string name="lbl_payment_history">Payment History</string>
     <string name="lbl_patient_charges_payments">Patient charges/payment</string>
     <string name="disclaimer_for_secure_messaging">DISCLAIMER: ENABLING THIS SETTING WILL REMOVE EXISTING RESTRICTIONS ON TEMPLATED RESPONSES FROM THE PATIENT AND INSTEAD ALLOW THEM TO SEND FREE-FORM CONTENT GOING FORWARD.\n\nAlthough the patient will be notified not to use secure messaging for urgent or emergency medical attention, %s assumes no responsibility or liability arising from the use of any and all secure message communications send by and to the patient.</string>
+    <string name="str_with_htmltag"><![CDATA[%s]]></string>
+    <string name="pin_not_match">Pin does not match. You have %s attempt left.  Please try again</string>
+    <string name="wrong_password">Password does not match. You have %s attempt left.  Please try again</string>
+    <string name="BIOMETRIC_CANCEL">Cancel</string>
+    <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
+    <string name="str_refresh_token_expired">Refresh token expired.</string>
+    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
+    <string name="str_archive_id_not_found" translatable="false">Archive ID does not exist for the order</string>
     <string name="user_permission">Permissions</string>
     <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
     <string name="str_select_designation">Select Designation</string>
@@ -1596,6 +1604,7 @@
     <string name="view_invited_list">View Invited List</string>
     <string name="invited_user_list">Invited User List</string>
     <string name="str_select_your_physician">Select your physician</string>
+
     <string name="lbl_remote_patient_monitoring">Remote Patient Monitoring</string>
     <string name="rpm_desc">Receive alerts and provide tailored feedback to your patients for pre-defined physological parameters.</string>
     <string name="notifications_alert">Notification Alerts</string>
@@ -1624,6 +1633,7 @@
     <string name="str_enable">Enable</string>
     <string name="str_disable">Disable</string>
     <string name="recorded_on">Recorded on %s</string>
+
     <string name="str_select_plan">Select Plan</string>
     <string name="str_plan_is_subscribe_now">You have successfully subscribe plan.</string>
     <string name="str_current_plan">Current Plan</string>
@@ -1637,14 +1647,6 @@
     <string name="str_resubscribe">Resubscribe</string>
     <string name="str_plan_already_activate">Plan already activated</string>
     <string name="retrive_pricing_plan">Retrieving pricing plan for you</string>
-    <string name="str_with_htmltag"><![CDATA[%s]]></string>
-    <string name="pin_not_match">Pin does not match. You have %s attempt left.  Please try again</string>
-    <string name="wrong_password">Password does not match. You have %s attempt left.  Please try again</string>
-    <string name="BIOMETRIC_CANCEL">Cancel</string>
-    <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
-    <string name="str_refresh_token_expired">Refresh token expired.</string>
-    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
-    <string name="str_archive_id_not_found" translatable="false">Archive ID does not exist for the order</string>
     <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
     <string name="visit_questionary">Visit Questionnaire</string>
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
@@ -1657,6 +1659,5 @@
     <string name="key_my_devices">My Devices</string>
     <string name="key_add_new_device">Add New Device</string>
     <string name="key_device_delete_confirmation">Are you sure you want to delete this device?</string>
-
 
 </resources>

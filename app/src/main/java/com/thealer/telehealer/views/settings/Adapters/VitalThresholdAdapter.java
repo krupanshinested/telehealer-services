@@ -21,6 +21,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.OnItemClickListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.settings.RemotePatientMonitoringFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,12 @@ import java.util.List;
  * Created Date: 28,June,2021
  **/
 public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private FragmentActivity activity;
+    private RemotePatientMonitoringFragment activity;
     private OnListItemSelectInterface onListItemSelectInterface;
     List<VitalThresholdModel.VitalsThreshold> vitalThresholdList = new ArrayList<>();
     private boolean isEditable = false;
 
-    public VitalThresholdAdapter(FragmentActivity activity, List<VitalThresholdModel.VitalsThreshold> vitalThresholdList, OnListItemSelectInterface onListItemSelectInterface) {
+    public VitalThresholdAdapter(RemotePatientMonitoringFragment activity, List<VitalThresholdModel.VitalsThreshold> vitalThresholdList, OnListItemSelectInterface onListItemSelectInterface) {
         this.activity = activity;
         this.vitalThresholdList = vitalThresholdList;
         this.onListItemSelectInterface = onListItemSelectInterface;
@@ -44,7 +45,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.adapter_threshold_header, viewGroup, false);
+        View view = LayoutInflater.from(activity.getActivity()).inflate(R.layout.adapter_threshold_header, viewGroup, false);
         return new HeaderHolder(view);
     }
 
@@ -146,7 +147,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     }
                 }
                 try {
-                    activity.runOnUiThread(new Runnable() {
+                    activity.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             notifyDataSetChanged();
@@ -184,7 +185,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     ranges.add(currentRangeInfo);
                     vitalThresholdList.get(bundle.getInt(ArgumentKeys.PARENT_POS)).setRanges(ranges);
                 }
-                activity.runOnUiThread(new Runnable() {
+                activity.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         notifyDataSetChanged();
@@ -266,7 +267,7 @@ public class VitalThresholdAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             title = (TextView) itemView.findViewById(R.id.title);
             ivPlus = (ImageView) itemView.findViewById(R.id.iv_plus);
             rvThreshold = (RecyclerView) itemView.findViewById(R.id.rv_threshold);
-            rvThreshold.setLayoutManager(new LinearLayoutManager(activity));
+            rvThreshold.setLayoutManager(new LinearLayoutManager(activity.getActivity()));
         }
     }
 

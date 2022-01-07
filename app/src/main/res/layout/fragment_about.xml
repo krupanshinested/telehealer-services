@@ -433,7 +433,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/cl_history"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="20dp"
@@ -473,7 +473,7 @@
                 android:gravity="center|left"
                 android:textColor="@color/app_gradient_start"
                 android:text="@string/edit"
-                android:textSize="@dimen/title_size"
+                android:textSize="@dimen/text_sub_title_size"
                 app:layout_constraintTop_toBottomOf="@+id/tv_vital"
                 app:layout_constraintEnd_toEndOf="parent"/>
             <androidx.recyclerview.widget.RecyclerView

@@ -303,17 +303,11 @@ public interface ApiInterface {
     @GET("api/correspondence-history")
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/unconnected-users-v2")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query(ROLE) String role, @Query(SPECIALITY) String speciality);
-
-    @GET("api/designations")
-    Observable<DesignationResponseModel> getDesignationList();
-
-    @POST("api/requests-v2")
-    Observable<BaseApiResponseModel> addConnection(@HeaderMap Map<String, String> headers, @Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    @GET("api/unconnected-users")
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
     @POST("api/requests")
-    Observable<BaseApiResponseModel> addPatientDocConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> addConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @DELETE("api/associations")
     Observable<BaseApiResponseModel> disconnectUser(@Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid);
@@ -333,8 +327,11 @@ public interface ApiInterface {
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
-    @GET("api/vitals/thresholds/{userGuid}")
-    Observable<VitalThresholdModel> getVitalsThreshold(@Path("userGuid") String userGuid);
+    @GET("api/vitals/thresholds/{id}")
+    Observable<VitalThresholdModel> getVitalsThreshold(@Path(ID) String id, @Query(USER_GUID) String guid);
+
+    @GET("api/vitals/thresholds")
+    Observable<VitalThresholdModel> getAllVitalsThreshold();
 
     @POST("api/vitals/thresholds")
     Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
@@ -388,7 +385,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
     @POST("api/vitals-v2")
-    Observable<VitalsCreateApiResponseModel> createVital(@HeaderMap Map<String, String> headers, @Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/bulk-upload/vitals")
@@ -499,10 +496,10 @@ public interface ApiInterface {
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
-    @POST("api/setup/invite-v2")
+    @POST("api/setup/invite")
     Observable<BaseApiResponseModel> inviteUserByDemographic(@Body InviteByDemographicRequestModel demographicRequestModel, @Query(DOCTOR_GUID) String doctor_guid);
 
-    @POST("api/setup/invite-v2")
+    @POST("api/setup/invite")
     Observable<InviteByEmailPhoneApiResponseModel> inviteUserByEmailPhone(@Query(DOCTOR_GUID) String doctor_user_guid, @Body InviteByEmailPhoneRequestModel emailPhoneRequestModel);
 
     @GET("api/call/{id}")
@@ -526,7 +523,7 @@ public interface ApiInterface {
     @PUT("api/requests")
     Observable<BaseApiResponseModel> setNotificationsRead(@Body Map<String, String> body);
 
-    @PATCH("api/requests-v2/{id}")
+    @PATCH("api/requests/{id}")
     Observable<NotificationRequestUpdateResponseModel> updateNotification(@Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Body Map<String, Object> body);
 
     @GET("api/token-v2")
