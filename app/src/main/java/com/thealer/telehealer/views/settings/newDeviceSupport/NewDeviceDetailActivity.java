@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -24,6 +25,7 @@ import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiRespons
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiViewModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.SubmitDeviceApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
@@ -32,7 +34,12 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 
+import java.util.HashMap;
+
 import okhttp3.internal.Util;
+
+import static com.thealer.telehealer.apilayer.api.ApiInterface.DEVICE_ID;
+import static com.thealer.telehealer.apilayer.api.ApiInterface.HEALTHCARE_DEVICE_ID;
 
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener {
     private ImageView backIv;
@@ -56,15 +63,25 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         newDeviceSetApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-                finish();
+
+                SubmitDeviceApiResponseModel response = (SubmitDeviceApiResponseModel) baseApiResponseModel;
+
+                if (response.isSuccess())
+                    finish();
+                else
+                    Utils.displayAlertMessage(getApplicationContext(), response.getMessage());
             }
         });
+
+
+        getDeviceLinkApiViewModel = new ViewModelProvider(this).get(GetDeviceLinkApiViewModel.class);
 
         getDeviceLinkApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 DeviceLinkApiResponseModel response = (DeviceLinkApiResponseModel) baseApiResponseModel;
 
+                deviceLink.setText("" + response.getData().getExternal_id());
             }
         });
     }
@@ -117,12 +134,16 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             linkLayout.setVisibility(View.GONE);
             deviceDescriptionVital.setVisibility(View.GONE);
         }
-
-        getDeviceLink();
+        if (!deviceFlag)
+            getDeviceLink();
     }
 
     private void setNewDevice() {
-        newDeviceSetApiViewModel.setDevice(healthCareId, edtDeviceId.getText().toString().trim());
+        HashMap<String, Object> payload = new HashMap<>();
+        payload.put(HEALTHCARE_DEVICE_ID, healthCareId);
+        payload.put(DEVICE_ID, edtDeviceId.getText().toString().trim());
+
+        newDeviceSetApiViewModel.setDevice(payload);
     }
 
     private void getDeviceLink() {
@@ -132,10 +153,12 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private void setClipboard(Context context, String text) {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
             android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
             clipboard.setText(text);
         } else {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Link", text);
+            Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
             clipboard.setPrimaryClip(clip);
         }
     }
@@ -148,7 +171,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 break;
             case R.id.txtSubmit:
                 if (edtDeviceId.getText().toString().isEmpty()) {
-                    Utils.displayAlertMessage(this);
+                    Utils.displayAlertMessage(this, getString(R.string.key_enter_device_id));
                 } else
                     setNewDevice();
                 break;

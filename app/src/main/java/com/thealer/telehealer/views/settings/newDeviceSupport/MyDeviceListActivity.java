@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.DeleteDeviceApiViewModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
@@ -36,6 +37,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     private CustomRecyclerView newDeviceCrv;
     private List<MyDeviceListApiResponseModel.Data> deviceList = new ArrayList<>();
     private NewDeviceApiViewModel newDeviceApiViewModel;
+    private DeleteDeviceApiViewModel deleteDeviceApiViewModel;
     private MyDeviceListApiResponseModel myDeviceListApiResponseModel;
     private MyDeviceListAdapter myDeviceListAdapter;
     Activity activity;
@@ -64,6 +66,16 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        });
+
+        deleteDeviceApiViewModel = new ViewModelProvider(this).get(DeleteDeviceApiViewModel.class);
+        deleteDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+
                 }
             }
         });
@@ -116,24 +128,21 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                 Utils.showAlertDialog(activity, getString(R.string.alert), getString(R.string.key_device_delete_confirmation),
                         getString(R.string.delete),
                         getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-//                                deleteDevice();
-                            }
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            deleteDevice(deviceList.get(position).getId());
                         },
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                        (dialog, which) -> dialog.dismiss());
             }
         });
         newDeviceCrv.getRecyclerView().setAdapter(myDeviceListAdapter);
 
         getMyDeviceList();
 
+    }
+
+    private void deleteDevice(String id){
+        deleteDeviceApiViewModel.deleteDevice(id);
     }
 
     private void getMyDeviceList() {

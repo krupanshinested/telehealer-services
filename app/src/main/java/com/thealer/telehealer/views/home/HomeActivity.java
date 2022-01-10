@@ -277,11 +277,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private boolean checkIsUserActivated() {
         if (UserType.isUserDoctor()) {
-//            if (!appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)) {
-//                startActivity(new Intent(this, DoctorOnBoardingActivity.class));
-//                finish();
-//                return false;
-//            } else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
+            if (!appPreference.getBoolean(PreferenceConstants.IS_USER_ACTIVATED)) {
+                startActivity(new Intent(this, DoctorOnBoardingActivity.class));
+                finish();
+                return false;
+            }
+//            else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
 //                startActivity(new Intent(this, SubscriptionActivity.class));
 //                finish();
 //                return false;

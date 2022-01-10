@@ -155,6 +155,7 @@
                     android:paddingVertical="@dimen/_10sdp"
                     android:layout_centerHorizontal="true"
                     android:textSize="@dimen/_13sdp"
+                    android:onClick="onClick"
                     android:textColor="@color/bt_white"
                     android:text="@string/submit"
                     tools:text="@string/submit"

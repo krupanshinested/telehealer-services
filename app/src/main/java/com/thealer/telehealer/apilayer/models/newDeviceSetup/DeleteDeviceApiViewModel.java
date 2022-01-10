@@ -7,15 +7,16 @@ import androidx.annotation.NonNull;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 
-import java.util.HashMap;
-
-public class NewDeviceSetApiViewModel extends BaseApiViewModel {
-    public NewDeviceSetApiViewModel(@NonNull Application application) {
+/**
+ * Created by Aswin on 15,July,2019
+ */
+public class DeleteDeviceApiViewModel extends BaseApiViewModel {
+    public DeleteDeviceApiViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public void setDevice(HashMap<String, Object> payload) {
-        fetchToken(status -> getAuthApiService().setDeviceStore(payload)
+    public void deleteDevice(String id) {
+        fetchToken(status -> getAuthApiService().deleteDevice(id)
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(true)) {
                     @Override

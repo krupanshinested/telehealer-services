@@ -51,6 +51,7 @@ import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBo
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.DeviceLinkApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.SubmitDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
@@ -688,11 +689,15 @@ public interface ApiInterface {
     @GET("api/log/requests-log")
     Observable<AccessLogApiResponseModel> getAccessLogs(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query("method") String method);
 
+    @POST("api/remove-device/{id}")
+    Observable<BaseApiResponseModel> deleteDevice(@Path(ID) String deviceId);
+
+
     @GET("devices")
     Observable<NewDeviceApiResponseModel> getDeviceList();
 
     @POST("api/user-devices")
-    Observable<NewDeviceApiResponseModel> setDeviceStore(@Query(HEALTHCARE_DEVICE_ID) String healthcare_device_id, @Query(DEVICE_ID) String device_id);
+    Observable<SubmitDeviceApiResponseModel> setDeviceStore(@Body HashMap<String, Object> item);
 
     @GET("api/user-devices")
     Observable<MyDeviceListApiResponseModel> getMyDeviceList();
