@@ -63,7 +63,7 @@ public class MyDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return adapterModelList.size();
     }
 
-    public void setData(ArrayList<MyDeviceListApiResponseModel.Data> result) {
+    public void setData(List<MyDeviceListApiResponseModel.Data> result) {
         resultBean = result;
         adapterModelList.clear();
         for (int i = 0; i < resultBean.size(); i++) {

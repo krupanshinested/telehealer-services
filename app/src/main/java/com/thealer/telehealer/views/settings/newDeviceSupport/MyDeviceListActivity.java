@@ -42,6 +42,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     private MyDeviceListAdapter myDeviceListAdapter;
     Activity activity;
     AppCompatTextView txtAddDevice;
+    int currentPosition = -1;
 
     private void initObservers() {
         activity = this;
@@ -75,6 +76,27 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
+
+                    try {
+                        Utils.showAlertDialog(activity, getString(R.string.alert), baseApiResponseModel.getMessage(),
+                                getString(R.string.ok), null, (dialog, which) -> {
+                                    dialog.dismiss();
+                                    if (deviceList.size() > 0){
+                                        deviceList.remove(currentPosition);
+
+                                        if(deviceList.size() > 0){
+                                            myDeviceListAdapter.setData(deviceList);
+                                            newDeviceCrv.showOrhideEmptyState(false);
+                                        }else{
+                                            newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_DEVICELIST);
+                                            newDeviceCrv.showOrhideEmptyState(true);
+                                        }
+                                    }
+                                }, (dialog, which) -> dialog.dismiss());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                 }
             }
@@ -130,7 +152,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                         getString(R.string.cancel),
                         (dialog, which) -> {
                             dialog.dismiss();
-                            deleteDevice(deviceList.get(position).getId());
+                            deleteDevice(deviceList.get(position).getId(), position);
                         },
                         (dialog, which) -> dialog.dismiss());
             }
@@ -141,7 +163,8 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
 
     }
 
-    private void deleteDevice(String id){
+    private void deleteDevice(String id, int position){
+        currentPosition = position;
         deleteDeviceApiViewModel.deleteDevice(id);
     }
 
