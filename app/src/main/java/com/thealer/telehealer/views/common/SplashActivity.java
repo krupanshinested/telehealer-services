@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,9 +16,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.DrawableImageViewTarget;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -40,6 +42,8 @@ import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.transaction.AddChargeActivity;
 import com.thealer.telehealer.views.transaction.TransactionFilterActivity;
+
+import org.jetbrains.annotations.NotNull;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
@@ -127,15 +131,25 @@ public class SplashActivity extends BaseActivity {
                         }
                     }
 
-                    FirebaseInstanceId.getInstance().getInstanceId()
-                            .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                                @Override
-                                public void onSuccess(InstanceIdResult instanceIdResult) {
-                                    String token = instanceIdResult.getToken();
-                                    Log.d("TeleHealerApplication", "received token " + token);
-                                    TelehealerFirebaseMessagingService.assignToken(token);
-                                }
-                            });
+                    FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<String> task) {
+                            String token = task.getResult();
+                            TelehealerFirebaseMessagingService.assignToken(token);
+
+                        }
+                    });
+
+//
+//                    FirebaseInstanceId.getInstance().getInstanceId()
+//                            .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+//                                @Override
+//                                public void onSuccess(InstanceIdResult instanceIdResult) {
+//                                    String token = instanceIdResult.getToken();
+//                                    Log.d("TeleHealerApplication", "received token " + token);
+//                                    TelehealerFirebaseMessagingService.assignToken(token);
+//                                }
+//                            });
 
                     finish();
                 }
