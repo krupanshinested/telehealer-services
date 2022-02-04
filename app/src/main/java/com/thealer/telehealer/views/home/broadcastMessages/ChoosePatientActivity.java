@@ -29,7 +29,6 @@ import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.SearchCellView;
 import com.thealer.telehealer.views.common.SearchInterface;
-import com.thealer.telehealer.views.home.broadcastMessages.adapter.ChoosePatientAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,6 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
     private RecyclerView rvPatientList;
     private SearchCellView searchView;
     private CustomRecyclerView doctorPatientListCrv;
-    private List<CommonUserApiResponseModel> lstPatient = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +93,8 @@ public class ChoosePatientActivity extends BaseActivity implements AttachObserve
         // TODO- Manage Patient Adapter List
         choosePatientAdapter = new ChoosePatientAdapter(this);
         rvPatientList.setAdapter(choosePatientAdapter);
+
+        searchView.setSearchEtHint(getString(R.string.lbl_search_patient));
 
         searchView.setSearchInterface(new SearchInterface() {
             @Override

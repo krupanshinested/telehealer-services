@@ -87,5 +87,6 @@ public class EmptyViewConstants {
 
     public static final String EMPTY_WAITING_ROOM = "empty_waiting_room";
     public static final String EMPTY_THRESHOLD = "empty_threshold";
+    public static final String EMPTY_DEVICELIST = "empty_deviceList";
     public static final String EMPTY_TRANSACTIONS = "empty_transactions";
 }

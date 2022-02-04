@@ -83,7 +83,11 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     Log.v("VitalsSendBaseFragment", "posting next value");
                 } else if (nextPostRequest != null) {
                     previousResponse = (VitalsCreateApiResponseModel) baseApiResponseModel;
-                    vitalsApiViewModel.createVital(nextPostRequest, doctor_guid);
+                    String currentUserGuid="";
+                    if(UserType.isUserAssistant()){
+                        currentUserGuid=nextPostRequest.getUser_guid()!=null?nextPostRequest.getUser_guid():"";
+                    }
+                    vitalsApiViewModel.createVital(currentUserGuid,nextPostRequest, doctor_guid);
                     nextPostRequest = null;
                     Log.v("VitalsSendBaseFragment", "posting next request");
                 } else if (!isPresentedInsideCallActivity()) {
@@ -273,11 +277,13 @@ public class VitalsSendBaseFragment extends BaseFragment {
         }
 
         String doctorGuid = null;
+        String currentUserGuid="";
         if (UserType.isUserAssistant()) {
             doctorGuid = getArguments().getString(Constants.DOCTOR_ID);
+            currentUserGuid=vitalApiRequestModel.getUser_guid()!=null?vitalApiRequestModel.getUser_guid():"";
         }
 
-        vitalsApiViewModel.createVital(vitalApiRequestModel, doctorGuid);
+        vitalsApiViewModel.createVital(currentUserGuid,vitalApiRequestModel, doctorGuid);
     }
 
     public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1,
@@ -297,13 +303,20 @@ public class VitalsSendBaseFragment extends BaseFragment {
             }
         }
 
+        String currentUserGuid="";
         if (vitalApiRequestModel_1 != null) {
-            vitalsApiViewModel.createVital(vitalApiRequestModel_1, doctor_guid);
+            if(UserType.isUserAssistant())
+                currentUserGuid=vitalApiRequestModel_1.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
+
+            vitalsApiViewModel.createVital(currentUserGuid,vitalApiRequestModel_1, doctor_guid);
             nextPostRequest = vitalApiRequestModel_2;
 
             currentPostingMeasurementType = vitalApiRequestModel_1.getType();
         } else {
-            vitalsApiViewModel.createVital(vitalApiRequestModel_2, doctor_guid);
+            if(UserType.isUserAssistant())
+                currentUserGuid=vitalApiRequestModel_2.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
+
+            vitalsApiViewModel.createVital(currentUserGuid,vitalApiRequestModel_2, doctor_guid);
             currentPostingMeasurementType = vitalApiRequestModel_2.getType();
         }
 

@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.SelectAssociationFragment;
@@ -375,6 +376,7 @@ public class CreateNewPrescriptionFragment extends OrdersBaseFragment implements
                 showSubFragmentInterface.onShowFragment(selectAssociationFragment);
                 break;
             case R.id.save_btn:
+                Utils.hideKeyboard(getActivity());
                 showQuickLogin();
                 break;
             case R.id.save_fax_btn:

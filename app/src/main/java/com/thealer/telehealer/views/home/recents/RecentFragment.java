@@ -44,6 +44,8 @@ import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.SearchCellView;
 import com.thealer.telehealer.views.common.SearchInterface;
 
+import java.util.ArrayList;
+
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
@@ -213,7 +215,17 @@ public class RecentFragment extends BaseFragment {
                             userGuid = doctorGuid;
                             doctorGuid = null;
                         }
-                        recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
+                        if(UserType.isUserAssistant() && doctorDetail.getPermissions()!= null && doctorDetail.getPermissions().size()>0){
+                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorDetail.getPermissions(),ArgumentKeys.VIEW_CALLS_CODE);
+                            if(isPermissionAllowed){
+                                recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
+                            }else{
+                                recentsCrv.showOrhideEmptyState(true);
+                                Utils.displayPermissionMsg(getContext());
+                            }
+                        }else {
+                            recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
+                        }
                     }
                 }
             }

@@ -67,12 +67,12 @@ public class VitalsApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getVitalPdf(String type, String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void getVitalPdf(String type,String filter, String startDate, String endDate, String user_guid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getVitalPDF(type, filter, startDate, endDate, user_guid, doctorGuid, true)
+                    getAuthApiService().getVitalPDF(type,filter, startDate, endDate, user_guid, doctorGuid, true)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<PDFUrlResponse>(getProgress(isShowProgress)) {
                                 @Override

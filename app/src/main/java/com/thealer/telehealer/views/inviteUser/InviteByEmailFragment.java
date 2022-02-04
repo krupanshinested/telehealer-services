@@ -16,7 +16,10 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 
 /**
@@ -30,6 +33,8 @@ public class InviteByEmailFragment extends InviteUserBaseFragment {
     private CommonUserApiResponseModel commonUserApiResponseModel = null;
     private String doctor_guid = null;
     private TextView infoTv;
+    private Bundle bundle =  null;
+    private String currentUserEmail="";
 
     @Nullable
     @Override
@@ -52,16 +57,37 @@ public class InviteByEmailFragment extends InviteUserBaseFragment {
             commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             if (commonUserApiResponseModel != null) {
                 doctor_guid = commonUserApiResponseModel.getUser_guid();
+                currentUserEmail = commonUserApiResponseModel.getEmail();
             }
+        }
+
+        WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
+        if(whoAmIApiResponseModel != null){
+            currentUserEmail=whoAmIApiResponseModel.getEmail();
         }
 
         inviteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSuccessFragment();
                 InviteByEmailPhoneRequestModel inviteByEmailPhoneRequestModel = new InviteByEmailPhoneRequestModel();
-                inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(emailEt.getText().toString(), null));
-                inviteUserApiViewModel.inviteUserByEmailPhone(doctor_guid, inviteByEmailPhoneRequestModel, false);
+                bundle=getArguments();
+                String role="";
+                if(bundle!=null){
+                    role=bundle.getString(ArgumentKeys.ROLE,"");
+                    if(doctor_guid==null || doctor_guid.equals("")){
+                        doctor_guid=bundle.getString(ArgumentKeys.USER_GUID,null);
+                    }
+
+                }
+                inviteByEmailPhoneRequestModel.setRole(role);
+
+                if(currentUserEmail.trim().equalsIgnoreCase(emailEt.getText().toString().trim())){
+                    showToast(getString(R.string.str_you_can_not_invite_yourself));
+                }else {
+                    showSuccessFragment();
+                    inviteByEmailPhoneRequestModel.getInvitations().add(new InviteByEmailPhoneRequestModel.InvitationsBean(emailEt.getText().toString(), null));
+                    inviteUserApiViewModel.inviteUserByEmailPhone(doctor_guid, inviteByEmailPhoneRequestModel, false);
+                }
             }
         });
 

@@ -108,6 +108,15 @@
 
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/subscription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/ic_baseline_credit_card_24"
+                    app:title="@string/lbl_my_subscriptions"
+                    android:visibility="gone"/>
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/add_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -203,9 +212,19 @@
                     android:id="@+id/logs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hideSpiltter="true"
                     app:icon="@drawable/setting_logs_icon"
                     app:title="@string/logs" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/new_device_setup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    android:visibility="gone"
+                    android:paddingBottom="@dimen/_5sdp"
+                    app:icon="@drawable/medical_assistant_icon"
+                    app:title="@string/str_new_device_setup" />
+
 
                 <View
                     android:layout_width="fill_parent"

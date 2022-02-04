@@ -73,6 +73,11 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         vitalsApiViewModel = new ViewModelProvider(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
 
+        if(getArguments() != null){
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+            if(userGuid != null && userGuid.isEmpty())
+                userGuid=null;
+        }
         vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -83,7 +88,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                         if (result != null) {
                             setUpData();
                         }
-                    } else {
+                    }else{
                         saveBtn.setVisibility(View.GONE);
                         editTv.setVisibility(View.VISIBLE);
                     }
@@ -106,7 +111,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                                         dialog.dismiss();
                                     }
                                 }, null);
-                    } else if (!jsonObject.has("is_cc_captured") && !jsonObject.has("is_default_card_valid")) {
+                    }else if (!jsonObject.has("is_cc_captured") && !jsonObject.has("is_default_card_valid")) {
                         String message = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                         Utils.showAlertDialog(getActivity(), getString(R.string.app_name), message,
                                 getString(R.string.ok), null, new DialogInterface.OnClickListener() {
@@ -116,7 +121,7 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                                     }
                                 }, null);
                         editTv.setVisibility(View.GONE);
-                    } else {
+                    }else{
                         Utils.showAlertDialog(getContext(), getString(R.string.app_name),
                                 errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                                 null, getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -141,11 +146,11 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
 
     private void setUpData() {
         initAdapter();
-        if (result != null && result.vitals_thresholds != null) {
+        if(result!=null && result.vitals_thresholds!=null) {
             vitalThresholdList = result.vitals_thresholds;
-            vitalThresholdAdapter.UpdateItem(vitalThresholdList, isEditable);
-            notificationCellView.updateSwitch(result.is_notify_on_capture != null ? result.is_notify_on_capture : false);
-            rpmCellView.updateSwitch(result.is_rpm_enabled != null ? result.is_rpm_enabled : false);
+            vitalThresholdAdapter.UpdateItem(vitalThresholdList,isEditable);
+            notificationCellView.updateSwitch(result.is_notify_on_capture!=null?result.is_notify_on_capture:false);
+            rpmCellView.updateSwitch(result.is_rpm_enabled!=null?result.is_rpm_enabled:false);
         }
     }
 
@@ -187,19 +192,19 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         rpmCellView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isEditable) {
+                if(isEditable) {
                     rpmCellView.toggleSwitch();
-                    result.is_rpm_enabled = rpmCellView.getSwitchStatus();
+                    result.is_rpm_enabled=rpmCellView.getSwitchStatus();
                 }
             }
         });
         notificationCellView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isEditable) {
+                if(isEditable) {
                     notificationCellView.toggleSwitch();
                     result.is_notify_on_capture = notificationCellView.getSwitchStatus();
-                } else {
+                } else{
                     Utils.showAlertDialog(getActivity(), getString(R.string.notifications_alert), getString(R.string.str_notification_threshold_msg),
                             getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                                 @Override
@@ -232,31 +237,33 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                manageUpdateVitals();
+                Utils.hideKeyboard(getActivity());
+                if(errorPos.size() ==0) {
+                    isEditable = false;
+                    setUpData();
+                    result.vitals_thresholds = vitalThresholdList;
+                    if(userGuid != null && !userGuid.isEmpty()) {
+                        List<String> userGuidList=new ArrayList<>();
+                        userGuidList.add(userGuid);
+                        result.setUsers(userGuidList);
+                    }
+                    vitalsApiViewModel.updateVitalThreshold(result);
+                }else{
+                    showToast(getString(R.string.please_fill_up_details));
+                }
             }
         });
 
 
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
+
         initAdapter();
 
-    }
-
-    public void manageUpdateVitals() {
-        Utils.hideKeyboard(getActivity());
-        if (errorPos.size() == 0) {
-            isEditable = false;
-            setUpData();
-
-            if (!userGuid.equals("")) {
-                result.users = new ArrayList<>();
-                result.users.add(userGuid);
-            }
-            result.vitals_thresholds = vitalThresholdList;
-            Utils.hideKeyboard(getActivity());
-            vitalsApiViewModel.updateVitalThreshold(result);
-        } else {
-            showToast(getString(R.string.please_fill_up_details));
-        }
     }
 
     private void initAdapter() {

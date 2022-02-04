@@ -45,7 +45,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments;
+            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription,newDeviceSetup;
+
     private View signOut;
 
     private ProfileUpdate profileUpdate;
@@ -109,13 +110,14 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         signOut = baseView.findViewById(R.id.signOut);
         add_card = baseView.findViewById(R.id.add_card);
         telehealer_billings = baseView.findViewById(R.id.telehealer_billings);
+        subscription = baseView.findViewById(R.id.subscription);
         patient_payments = baseView.findViewById(R.id.patient_payments);
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
         educational_video = baseView.findViewById(R.id.educational_video);
-        versionTv
-                = (TextView) baseView.findViewById(R.id.version_tv);
+        versionTv = (TextView) baseView.findViewById(R.id.version_tv);
+        newDeviceSetup = (ProfileCellView) baseView.findViewById(R.id.new_device_setup);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
 
         lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
@@ -165,8 +167,10 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         signOut.setOnClickListener(this);
         add_card.setOnClickListener(this);
         telehealer_billings.setOnClickListener(this);
+        subscription.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
+        newDeviceSetup.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
@@ -179,7 +183,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     patient_payments.setVisibility(View.VISIBLE);
                     patient_payments.updateTitle(getString(R.string.lbl_charges));
                     add_card.setVisibility(View.GONE);
+                    subscription.setVisibility(View.GONE);
+                    patient_payments.hideSplitter(true);
                 } else {
+                    subscription.setVisibility(View.GONE);
+                    add_card.hideSplitter(true);
                     patient_payments.setVisibility(View.GONE);
                 }
                 documents.setVisibility(View.VISIBLE);
@@ -194,6 +202,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     telehealer_billings.hideSplitter(false);
                     add_card.setVisibility(View.VISIBLE);
                     add_card.hideSplitter(false);
+                    subscription.hideSplitter(false);
+                    subscription.setVisibility(View.VISIBLE);
+                    patient_payments.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);
@@ -208,6 +219,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     telehealer_billings.setVisibility(View.GONE);
                     add_card.hideSplitter(false);
                     add_card.setVisibility(View.GONE);
+                    patient_payments.hideSplitter(true);
+                    subscription.setVisibility(View.GONE);
+                    subscription.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);

@@ -1,5 +1,8 @@
 package com.thealer.telehealer.common;
 
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
+import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -173,6 +176,7 @@ public class Constants {
     public static final String CALL_SCREEN_MAXIMIZE = "CALL_SCREEN_MAXIMIZE";
     public static final String CALL_ACTIVITY_RESUMED = "CALL_ACTIVITY_RESUMED";
     public static final String EXTRA_REMOVED_DATE = "EXTRA_REMOVED_DATE";
+    public static String DESIGNATION="DESIGNATION";
 
     //Vital States
     public static final int idle = 1;
@@ -195,6 +199,8 @@ public class Constants {
     public static final int TotalCount=3;
     public static boolean ErrorFlag = false;
     public static String ChildHood_Asthma="Childhood Asthma Control Test";
+    public static int activatedPlan=-1;
+    public static boolean isFromSubscriptionPlan=false;
 
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";

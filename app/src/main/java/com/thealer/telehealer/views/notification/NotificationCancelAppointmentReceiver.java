@@ -10,6 +10,7 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.UserType;
 
 /**
  * Created by Aswin on 31,January,2019
@@ -27,7 +28,12 @@ public class NotificationCancelAppointmentReceiver extends BroadcastReceiver {
         notificationManager.cancel(notificationId);
 
         SchedulesApiViewModel schedulesApiViewModel = new SchedulesApiViewModel(TeleHealerApplication.application);
-        schedulesApiViewModel.deleteSchedule(notificationId, resultBean.getStart(), resultBean.getScheduledToUser().getUser_guid(), null, false);
+
+        String currentUserGuid=resultBean.getScheduled_by_user().getUser_guid();
+        if(!UserType.isUserAssistant())
+            currentUserGuid="";
+
+        schedulesApiViewModel.deleteSchedule(notificationId, resultBean.getStart(),currentUserGuid, null, false);
 
     }
 }

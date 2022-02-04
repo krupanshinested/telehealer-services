@@ -31,6 +31,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -156,7 +157,11 @@ public class PatientHistoryFragment extends BaseFragment {
         showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
         sendSuccessViewBroadCast(getActivity(), true, getString(R.string.please_wait), getString(R.string.posting_your_appointment));
         checkForHistoryUpdate();
-        schedulesApiViewModel.createSchedule(null, createScheduleViewModel.getDoctorCommonModel().getUser_guid(), createScheduleViewModel.getSchedulesCreateRequestModel(), false);
+        String currentUserGuid=createScheduleViewModel.getDoctorCommonModel().getUser_guid();
+        if(!UserType.isUserAssistant())
+            currentUserGuid="";
+
+        schedulesApiViewModel.createSchedule(currentUserGuid,null, createScheduleViewModel.getDoctorCommonModel().getUser_guid(), createScheduleViewModel.getSchedulesCreateRequestModel(), false);
     }
 
     private void checkForHistoryUpdate() {

@@ -34,6 +34,7 @@ import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -50,6 +51,7 @@ public class EducationalCreateFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle,next_tv;
+    private String doctorGuid;
 
     @Nullable
     private EducationalVideo educationalVideo;
@@ -82,6 +84,7 @@ public class EducationalCreateFragment extends BaseFragment {
                     educationalVideo = ((EducationalVideoOrder) educationalVideoObject).getVideo();
                 }
             }
+            doctorGuid= getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
 
         initView(view);
@@ -203,9 +206,9 @@ public class EducationalCreateFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 if (educationalVideo != null) {
-                    educationalVideoViewModel.updateEducationalVideo(title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
+                    educationalVideoViewModel.updateEducationalVideo(doctorGuid,title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
                 } else {
-                   educationalVideoViewModel.postEducationalVideo(new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
+                   educationalVideoViewModel.postEducationalVideo(doctorGuid,new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
                 }
             }
         });

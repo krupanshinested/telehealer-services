@@ -17,6 +17,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -30,16 +31,20 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
+import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -48,6 +53,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -55,6 +61,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,6 +76,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Util.TeleCacheUrl;
@@ -86,6 +95,7 @@ import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.inviteUser.InvitedListActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;
@@ -529,7 +539,6 @@ public class Utils {
         return "";
     }
 
-
     public static Date getDateFromString(String dateString) {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         dateFormat.setTimeZone(UtcTimezone);
@@ -657,6 +666,10 @@ public class Utils {
 
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
         return first_name + " " + last_name + " " + ((title != null) ? title : "");
+    }
+
+    public static String getSupportStaffDisplayName(String first_name, String last_name, String designation) {
+        return first_name + " " + last_name + ((designation != null) ? ", " + designation : "");
     }
 
     public static String getPatientDisplayName(String first_name, String last_name) {
@@ -807,6 +820,44 @@ public class Utils {
         return "";
     }
 
+    public static void displayPermissionMsg(Context context) {
+        try {
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
+                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void displayAlertMessage(Context context) {
+        try {
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
+                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String getCurrentFomatedTime() {
 
         DateFormat outDateFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
@@ -822,22 +873,22 @@ public class Utils {
             return Html.fromHtml(htmlString);
         }*/
         // remove leading <br/>
-        while (htmlString.startsWith("<br/>")){
+        while (htmlString.startsWith("<br/>")) {
 
             htmlString = htmlString.replaceFirst("<br/>", "");
         }
 
         // remove trailing <br/>
-        while (htmlString.endsWith("<br/>")){
+        while (htmlString.endsWith("<br/>")) {
 
-            htmlString =  htmlString.replaceAll("<br/>$", "");
+            htmlString = htmlString.replaceAll("<br/>$", "");
         }
 
         // reduce multiple \n in the processed HTML string
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-            return Html.fromHtml(htmlString,  FROM_HTML_MODE_COMPACT);
-        }else{
+            return Html.fromHtml(htmlString, FROM_HTML_MODE_COMPACT);
+        } else {
 
             return Html.fromHtml(htmlString);
         }
@@ -1542,8 +1593,11 @@ public class Utils {
         TextView inviteContactsTv;
         TextView broadcastAllTv;
         View broadcastView;
+        TextView invitedListTv;
+        View invitedListView;
         CardView cancelCv;
-
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (View) alertView.findViewById(R.id.invited_list_view);
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1551,6 +1605,29 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        if (bundle != null) {
+            Boolean isInvitedVisible = bundle.getBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
+            if (isInvitedVisible) {
+                invitedListTv.setVisibility(View.VISIBLE);
+                invitedListView.setVisibility(View.VISIBLE);
+            } else {
+                invitedListTv.setVisibility(View.GONE);
+                invitedListView.setVisibility(View.GONE);
+            }
+        }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1590,7 +1667,7 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static void showDoctorOverflowMenu(FragmentActivity context) {
+    public static void showDoctorOverflowMenu(FragmentActivity context, Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
         builder.setView(alertView);
@@ -1601,8 +1678,13 @@ public class Utils {
         TextView broadCastMessageTv;
         TextView broadcastAllTv;
         View broadcastView;
+        TextView invitedListTv;
+        View invitedListView;
+        View pendingInvitesView;
         CardView cancelCv;
 
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (TextView) alertView.findViewById(R.id.invited_list);
         pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1610,9 +1692,20 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
 
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        pendingInvitesView = (View) alertView.findViewById(R.id.invite_manually_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
+
         pendingInvitesTv.setText(R.string.pending_invites);
         broadCastMessageTv.setText(R.string.broadcast_messages);
         broadcastAllTv.setText(R.string.broadcast_messages_all);
+        broadcastAllTv.setText(R.string.broadcast_messages_all);
+
+        invitedListTv.setVisibility(View.GONE);
+        invitedListView.setVisibility(View.GONE);
+
         broadCastMessageTv.setVisibility(View.VISIBLE);
         broadcastView.setVisibility(View.VISIBLE);
         broadcastAllTv.setVisibility(View.VISIBLE);
@@ -1623,6 +1716,48 @@ public class Utils {
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
         }
+
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            pendingInvitesTv.setVisibility(View.GONE);
+            pendingInvitesView.setVisibility(View.GONE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_DOCTOR)) {
+            if (bundle != null) {
+                String role = bundle.getString(ArgumentKeys.ROLE, "");
+                if (role.equals(Constants.ROLE_ASSISTANT)) {
+                    invitedListTv.setVisibility(View.VISIBLE);
+                    invitedListView.setVisibility(View.VISIBLE);
+                    pendingInvitesTv.setVisibility(View.GONE);
+                    pendingInvitesView.setVisibility(View.GONE);
+                    broadCastMessageTv.setVisibility(View.GONE);
+                    broadcastView.setVisibility(View.GONE);
+                    broadcastAllTv.setVisibility(View.GONE);
+                }
+            }
+
+        }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1823,41 +1958,40 @@ public class Utils {
 
     public static void checkIdealTime(Context context) {
         if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
-                long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
-                long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
-                if (currentTimeInMillis == lastActiveTime)
-                    lastActiveTime = timestamp.getTime();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+            long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+            long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
+            if (currentTimeInMillis == lastActiveTime)
+                lastActiveTime = timestamp.getTime();
 
-                if (lastActiveTime == 0) {
-                    lastActiveTime = timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                }else if(timestamp.getTime()>= expiryTimeInMillis){
-                    UserDetailPreferenceManager.invalidateUser();
-                    PubnubUtil.shared.unsubscribe();
+            if (lastActiveTime == 0) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            } else if (timestamp.getTime() >= expiryTimeInMillis) {
+                UserDetailPreferenceManager.invalidateUser();
+                PubnubUtil.shared.unsubscribe();
 
-                    EventRecorder.updateUserId(null);
+                EventRecorder.updateUserId(null);
 
-                    context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-                } else if (timestamp.getTime()>= currentTimeInMillis) {
-                    lastActiveTime=timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                    if (!Constants.DisplayQuickLogin) {
-                        Constants.DisplayQuickLogin = true;
-                        try {
-                            context.startActivity(new Intent(context, QuickLoginActivity.class));
-                        } catch (Exception e) {
-                            context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                        }
+                context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            } else if (timestamp.getTime() >= currentTimeInMillis) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                if (!Constants.DisplayQuickLogin) {
+                    Constants.DisplayQuickLogin = true;
+                    try {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    } catch (Exception e) {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
-                } else {
-                    lastActiveTime = timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 }
+            } else {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            }
         }
     }
-
 
 
     public static void showMultichoiseItemSelectAlertDialog(@NonNull Context
@@ -1896,7 +2030,7 @@ public class Utils {
     }
 
     public static boolean isRefreshTokenExpire() {
-        if(!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
             if (lastActiveTime == 0) {
@@ -1906,9 +2040,44 @@ public class Utils {
 
             long expireTime = lastActiveTime + Constants.ExpireTime;
             return timestamp.getTime() > expireTime;
-        }else{
+        } else {
             return false;
         }
+    }
+
+    public static boolean checkPermissionStatus(List<PermissionBean> lstPermissions, String permissionCode) {
+        for (PermissionBean currentPermission : lstPermissions) {
+            if (currentPermission.getPermission() != null && currentPermission.getPermission().getCode().equals(permissionCode)) {
+                return currentPermission.getValue() != null ? currentPermission.getValue() : false;
+            } else {
+                if (currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
+                    List<PermissionBean> lstChildPermission = currentPermission.getChildren();
+                    for (PermissionBean currentChildPermission : lstChildPermission) {
+                        if (currentChildPermission != null && currentChildPermission.getPermission() != null &&
+                                currentChildPermission.getPermission().getCode().equals(permissionCode)) {
+                            if (!currentPermission.getValue()) {
+                                return false;
+                            }
+                            return currentChildPermission.getValue() != null ? currentChildPermission.getValue() : false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void changeMenuIconColor(Context context, MenuItem menuItem, int currentColor) {
+
+        try {
+            SpannableString s = new SpannableString(menuItem.getTitle());
+            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, currentColor)), 0, s.length(), 0);
+            menuItem.setTitle(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        menuItem.getIcon().setColorFilter(ContextCompat.getColor(context, currentColor), PorterDuff.Mode.SRC_IN);
     }
 
     public interface OnMultipleChoiceInterface {
@@ -1961,6 +2130,7 @@ public class Utils {
         comboImage.drawBitmap(sc, fr.getWidth(), 0f, null);
         return comboBitmap;
     }
+
     public static Boolean isAuthExpired() {
         try {
             JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
@@ -1971,6 +2141,7 @@ public class Utils {
             return true;
         }
     }
+
     public static void validUserToLogin(Context context) {
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
@@ -2045,11 +2216,11 @@ public class Utils {
     }
 
     public static double get2Decimal(String decimalString) {
-            if(isNumeric(decimalString)){
-                return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
-            }else{
-                return 00.00;
-            }
+        if (isNumeric(decimalString)) {
+            return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
+        } else {
+            return 00.00;
+        }
 
     }
 
