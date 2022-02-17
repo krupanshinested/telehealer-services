@@ -281,11 +281,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 startActivity(new Intent(this, DoctorOnBoardingActivity.class));
                 finish();
                 return false;
-            } else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
-                startActivity(new Intent(this, SubscriptionActivity.class));
-                finish();
-                return false;
             }
+//            else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
+//                startActivity(new Intent(this, SubscriptionActivity.class));
+//                finish();
+//                return false;
+//            }
 
         }
         return true;

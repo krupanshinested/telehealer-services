@@ -305,7 +305,10 @@ public interface ApiInterface {
     @GET("api/unconnected-users")
     Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
 
-    @POST("api/requests")
+    @GET("api/designations")
+    Observable<DesignationResponseModel> getDesignationList();
+
+    @POST("api/requests-v2")
     Observable<BaseApiResponseModel> addConnection(@HeaderMap Map<String, String> headers, @Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @POST("api/requests")
@@ -354,7 +357,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> cancelOrder(@Path("type") String type, @Path(ID) int id, @Query(DOCTOR_GUID) String doctorGuid, @Query(CANCEL) boolean cancel);
 
     @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_PRESCRIPTIONS)
-    Observable<OrdersBaseApiResponseModel> createPrescription(@Query(SYNC_CREATE) boolean sync_create, @Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<OrdersBaseApiResponseModel> createPrescription(@HeaderMap Map<String, String> headers, @Query(SYNC_CREATE) boolean sync_create, @Body CreatePrescriptionRequestModel createPrescriptionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/users-v2")
     Observable<ArrayList<CommonUserApiResponseModel>> getUsersByGuid(@Query(FILTER_USER_GUID_IN) String data);
@@ -387,7 +390,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> updateUserQuestionnaire(@Path(ID) String userGuid, @Body UpdateQuestionaryBodyModel updateQuestionaryBodyModel);
 
     @POST("api/vitals-v2")
-    Observable<VitalsCreateApiResponseModel> createVital(@Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<VitalsCreateApiResponseModel> createVital(@HeaderMap Map<String, String> headers, @Body CreateVitalApiRequestModel vitalApiRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @Multipart
     @POST("api/bulk-upload/vitals")
@@ -469,7 +472,7 @@ public interface ApiInterface {
     Observable<EducationalVideoApiResponseModel> getUserEducationalVideoList(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(USER_GUID) String user_guid, @Query(DOCTOR_GUID) String doctorGuid, @Query(ASSIGNOR) boolean assignor);
 
     @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_MISC)
-    Observable<BaseApiResponseModel> createMiscellaneous(@Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> createMiscellaneous(@HeaderMap Map<String, String> headers, @Body CreateMiscellaneousRequestModel createMiscellaneousRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/referrals")
     Observable<OrdersIdListApiResponseModel> getOrderDetails(@Query(USER_GUID) String userGuid, @Query(DOCTOR_GUID) String doctorGuid, @Query(FILTER_ID_IN) String ids);
@@ -484,7 +487,7 @@ public interface ApiInterface {
     Observable<SchedulesApiResponseModel> getSchedules(@Query(SEARCH_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(DOCTOR_GUID) String doctorGuidList);
 
     @POST("api/requests")
-    Observable<BaseApiResponseModel> createSchedules(@Query(DOCTOR_GUID) String doctorGuidList, @Body SchedulesCreateRequestModel createRequestModel);
+    Observable<BaseApiResponseModel> createSchedules(@HeaderMap Map<String, String> headers,@Query(DOCTOR_GUID) String doctorGuidList, @Body SchedulesCreateRequestModel createRequestModel);
 
     @GET("api/schedule")
     Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming, @Query(DOCTOR_GUID) String doctorGuid);
@@ -493,7 +496,7 @@ public interface ApiInterface {
     Observable<ArrayList<SchedulesApiResponseModel.ResultBean>> getUserUpcomingSchedules(@Query(USER_GUID) String user_guid, @Query("upcoming") boolean upcoming, @Query(DOCTOR_GUID) String doctorGuid, @Query("day") String day, @Query("month") String month, @Query("year") String year);
 
     @DELETE("api/schedule")
-    Observable<BaseApiResponseModel> deleteSchedule(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
+    Observable<BaseApiResponseModel> deleteSchedule(@HeaderMap Map<String, String> headers, @Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);
 
     @GET("api/schedule")
     Observable<SchedulesApiResponseModel.ResultBean> getScheduleDetail(@Query("schedule_id") int schedule_id, @Query(DOCTOR_GUID) String doctorGuid);

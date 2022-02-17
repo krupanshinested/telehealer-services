@@ -16,31 +16,35 @@ import com.thealer.telehealer.views.base.BaseActivity;
 public class GuestLoginScreensActivity extends BaseActivity {
     private PatientInvite patientInvite;
     private String screenType;
-    private Fragment fragment=null;
+    private Fragment fragment = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_login_screens);
 
         patientInvite = (PatientInvite) getIntent().getSerializableExtra(ArgumentKeys.GUEST_INFO);
-        screenType=getIntent().getStringExtra(ArgumentKeys.GUEST_SCREENTYPE);
+        screenType = getIntent().getStringExtra(ArgumentKeys.GUEST_SCREENTYPE);
 
-        if (screenType.equalsIgnoreCase(ArgumentKeys.WAITING_SCREEN)){
-            fragment=new WaitingScreenFragment();
+        if (screenType != null){
+            if (screenType.equalsIgnoreCase(ArgumentKeys.WAITING_SCREEN)) {
+                fragment = new WaitingScreenFragment();
+            }
+            setFragment(fragment);
         }
-        setFragment(fragment);
+
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        intent.putExtra(ArgumentKeys.GUEST_INFO,getIntent().getSerializableExtra(ArgumentKeys.GUEST_INFO));
-        intent.putExtra(ArgumentKeys.GUEST_SCREENTYPE,getIntent().getStringExtra(ArgumentKeys.GUEST_SCREENTYPE));
+        intent.putExtra(ArgumentKeys.GUEST_INFO, getIntent().getSerializableExtra(ArgumentKeys.GUEST_INFO));
+        intent.putExtra(ArgumentKeys.GUEST_SCREENTYPE, getIntent().getStringExtra(ArgumentKeys.GUEST_SCREENTYPE));
         super.onNewIntent(intent);
-        Log.d("GuestLoginScreens","onNewIntent");
+        Log.d("GuestLoginScreens", "onNewIntent");
     }
 
     public void setFragment(Fragment fragment) {
-        Bundle bundle=new Bundle();
+        Bundle bundle = new Bundle();
         if (fragment != null) {
             try {
                 bundle.putSerializable(ArgumentKeys.GUEST_INFO, patientInvite);

@@ -18,10 +18,10 @@
             android:layout_marginBottom="8dp"
             android:padding="8dp"
             android:src="@drawable/ic_arrow_back_black_24dp"
-            android:tint="@color/colorGrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorGrey" />
 
         <ImageView
             android:id="@+id/help_iv"
@@ -29,11 +29,11 @@
             android:layout_height="40dp"
             android:padding="@dimen/padding_default"
             android:src="@drawable/ic_help_outline"
-            android:tint="@color/colorBlack"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/back_iv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorBlack" />
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -69,11 +69,11 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_close_red_24dp"
-            android:tint="@color/colorBlack"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorBlack" />
 
         <ImageView
             android:id="@+id/other_option"
@@ -83,11 +83,11 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_close_red_24dp"
-            android:tint="@color/colorBlack"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorBlack" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

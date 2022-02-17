@@ -52,6 +52,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
@@ -1929,12 +1930,20 @@ public class Utils {
                     "?cc=" +
                     "&subject=" +
                     "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
-        } catch (PackageManager.NameNotFoundException e) {
+            intent.setData(Uri.parse(mailto));
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            } else {
+                Toast.makeText(context, "No app to send email. Please install at least one",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        intent.setData(Uri.parse(mailto));
+            Toast.makeText(context, "No app to send email. Please install at least one",
+                    Toast.LENGTH_SHORT).show();
 
-        context.startActivity(intent);
+        }
+
 
     }
 

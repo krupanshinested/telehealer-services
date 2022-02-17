@@ -59,11 +59,11 @@ import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
-public class WaitingScreenFragment extends Fragment implements PatientInviteRoomInterface,PubNubDelagate, View.OnClickListener {
+public class WaitingScreenFragment extends Fragment implements PatientInviteRoomInterface, PubNubDelagate, View.OnClickListener {
 
     private PatientInvite patientInvite;
     private View view;
-    private TextView tv_Position, tv_youare,tv_docotor_msg;
+    private TextView tv_Position, tv_youare, tv_docotor_msg;
     private ImageView close_iv;
     private PubnubHandler pubnubHandler;
     private PatientInviteHandler patientInviteHandler;
@@ -80,7 +80,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
         Bundle bundle = getArguments();
         patientInvite = (PatientInvite) bundle.getSerializable(ArgumentKeys.GUEST_INFO);
 
-        patientInviteHandler = new PatientInviteHandler(getActivity(),patientInvite,this);
+        patientInviteHandler = new PatientInviteHandler(getActivity(), patientInvite, this);
         patientInviteHandler.startToSubscribe();
 
         initPubnub();
@@ -119,19 +119,19 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     }
 
     private void initalizeTokBox() {
-        String doctorName=patientInvite.getDoctorDetails().getDoctorDisplayName();
-        CallRequest callRequest = new CallRequest(patientInvite.patientinfo.getId(), patientInvite.getDoctorDetails().getUser_guid(), patientInvite.getDoctorDetails(), null, doctorName, null, OpenTokConstants.video,false,null);
+        String doctorName = patientInvite.getDoctorDetails().getDoctorDisplayName();
+        CallRequest callRequest = new CallRequest(patientInvite.patientinfo.getId(), patientInvite.getDoctorDetails().getUser_guid(), patientInvite.getDoctorDetails(), null, doctorName, null, OpenTokConstants.video, false, null);
         callRequest.setCallForDirectWaitingRoom(true);
         callRequest.setForGuestUser(patientInvite.getPatientinfo().isGuestUser());
 
-        CallSettings callSettings=new CallSettings();
-        Log.d("waitingScreenFrag","sessionId"+patientInvite.getPatientinfo().getSessionId());
-        Log.d("waitingScreenFrag","apiKey"+patientInvite.getApiKey());
-        Log.d("waitingScreenFrag","token"+patientInvite.getToken());
-        callSettings.sessionId=patientInvite.getPatientinfo().getSessionId();
-        callSettings.apiKey=patientInvite.getApiKey();
-        callSettings.token=patientInvite.getToken();
-        callSettings.recording_enabled  = patientInvite.doctorDetails.getRecording_enabled();
+        CallSettings callSettings = new CallSettings();
+        Log.d("waitingScreenFrag", "sessionId" + patientInvite.getPatientinfo().getSessionId());
+        Log.d("waitingScreenFrag", "apiKey" + patientInvite.getApiKey());
+        Log.d("waitingScreenFrag", "token" + patientInvite.getToken());
+        callSettings.sessionId = patientInvite.getPatientinfo().getSessionId();
+        callSettings.apiKey = patientInvite.getApiKey();
+        callSettings.token = patientInvite.getToken();
+        callSettings.recording_enabled = patientInvite.doctorDetails.getRecording_enabled();
         callSettings.transcription_enabled = patientInvite.doctorDetails.getTranscription_enabled();
         callSettings.canStartPublishAudio = false;
         callSettings.canStartPublishVideo = false;
@@ -141,7 +141,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
         OpenTok tokBox = CallManager.shared.getCall(patientInvite.patientinfo.getId());
         if (tokBox == null) {
-            tokBox=new OpenTok(callRequest);
+            tokBox = new OpenTok(callRequest);
         }
         tokBox.connectToSession();
         CallManager.shared.addCall(tokBox);
@@ -154,7 +154,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    showExitAlert(getString(R.string.exit_waiting_room),getString(R.string.exit_waiting_msg),getString(R.string.stayhere),getString(R.string.exit));
+                    showExitAlert(getString(R.string.exit_waiting_room), getString(R.string.exit_waiting_msg), getString(R.string.stayhere), getString(R.string.exit));
                 }
                 return false;
             }
@@ -163,31 +163,27 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     @Override
     public void didUpdateCurrentPosition(int position) {
-        Log.d("waitingScreen","didUpdateCurrentPosition"+position);
-        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tv_youare.setVisibility(View.VISIBLE);
-                tv_Position.setText(""+position);
-                String posString;
-                if (position==1)
-                {
-                    posString = position+"st";
-                } else if (position== 2) {
-                    posString =  position+"nd";
-                } else if(position==3) {
-                    posString =  position+"rd";
-                } else {
-                    posString =  position+"th";
-                }
-
-                String wholeText=getResources().getString(R.string.youare)+" "+posString+" "+getString(R.string.inline);
-                SpannableString ss = new SpannableString(wholeText);
-                StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-                ss.setSpan(boldSpan, 8, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                tv_youare.setText(ss);
+        Log.d("waitingScreen", "didUpdateCurrentPosition" + position);
+        getActivity().runOnUiThread(() -> {
+            tv_youare.setVisibility(View.VISIBLE);
+            tv_Position.setText("" + position);
+            String posString;
+            if (position == 1) {
+                posString = position + "st";
+            } else if (position == 2) {
+                posString = position + "nd";
+            } else if (position == 3) {
+                posString = position + "rd";
+            } else {
+                posString = position + "th";
             }
+
+            String wholeText = getResources().getString(R.string.youare) + " " + posString + " " + getString(R.string.inline);
+            SpannableString ss = new SpannableString(wholeText);
+            StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+            ss.setSpan(boldSpan, 8, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            tv_youare.setText(ss);
         });
 
     }
@@ -199,8 +195,8 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     @Override
     public void didReceiveMessage(APNSPayload apnsPayload) {
-        Log.d("Waitingscreenfrag","didReceiveMessage"+apnsPayload);
-        if (apnsPayload!=null){
+        Log.d("Waitingscreenfrag", "didReceiveMessage" + apnsPayload);
+        if (apnsPayload != null) {
             (getActivity()).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -208,7 +204,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
                     if (apnsPayload.getType().equalsIgnoreCase(APNSPayload.waitingRoomMessage)) {
                         if (apnsPayload.getContent() != null) {
                             tv_docotor_msg.setVisibility(View.VISIBLE);
-                            String doctor_msg = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() +" , "+patientInvite.doctorDetails.getAssistantTitle()+ "  says  ";
+                            String doctor_msg = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() + " , " + patientInvite.doctorDetails.getAssistantTitle() + "  says  ";
                             tv_docotor_msg.setText(doctor_msg + " ' " + apnsPayload.getContent() + " '");
                         } else
                             tv_docotor_msg.setVisibility(View.GONE);
@@ -225,7 +221,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     @Override
     public void kickOut() {
-        Log.d("kickout","waitingScreenFragment");
+        Log.d("kickout", "waitingScreenFragment");
         dismiss(false);
     }
 
@@ -241,7 +237,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     @Override
     public void onDestroy() {
-        Log.d("onDestroy","waitingScreenFragment");
+        Log.d("onDestroy", "waitingScreenFragment");
         onExit();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(applifecycylestatus);
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(did_subscriber_connected);
@@ -252,9 +248,12 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     }
 
     private void onExit() {
-        patientInviteHandler.unRegisterKickout();
-        patientInviteHandler.unsubscribe();
-        pubnubHandler.unsubscribe();
+        if (patientInviteHandler != null) {
+            patientInviteHandler.unRegisterKickout();
+            patientInviteHandler.unsubscribe();
+        }
+        if (pubnubHandler    != null)
+            pubnubHandler.unsubscribe();
 
         OpenTok tokBox = CallManager.shared.getCall(patientInvite.patientinfo.getId());
         if (tokBox != null) {
@@ -286,9 +285,9 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.im_Close:
-                showExitAlert(getString(R.string.exit_waiting_room),getString(R.string.exit_waiting_msg),getString(R.string.stayhere),getString(R.string.exit));
+                showExitAlert(getString(R.string.exit_waiting_room), getString(R.string.exit_waiting_msg), getString(R.string.stayhere), getString(R.string.exit));
                 break;
         }
     }
@@ -296,7 +295,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     private BroadcastReceiver applifecycylestatus = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS,false);
+            boolean status = intent.getBooleanExtra(ArgumentKeys.APP_LIFECYCLE_STATUS, false);
             if (status) {
                 Log.d("WaitingScreenFragment", "Foreground");
                 stopWaitingRoomService();
@@ -324,12 +323,12 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     private BroadcastReceiver did_subscriber_connected = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("did_subscriber_con","did_subscriber_connected");
-            String docotorName=patientInvite.doctorDetails.getFirst_name()+" "+patientInvite.doctorDetails.getLast_name()+" , "+patientInvite.doctorDetails.getAssistantTitle()+" ";
+            Log.d("did_subscriber_con", "did_subscriber_connected");
+            String docotorName = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() + " , " + patientInvite.doctorDetails.getAssistantTitle() + " ";
             showJoinALert(docotorName + getString(R.string.waiting_for_you), docotorName + getString(R.string.has_enterted_waiting_room), getString(R.string.yes), getString(R.string.exit));
 
             if (!TeleHealerApplication.isInForeGround) {
-                Utils.displyNotificationOnTop(docotorName+" "+getString(R.string.waiting_for_you),docotorName+  getString(R.string.has_enterted_waiting_room_open_ap),null,new Intent(getActivity(), GuestLoginScreensActivity.class));
+                Utils.displyNotificationOnTop(docotorName + " " + getString(R.string.waiting_for_you), docotorName + getString(R.string.has_enterted_waiting_room_open_ap), null, new Intent(getActivity(), GuestLoginScreensActivity.class));
             }
         }
     };
@@ -337,14 +336,14 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     private BroadcastReceiver did_end_call = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           dismiss(intent.getBooleanExtra(ArgumentKeys.IS_USER_ADMITTED,false));
+            dismiss(intent.getBooleanExtra(ArgumentKeys.IS_USER_ADMITTED, false));
         }
     };
 
     private BroadcastReceiver notNowRegister = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("WaitingScreenFragment","notNowRegister");
+            Log.d("WaitingScreenFragment", "notNowRegister");
             onExit();
         }
     };
@@ -366,7 +365,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     }
 
-    private void showJoinALert(String title,String message,String postiveBtn,String negativeBtn) {
+    private void showJoinALert(String title, String message, String postiveBtn, String negativeBtn) {
 
         Utils.showAlertDialog(getActivity(), title, message, postiveBtn, negativeBtn, new DialogInterface.OnClickListener() {
             @Override
