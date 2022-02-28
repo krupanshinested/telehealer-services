@@ -24,6 +24,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
@@ -45,7 +46,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription,newDeviceSetup;
+            feedback, terms_and_condition, privacy_policy, add_card, telehealer_billings, educational_video, patient_payments, subscription, newDeviceSetup;
 
     private View signOut;
 
@@ -135,6 +136,11 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+        if (UserType.isUserPatient())
+            newDeviceSetup.setVisibility(View.VISIBLE);
+        else
+            newDeviceSetup.setVisibility(View.GONE);
 
         profileUpdate = new ViewModelProvider(getActivity()).get(ProfileUpdate.class);
 
@@ -228,8 +234,8 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 }
                 break;
         }
-        if(Constants.isRedirectProfileSetting){
-            Constants.isRedirectProfileSetting=false;
+        if (Constants.isRedirectProfileSetting) {
+            Constants.isRedirectProfileSetting = false;
             settings.performClick();
         }
     }

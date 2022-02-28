@@ -231,6 +231,8 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public MutableLiveData<BaseApiResponseModel> baseApiResponseModelMutableLiveData = new MutableLiveData<>();
 
+    public MutableLiveData<BaseApiResponseModel> baseDeleteApiResponseModelMutableLiveData = new MutableLiveData<>();
+
     public MutableLiveData<ArrayList<BaseApiResponseModel>> baseApiArrayListMutableLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<BaseApiResponseModel>> getArrayListMutableLiveData() {
@@ -247,6 +249,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public void setBaseApiResponseModelMutableLiveData(MutableLiveData<BaseApiResponseModel> baseApiResponseModelMutableLiveData) {
         this.baseApiResponseModelMutableLiveData = baseApiResponseModelMutableLiveData;
+    }
+
+    public MutableLiveData<BaseApiResponseModel> getBaseDeleteApiResponseModelMutableLiveData() {
+        return baseDeleteApiResponseModelMutableLiveData;
+    }
+
+    public void setBaseDeleteApiResponseModelMutableLiveData(MutableLiveData<BaseApiResponseModel> baseDeleteApiResponseModelMutableLiveData) {
+        this.baseDeleteApiResponseModelMutableLiveData = baseDeleteApiResponseModelMutableLiveData;
     }
 
     public boolean requestInProgress = false;

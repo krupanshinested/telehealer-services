@@ -35,7 +35,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:padding="@dimen/_15sdp">
 
@@ -141,6 +141,13 @@
                             android:textSize="@dimen/_12ssp"
                             tools:text="@string/str_new_device_dummy_desc2" />
 
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/physician_crv"
+                            android:layout_width="match_parent"
+                            android:padding="@dimen/_5sdp"
+                            android:fitsSystemWindows="true"
+                            android:layout_height="match_parent" />
+
                     </LinearLayout>
 
                 </androidx.core.widget.NestedScrollView>
@@ -156,6 +163,7 @@
                     android:textSize="@dimen/_13sdp"
                     android:textColor="@color/bt_white"
                     android:text="@string/submit"
+                    android:onClick="onClick"
                     tools:text="@string/submit"
                     android:layout_alignParentBottom="true"
                     android:backgroundTint="@color/app_gradient_start"

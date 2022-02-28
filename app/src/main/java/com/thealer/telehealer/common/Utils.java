@@ -842,7 +842,7 @@ public class Utils {
 
     public static void displayAlertMessage(Context context) {
         try {
-            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.str_please_ask_for_permission),
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.enter_device_id),
                     null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

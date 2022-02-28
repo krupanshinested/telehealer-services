@@ -265,10 +265,19 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    public class AssociationAdapterListModel {
+    public static class AssociationAdapterListModel {
         private int type;
         private String title;
+        private boolean selectedFlag;
         private CommonUserApiResponseModel commonUserApiResponseModel;
+
+        public boolean isSelectedFlag() {
+            return selectedFlag;
+        }
+
+        public void setSelectedFlag(boolean selectedFlag) {
+            this.selectedFlag = selectedFlag;
+        }
 
         public AssociationAdapterListModel(int type, String title) {
             this.type = type;
@@ -303,5 +312,6 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
         public void setCommonUserApiResponseModel(CommonUserApiResponseModel commonUserApiResponseModel) {
             this.commonUserApiResponseModel = commonUserApiResponseModel;
         }
+
     }
 }

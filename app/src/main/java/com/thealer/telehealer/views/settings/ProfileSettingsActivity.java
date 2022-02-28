@@ -118,7 +118,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
     private RelativeLayout collapseBackgroundRl;
     private TextView nextTv;
     private ImageView userProfileIv, genderIv;
-    private ProfileCellView newDeviceSetup;
     private String detailTitle = "";
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
@@ -196,13 +195,6 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
 
         statusCiv.setVisibility(View.GONE);
         favoriteIv.setVisibility(View.GONE);
-        newDeviceSetup = (ProfileCellView) findViewById(R.id.new_device_setup);
-
-        if (UserType.isUserDoctor())
-            newDeviceSetup.setVisibility(View.VISIBLE);
-        else
-            newDeviceSetup.setVisibility(View.GONE);
-
         nextTv = findViewById(R.id.next_tv);
 
         updateProfile();

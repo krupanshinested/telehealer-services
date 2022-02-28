@@ -702,6 +702,9 @@ public interface ApiInterface {
     @GET("api/user-devices")
     Observable<MyDeviceListApiResponseModel> getMyDeviceList();
 
+    @DELETE("api/remove-device/{id}")
+    Observable<BaseApiResponseModel> deleteDevice(@Path(ID) String deviceid);
+
 
     @GET("api/educational-video")
     Observable<EducationalVideoResponse> getEducationalVideo(@Query(SEARCH_TITLE_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String user_guid, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);

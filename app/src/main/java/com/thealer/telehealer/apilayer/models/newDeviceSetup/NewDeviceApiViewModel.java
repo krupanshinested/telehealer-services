@@ -38,4 +38,15 @@ public class NewDeviceApiViewModel extends BaseApiViewModel {
                     }
                 }));
     }
+
+    public void deleteDevice(String device_id) {
+        fetchToken(status -> getAuthApiService().deleteDevice(device_id)
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(true)) {
+                    @Override
+                    public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                        baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                    }
+                }));
+    }
 }

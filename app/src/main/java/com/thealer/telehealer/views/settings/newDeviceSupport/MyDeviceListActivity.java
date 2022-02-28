@@ -36,6 +36,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     private CustomRecyclerView newDeviceCrv;
     private List<MyDeviceListApiResponseModel.Data> deviceList = new ArrayList<>();
     private NewDeviceApiViewModel newDeviceApiViewModel;
+    private NewDeviceApiViewModel deleteDeviceApiViewModel;
     private MyDeviceListApiResponseModel myDeviceListApiResponseModel;
     private MyDeviceListAdapter myDeviceListAdapter;
     Activity activity;
@@ -44,6 +45,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     private void initObservers() {
         activity = this;
         newDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
+        deleteDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
         newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
@@ -64,6 +66,16 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        });
+
+        deleteDeviceApiViewModel.getBaseDeleteApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    // refreshList
+                    getMyDeviceList();
                 }
             }
         });
@@ -116,18 +128,10 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                 Utils.showAlertDialog(activity, getString(R.string.alert), getString(R.string.key_device_delete_confirmation),
                         getString(R.string.delete),
                         getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-//                                deleteDevice();
-                            }
+                        (dialog, which) -> {
+                                deleteDevice(deviceList.get(position).getDevice_id());
                         },
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                        (dialog, which) -> dialog.dismiss());
             }
         });
         newDeviceCrv.getRecyclerView().setAdapter(myDeviceListAdapter);
@@ -140,6 +144,9 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
         newDeviceApiViewModel.getMyDevicelist();
     }
 
+    private void deleteDevice(String device_id){
+        deleteDeviceApiViewModel.deleteDevice(device_id);
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
