@@ -1,12 +1,13 @@
 package com.thealer.telehealer.views.settings.newDeviceSupport;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -19,40 +20,40 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
-import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
-import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiViewModel;
+import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
+import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CustomRecyclerView;
-import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
-import com.thealer.telehealer.common.OnPaginateInterface;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 
 import java.util.ArrayList;
-
-import okhttp3.internal.Util;
+import java.util.HashMap;
+import java.util.List;
 
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener {
     private ImageView backIv;
     private TextView toolbarTitle;
-    private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital;
+    private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician;
     private AppCompatEditText edtDeviceId;
     private AppCompatTextView txtSubmit;
     private AppCompatImageView deviceTv;
     private LinearLayout linkLayout;
     AppCompatTextView deviceLink;
     private AssociationApiViewModel associationApiViewModel;
-
+    private AssociationApiViewModel associationUniqueApiViewModel;
+    private String uniqueUrl = "";
     private NewDeviceSetApiViewModel newDeviceSetApiViewModel;
-    private MyDeviceListApiResponseModel.Data myDeviceDetail;
+    private MyDeviceListApiResponseModel.Devices myDeviceDetail;
     private NewDeviceSetApiResponseModel.Data deviceDetail;
     private String healthCareId = "";
     private String title = "", description = "", image;
@@ -65,14 +66,16 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
-        newDeviceSetApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+        newDeviceSetApiViewModel.baseApiSetDeviceResponseModelMutableLiveData.observe(this, new Observer<SetDeviceResponseModel>() {
             @Override
-            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+            public void onChanged(SetDeviceResponseModel setDeviceResponseModel) {
                 finish();
+                Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
             }
         });
 
         associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
+        associationUniqueApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
 
         associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
@@ -80,6 +83,14 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 doctorGroupedAssociations = new ArrayList(baseApiResponseModels);
 
                 didReceivedResult();
+            }
+        });
+
+        associationUniqueApiViewModel.baseUniqueApiResponseModelMutableLiveData.observe(this, new Observer<UniqueResponseModel>() {
+            @Override
+            public void onChanged(UniqueResponseModel uniqueResponseModel) {
+                uniqueUrl = uniqueResponseModel.getData().getExternal_id();
+                deviceLink.setText("" + uniqueUrl);
             }
         });
 
@@ -112,18 +123,18 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 description = deviceDetail.getDescription();
                 image = deviceDetail.getImage();
             } else {
-                myDeviceDetail = gson.fromJson(myDevice, MyDeviceListApiResponseModel.Data.class);
+                myDeviceDetail = gson.fromJson(myDevice, MyDeviceListApiResponseModel.Devices.class);
                 healthCareId = myDeviceDetail.getHealthcare_device().getId();
                 title = myDeviceDetail.getHealthcare_device().getName();
                 description = myDeviceDetail.getHealthcare_device().getDescription();
                 image = myDeviceDetail.getHealthcare_device().getImage();
-
             }
         }
 
         activity = this;
         backIv = findViewById(R.id.back_iv);
         deviceDescriptionVital = findViewById(R.id.device_description_vital);
+        deviceSmsPhysician = findViewById(R.id.device_sms_physician);
         linkLayout = findViewById(R.id.linkLayout);
         deviceTv = findViewById(R.id.deviceTv);
         deviceLink = findViewById(R.id.device_link);
@@ -145,12 +156,31 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             deviceDescription1.setVisibility(View.GONE);
             linkLayout.setVisibility(View.GONE);
             deviceDescriptionVital.setVisibility(View.GONE);
+//            deviceSmsPhysician.setVisibility(View.GONE);
+//            newDeviceCrv.setVisibility(View.GONE);
+
+        } else {
+            getUniqueUrl();
+            getAssociationsList(true);
         }
-        getAssociationsList(true);
+
     }
 
     private void setNewDevice() {
-        newDeviceSetApiViewModel.setDevice(healthCareId, edtDeviceId.getText().toString().trim());
+        ArrayList<String> smsList = new ArrayList<>();
+        if (adapterListModels != null)
+            for (DoctorPatientListAdapter.AssociationAdapterListModel doctorGroupedAssociations : adapterListModels) {
+                if (doctorGroupedAssociations.isSelectedFlag()) {
+                    smsList.add(String.valueOf(doctorGroupedAssociations.getCommonUserApiResponseModel().getUser_id()));
+                }
+            }
+
+        HashMap<String, Object> param = new HashMap<>();
+        param.put(ApiInterface.HEALTHCARE_DEVICE_ID, healthCareId);
+        param.put(ApiInterface.DEVICE_ID, edtDeviceId.getText().toString().trim());
+        param.put(ApiInterface.SMS_ENABLED, true);
+        param.put(ApiInterface.PHYSICIAN_NOTIFICATION, smsList);
+        newDeviceSetApiViewModel.setDevice(param);
     }
 
     private void getAssociationsList(boolean isShowProgress) {
@@ -159,14 +189,32 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         }
     }
 
-    private void didReceivedResult() {
-        myPhysicianListAdapter.setData(doctorGroupedAssociations);
+    private void getUniqueUrl() {
+        associationUniqueApiViewModel.getUniqueUrl();
     }
+
+    List<DoctorPatientListAdapter.AssociationAdapterListModel> adapterListModels;
+
+    private void didReceivedResult() {
+        adapterListModels = new ArrayList<>();
+        for (int i = 0; i < doctorGroupedAssociations.size(); i++) {
+            DoctorGroupedAssociations associations = doctorGroupedAssociations.get(i);
+
+            for (int j = 0; j < associations.getDoctors().size(); j++) {
+                adapterListModels.add(new DoctorPatientListAdapter.AssociationAdapterListModel(2, associations.getDoctors().get(j)));
+            }
+        }
+        myPhysicianListAdapter.setData(adapterListModels);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
                 onBackPressed();
+                break;
+            case R.id.copy_device_link:
+                setClipboard(activity, uniqueUrl);
                 break;
             case R.id.txtSubmit:
                 if (edtDeviceId.getText().toString().isEmpty()) {
@@ -174,6 +222,18 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 } else
                     setNewDevice();
                 break;
+        }
+    }
+
+    private void setClipboard(Context context, String text) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(text);
+        } else {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Url", text);
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(activity, "Copied Url", Toast.LENGTH_SHORT).show();
         }
     }
 }

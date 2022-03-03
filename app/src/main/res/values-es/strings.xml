@@ -1571,5 +1571,6 @@
     <string name="key_my_devices">My Devices</string>
     <string name="key_add_new_device">Add New Device</string>
     <string name="key_device_delete_confirmation">Are you sure you want to delete this device?</string>
+    <string name="key_device_sms_enabled">Enable SMS for following physician: </string>
 
 </resources>

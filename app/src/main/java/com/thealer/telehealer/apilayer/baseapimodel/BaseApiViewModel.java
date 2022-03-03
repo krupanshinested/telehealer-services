@@ -22,7 +22,9 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.manager.helper.NoConnectivityException;
+import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
+import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -231,7 +233,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public MutableLiveData<BaseApiResponseModel> baseApiResponseModelMutableLiveData = new MutableLiveData<>();
 
+    public MutableLiveData<SetDeviceResponseModel> baseApiSetDeviceResponseModelMutableLiveData = new MutableLiveData<>();
+
     public MutableLiveData<BaseApiResponseModel> baseDeleteApiResponseModelMutableLiveData = new MutableLiveData<>();
+
+    public MutableLiveData<UniqueResponseModel> baseUniqueApiResponseModelMutableLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<BaseApiResponseModel>> baseApiArrayListMutableLiveData = new MutableLiveData<>();
 
@@ -241,6 +247,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public void setArrayListMutableLiveData(MutableLiveData<ArrayList<BaseApiResponseModel>> arrayListMutableLiveData) {
         this.baseApiArrayListMutableLiveData = arrayListMutableLiveData;
+    }
+
+    public MutableLiveData<SetDeviceResponseModel> getBaseApiSetDeviceResponseModelMutableLiveData() {
+        return baseApiSetDeviceResponseModelMutableLiveData;
+    }
+
+    public void setBaseApiSetDeviceResponseModelMutableLiveData(MutableLiveData<SetDeviceResponseModel> baseApiSetDeviceResponseModelMutableLiveData) {
+        this.baseApiSetDeviceResponseModelMutableLiveData = baseApiSetDeviceResponseModelMutableLiveData;
     }
 
     public MutableLiveData<BaseApiResponseModel> getBaseApiResponseModelMutableLiveData() {
@@ -257,6 +271,14 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
     public void setBaseDeleteApiResponseModelMutableLiveData(MutableLiveData<BaseApiResponseModel> baseDeleteApiResponseModelMutableLiveData) {
         this.baseDeleteApiResponseModelMutableLiveData = baseDeleteApiResponseModelMutableLiveData;
+    }
+
+    public MutableLiveData<UniqueResponseModel> getBaseUniqueApiResponseModelMutableLiveData() {
+        return baseUniqueApiResponseModelMutableLiveData;
+    }
+
+    public void setBaseUniqueApiResponseModelMutableLiveData(MutableLiveData<UniqueResponseModel> baseUniqueApiResponseModelMutableLiveData) {
+        this.baseUniqueApiResponseModelMutableLiveData = baseUniqueApiResponseModelMutableLiveData;
     }
 
     public boolean requestInProgress = false;

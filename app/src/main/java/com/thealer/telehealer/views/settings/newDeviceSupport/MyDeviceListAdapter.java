@@ -13,10 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
-import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnDeviceItemClickListener;
-import com.thealer.telehealer.views.common.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +24,11 @@ public class MyDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_ITEM = 2;
 
     private Context context;
-    private List<MyDeviceListApiResponseModel.Data> resultBean;
+    private ArrayList<MyDeviceListApiResponseModel.Devices> resultBean;
     private List<MyDeviceAdapterModel> adapterModelList;
     OnDeviceItemClickListener onItemClickListener;
 
-    public MyDeviceListAdapter(Context context, List<MyDeviceListApiResponseModel.Data> deviceList, OnDeviceItemClickListener onClickListener) {
+    public MyDeviceListAdapter(Context context, ArrayList<MyDeviceListApiResponseModel.Devices> deviceList, OnDeviceItemClickListener onClickListener) {
         this.context = context;
         adapterModelList = new ArrayList<>();
         onItemClickListener = onClickListener;
@@ -47,7 +45,7 @@ public class MyDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         ItemHolder itemHolder = (ItemHolder) holder;
-        MyDeviceListApiResponseModel.Data resultBean = adapterModelList.get(position).getItem();
+        MyDeviceListApiResponseModel.Devices resultBean = adapterModelList.get(position).getItem();
 
         Utils.setImageWithGlide(context, itemHolder.deviceTv, resultBean.getHealthcare_device().getImage(), context.getDrawable(R.drawable.add_provider), true, true);
         itemHolder.deviceDelete.setVisibility(View.VISIBLE);
@@ -63,7 +61,7 @@ public class MyDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return adapterModelList.size();
     }
 
-    public void setData(ArrayList<MyDeviceListApiResponseModel.Data> result) {
+    public void setData(ArrayList<MyDeviceListApiResponseModel.Devices> result) {
         resultBean = result;
         adapterModelList.clear();
         for (int i = 0; i < resultBean.size(); i++) {
@@ -100,14 +98,14 @@ public class MyDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private class MyDeviceAdapterModel {
         private int type;
         private String date;
-        private MyDeviceListApiResponseModel.Data item;
+        private MyDeviceListApiResponseModel.Devices item;
 
         public MyDeviceAdapterModel(int type, String date) {
             this.type = type;
             this.date = date;
         }
 
-        public MyDeviceAdapterModel(int type, MyDeviceListApiResponseModel.Data item) {
+        public MyDeviceAdapterModel(int type, MyDeviceListApiResponseModel.Devices item) {
             this.type = type;
             this.item = item;
         }
@@ -128,11 +126,11 @@ public class MyDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.date = date;
         }
 
-        public MyDeviceListApiResponseModel.Data getItem() {
+        public MyDeviceListApiResponseModel.Devices getItem() {
             return item;
         }
 
-        public void setItem(MyDeviceListApiResponseModel.Data item) {
+        public void setItem(MyDeviceListApiResponseModel.Devices item) {
             this.item = item;
         }
     }

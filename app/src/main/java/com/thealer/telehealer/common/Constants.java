@@ -2,6 +2,8 @@ package com.thealer.telehealer.common;
 
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
+import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
+import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +38,8 @@ public class Constants {
     public static final int SHOW_SCREEN = 2;
 
     public static final int PAGINATION_SIZE = 20;
+    public static NewDeviceSupportActivity NEW_DEVICE_SUPPORT_ACTIVITY;
+    public static MyDeviceListActivity myDeviceListActivity;
 
     //User Activation status
     public static final String ACTIVATION_PENDING = "ACTIVATION_PENDING";

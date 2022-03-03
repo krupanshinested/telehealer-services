@@ -268,7 +268,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     public static class AssociationAdapterListModel {
         private int type;
         private String title;
-        private boolean selectedFlag;
+        private boolean selectedFlag =  false;
         private CommonUserApiResponseModel commonUserApiResponseModel;
 
         public boolean isSelectedFlag() {

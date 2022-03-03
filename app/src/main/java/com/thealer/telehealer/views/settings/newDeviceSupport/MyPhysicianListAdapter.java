@@ -5,25 +5,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
-import com.thealer.telehealer.common.Animation.CustomUserListItemView;
-import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 
@@ -64,14 +55,11 @@ public class MyPhysicianListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         else
             itemHolder.checkbox.setSelected(true);
 
-        itemHolder.checkbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(itemHolder.checkbox.isSelected()){
-                    adapterListModels.get(position).setSelectedFlag(false);
-                }else{
-                    adapterListModels.get(position).setSelectedFlag(true);
-                }
+        itemHolder.checkbox.setOnCheckedChangeListener((compoundButton, b) -> {
+            if(b){
+                adapterListModels.get(position).setSelectedFlag(true);
+            }else{
+                adapterListModels.get(position).setSelectedFlag(false);
             }
         });
     }
@@ -85,17 +73,9 @@ public class MyPhysicianListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return adapterListModels.size();
     }
 
-    public void setData(List<DoctorGroupedAssociations> associationApiResponseModelResult) {
+    public void setData(List<DoctorPatientListAdapter.AssociationAdapterListModel> associationApiResponseModelResult) {
         adapterListModels.clear();
-
-        for (int i = 0; i < associationApiResponseModelResult.size(); i++) {
-            DoctorGroupedAssociations associations = associationApiResponseModelResult.get(i);
-
-            for (int j = 0; j < associations.getDoctors().size(); j++) {
-                adapterListModels.add(new DoctorPatientListAdapter.AssociationAdapterListModel(TYPE_ITEM, associations.getDoctors().get(j)));
-            }
-        }
-
+        adapterListModels.addAll(associationApiResponseModelResult);
         notifyDataSetChanged();
     }
 

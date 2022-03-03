@@ -10,10 +10,12 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -62,6 +64,17 @@ public class AssociationApiViewModel extends BaseApiViewModel {
                 }
             }
         });
+    }
+
+    public void getUniqueUrl() {
+        fetchToken(status -> getAuthApiService().getUniqueUrl()
+                .compose(applySchedulers())
+                .subscribe(new RAObserver<UniqueResponseModel>(getProgress(true)) {
+                    @Override
+                    public void onSuccess(UniqueResponseModel uniqueResponseModel) {
+                        baseUniqueApiResponseModelMutableLiveData.setValue(uniqueResponseModel);
+                    }
+                }));
     }
 
     public void getDoctorGroupedAssociations(boolean showProgress) {

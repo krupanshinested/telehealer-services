@@ -121,6 +121,7 @@
                                 android:paddingHorizontal="@dimen/_12sdp"
                                 android:paddingVertical="@dimen/_4sdp"
                                 android:text="@string/key_copy"
+                                android:onClick="onClick"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="@dimen/_11ssp"
                                 tools:text="@string/key_copy" />
@@ -138,15 +139,31 @@
                             android:gravity="center|left"
                             android:text="@string/str_new_device_dummy_desc2"
                             android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/_12ssp"
+                            android:textSize="@dimen/_11ssp"
                             tools:text="@string/str_new_device_dummy_desc2" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_sms_physician"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:gravity="center|left"
+                            android:text="@string/key_device_sms_enabled"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12ssp"
+                            android:textStyle="bold"
+                            tools:text="@string/key_device_sms_enabled" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/physician_crv"
                             android:layout_width="match_parent"
-                            android:padding="@dimen/_5sdp"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/_5sdp"
                             android:fitsSystemWindows="true"
-                            android:layout_height="match_parent" />
+                            android:padding="@dimen/_5sdp" />
 
                     </LinearLayout>
 

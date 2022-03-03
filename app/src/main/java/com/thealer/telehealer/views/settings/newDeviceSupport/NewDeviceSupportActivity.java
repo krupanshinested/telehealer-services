@@ -17,6 +17,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -37,6 +38,7 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
 
     private void initObservers() {
         activity = this;
+        Constants.NEW_DEVICE_SUPPORT_ACTIVITY = this;
         newDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
         newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -102,6 +104,11 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
         newDeviceCrv.getRecyclerView().setAdapter(newDeviceSupportAdapter);
 
         getNewDeviceSetup();
+    }
+
+    public void finishScreen() {
+        finish();
+        Constants.myDeviceListActivity.refreshList();
     }
 
     private void getNewDeviceSetup() {

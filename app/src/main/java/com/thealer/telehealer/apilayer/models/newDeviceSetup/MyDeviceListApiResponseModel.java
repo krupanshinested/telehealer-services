@@ -8,7 +8,7 @@ public class MyDeviceListApiResponseModel extends BaseApiResponseModel {
 
     private String code;
 
-    private ArrayList<Data> data;
+    private Data data;
 
     public String getCode() {
         return code;
@@ -18,15 +18,29 @@ public class MyDeviceListApiResponseModel extends BaseApiResponseModel {
         this.code = code;
     }
 
-    public ArrayList<Data> getData() {
+    public Data getData() {
         return data;
     }
 
-    public void setData(ArrayList<Data> data) {
+    public void setData(Data data) {
         this.data = data;
     }
 
     public static class Data {
+
+        private ArrayList<Devices> devices;
+
+        public ArrayList<Devices> getDevices() {
+            return devices;
+        }
+
+        public void setDevices(ArrayList<Devices> devices) {
+            this.devices = devices;
+        }
+    }
+
+    public class Devices
+    {
 
         private String device_id;
 

@@ -20,6 +20,7 @@ import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResp
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -34,7 +35,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     private ImageView backIv;
     private TextView toolbarTitle;
     private CustomRecyclerView newDeviceCrv;
-    private List<MyDeviceListApiResponseModel.Data> deviceList = new ArrayList<>();
+    private ArrayList<MyDeviceListApiResponseModel.Devices> deviceList = new ArrayList<>();
     private NewDeviceApiViewModel newDeviceApiViewModel;
     private NewDeviceApiViewModel deleteDeviceApiViewModel;
     private MyDeviceListApiResponseModel myDeviceListApiResponseModel;
@@ -44,6 +45,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
 
     private void initObservers() {
         activity = this;
+        Constants.myDeviceListActivity = this;
         newDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
         deleteDeviceApiViewModel = new ViewModelProvider(this).get(NewDeviceApiViewModel.class);
         newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -53,9 +55,9 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                     try {
                         myDeviceListApiResponseModel = (MyDeviceListApiResponseModel) baseApiResponseModel;
 
-                        if (myDeviceListApiResponseModel.getData().size() > 0) {
-                            deviceList = myDeviceListApiResponseModel.getData();
-                            myDeviceListAdapter.setData(myDeviceListApiResponseModel.getData());
+                        if (myDeviceListApiResponseModel.getData().getDevices().size() > 0) {
+                            deviceList = myDeviceListApiResponseModel.getData().getDevices();
+                            myDeviceListAdapter.setData(myDeviceListApiResponseModel.getData().getDevices());
                             newDeviceCrv.showOrhideEmptyState(false);
                         } else {
                             newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_DEVICELIST);
@@ -129,7 +131,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                         getString(R.string.delete),
                         getString(R.string.cancel),
                         (dialog, which) -> {
-                                deleteDevice(deviceList.get(position).getDevice_id());
+                                deleteDevice(deviceList.get(position).getId());
                         },
                         (dialog, which) -> dialog.dismiss());
             }
@@ -157,5 +159,9 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(activity, NewDeviceSupportActivity.class));
                 break;
         }
+    }
+
+    public void refreshList(){
+        getMyDeviceList();
     }
 }
