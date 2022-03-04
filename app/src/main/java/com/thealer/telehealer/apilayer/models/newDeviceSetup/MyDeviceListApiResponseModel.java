@@ -1,5 +1,7 @@
 package com.thealer.telehealer.apilayer.models.newDeviceSetup;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 
 import java.util.ArrayList;
@@ -47,6 +49,8 @@ public class MyDeviceListApiResponseModel extends BaseApiResponseModel {
         private String user_id;
 
         private Healthcare_device healthcare_device;
+
+        private ArrayList<PhysicianNotification> physicianNotification = null;
 
         private String healthcare_device_id;
 
@@ -162,6 +166,63 @@ public class MyDeviceListApiResponseModel extends BaseApiResponseModel {
             public void setId(String id) {
                 this.id = id;
             }
+        }
+
+        public ArrayList<PhysicianNotification> getPhysicianNotification() {
+            return physicianNotification;
+        }
+
+        public void setPhysicianNotification(ArrayList<PhysicianNotification> physicianNotification) {
+            this.physicianNotification = physicianNotification;
+        }
+
+        public class PhysicianNotification {
+
+            @SerializedName("id")
+            @Expose
+            private Integer id;
+            @SerializedName("healthcare_device_id")
+            @Expose
+            private Integer healthcareDeviceId;
+            @SerializedName("user_id")
+            @Expose
+            private Integer userId;
+            @SerializedName("user_healthcare_device_id")
+            @Expose
+            private Integer userHealthcareDeviceId;
+
+            public Integer getId() {
+                return id;
+            }
+
+            public void setId(Integer id) {
+                this.id = id;
+            }
+
+            public Integer getHealthcareDeviceId() {
+                return healthcareDeviceId;
+            }
+
+            public void setHealthcareDeviceId(Integer healthcareDeviceId) {
+                this.healthcareDeviceId = healthcareDeviceId;
+            }
+
+            public Integer getUserId() {
+                return userId;
+            }
+
+            public void setUserId(Integer userId) {
+                this.userId = userId;
+            }
+
+            public Integer getUserHealthcareDeviceId() {
+                return userHealthcareDeviceId;
+            }
+
+            public void setUserHealthcareDeviceId(Integer userHealthcareDeviceId) {
+                this.userHealthcareDeviceId = userHealthcareDeviceId;
+            }
+
         }
     }
 }

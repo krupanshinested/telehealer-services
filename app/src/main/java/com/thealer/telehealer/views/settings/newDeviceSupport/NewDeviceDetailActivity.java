@@ -22,8 +22,10 @@ import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.AssociationAdapterListModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiResponseModel;
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiViewModel;
@@ -81,7 +83,6 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             @Override
             public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
                 doctorGroupedAssociations = new ArrayList(baseApiResponseModels);
-
                 didReceivedResult();
             }
         });
@@ -93,12 +94,6 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 deviceLink.setText("" + uniqueUrl);
             }
         });
-
-        newDeviceCrv = findViewById(R.id.physician_crv);
-        myPhysicianListAdapter = new MyPhysicianListAdapter(this);
-        newDeviceCrv.setLayoutManager(new LinearLayoutManager(activity));
-        newDeviceCrv.setAdapter(myPhysicianListAdapter);
-
     }
 
     @Override
@@ -110,26 +105,6 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     }
 
     private void initView() {
-
-        Gson gson = new Gson();
-        if (getIntent().getExtras() != null) {
-            String myDevice = getIntent().getStringExtra(ArgumentKeys.DEVICE_DETAILS);
-            deviceFlag = getIntent().getBooleanExtra(ArgumentKeys.DEVICE_FLAG, false);
-
-            if (!deviceFlag) {
-                deviceDetail = gson.fromJson(myDevice, NewDeviceSetApiResponseModel.Data.class);
-                healthCareId = deviceDetail.getId();
-                title = deviceDetail.getName();
-                description = deviceDetail.getDescription();
-                image = deviceDetail.getImage();
-            } else {
-                myDeviceDetail = gson.fromJson(myDevice, MyDeviceListApiResponseModel.Devices.class);
-                healthCareId = myDeviceDetail.getHealthcare_device().getId();
-                title = myDeviceDetail.getHealthcare_device().getName();
-                description = myDeviceDetail.getHealthcare_device().getDescription();
-                image = myDeviceDetail.getHealthcare_device().getImage();
-            }
-        }
 
         activity = this;
         backIv = findViewById(R.id.back_iv);
@@ -144,6 +119,39 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         deviceDescription2 = findViewById(R.id.device_description2);
         deviceDescription1 = findViewById(R.id.device_description1);
         backIv.setOnClickListener(this);
+
+        Gson gson = new Gson();
+        if (getIntent().getExtras() != null) {
+            String myDevice = getIntent().getStringExtra(ArgumentKeys.DEVICE_DETAILS);
+            deviceFlag = getIntent().getBooleanExtra(ArgumentKeys.DEVICE_FLAG, false);
+
+            if (!deviceFlag) {
+                deviceDetail = gson.fromJson(myDevice, NewDeviceSetApiResponseModel.Data.class);
+                healthCareId = deviceDetail.getId();
+                title = deviceDetail.getName();
+                description = deviceDetail.getDescription();
+                image = deviceDetail.getImage();
+//                edtDeviceId.setText(deviceDetail.getId());
+//                edtDeviceId.setEnabled(false);
+//                edtDeviceId.setClickable(false);
+            } else {
+                myDeviceDetail = gson.fromJson(myDevice, MyDeviceListApiResponseModel.Devices.class);
+                healthCareId = myDeviceDetail.getHealthcare_device().getId();
+                title = myDeviceDetail.getHealthcare_device().getName();
+                description = myDeviceDetail.getHealthcare_device().getDescription();
+                image = myDeviceDetail.getHealthcare_device().getImage();
+                edtDeviceId.setText(myDeviceDetail.getDevice_id());
+                edtDeviceId.setEnabled(false);
+                edtDeviceId.setClickable(false);
+            }
+
+            newDeviceCrv = findViewById(R.id.physician_crv);
+            myPhysicianListAdapter = new MyPhysicianListAdapter(this, deviceFlag);
+            newDeviceCrv.setLayoutManager(new LinearLayoutManager(activity));
+            newDeviceCrv.setAdapter(myPhysicianListAdapter);
+        }
+
+
         toolbarTitle.setText(title);
         deviceDescription2.setText(description);
         if (image != null) {
@@ -151,25 +159,19 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         }
 
         if (deviceFlag) {
-            edtDeviceId.setVisibility(View.GONE);
             txtSubmit.setVisibility(View.GONE);
             deviceDescription1.setVisibility(View.GONE);
-            linkLayout.setVisibility(View.GONE);
             deviceDescriptionVital.setVisibility(View.GONE);
-//            deviceSmsPhysician.setVisibility(View.GONE);
-//            newDeviceCrv.setVisibility(View.GONE);
-
-        } else {
-            getUniqueUrl();
-            getAssociationsList(true);
         }
 
+        getUniqueUrl();
+        getAssociationsList(true);
     }
 
     private void setNewDevice() {
         ArrayList<String> smsList = new ArrayList<>();
         if (adapterListModels != null)
-            for (DoctorPatientListAdapter.AssociationAdapterListModel doctorGroupedAssociations : adapterListModels) {
+            for (AssociationAdapterListModel doctorGroupedAssociations : adapterListModels) {
                 if (doctorGroupedAssociations.isSelectedFlag()) {
                     smsList.add(String.valueOf(doctorGroupedAssociations.getCommonUserApiResponseModel().getUser_id()));
                 }
@@ -178,7 +180,10 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         HashMap<String, Object> param = new HashMap<>();
         param.put(ApiInterface.HEALTHCARE_DEVICE_ID, healthCareId);
         param.put(ApiInterface.DEVICE_ID, edtDeviceId.getText().toString().trim());
-        param.put(ApiInterface.SMS_ENABLED, true);
+        if (smsList.size() == 0)
+            param.put(ApiInterface.SMS_ENABLED, false);
+        else
+            param.put(ApiInterface.SMS_ENABLED, true);
         param.put(ApiInterface.PHYSICIAN_NOTIFICATION, smsList);
         newDeviceSetApiViewModel.setDevice(param);
     }
@@ -193,19 +198,28 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         associationUniqueApiViewModel.getUniqueUrl();
     }
 
-    List<DoctorPatientListAdapter.AssociationAdapterListModel> adapterListModels;
+    List<AssociationAdapterListModel> adapterListModels;
 
     private void didReceivedResult() {
         adapterListModels = new ArrayList<>();
-        for (int i = 0; i < doctorGroupedAssociations.size(); i++) {
-            DoctorGroupedAssociations associations = doctorGroupedAssociations.get(i);
+        for (DoctorGroupedAssociations associations : doctorGroupedAssociations) {
+            for (CommonUserApiResponseModel doctor : associations.getDoctors()) {
+                adapterListModels.add(new AssociationAdapterListModel(2, doctor));
+            }
+        }
 
-            for (int j = 0; j < associations.getDoctors().size(); j++) {
-                adapterListModels.add(new DoctorPatientListAdapter.AssociationAdapterListModel(2, associations.getDoctors().get(j)));
+        if (deviceFlag) {
+            for (AssociationAdapterListModel associationAdapterListModel : adapterListModels) {
+                for (MyDeviceListApiResponseModel.Devices.PhysicianNotification physicianNotification : myDeviceDetail.getPhysicianNotification()) {
+                    if (physicianNotification.getUserId() == associationAdapterListModel.getCommonUserApiResponseModel().getUser_id()) {
+                        associationAdapterListModel.setSelectedFlag(true);
+                    }
+                }
             }
         }
         myPhysicianListAdapter.setData(adapterListModels);
     }
+
 
     @Override
     public void onClick(View v) {
