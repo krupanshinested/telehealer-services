@@ -163,31 +163,27 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
 
     @Override
     public void didUpdateCurrentPosition(int position) {
-        Log.d("waitingScreen","didUpdateCurrentPosition"+position);
-        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tv_youare.setVisibility(View.VISIBLE);
-                tv_Position.setText(""+position);
-                String posString;
-                if (position==1)
-                {
-                    posString = position+"st";
-                } else if (position== 2) {
-                    posString =  position+"nd";
-                } else if(position==3) {
-                    posString =  position+"rd";
-                } else {
-                    posString =  position+"th";
-                }
-
-                String wholeText=getResources().getString(R.string.youare)+" "+posString+" "+getString(R.string.inline);
-                SpannableString ss = new SpannableString(wholeText);
-                StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-                ss.setSpan(boldSpan, 8, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                tv_youare.setText(ss);
+        Log.d("waitingScreen", "didUpdateCurrentPosition" + position);
+        getActivity().runOnUiThread(() -> {
+            tv_youare.setVisibility(View.VISIBLE);
+            tv_Position.setText("" + position);
+            String posString;
+            if (position == 1) {
+                posString = position + "st";
+            } else if (position == 2) {
+                posString = position + "nd";
+            } else if (position == 3) {
+                posString = position + "rd";
+            } else {
+                posString = position + "th";
             }
+
+            String wholeText = getResources().getString(R.string.youare) + " " + posString + " " + getString(R.string.inline);
+            SpannableString ss = new SpannableString(wholeText);
+            StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+            ss.setSpan(boldSpan, 8, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            tv_youare.setText(ss);
         });
 
     }

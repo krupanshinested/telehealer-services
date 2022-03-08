@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <include layout="@layout/appbar_back_with_title_app_color" />
+
+    <com.thealer.telehealer.common.CustomRecyclerView
+        android:id="@+id/new_device_crv"
+        android:layout_width="match_parent"
+        android:padding="@dimen/_5sdp"
+        android:layout_weight="1"
+        android:layout_height="0dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtAddDevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_25sdp"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_10sdp"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/_13sdp"
+        android:textColor="@color/bt_white"
+        android:text="@string/key_add_new_device"
+        android:gravity="center"
+        tools:text="@string/key_add_new_device"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/app_gradient_start"
+        android:background="@drawable/submit_btn_background" />
+
+</LinearLayout>

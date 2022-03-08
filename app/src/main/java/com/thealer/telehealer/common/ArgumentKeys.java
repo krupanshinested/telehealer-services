@@ -262,5 +262,8 @@ public class ArgumentKeys {
     public static final String IS_USER_ADMITTED = "IS_USER_ADMITTED";
 
     public static final String IS_HEAD_LESS = "IS_HEAD_LESS";
-
+    public static final String DEVICE_TITLE = "title";
+    public static final String HEALTH_CARE_ID = "health_care_id";
+    public static final String DEVICE_FLAG = "device_flag";
+    public static final String DEVICE_DETAILS = "device_details";
 }

@@ -47,6 +47,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -766,6 +767,25 @@ public class Utils {
         }
     }
 
+    public static void displayAlertMessage(Context context) {
+        try {
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.enter_device_id),
+                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String getCurrentFomatedDate() {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss", Locale.ENGLISH);
@@ -822,22 +842,22 @@ public class Utils {
             return Html.fromHtml(htmlString);
         }*/
         // remove leading <br/>
-        while (htmlString.startsWith("<br/>")){
+        while (htmlString.startsWith("<br/>")) {
 
             htmlString = htmlString.replaceFirst("<br/>", "");
         }
 
         // remove trailing <br/>
-        while (htmlString.endsWith("<br/>")){
+        while (htmlString.endsWith("<br/>")) {
 
-            htmlString =  htmlString.replaceAll("<br/>$", "");
+            htmlString = htmlString.replaceAll("<br/>$", "");
         }
 
         // reduce multiple \n in the processed HTML string
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-            return Html.fromHtml(htmlString,  FROM_HTML_MODE_COMPACT);
-        }else{
+            return Html.fromHtml(htmlString, FROM_HTML_MODE_COMPACT);
+        } else {
 
             return Html.fromHtml(htmlString);
         }
@@ -1794,12 +1814,20 @@ public class Utils {
                     "?cc=" +
                     "&subject=" +
                     "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
-        } catch (PackageManager.NameNotFoundException e) {
+            intent.setData(Uri.parse(mailto));
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            } else {
+                Toast.makeText(context, "No app to send email. Please install at least one",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        intent.setData(Uri.parse(mailto));
+            Toast.makeText(context, "No app to send email. Please install at least one",
+                    Toast.LENGTH_SHORT).show();
 
-        context.startActivity(intent);
+        }
+
 
     }
 
@@ -1823,41 +1851,40 @@ public class Utils {
 
     public static void checkIdealTime(Context context) {
         if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
-                long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
-                long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
-                if (currentTimeInMillis == lastActiveTime)
-                    lastActiveTime = timestamp.getTime();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
+            long currentTimeInMillis = lastActiveTime + Constants.IdealTime;
+            long expiryTimeInMillis = lastActiveTime + Constants.ExpireTime;
+            if (currentTimeInMillis == lastActiveTime)
+                lastActiveTime = timestamp.getTime();
 
-                if (lastActiveTime == 0) {
-                    lastActiveTime = timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                }else if(timestamp.getTime()>= expiryTimeInMillis){
-                    UserDetailPreferenceManager.invalidateUser();
-                    PubnubUtil.shared.unsubscribe();
+            if (lastActiveTime == 0) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            } else if (timestamp.getTime() >= expiryTimeInMillis) {
+                UserDetailPreferenceManager.invalidateUser();
+                PubnubUtil.shared.unsubscribe();
 
-                    EventRecorder.updateUserId(null);
+                EventRecorder.updateUserId(null);
 
-                    context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-                } else if (timestamp.getTime()>= currentTimeInMillis) {
-                    lastActiveTime=timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
-                    if (!Constants.DisplayQuickLogin) {
-                        Constants.DisplayQuickLogin = true;
-                        try {
-                            context.startActivity(new Intent(context, QuickLoginActivity.class));
-                        } catch (Exception e) {
-                            context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                        }
+                context.startActivity(new Intent(context, SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            } else if (timestamp.getTime() >= currentTimeInMillis) {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+                if (!Constants.DisplayQuickLogin) {
+                    Constants.DisplayQuickLogin = true;
+                    try {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class));
+                    } catch (Exception e) {
+                        context.startActivity(new Intent(context, QuickLoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
-                } else {
-                    lastActiveTime = timestamp.getTime();
-                    appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
                 }
+            } else {
+                lastActiveTime = timestamp.getTime();
+                appPreference.setString(PreferenceConstants.LAST_ACTIVE_TIME, lastActiveTime + "");
+            }
         }
     }
-
 
 
     public static void showMultichoiseItemSelectAlertDialog(@NonNull Context
@@ -1896,7 +1923,7 @@ public class Utils {
     }
 
     public static boolean isRefreshTokenExpire() {
-        if(!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
+        if (!appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN).isEmpty()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             long lastActiveTime = Long.parseLong(appPreference.getStringWithDefault(PreferenceConstants.LAST_ACTIVE_TIME, "0"));
             if (lastActiveTime == 0) {
@@ -1906,7 +1933,7 @@ public class Utils {
 
             long expireTime = lastActiveTime + Constants.ExpireTime;
             return timestamp.getTime() > expireTime;
-        }else{
+        } else {
             return false;
         }
     }
@@ -1961,6 +1988,7 @@ public class Utils {
         comboImage.drawBitmap(sc, fr.getWidth(), 0f, null);
         return comboBitmap;
     }
+
     public static Boolean isAuthExpired() {
         try {
             JWT jwt = new JWT(appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN));
@@ -1971,6 +1999,7 @@ public class Utils {
             return true;
         }
     }
+
     public static void validUserToLogin(Context context) {
         WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
@@ -2045,11 +2074,11 @@ public class Utils {
     }
 
     public static double get2Decimal(String decimalString) {
-            if(isNumeric(decimalString)){
-                return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
-            }else{
-                return 00.00;
-            }
+        if (isNumeric(decimalString)) {
+            return Double.parseDouble(new DecimalFormat("##.##").format(Double.parseDouble(decimalString)));
+        } else {
+            return 00.00;
+        }
 
     }
 

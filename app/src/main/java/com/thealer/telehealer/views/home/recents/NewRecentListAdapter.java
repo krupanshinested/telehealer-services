@@ -127,48 +127,46 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     itemHolder.labelIv.setVisibility(View.GONE);
                 }
 
-                itemHolder.itemCv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (isChat){
+                itemHolder.itemCv.setOnClickListener(v -> {
+                    if (isChat){
+                        try {
                             activity.startActivity(new Intent(activity, ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        else if (resultBean.getDurationInSecs() > 0) {
-                            VisitsDetailFragment visitsDetailFragment = new VisitsDetailFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, resultBean);
-                            visitsDetailFragment.setArguments(bundle);
-                            showSubFragmentInterface.onShowFragment(visitsDetailFragment);
-                        }
+                    }
+                    else if (resultBean.getDurationInSecs() > 0) {
+                        VisitsDetailFragment visitsDetailFragment = new VisitsDetailFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, resultBean);
+                        visitsDetailFragment.setArguments(bundle);
+                        showSubFragmentInterface.onShowFragment(visitsDetailFragment);
                     }
                 });
 
-                itemHolder.infoIv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
-                        Bundle bundle = new Bundle();
-                        String userGuid;
-                        if (UserType.isUserPatient()) {
-                            userGuid = resultBean.getDoctor().getUser_guid();
+                itemHolder.infoIv.setOnClickListener(v -> {
+                    DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();
+                    Bundle bundle = new Bundle();
+                    String userGuid;
+                    if (UserType.isUserPatient()) {
+                        userGuid = resultBean.getDoctor().getUser_guid();
 
-                            if (resultBean.getMedical_assistant() != null) {
-                                userGuid = resultBean.getMedical_assistant().getUser_guid();
-                            }
-                        } else {
-                            userGuid = resultBean.getPatient().getUser_guid();
-
-                            if (UserType.isUserAssistant()) {
-                                bundle.putString(ArgumentKeys.DOCTOR_GUID, resultBean.getDoctor().getUser_guid());
-                                bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
-                            }
+                        if (resultBean.getMedical_assistant() != null) {
+                            userGuid = resultBean.getMedical_assistant().getUser_guid();
                         }
-                        bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
-                        bundle.putString(ArgumentKeys.USER_GUID, userGuid);
+                    } else {
+                        userGuid = resultBean.getPatient().getUser_guid();
 
-                        doctorPatientDetailViewFragment.setArguments(bundle);
-                        showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
+                        if (UserType.isUserAssistant()) {
+                            bundle.putString(ArgumentKeys.DOCTOR_GUID, resultBean.getDoctor().getUser_guid());
+                            bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                        }
                     }
+                    bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
+                    bundle.putString(ArgumentKeys.USER_GUID, userGuid);
+
+                    doctorPatientDetailViewFragment.setArguments(bundle);
+                    showSubFragmentInterface.onShowFragment(doctorPatientDetailViewFragment);
                 });
 
                 if (userType == Constants.TYPE_PATIENT) {
