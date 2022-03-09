@@ -455,7 +455,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         } else {
                             if (Constants.ErrorFlag == false) {
                                 Constants.ErrorFlag = true;
-                                handleUnAuth(errorModel);
+                                try {
+                                    new Handler().postDelayed(() -> Constants.ErrorFlag = false,1500);
+                                } catch (Exception exception) {
+                                    exception.printStackTrace();
+                                }                                handleUnAuth(errorModel);
                                 errorModelLiveData.setValue(errorModel);
                             }
                         }
@@ -465,6 +469,12 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                     case 403:
                         if (Constants.ErrorFlag == false) {
                             Constants.ErrorFlag = true;
+                            try {
+                                new Handler().postDelayed(() -> Constants.ErrorFlag = false,1500);
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                            }
+
                             errorModelLiveData.setValue(errorModel);
                             if (isRefreshToken) {
                                 baseViewInterfaceList.clear();

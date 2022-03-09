@@ -51,6 +51,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
         newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                dismissProgressDialog();
                 if (baseApiResponseModel != null) {
                     try {
                         myDeviceListApiResponseModel = (MyDeviceListApiResponseModel) baseApiResponseModel;
@@ -102,6 +103,8 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
         backIv.setOnClickListener(this);
         txtAddDevice.setOnClickListener(this);
         toolbarTitle.setText(getString(R.string.key_my_devices));
+
+        showProgressDialog();
 
         newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_DEVICELIST);
 

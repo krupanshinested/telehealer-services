@@ -43,6 +43,7 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
         newDeviceApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                dismissProgressDialog();
                 if (baseApiResponseModel != null) {
                     try {
                         newDeviceApiResponseModel = (NewDeviceApiResponseModel) baseApiResponseModel;
@@ -82,7 +83,7 @@ public class NewDeviceSupportActivity extends BaseActivity implements View.OnCli
 
         backIv.setOnClickListener(this);
         toolbarTitle.setText(getString(R.string.str_new_device_setup));
-
+        showProgressDialog();
         newDeviceCrv.setEmptyState(EmptyViewConstants.EMPTY_DEVICELIST);
 
         newDeviceCrv.showOrhideEmptyState(false);

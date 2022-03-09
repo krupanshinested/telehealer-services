@@ -69,8 +69,10 @@
                             android:layout_marginVertical="@dimen/_10sdp"
                             android:background="@drawable/device_id_background"
                             android:fontFamily="@font/open_sans_semibold"
+                            android:inputType="textNoSuggestions"
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
                             android:hint="@string/enter_device_id"
-                            android:maxLines="1"
+                            android:singleLine="true"
                             android:padding="@dimen/_10sdp"
                             android:textColorHint="@color/colorBlack" />
 
@@ -106,7 +108,6 @@
                                 android:ellipsize="end"
                                 android:fontFamily="@font/open_sans_semibold"
                                 android:gravity="center|left"
-                                android:maxLines="1"
                                 android:textColor="@color/colorBlack"
                                 android:textSize="@dimen/_11ssp"
                                 tools:text="@string/str_new_device_dummy_desc" />
@@ -118,6 +119,7 @@
                                 android:background="@drawable/copy_btn_background"
                                 android:fontFamily="@font/open_sans"
                                 android:gravity="center"
+                                android:layout_gravity="center"
                                 android:paddingHorizontal="@dimen/_12sdp"
                                 android:paddingVertical="@dimen/_4sdp"
                                 android:text="@string/key_copy"

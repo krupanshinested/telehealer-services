@@ -214,7 +214,7 @@
                     android:visibility="gone"
                     android:paddingBottom="@dimen/_5sdp"
                     app:icon="@drawable/medical_assistant_icon"
-                    app:title="@string/str_new_device_setup" />
+                    app:title="@string/key_manage_devices" />
 
 
                 <View
