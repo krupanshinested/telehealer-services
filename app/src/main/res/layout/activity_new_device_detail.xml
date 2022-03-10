@@ -60,6 +60,7 @@
                             android:text="@string/str_new_device_dummy_desc"
                             android:textColor="@color/device_description_color"
                             android:textSize="@dimen/_12ssp"
+                            android:visibility="visible"
                             tools:text="@string/str_new_device_dummy_desc" />
 
                         <androidx.appcompat.widget.AppCompatEditText
@@ -68,28 +69,26 @@
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="@dimen/_10sdp"
                             android:background="@drawable/device_id_background"
-                            android:fontFamily="@font/open_sans_semibold"
-                            android:inputType="textNoSuggestions"
                             android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+                            android:fontFamily="@font/open_sans_semibold"
                             android:hint="@string/enter_device_id"
-                            android:singleLine="true"
+                            android:inputType="textNoSuggestions"
                             android:padding="@dimen/_10sdp"
+                            android:singleLine="true"
                             android:textColorHint="@color/colorBlack" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_description2"
+                            android:id="@+id/device_get_vital"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_10sdp"
                             android:ellipsize="end"
                             android:ems="3"
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
-                            android:text="@string/str_new_device_dummy_desc"
+                            android:text="@string/str_new_device_get_vital_desc"
                             android:textColor="@color/device_description_color"
                             android:textSize="@dimen/_12ssp"
-                            tools:text="@string/str_new_device_dummy_desc" />
-
+                            tools:text="@string/str_new_device_get_vital_desc" />
 
                         <LinearLayout
                             android:id="@+id/linkLayout"
@@ -116,19 +115,74 @@
                                 android:id="@+id/copy_device_link"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center"
                                 android:background="@drawable/copy_btn_background"
                                 android:fontFamily="@font/open_sans"
                                 android:gravity="center"
-                                android:layout_gravity="center"
+                                android:onClick="onClick"
                                 android:paddingHorizontal="@dimen/_12sdp"
                                 android:paddingVertical="@dimen/_4sdp"
                                 android:text="@string/key_copy"
-                                android:onClick="onClick"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="@dimen/_11ssp"
                                 tools:text="@string/key_copy" />
 
                         </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/str_new_device_dummy_desc" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/device_link1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_10sdp"
+                                android:ellipsize="end"
+                                android:ems="3"
+                                android:onClick="onClick"
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center|left"
+                                android:text="@string/key_download_product_sheet"
+                                android:textColor="@color/bt_theme_blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:fontFamily="@font/open_sans_semibold"
+                                tools:text="@string/key_download_product_sheet" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/device_link2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:ellipsize="end"
+                                android:ems="3"
+                                android:onClick="onClick"
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center|left"
+                                android:text="@string/key_download_user_manual"
+                                android:textColor="@color/bt_theme_blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:fontFamily="@font/open_sans_semibold"
+                                tools:text="@string/key_download_user_manual" />
+
+
+                        </LinearLayout>
+
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/device_sms_physician"
@@ -176,21 +230,20 @@
                     android:id="@+id/txtSubmit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_20sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
-                    android:paddingVertical="@dimen/_10sdp"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="@dimen/_13sdp"
-                    android:textColor="@color/bt_white"
-                    android:text="@string/submit"
-                    android:onClick="onClick"
-                    tools:text="@string/submit"
                     android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:background="@drawable/submit_btn_background"
                     android:backgroundTint="@color/app_gradient_start"
-                    android:background="@drawable/submit_btn_background" />
+                    android:onClick="onClick"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:text="@string/submit"
+                    android:textColor="@color/bt_white"
+                    android:textSize="@dimen/_13sdp"
+                    tools:text="@string/submit" />
 
             </RelativeLayout>
-
 
 
         </androidx.cardview.widget.CardView>

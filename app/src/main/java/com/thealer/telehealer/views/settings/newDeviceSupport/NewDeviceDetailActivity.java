@@ -2,14 +2,24 @@ package com.thealer.telehealer.views.settings.newDeviceSupport;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -36,7 +46,6 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.home.DoctorPatientListAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,10 +55,13 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private ImageView backIv;
     private TextView toolbarTitle;
     private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician;
+    private AppCompatTextView deviceLink1, deviceLink2;
     private AppCompatEditText edtDeviceId;
     private AppCompatTextView txtSubmit;
     private AppCompatImageView deviceTv;
     private LinearLayout linkLayout;
+    String productLink1 = "";
+    String productLink2 = "";
     AppCompatTextView deviceLink;
     private AssociationApiViewModel associationApiViewModel;
     private AssociationApiViewModel associationUniqueApiViewModel;
@@ -64,6 +76,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations = new ArrayList<>();
     private MyPhysicianListAdapter myPhysicianListAdapter;
     private RecyclerView newDeviceCrv;
+    AlertDialog alertDialog = null;
 
 
     private void initObservers() {
@@ -119,7 +132,11 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         toolbarTitle = findViewById(R.id.toolbar_title);
         deviceDescription2 = findViewById(R.id.device_description2);
         deviceDescription1 = findViewById(R.id.device_description1);
+        deviceLink1 = findViewById(R.id.device_link1);
+        deviceLink2 = findViewById(R.id.device_link2);
         backIv.setOnClickListener(this);
+        deviceLink1.setOnClickListener(this);
+        deviceLink2.setOnClickListener(this);
 
         Gson gson = new Gson();
         if (getIntent().getExtras() != null) {
@@ -132,6 +149,8 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 title = deviceDetail.getName();
                 description = deviceDetail.getDescription();
                 image = deviceDetail.getImage();
+                productLink1 = deviceDetail.getProduct_info_link();
+                productLink2 = deviceDetail.getProduct_info_link_1();
 //                edtDeviceId.setText(deviceDetail.getId());
 //                edtDeviceId.setEnabled(false);
 //                edtDeviceId.setClickable(false);
@@ -141,6 +160,8 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 title = myDeviceDetail.getHealthcare_device().getName();
                 description = myDeviceDetail.getHealthcare_device().getDescription();
                 image = myDeviceDetail.getHealthcare_device().getImage();
+                productLink1 = myDeviceDetail.getHealthcare_device().getProduct_info_link();
+                productLink2 = myDeviceDetail.getHealthcare_device().getProduct_info_link_1();
                 edtDeviceId.setText(myDeviceDetail.getDevice_id());
                 edtDeviceId.setEnabled(false);
                 edtDeviceId.setClickable(false);
@@ -162,11 +183,41 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         if (deviceFlag) {
             txtSubmit.setVisibility(View.GONE);
             deviceDescription1.setVisibility(View.GONE);
-            deviceDescriptionVital.setVisibility(View.GONE);
-        }
+            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled_view));
+        } else
+            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled));
+
 
         getUniqueUrl();
         getAssociationsList(true);
+        String clickHereText = getString(R.string.str_new_device_dummy_desc);
+        SpannableString ss = new SpannableString(getString(R.string.str_new_device_dummy_desc));
+        int currentIndex = clickHereText.indexOf(getString(R.string.key_to_find_number));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                ViewGroup viewGroup = findViewById(android.R.id.content);
+                View dialogView = LayoutInflater.from(activity).inflate(R.layout.custom_dialog, viewGroup, false);
+
+                AppCompatImageView btnClose = dialogView.findViewById(R.id.btn_close);
+                btnClose.setOnClickListener(view -> {
+                    alertDialog.dismiss();
+                });
+                builder.setView(dialogView);
+                alertDialog = builder.create();
+                alertDialog.show();
+
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+            }
+        };
+        ss.setSpan(clickableSpan, currentIndex, clickHereText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        deviceDescription1.setText(ss);
+        deviceDescription1.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void setNewDevice() {
@@ -229,6 +280,16 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.back_iv:
                 onBackPressed();
+                break;
+            case R.id.device_link1:
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse("http://docs.google.com/viewer?url=" + productLink1), "text/html");
+                startActivity(intent);
+                break;
+            case R.id.device_link2:
+                Intent link2 = new Intent(Intent.ACTION_VIEW);
+                link2.setDataAndType(Uri.parse("http://docs.google.com/viewer?url=" + productLink2), "text/html");
+                startActivity(link2);
                 break;
             case R.id.copy_device_link:
                 setClipboard(activity, uniqueUrl);
