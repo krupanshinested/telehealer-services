@@ -76,9 +76,16 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
         deleteDeviceApiViewModel.getBaseDeleteApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+
+
                 if (baseApiResponseModel != null) {
-                    // refreshList
-                    getMyDeviceList();
+                    Utils.showAlertDialogWithFinish(activity, baseApiResponseModel.getMessage(),getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // refreshList
+                            getMyDeviceList();
+                        }
+                    });
                 }
             }
         });

@@ -688,6 +688,20 @@ public class Utils {
         return dialog;
     }
 
+    public static Dialog showAlertDialogWithFinish(Context context,String message,
+                                         @Nullable String positiveTitle,
+                                         @Nullable DialogInterface.OnClickListener positiveListener) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context, R.style.custom_alert_dialog_style);
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+        if (positiveTitle != null) {
+            alertDialog.setPositiveButton(positiveTitle, positiveListener);
+        }
+        AlertDialog dialog = alertDialog.create();
+        dialog.show();
+        return dialog;
+    }
+
     public static Dialog showAlertDialogWithClose(Context context, String title, String message,
                                                   @Nullable String leftTitle,
                                                   @Nullable String rightTitle,

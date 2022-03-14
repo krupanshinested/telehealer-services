@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.settings.newDeviceSupport;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -84,9 +85,16 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         newDeviceSetApiViewModel.baseApiSetDeviceResponseModelMutableLiveData.observe(this, new Observer<SetDeviceResponseModel>() {
             @Override
             public void onChanged(SetDeviceResponseModel setDeviceResponseModel) {
-                finish();
-                txtSubmit.setClickable(true);
-                Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
+
+                Utils.showAlertDialogWithFinish(activity, setDeviceResponseModel.getMessage(),getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                        txtSubmit.setClickable(true);
+                        Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
+                    }
+                });
+
             }
         });
 
