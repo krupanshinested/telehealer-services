@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,12 +27,14 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.OnDeviceItemClickListener;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.common.SuccessViewInterface;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyDeviceListActivity extends BaseActivity implements View.OnClickListener {
+public class MyDeviceListActivity extends BaseActivity implements View.OnClickListener, SuccessViewInterface {
     private ImageView backIv;
     private TextView toolbarTitle;
     private CustomRecyclerView newDeviceCrv;
@@ -79,13 +82,22 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
 
 
                 if (baseApiResponseModel != null) {
-                    Utils.showAlertDialogWithFinish(activity, baseApiResponseModel.getMessage(),getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // refreshList
-                            getMyDeviceList();
-                        }
-                    });
+//                    Utils.showAlertDialogWithFinish(activity, baseApiResponseModel.getMessage(),getString(R.string.ok), new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            // refreshList
+//                            getMyDeviceList();
+//                        }
+//                    });
+                    SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, baseApiResponseModel.getMessage());
+                    bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
+                    successViewDialogFragment.setArguments(bundle);
+                    successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
                 }
             }
         });
@@ -159,6 +171,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     private void deleteDevice(String device_id){
         deleteDeviceApiViewModel.deleteDevice(device_id);
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -172,6 +185,11 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
     }
 
     public void refreshList(){
+        getMyDeviceList();
+    }
+
+    @Override
+    public void onSuccessViewCompletion(boolean success) {
         getMyDeviceList();
     }
 }
