@@ -23,7 +23,7 @@ public class NewDeviceApiViewModel extends BaseApiViewModel {
     }
 
     public void getDevicelist() {
-        fetchToken(status -> getPublicApiService().getDeviceList()
+        fetchToken(status -> getAuthApiService().getDeviceList()
                 .compose(applySchedulers())
                 .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(true)) {
                     @Override

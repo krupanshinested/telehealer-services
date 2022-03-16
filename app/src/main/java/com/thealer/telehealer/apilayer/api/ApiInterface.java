@@ -678,7 +678,7 @@ public interface ApiInterface {
     @GET("api/log/requests-log")
     Observable<AccessLogApiResponseModel> getAccessLogs(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query("method") String method);
 
-    @GET("devices")
+    @GET("api/devices")
     Observable<NewDeviceApiResponseModel> getDeviceList();
 
     @POST("api/user-devices")

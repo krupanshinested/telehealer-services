@@ -56,16 +56,13 @@ public class MedicalHistoryListAdapter extends RecyclerView.Adapter<MedicalHisto
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.itemTitleTv.setText(listItem.get(i));
         viewHolder.leftIv.setImageDrawable(fragmentActivity.getDrawable(MedicalHistoryConstants.getIcon(typeList[i])));
-        viewHolder.itemCl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        viewHolder.itemCl.setOnClickListener(v -> {
 
-                MedicalHistoryEditFragment medicalHistoryEditFragment = new MedicalHistoryEditFragment();
-                bundle.putString(ArgumentKeys.HISTORY_TYPE, typeList[i]);
-                medicalHistoryEditFragment.setArguments(bundle);
-                medicalHistoryEditFragment.setTargetFragment(fragment, RequestID.REQ_HISTORY_UPDATE);
-                showSubFragmentInterface.onShowFragment(medicalHistoryEditFragment);
-            }
+            MedicalHistoryEditFragment medicalHistoryEditFragment = new MedicalHistoryEditFragment();
+            bundle.putString(ArgumentKeys.HISTORY_TYPE, typeList[i]);
+            medicalHistoryEditFragment.setArguments(bundle);
+            medicalHistoryEditFragment.setTargetFragment(fragment, RequestID.REQ_HISTORY_UPDATE);
+            showSubFragmentInterface.onShowFragment(medicalHistoryEditFragment);
         });
     }
 
