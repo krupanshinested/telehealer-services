@@ -11,6 +11,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +45,18 @@ import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
+import com.thealer.telehealer.views.common.SuccessViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener {
+public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener, SuccessViewInterface {
     private ImageView backIv;
     private TextView toolbarTitle;
     private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician;
@@ -86,14 +90,22 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             @Override
             public void onChanged(SetDeviceResponseModel setDeviceResponseModel) {
 
-                Utils.showAlertDialogWithFinish(activity, setDeviceResponseModel.getMessage(),getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                        txtSubmit.setClickable(true);
-                        Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
-                    }
-                });
+//                Utils.showAlertDialogWithFinish(activity, setDeviceResponseModel.getMessage(),getString(R.string.ok), new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        finish();
+//                        txtSubmit.setClickable(true);
+//                        Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
+//                    }
+//                });
+                SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, setDeviceResponseModel.getMessage());
+                bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
+                successViewDialogFragment.setArguments(bundle);
+                successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
 
             }
         });
@@ -321,5 +333,12 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             clipboard.setPrimaryClip(clip);
             Toast.makeText(activity, "Copied Url", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onSuccessViewCompletion(boolean success) {
+        finish();
+        txtSubmit.setClickable(true);
+        Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
     }
 }
