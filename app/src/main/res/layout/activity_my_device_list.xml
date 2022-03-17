@@ -18,10 +18,6 @@
         android:id="@+id/txtAddDevice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_25sdp"
-        android:layout_marginVertical="@dimen/_10sdp"
-        android:paddingHorizontal="@dimen/_20sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
         android:paddingVertical="@dimen/_10sdp"
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/_13sdp"
@@ -31,6 +27,6 @@
         tools:text="@string/key_add_new_device"
         android:layout_alignParentBottom="true"
         android:backgroundTint="@color/app_gradient_start"
-        android:background="@drawable/submit_btn_background" />
+        android:background="@color/app_gradient_start" />
 
 </LinearLayout>

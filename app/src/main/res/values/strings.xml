@@ -373,7 +373,7 @@
     <string name="account_deletion_description">To Delete account permanantly,enter the text \'DELETE\'</string>
     <string name="delete_account_description">Are you sure you want to delete your account? Deleting your account would terminate all access to the platform and immediately also delete all your records. This will not be retrievable at a later point and this action cannot be reversed.</string>
     <string name="profile_settings">Profile Settings</string>
-    <string name="submit">submit</string>
+    <string name="submit">Submit</string>
     <string name="time">time</string>
     <string name="vitals_patient_bottom_hint_1">Your provider\'s office may be  </string>
     <string name="not">NOT</string>
@@ -1625,8 +1625,8 @@
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
     <string name="str_new_device_setup">Setup New Tellihealth Device</string>
     <string name="EMPTY_DEVICE">No Tellihealth Device Added</string>
-    <string name="str_new_device_dummy_desc">Enter your Device ID here in the first tab. You\'ll find your Device ID on the unit as IMEI on the back below the QR code. <font color='#FF0000'><b>To find the number click here.</b></font></string>
-    <string name="str_new_device_get_vital_desc">To get the vitals from Tellihealth to Telehealer, copy the below API URL and paste it in the API URL under your dashboard in Tellihealth.</string>
+    <string name="str_new_device_dummy_desc">Enter your Device ID here in the first tab. You\'ll find your Device ID on the unit as IMEI on the back below the QR code. To find the number <font color='#FF0000'><b>click here.</b></font></string>
+    <string name="str_new_device_get_vital_desc">To get the vitals from Tellihealth to Telehealer, copy the URL below and paste it in the API URL under your dashboard in Tellihealth.</string>
     <string name="str_new_device_dummy_desc2">ONLY YOUR vitals should be measured with this device to ensure accuracy of medical care.</string>
     <string name="enter_device_id">Enter Device IMEI Number</string>
     <string name="key_copy">Copy</string>
@@ -1639,6 +1639,6 @@
     <string name="key_device_sms_enabled_view">SMS for following physician: </string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
-    <string name="key_to_find_number">To find the number click here.</string>
+    <string name="key_to_find_number">click here.</string>
 
 </resources>

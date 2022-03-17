@@ -189,7 +189,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
             newDeviceCrv = findViewById(R.id.physician_crv);
             myPhysicianListAdapter = new MyPhysicianListAdapter(this, deviceFlag);
-            newDeviceCrv.setLayoutManager(new LinearLayoutManager(activity));
+            newDeviceCrv.setLayoutManager(new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false));
             newDeviceCrv.setAdapter(myPhysicianListAdapter);
         }
 

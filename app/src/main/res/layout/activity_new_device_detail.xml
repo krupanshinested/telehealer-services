@@ -29,7 +29,6 @@
                 <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@+id/txtSubmit"
                     android:layout_marginBottom="@dimen/_10sdp"
                     android:fillViewport="true">
 
@@ -75,6 +74,7 @@
                             android:inputType="textNoSuggestions"
                             android:padding="@dimen/_10sdp"
                             android:singleLine="true"
+                            android:textSize="@dimen/_12ssp"
                             android:textColorHint="@color/colorBlack" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -205,6 +205,7 @@
                             android:layout_height="match_parent"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:fitsSystemWindows="true"
+                            android:scrollbars="horizontal"
                             android:padding="@dimen/_5sdp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -221,27 +222,26 @@
                             android:textSize="@dimen/_11ssp"
                             tools:text="@string/str_new_device_dummy_desc2" />
 
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtSubmit"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/submit_btn_background"
+                            android:backgroundTint="@color/app_gradient_start"
+                            android:onClick="onClick"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/_20sdp"
+                            android:paddingVertical="@dimen/_10sdp"
+                            android:text="@string/submit"
+                            android:textColor="@color/bt_white"
+                            android:textSize="@dimen/_13sdp"
+                            tools:text="@string/submit" />
 
                     </LinearLayout>
 
                 </androidx.core.widget.NestedScrollView>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txtSubmit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="@dimen/_10sdp"
-                    android:background="@drawable/submit_btn_background"
-                    android:backgroundTint="@color/app_gradient_start"
-                    android:onClick="onClick"
-                    android:paddingHorizontal="@dimen/_20sdp"
-                    android:paddingVertical="@dimen/_10sdp"
-                    android:text="@string/submit"
-                    android:textColor="@color/bt_white"
-                    android:textSize="@dimen/_13sdp"
-                    tools:text="@string/submit" />
 
             </RelativeLayout>
 
