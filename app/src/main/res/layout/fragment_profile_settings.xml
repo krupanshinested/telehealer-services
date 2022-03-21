@@ -213,7 +213,7 @@
                     app:hideSpiltter="true"
                     android:visibility="gone"
                     android:paddingBottom="@dimen/_5sdp"
-                    app:icon="@drawable/medical_assistant_icon"
+                    app:icon="@drawable/settings_tellihealthdevice"
                     app:title="@string/key_manage_devices" />
 
 

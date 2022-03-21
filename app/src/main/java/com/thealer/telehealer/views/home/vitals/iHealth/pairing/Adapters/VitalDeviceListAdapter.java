@@ -78,12 +78,17 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
             sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.setup_new_devices), set_up_device));
+            sources.add(new DataSource(null,empty_space,"",none));
         }
 
-        sources.add(new DataSource(null,empty_space,"",none));
         sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manual_input),manual_entry_type));
-        sources.add(new DataSource(null,empty_space,"",none));
-        sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.str_new_device_setup),set_up_telihealth_device));
+
+        if (measurementType != null && measurementType.equals(SupportedMeasurementType.height)) {
+
+        } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
+            sources.add(new DataSource(null,empty_space,"",none));
+            sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.str_new_device_setup),set_up_telihealth_device));
+        }
 
         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             sources.add(new DataSource(null,empty_space,"",none));
