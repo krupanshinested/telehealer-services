@@ -59,7 +59,7 @@ import java.util.List;
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener, SuccessViewInterface {
     private ImageView backIv;
     private TextView toolbarTitle;
-    private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician;
+    private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician, devicestep;
     private AppCompatTextView deviceLink1, deviceLink2;
     private AppCompatEditText edtDeviceId;
     private AppCompatTextView txtSubmit;
@@ -152,6 +152,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         toolbarTitle = findViewById(R.id.toolbar_title);
         deviceDescription2 = findViewById(R.id.device_description2);
         deviceDescription1 = findViewById(R.id.device_description1);
+        devicestep = findViewById(R.id.device_step);
         deviceLink1 = findViewById(R.id.device_link1);
         deviceLink2 = findViewById(R.id.device_link2);
         backIv.setOnClickListener(this);
@@ -189,7 +190,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
             newDeviceCrv = findViewById(R.id.physician_crv);
             myPhysicianListAdapter = new MyPhysicianListAdapter(this, deviceFlag);
-            newDeviceCrv.setLayoutManager(new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false));
+            newDeviceCrv.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
             newDeviceCrv.setAdapter(myPhysicianListAdapter);
         }
 
@@ -238,6 +239,8 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         ss.setSpan(clickableSpan, currentIndex, clickHereText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         deviceDescription1.setText(ss);
         deviceDescription1.setMovementMethod(LinkMovementMethod.getInstance());
+
+        devicestep.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void setNewDevice() {
