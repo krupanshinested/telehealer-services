@@ -1625,7 +1625,7 @@
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
     <string name="str_new_device_setup">Setup New Tellihealth Device</string>
     <string name="EMPTY_DEVICE">No Tellihealth Device Added</string>
-    <string name="str_new_device_dummy_desc">Enter your Device ID here then save changes. Find your Device ID on the unit as IMEI number. To find IMEI, <font color='#FF0000'><b>Click here.</b></font></string>
+    <string name="str_new_device_dummy_desc">1. Enter your Device ID here then save changes. Find your Device ID on the unit as IMEI number. To find IMEI, <font color='#FF0000'><b>Click here.</b></font></string>
     <string name="str_new_device_get_vital_desc">To get the vitals from Tellihealth to Telehealer, copy the URL below and paste it in the API URL under your dashboard in Tellihealth.</string>
     <string name="str_new_device_dummy_desc2">ONLY YOUR vitals should be measured with this device to ensure accuracy of medical care.</string>
     <string name="enter_device_id">Enter Device IMEI Number</string>
@@ -1635,7 +1635,7 @@
     <string name="key_manage_devices">Manage Tellihealth Devices</string>
     <string name="key_add_new_device">Add New Device</string>
     <string name="key_device_delete_confirmation">Are you sure you want to delete this device?</string>
-    <string name="key_device_sms_enabled">Select provider to receive feedback from regarding your vitals:</string>
+    <string name="key_device_sms_enabled">2. Select provider to receive feedback from regarding your vitals:</string>
     <string name="key_device_sms_enabled_view">SMS for following physician: </string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
@@ -1644,5 +1644,7 @@
     <string name="tellihealthstep">1. Login to <font color='#FF0000'><b><a href="https://tellihealth.com/my-account/">Tellihealth</a></b></font> site. If not registered then please complete registration.\n2. Go to "Developers" from left menu.\n3. Here you will find "API Callback URL" and "Product" list.\n4. Select your product from the list and copy paste the below "Unique URL" from here and paste in "API Callback URL" and save changes.</string>
     <string name="tellihealth">Tellihealth</string>
     <string name="donotshare">* Please DO NOT SHARE your unique url with anyone.</string>
+    <string name="tellihealthnotes">Please follow below steps to register Tellihealth device with Telehealer.</string>
+    <string name="telehealerstep">Telehealer Steps:</string>
 
 </resources>

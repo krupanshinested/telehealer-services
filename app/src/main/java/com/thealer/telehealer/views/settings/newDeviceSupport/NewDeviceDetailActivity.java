@@ -203,8 +203,9 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
         if (deviceFlag) {
             txtSubmit.setVisibility(View.GONE);
-            deviceDescription1.setVisibility(View.GONE);
-            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled_view));
+//            deviceDescription1.setVisibility(View.GONE);
+//            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled_view));
+            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled));
         } else
             deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled));
 
