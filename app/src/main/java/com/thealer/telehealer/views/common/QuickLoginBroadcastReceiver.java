@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.thealer.telehealer.common.ArgumentKeys;
 
@@ -14,6 +15,7 @@ public class QuickLoginBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
+        Log.d("Quick login status", "Quick login status" + bundle.getInt(ArgumentKeys.QUICK_LOGIN_STATUS));
         if (bundle != null) {
             onQuickLogin(bundle.getInt(ArgumentKeys.QUICK_LOGIN_STATUS));
         }
