@@ -1,5 +1,6 @@
 package com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static final int manual_entry_type = 1;
     public static final int device_type = 2;
     public static final int set_up_device = 3;
+    public static final int set_up_telihealth_device = 5;
     public static final int google_fit_sources = 4;
 
     private Context context;
@@ -59,7 +61,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 VitalDevice device = connectedDevices.get(i);
                 sources.add(new DataSource(device,data,"",device_type));
             }
-            
+
         }
 
         if (unconnectedDevices.size() > 0) {
@@ -76,10 +78,17 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
             sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.setup_new_devices), set_up_device));
+            sources.add(new DataSource(null,empty_space,"",none));
         }
 
-        sources.add(new DataSource(null,empty_space,"",none));
         sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manual_input),manual_entry_type));
+
+        if (measurementType != null && measurementType.equals(SupportedMeasurementType.height)) {
+
+        } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
+            sources.add(new DataSource(null,empty_space,"",none));
+            sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.str_new_device_setup),set_up_telihealth_device));
+        }
 
         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
             sources.add(new DataSource(null,empty_space,"",none));
@@ -123,7 +132,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") int position) {
         DataSource dataSource = sources.get(position);
         View baseView = null;
         switch (dataSource.getDataType()) {
