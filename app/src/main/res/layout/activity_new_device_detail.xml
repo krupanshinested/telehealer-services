@@ -266,12 +266,12 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:ems="3"
-                            android:visibility="gone"
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
                             android:text="@string/str_new_device_get_vital_desc"
                             android:textColor="@color/device_description_color"
                             android:textSize="@dimen/_12ssp"
+                            android:visibility="gone"
                             tools:text="@string/str_new_device_get_vital_desc" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -287,15 +287,96 @@
                             android:textSize="@dimen/_12ssp"
                             tools:text="@string/key_device_sms_enabled" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/physician_crv"
+                        <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:fadeScrollbars="false"
-                            android:fitsSystemWindows="true"
-                            android:padding="@dimen/_5sdp"
-                            android:scrollbars="horizontal" />
+                            android:layout_marginTop="@dimen/_5sdp">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/physician_crv"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:layout_marginEnd="@dimen/_12sdp"
+                                android:fitsSystemWindows="true"
+                                android:orientation="horizontal"
+                                android:padding="@dimen/_2sdp"
+                                android:scrollbars="none"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/adapter_sms_physician" />
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="@dimen/_22sdp"
+                                android:layout_height="@dimen/_22sdp"
+                                android:layout_gravity="center_vertical|start"
+                                android:elevation="0dp"
+                                app:cardBackgroundColor="@android:color/transparent"
+                                app:cardCornerRadius="@dimen/_15sdp"
+                                app:cardElevation="0dp">
+
+                                <com.skyfishjy.library.RippleBackground
+                                    android:id="@+id/contentprevious"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_vertical"
+                                    app:rb_color="#E0E0E0"
+                                    app:rb_duration="2000"
+                                    app:rb_radius="32dp"
+                                    app:rb_rippleAmount="2"
+                                    app:rb_scale="1">
+
+                                    <ImageView
+                                        android:id="@+id/ibtn_previous"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:src="@drawable/ic_previous" />
+                                </com.skyfishjy.library.RippleBackground>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="@dimen/_22sdp"
+                                android:layout_height="@dimen/_22sdp"
+                                android:layout_gravity="center_vertical|end"
+                                android:elevation="0dp"
+                                app:cardBackgroundColor="@android:color/transparent"
+                                app:cardCornerRadius="@dimen/_15sdp"
+                                app:cardElevation="0dp">
+
+                                <com.skyfishjy.library.RippleBackground
+                                    android:id="@+id/contentpreviouss"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    app:rb_color="#E0E0E0"
+                                    app:rb_duration="2000"
+                                    app:rb_radius="35dp"
+                                    app:rb_rippleAmount="2"
+                                    app:rb_scale="1">
+
+                                    <ImageView
+                                        android:id="@+id/ibtn_next"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:src="@drawable/ic_next" />
+                                </com.skyfishjy.library.RippleBackground>
+
+                            </androidx.cardview.widget.CardView>
+
+
+                        </FrameLayout>
+
+                        <!--                        <androidx.recyclerview.widget.RecyclerView-->
+                        <!--                            android:id="@+id/physician_crv"-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="match_parent"-->
+                        <!--                            android:layout_marginTop="@dimen/_5sdp"-->
+                        <!--                            android:fadeScrollbars="false"-->
+                        <!--                            android:fitsSystemWindows="true"-->
+                        <!--                            android:padding="@dimen/_5sdp"-->
+                        <!--                            android:scrollbars="horizontal" />-->
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/device_description_vital"

@@ -2,7 +2,6 @@ package com.thealer.telehealer.views.settings.newDeviceSupport;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,9 +30,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.AssociationAdapterListModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
@@ -45,7 +46,6 @@ import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -57,7 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener, SuccessViewInterface {
-    private ImageView backIv;
+    private ImageView backIv,previousPhysician,nextPhysician;
     private TextView toolbarTitle;
     private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician, devicestep;
     private AppCompatTextView deviceLink1, deviceLink2;
@@ -82,10 +82,28 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private MyPhysicianListAdapter myPhysicianListAdapter;
     private RecyclerView newDeviceCrv;
     AlertDialog alertDialog = null;
+    private RippleBackground contentprevious;
+    private RippleBackground contentpreviouss;
 
 
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
+
+        newDeviceSetApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                Log.d("TAG", "onChanged: " + errorModel.getMessage());
+                SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
+                successViewDialogFragment.setArguments(bundle);
+                successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+            }
+        });
+
         newDeviceSetApiViewModel.baseApiSetDeviceResponseModelMutableLiveData.observe(this, new Observer<SetDeviceResponseModel>() {
             @Override
             public void onChanged(SetDeviceResponseModel setDeviceResponseModel) {
@@ -143,7 +161,13 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         activity = this;
         backIv = findViewById(R.id.back_iv);
         deviceDescriptionVital = findViewById(R.id.device_description_vital);
+        previousPhysician = findViewById(R.id.ibtn_previous);
+        contentprevious = findViewById(R.id.contentprevious);
+        contentpreviouss = findViewById(R.id.contentpreviouss);
+        contentprevious.startRippleAnimation();
+        contentpreviouss.startRippleAnimation();
         deviceSmsPhysician = findViewById(R.id.device_sms_physician);
+        nextPhysician = findViewById(R.id.ibtn_next);
         linkLayout = findViewById(R.id.linkLayout);
         deviceTv = findViewById(R.id.deviceTv);
         deviceLink = findViewById(R.id.device_link);
@@ -158,6 +182,8 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         backIv.setOnClickListener(this);
         deviceLink1.setOnClickListener(this);
         deviceLink2.setOnClickListener(this);
+        previousPhysician.setOnClickListener(this);
+        nextPhysician.setOnClickListener(this);
 
         Gson gson = new Gson();
         if (getIntent().getExtras() != null) {
@@ -324,6 +350,16 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 } else
                     setNewDevice();
                 break;
+            case R.id.ibtn_previous:
+                int CurrentPos = ((LinearLayoutManager)newDeviceCrv.getLayoutManager()).findFirstVisibleItemPosition();
+                if (CurrentPos > 0)
+                    newDeviceCrv.scrollToPosition(CurrentPos - 1);
+                break;
+            case R.id.ibtn_next:
+                int CurrentPosition = ((LinearLayoutManager)newDeviceCrv.getLayoutManager()).findFirstVisibleItemPosition();
+                if (CurrentPosition < newDeviceCrv.getAdapter().getItemCount()-1)
+                    newDeviceCrv.scrollToPosition(CurrentPosition + 1);
+                break;
         }
     }
 
@@ -341,8 +377,10 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
     @Override
     public void onSuccessViewCompletion(boolean success) {
-        finish();
         txtSubmit.setClickable(true);
-        Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
+        if (success) {
+            finish();
+            Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
+        }
     }
 }
