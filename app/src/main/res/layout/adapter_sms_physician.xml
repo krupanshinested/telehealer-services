@@ -9,8 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/list_item_cv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/_3sdp"
+        android:layout_height="@dimen/_68sdp"
         app:cardCornerRadius="6dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/bottom_view"
@@ -20,58 +19,53 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/list_data_cl"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_8sdp"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/list_data_cl"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar_civ"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:src="@drawable/profile_placeholder"
+                    app:civ_border_color="@android:color/darker_gray"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/list_title_tv"
+                    style="@style/card_title_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_default"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:textSize="@dimen/_13ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/checkbox"
+                    app:layout_constraintStart_toEndOf="@id/avatar_civ"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/dummy_text" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/avatar_civ"
-                        android:layout_width="@dimen/card_image_view_size"
-                        android:layout_height="@dimen/card_image_view_size"
-                        android:src="@drawable/profile_placeholder"
-                        app:civ_border_color="@android:color/darker_gray"
-                        app:civ_border_width="1dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/list_title_tv"
-                        style="@style/card_title_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="@dimen/margin_default"
-                        android:layout_weight="1"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/checkbox"
-                        app:layout_constraintStart_toEndOf="@id/avatar_civ"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="@string/dummy_text" />
-
-                    <androidx.appcompat.widget.AppCompatCheckBox
-                        android:id="@+id/checkbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="SMS"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </LinearLayout>
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="SMS"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </LinearLayout>
         </LinearLayout>
