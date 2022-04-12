@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -57,7 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener, SuccessViewInterface {
-    private ImageView backIv,previousPhysician,nextPhysician;
+    private ImageView backIv, previousPhysician, nextPhysician;
     private TextView toolbarTitle;
     private AppCompatTextView deviceDescription2, deviceDescription1, deviceDescriptionVital, deviceSmsPhysician, devicestep;
     private AppCompatTextView deviceLink1, deviceLink2;
@@ -84,7 +85,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     AlertDialog alertDialog = null;
     private RippleBackground contentprevious;
     private RippleBackground contentpreviouss;
-
+    private CardView vwprevious, vwnext;
 
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
@@ -92,7 +93,6 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         newDeviceSetApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                Log.d("TAG", "onChanged: " + errorModel.getMessage());
                 SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
@@ -161,13 +161,15 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         activity = this;
         backIv = findViewById(R.id.back_iv);
         deviceDescriptionVital = findViewById(R.id.device_description_vital);
+        vwprevious = findViewById(R.id.vw_previous);
         previousPhysician = findViewById(R.id.ibtn_previous);
         contentprevious = findViewById(R.id.contentprevious);
-        contentpreviouss = findViewById(R.id.contentpreviouss);
         contentprevious.startRippleAnimation();
-        contentpreviouss.startRippleAnimation();
         deviceSmsPhysician = findViewById(R.id.device_sms_physician);
+        vwnext = findViewById(R.id.vw_next);
         nextPhysician = findViewById(R.id.ibtn_next);
+        contentpreviouss = findViewById(R.id.contentpreviouss);
+        contentpreviouss.startRippleAnimation();
         linkLayout = findViewById(R.id.linkLayout);
         deviceTv = findViewById(R.id.deviceTv);
         deviceLink = findViewById(R.id.device_link);
@@ -322,6 +324,15 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             }
         }
         myPhysicianListAdapter.setData(adapterListModels);
+
+        if (adapterListModels.size() <= 1) {
+            vwnext.setVisibility(View.GONE);
+            vwprevious.setVisibility(View.GONE);
+        } else {
+            vwnext.setVisibility(View.VISIBLE);
+            vwprevious.setVisibility(View.VISIBLE);
+        }
+
     }
 
 
@@ -351,13 +362,13 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                     setNewDevice();
                 break;
             case R.id.ibtn_previous:
-                int CurrentPos = ((LinearLayoutManager)newDeviceCrv.getLayoutManager()).findFirstVisibleItemPosition();
+                int CurrentPos = ((LinearLayoutManager) newDeviceCrv.getLayoutManager()).findFirstVisibleItemPosition();
                 if (CurrentPos > 0)
                     newDeviceCrv.scrollToPosition(CurrentPos - 1);
                 break;
             case R.id.ibtn_next:
-                int CurrentPosition = ((LinearLayoutManager)newDeviceCrv.getLayoutManager()).findFirstVisibleItemPosition();
-                if (CurrentPosition < newDeviceCrv.getAdapter().getItemCount()-1)
+                int CurrentPosition = ((LinearLayoutManager) newDeviceCrv.getLayoutManager()).findFirstVisibleItemPosition();
+                if (CurrentPosition < newDeviceCrv.getAdapter().getItemCount() - 1)
                     newDeviceCrv.scrollToPosition(CurrentPosition + 1);
                 break;
         }
