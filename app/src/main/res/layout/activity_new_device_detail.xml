@@ -301,11 +301,13 @@
                                 android:fitsSystemWindows="true"
                                 android:orientation="horizontal"
                                 android:padding="@dimen/_2sdp"
-                                android:scrollbars="none"
+                                android:scrollbars="horizontal"
+                                android:fadeScrollbars="false"
                                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                 tools:listitem="@layout/adapter_sms_physician" />
 
                             <androidx.cardview.widget.CardView
+                                android:id="@+id/vw_previous"
                                 android:layout_width="@dimen/_22sdp"
                                 android:layout_height="@dimen/_22sdp"
                                 android:layout_gravity="center_vertical|start"
@@ -336,6 +338,7 @@
                             </androidx.cardview.widget.CardView>
 
                             <androidx.cardview.widget.CardView
+                                android:id="@+id/vw_next"
                                 android:layout_width="@dimen/_22sdp"
                                 android:layout_height="@dimen/_22sdp"
                                 android:layout_gravity="center_vertical|end"
