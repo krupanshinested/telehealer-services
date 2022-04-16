@@ -21,18 +21,6 @@
             "package_name": "com.thealer",
             "certificate_hash": "fe1a82319e7e7958ad7521ee268bc3726d8023eb"
           }
-        },
-        {
-          "client_id": "1092527537093-uk22p0irg4g86qv9p8bsuql892jqrafv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thealer",
-            "certificate_hash": "70430c92d9eaeaad4b2fa66ffd3f213e5074937d"
-          }
-        },
-        {
-          "client_id": "1092527537093-meuo13qng2ln73l4dsi36jkqqalicbf2.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -41,21 +29,27 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
+          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "1092527537093-meuo13qng2ln73l4dsi36jkqqalicbf2.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1092527537093-f4jj018eeupvuirhoj1o259dctm46m51.apps.googleusercontent.com",
+              "client_id": "1092527537093-u806vjqvrtd95les2fh3ira3ml4b7j5p.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.thealer",
-                "app_store_id": "1437457936"
+                "bundle_id": "com.thealer.pro"
               }
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     },
@@ -68,24 +62,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "1092527537093-b3961u431tqldfgoh137sm5pqp70pksg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thealer.pro",
-            "certificate_hash": "b8f120e77f4ad70c1c3c9041c3b2d4078dc92512"
-          }
-        },
-        {
           "client_id": "1092527537093-gun54eh7f6bjbjummdqfj1s90jkp2npi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.thealer.pro",
             "certificate_hash": "fe1a82319e7e7958ad7521ee268bc3726d8023eb"
           }
-        },
-        {
-          "client_id": "1092527537093-meuo13qng2ln73l4dsi36jkqqalicbf2.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -94,21 +76,27 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
+          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "1092527537093-meuo13qng2ln73l4dsi36jkqqalicbf2.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1092527537093-f4jj018eeupvuirhoj1o259dctm46m51.apps.googleusercontent.com",
+              "client_id": "1092527537093-u806vjqvrtd95les2fh3ira3ml4b7j5p.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.thealer",
-                "app_store_id": "1437457936"
+                "bundle_id": "com.thealer.pro"
               }
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     }

@@ -1479,9 +1479,9 @@
     <string name="wrong_password">Wrong password.  %s attempt left.</string>
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
-    <string name="str_refresh_token_expired">Refresh token expired.</string>
-    <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
-    <string name="lbl_remote_patient_monitoring">Remote Patient Monitoring</string>
+    <string name="str_refresh_token_expired">रीफ़्रेश टोकन समाप्त हो गया</string>
+    <string name="str_invalid_refresh_token">अमान्य रीफ़्रेश टोकन भेजा गया.</string>
+    <string name="lbl_remote_patient_monitoring">दूरस्थ रोगी निगरानी</string>
     <string name="rpm_desc">Receive alerts and provide tailored feedback to your patients for pre-defined physological parameters.</string>
     <string name="notifications_alert">Notification Alerts</string>
     <string name="mgdl">mg/dL</string>
@@ -1509,34 +1509,10 @@
     <string name="str_enable">Enable</string>
     <string name="str_disable">Disable</string>
     <string name="recorded_on">Recorded on %s</string>
-    <string name="user_permission">User permission</string>
-    <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
-    <string name="str_select_designation">Select Designation</string>
-    <string name="str_select_designation_for">Select designation for %s</string>
-    <string name="lbl_my_subscriptions">My Subscriptions</string>
-    <string name="lbl_subscriptions_plan">Subscription Plan</string>
-    <string name="symbol_dollar">$</string>
-    <string name="str_free_data">Get this plan Free when</string>
-    <string name="lbl_plan_name">Plan Name</string>
-    <string name="lbl_monitored_patients_for_month">Monitored Patients for Month \n (RPMBHICCM)</string>
-    <string name="lbl_plan_note"><![CDATA[All subscription plans are renewed every month until </br> you cancel and changes are not Proratable]]></string>
-    <string name="lbl_change_plan">Change Plan</string>
-    <string name="confirm">Confirm</string>
-    <string name="lbl_type_your_reason_here">Type your reason here</string>
-    <string name="add_support_staff">Add Support Staff</string>
-    <string name="lbl_add_staff">Add Staff</string>
-    <string name="send_invitation">Send Invitation</string>
-    <string name="select_whome_you_want_to_send_invitation">Select to Whom you want to send invitation</string>
-    <string name="help_content_invite_patient">Send manual invitation to provider and its support staff.</string>
-    <string name="help_content_invite_assistant">As being support staff you can send manually invitation to provider, patient as well as other support staff.</string>
-    <string name="help_content_invite_provider">As being provider you can send manually invitation to support staff as well as patient</string>
-    <string name="view_invited_list">View Invitation List</string>
-    <string name="invited_user_list">Invited User List</string>
-    <string name="str_select_your_physician">Select your physician</string>
-    <string name="str_select_plan">Select Plan</string>
-    <string name="str_plan_is_subscribe_now">You have successfully subscribe plan.</string>
-    <string name="str_current_plan">Current Plan</string>
-    <string name="str_start_with_basic">Start with Basic</string>
+    <string name="str_select_plan">प्लान का चयन करें</string>
+    <string name="str_plan_is_subscribe_now">आपने योजना को सफलतापूर्वक सब्सक्राइब कर लिया है।</string>
+    <string name="str_current_plan">वर्तमान योजना</string>
+    <string name="str_start_with_basic">बेसिक से शुरू करें</string>
     <string name="str_start_with_limited">Start with Limited</string>
     <string name="str_start_with_better">Start with Better</string>
     <string name="str_start_with_ideal">Start with Ideal</string>
@@ -1568,9 +1544,9 @@
     <string name="key_to_find_number">Click here.</string>
     <string name="tellihealt">Tellihealth Steps:</string>
     <string name="tellihealthstep">1. Login to <font color='#FF0000'><b><a href="https://tellihealth.com/my-account/">Tellihealth</a></b></font> site. If not registered then please complete registration.\n2. Go to "Developers" from left menu.\n3. Here you will find "API Callback URL" and "Product" list.\n4. Select your product from the list and copy paste the below "Unique URL" from here and paste in "API Callback URL" and save changes.</string>
-    <string name="tellihealth">Tellihealth</string>
-    <string name="donotshare">* Please DO NOT SHARE your unique url with anyone.</string>
-    <string name="tellihealthnotes">Please follow below steps to register Tellihealth device with Telehealer.</string>
-    <string name="telehealerstep">Telehealer Steps:</string>
+    <string name="tellihealth">टेलिहेल्थ</string>
+    <string name="donotshare">कृपया अपना अनूठा यूआरएल किसी के साथ साझा न करें।</string>
+    <string name="tellihealthnotes">टेलिहेल्थ डिवाइस को टेलीहीलर के साथ पंजीकृत करने के लिए कृपया नीचे दिए गए चरणों का पालन करें।</string>
+    <string name="telehealerstep">टेलीहीलर कदम:</string>
 
 </resources>
