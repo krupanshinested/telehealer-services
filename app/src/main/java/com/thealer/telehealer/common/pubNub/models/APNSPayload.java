@@ -38,6 +38,7 @@ public class APNSPayload implements Serializable {
     public static final String creditCardExpired = "creditcard";
     public static final String creditCardRequested = "creditCardRequested";
     public static final String charge = "charge";
+    public static final String forms = "forms";
 
 
     private HashMap<String, Object> aps;
@@ -56,6 +57,8 @@ public class APNSPayload implements Serializable {
 
     @Nullable
     private String sessionId;
+    @Nullable
+    private int form_id;
     @Nullable
     private Double timestamp;
     @Nullable
@@ -126,6 +129,14 @@ public class APNSPayload implements Serializable {
     @Nullable
     public Double getTimestamp() {
         return timestamp;
+    }
+
+    public int getForm_id() {
+        return form_id;
+    }
+
+    public void setForm_id(int form_id) {
+        this.form_id = form_id;
     }
 
     @Nullable

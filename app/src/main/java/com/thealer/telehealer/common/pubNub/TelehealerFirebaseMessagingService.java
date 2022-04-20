@@ -1,7 +1,9 @@
 package com.thealer.telehealer.common.pubNub;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
+
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,9 +27,10 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.OpenTok.CallManager;
-import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.CallReceiveInterface;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.ResultFetcher;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
@@ -43,11 +46,6 @@ import com.thealer.telehealer.views.notification.NotificationDetailActivity;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.thealer.telehealer.common.PreferenceConstants;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.TeleHealerApplication.application;
 
 /**
  * Created by rsekar on 12/25/18.
@@ -204,6 +202,11 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.creditCardRequested:
             case APNSPayload.charge:
                 Utils.createNotificationTop(data, new Intent(this, HomeActivity.class));
+                break;
+            case APNSPayload.forms:
+                intent = new Intent(this, NotificationActivity.class);
+                Utils.createNotification(data, intent);
+                sendNewNotificationBroadCast();
                 break;
             case APNSPayload.kickOutwaitingRoom:
                 LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ArgumentKeys.USER_KIKCOUT));
