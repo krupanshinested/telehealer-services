@@ -1530,10 +1530,10 @@
     <string name="str_new_device_dummy_desc2">चिकित्सा देखभाल की सटीकता सुनिश्चित करने के लिए इस उपकरण से केवल आपके महत्वपूर्ण अंगों को मापा जाना चाहिए।</string>
     <string name="enter_device_id">डिवाइस IMEI नंबर दर्ज करें</string>
     <string name="key_copy">Copy</string>
-    <string name="key_checkbox_device_text">I have declare........</string>
-    <string name="key_my_devices">My Devices</string>
+    <string name="key_checkbox_device_text">मैंने घोषणा की है........</string>
+    <string name="key_my_devices">मेरे उपकरण</string>
     <string name="key_manage_devices">टेलीहेल्थ डिवाइस प्रबंधित करें</string>
-    <string name="key_add_new_device">Add New Device</string>
+    <string name="key_add_new_device">नया उपकरण जोड़ें</string>
     <string name="key_device_delete_confirmation">क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?</string>
     <string name="key_device_sms_enabled">2. अपने जरूरी कामों के बारे में फीडबैक प्राप्त करने के लिए प्रदाता का चयन करें:</string>
     <string name="key_device_sms_enabled_view">निम्नलिखित चिकित्सक के लिए एसएमएस:</string>

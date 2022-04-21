@@ -1824,21 +1824,12 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         String mailto = null;
         try {
-//            mailto = "mailto:" + context.getString(R.string.mail_to) +
-//                    "?cc=" +
-//                    "&subject=" +
-//                    "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
-//            intent.setData(Uri.parse(mailto));
-            intent.putExtra(Intent.EXTRA_EMAIL, context.getString(R.string.mail_to));
-            intent.putExtra(Intent.EXTRA_CC, "");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "");
-            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            } else {
-                Toast.makeText(context, "No app to send email. Please install at least one",
-                        Toast.LENGTH_SHORT).show();
-            }
+            mailto = "mailto:" + context.getString(R.string.mail_to) +
+                    "?cc=" +
+                    "&subject=" +
+                    "&body=" + Html.fromHtml(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
+            intent.setData(Uri.parse(mailto));
+            context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(context, "No app to send email. Please install at least one",
