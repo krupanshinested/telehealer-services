@@ -1,5 +1,8 @@
 package com.thealer.telehealer.views.guestlogin.screens;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,14 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
@@ -27,6 +23,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
@@ -34,10 +34,9 @@ import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.CallManager;
-import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.CallSettings;
-import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
@@ -53,12 +52,6 @@ import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 
-import java.util.Objects;
-
-import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-
 public class WaitingScreenFragment extends Fragment implements PatientInviteRoomInterface,PubNubDelagate, View.OnClickListener {
 
     private PatientInvite patientInvite;
@@ -67,7 +60,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     private ImageView close_iv;
     private PubnubHandler pubnubHandler;
     private PatientInviteHandler patientInviteHandler;
-
+    private Activity context;
     public WaitingScreenFragment() {
     }
 
@@ -76,7 +69,7 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_waiting_screen, container, false);
         initView();
-
+        context = this.getActivity();
         Bundle bundle = getArguments();
         patientInvite = (PatientInvite) bundle.getSerializable(ArgumentKeys.GUEST_INFO);
 
@@ -164,27 +157,28 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     @Override
     public void didUpdateCurrentPosition(int position) {
         Log.d("waitingScreen", "didUpdateCurrentPosition" + position);
-        getActivity().runOnUiThread(() -> {
-            tv_youare.setVisibility(View.VISIBLE);
-            tv_Position.setText("" + position);
-            String posString;
-            if (position == 1) {
-                posString = position + "st";
-            } else if (position == 2) {
-                posString = position + "nd";
-            } else if (position == 3) {
-                posString = position + "rd";
-            } else {
-                posString = position + "th";
-            }
+        if (context != null)
+            context.runOnUiThread(() -> {
+                tv_youare.setVisibility(View.VISIBLE);
+                tv_Position.setText("" + position);
+                String posString;
+                if (position == 1) {
+                    posString = position + "st";
+                } else if (position == 2) {
+                    posString = position + "nd";
+                } else if (position == 3) {
+                    posString = position + "rd";
+                } else {
+                    posString = position + "th";
+                }
 
-            String wholeText = getResources().getString(R.string.youare) + " " + posString + " " + getString(R.string.inline);
-            SpannableString ss = new SpannableString(wholeText);
-            StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-            ss.setSpan(boldSpan, 8, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                String wholeText = getResources().getString(R.string.youare) + " " + posString + " " + getString(R.string.inline);
+                SpannableString ss = new SpannableString(wholeText);
+                StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+                ss.setSpan(boldSpan, 8, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            tv_youare.setText(ss);
-        });
+                tv_youare.setText(ss);
+            });
 
     }
 
@@ -196,18 +190,19 @@ public class WaitingScreenFragment extends Fragment implements PatientInviteRoom
     @Override
     public void didReceiveMessage(APNSPayload apnsPayload) {
         Log.d("Waitingscreenfrag","didReceiveMessage"+apnsPayload);
-        if (apnsPayload!=null){
-            (getActivity()).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //if type waiting room message
-                    if (apnsPayload.getType().equalsIgnoreCase(APNSPayload.waitingRoomMessage)) {
-                        if (apnsPayload.getContent() != null) {
-                            tv_docotor_msg.setVisibility(View.VISIBLE);
-                            String doctor_msg = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() +" , "+patientInvite.doctorDetails.getAssistantTitle()+ "  says  ";
-                            tv_docotor_msg.setText(doctor_msg + " ' " + apnsPayload.getContent() + " '");
-                        } else
-                            tv_docotor_msg.setVisibility(View.GONE);
+        if (apnsPayload!=null) {
+            if (context != null)
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //if type waiting room message
+                        if (apnsPayload.getType().equalsIgnoreCase(APNSPayload.waitingRoomMessage)) {
+                            if (apnsPayload.getContent() != null) {
+                                tv_docotor_msg.setVisibility(View.VISIBLE);
+                                String doctor_msg = patientInvite.doctorDetails.getFirst_name() + " " + patientInvite.doctorDetails.getLast_name() + " , " + patientInvite.doctorDetails.getAssistantTitle() + "  says  ";
+                                tv_docotor_msg.setText(doctor_msg + " ' " + apnsPayload.getContent() + " '");
+                            } else
+                                tv_docotor_msg.setVisibility(View.GONE);
                     }
                 }
             });
