@@ -46,6 +46,8 @@ import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneApiRe
 import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
 import com.thealer.telehealer.apilayer.models.master.MasterResp;
 import com.thealer.telehealer.apilayer.models.medicalHistory.UpdateQuestionaryBodyModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.MyDeviceListApiResponseModel;
+import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
 import com.thealer.telehealer.apilayer.models.orders.OrdersBaseApiResponseModel;
@@ -74,6 +76,7 @@ import com.thealer.telehealer.apilayer.models.recents.VisitsDetailApiResponseMod
 import com.thealer.telehealer.apilayer.models.requestotp.OtpVerificationResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestModel;
+import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.signature.SignatureApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
@@ -82,10 +85,12 @@ import com.thealer.telehealer.apilayer.models.transaction.req.RefundReq;
 import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
+import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.apilayer.models.userStatus.ConnectionStatusApiResponseModel;
 import com.thealer.telehealer.apilayer.models.visits.UpdateVisitRequestModel;
 import com.thealer.telehealer.apilayer.models.vitalReport.VitalReportApiReponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.CreateVitalApiRequestModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsCreateApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsPaginatedApiResponseModel;
@@ -177,6 +182,10 @@ public interface ApiInterface {
     String PROFILE_COMPLETE = "profile_complete";
     String REJECT = "reject";
     String SESSIONID = "session_id";
+    String HEALTHCARE_DEVICE_ID = "healthcare_device_id";
+    String DEVICE_ID = "device_id";
+    String SMS_ENABLED = "sms_enabled";
+    String PHYSICIAN_NOTIFICATION = "physicianNotification";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -314,6 +323,15 @@ public interface ApiInterface {
     @GET("api/referrals/" + OrderConstant.ORDER_TYPE_LABS)
     Observable<OrdersLabApiResponseModel> getLabOrders(@Query(SEARCH_FILTER_LAB) String search, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
+    @GET("api/vitals/thresholds/{id}")
+    Observable<VitalThresholdModel> getVitalsThreshold(@Path(ID) String id, @Query(USER_GUID) String guid);
+
+    @GET("api/vitals/thresholds")
+    Observable<VitalThresholdModel> getAllVitalsThreshold();
+
+    @POST("api/vitals/thresholds")
+    Observable<BaseApiResponseModel> updateVitalsThreshold(@Body VitalThresholdModel.Result vitalThresholdModel);
+
     @GET("icd-codes")
     Observable<IcdCodeApiResponseModel> getFilteredIcdCodes(@Query(FILTER_CODE_IN) String data);
 
@@ -421,7 +439,7 @@ public interface ApiInterface {
     Observable<Response<ResponseBody>> getPdfFile(@Url String fileUrl);
 
     @POST("refresh")
-    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version,@Query("checkTokenExp") boolean isTokenExp);
+    Observable<SigninApiResponseModel> refreshToken(@Header(REFRESH_TOKEN) String refreshToken, @Query("skip_version_check") boolean skip_version_check, @Query("version") String version, @Query("checkTokenExp") boolean isTokenExp);
 
     @POST("api/referrals-v2/" + OrderConstant.ORDER_TYPE_X_RAY)
     Observable<OrdersBaseApiResponseModel> createRadiology(@Query(SYNC_CREATE) boolean sync_create, @Body CreateRadiologyRequestModel createRadiologyRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
@@ -660,6 +678,20 @@ public interface ApiInterface {
     @GET("api/log/requests-log")
     Observable<AccessLogApiResponseModel> getAccessLogs(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query("method") String method);
 
+    @GET("api/devices")
+    Observable<NewDeviceApiResponseModel> getDeviceList();
+
+    @POST("api/user-devices")
+    Observable<SetDeviceResponseModel> setDeviceStore(@Body HashMap<String, Object> value);
+
+    @GET("api/user-devices")
+    Observable<MyDeviceListApiResponseModel> getMyDeviceList();
+
+    @POST("api/remove-device")
+    Observable<BaseApiResponseModel> deleteDevice(@Body Map<String, String> deviceid);
+
+    @GET("api/user-external-id")
+    Observable<UniqueResponseModel> getUniqueUrl();
 
     @GET("api/educational-video")
     Observable<EducationalVideoResponse> getEducationalVideo(@Query(SEARCH_TITLE_FILTER) String search, @Query(PAGINATE) boolean paginate, @Query(DOCTOR_GUID) String user_guid, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);

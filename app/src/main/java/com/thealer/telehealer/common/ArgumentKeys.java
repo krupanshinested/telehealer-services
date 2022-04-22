@@ -163,6 +163,14 @@ public class ArgumentKeys {
     public static final String NEED_TO_TRIGGER_VITAL_AUTOMATICALLY = "NEED_TO_TRIGGER_VITAL_AUTOMATICALLY";
 
     public static final String RESULT = "RESULT";
+    public static final String PARENT_POS = "parentPos";
+    public static final String IS_REMOVE = "isRemove";
+    public static final String IS_ADD = "isAdd";
+    public static final String VITAL_TYPE = "vitalType";
+    public static final String LOW_VALUE = "lowValue";
+    public static final String HIGH_VALUE = "highValue";
+    public static final String THRESHOLD_VALUE = "thresholdValue";
+    public static final String THRESHOLD_MSG = "thresholdMsg";
 
     public static final String USE_OWN_TOOLBAR = "USE_OWN_TOOLBAR";
 
@@ -254,5 +262,8 @@ public class ArgumentKeys {
     public static final String IS_USER_ADMITTED = "IS_USER_ADMITTED";
 
     public static final String IS_HEAD_LESS = "IS_HEAD_LESS";
-
+    public static final String DEVICE_TITLE = "title";
+    public static final String HEALTH_CARE_ID = "health_care_id";
+    public static final String DEVICE_FLAG = "device_flag";
+    public static final String DEVICE_DETAILS = "device_details";
 }

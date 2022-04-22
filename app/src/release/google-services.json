@@ -99,68 +99,6 @@
           "status": 2
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:930182427971:android:65eeb7c6e536b8ad",
-        "android_client_info": {
-          "package_name": "com.stethio.md"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "930182427971-tn1o246kom6shhbjh0b2q5iq6niqla4d.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBzESiFVr0eiYNKQDZVQBVTibMN47BvPvs"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:930182427971:android:65eeb7c6e536b8ad",
-        "android_client_info": {
-          "package_name": "com.stethio.health"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "930182427971-tn1o246kom6shhbjh0b2q5iq6niqla4d.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBzESiFVr0eiYNKQDZVQBVTibMN47BvPvs"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
     }
   ],
   "configuration_version": "1"

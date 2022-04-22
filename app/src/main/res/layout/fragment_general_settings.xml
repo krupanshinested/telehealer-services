@@ -91,7 +91,6 @@
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
                     app:settings_title="@string/lbl_receive_patient_payments" />
-
                 <LinearLayout
                     android:id="@+id/rpm_ll"
                     android:layout_width="fill_parent"
@@ -111,7 +110,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:hideSpiltter="true"
-                        app:isSpinnerType="true"
                         app:title="@string/rpm_title" />
 
                     <View

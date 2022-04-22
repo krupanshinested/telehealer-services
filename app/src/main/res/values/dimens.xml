@@ -30,6 +30,7 @@
     <dimen name="text_small_title_size">9sp</dimen>
 
     <dimen name="margin_default">8dp</dimen>
+    <dimen name="margin_et_default">30dp</dimen>
     <dimen name="padding_default">8dp</dimen>
     <dimen name="card_default_padding">12dp</dimen>
 

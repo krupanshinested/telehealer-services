@@ -162,7 +162,11 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         addFab.setOnClickListener(this);
 
-
+        if (UserType.isUserPatient()) {
+            search_view.setSearchHint(getString(R.string.search_doctors));
+        }else {
+            search_view.setSearchHint(getString(R.string.search_associations));
+        }
 
         search_view.setSearchInterface(new SearchInterface() {
             @Override

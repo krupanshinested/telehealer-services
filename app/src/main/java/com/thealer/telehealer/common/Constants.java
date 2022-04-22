@@ -1,5 +1,8 @@
 package com.thealer.telehealer.common;
 
+import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
+import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +21,7 @@ public class Constants {
     public final static int ERROR_TIMEOUT = 5000;
     public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 30000;
 
+    public static boolean ErrorCodeFlag = false;
 
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
 
@@ -30,6 +34,8 @@ public class Constants {
     public static final int SHOW_NOTHING = 0;
     public static final int SHOW_PROGRESS = 1;
     public static final int SHOW_SCREEN = 2;
+    public static NewDeviceSupportActivity NEW_DEVICE_SUPPORT_ACTIVITY;
+    public static MyDeviceListActivity myDeviceListActivity;
 
     public static final int PAGINATION_SIZE = 20;
 
@@ -188,11 +194,12 @@ public class Constants {
     public static final double STRIPE_MIN_AMOUNT = 0.50;
     public static boolean isRedirectProfileSetting=false;
     public  static  boolean DisplayQuickLogin = false;
-    public static final long IdealTime=2*60*1000;
-    public static long ExpireTime=5*60*1000;
+    public static final long IdealTime=30*60*1000;
+    public static long ExpireTime=24*60*60*1000;
     public static boolean isFromBackground=true;
     public static final int TotalCount=3;
-
+    public static boolean ErrorFlag = false;
+    public static String ChildHood_Asthma="Childhood Asthma Control Test";
 
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";
