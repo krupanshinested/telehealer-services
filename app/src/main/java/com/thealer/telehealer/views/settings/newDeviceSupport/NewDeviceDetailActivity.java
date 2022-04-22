@@ -307,7 +307,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private void didReceivedResult() {
         adapterListModels = new ArrayList<>();
         for (DoctorGroupedAssociations associations : doctorGroupedAssociations) {
-            if (associations.getGroup_name().equals("Others"))
+            if (!associations.getGroup_name().equals("Medical Assistants"))
                 for (CommonUserApiResponseModel doctor : associations.getDoctors()) {
                     adapterListModels.add(new AssociationAdapterListModel(2, doctor));
                 }
