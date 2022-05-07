@@ -38,6 +38,8 @@ import com.thealer.telehealer.apilayer.models.diet.DietUserListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.FoodDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.FoodListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailRequestModel;
+import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
+import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.TypeAHeadResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
@@ -111,6 +113,7 @@ import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -186,6 +189,7 @@ public interface ApiInterface {
     String DEVICE_ID = "device_id";
     String SMS_ENABLED = "sms_enabled";
     String PHYSICIAN_NOTIFICATION = "physicianNotification";
+    String FEEDBACK_TYPE = "feedback_type";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
@@ -774,5 +778,10 @@ public interface ApiInterface {
     @POST("/api/charge/process-refund-v2")
     Observable<BaseApiResponseModel> processRefund(@Query("id") int id, @Body() RefundReq req);
 
+    @GET("/api/feedback/getSetting")
+    Call<FeedbackSettingModel> getFeedbackSetting();
+
+    @GET("/api/feedback/question")
+    Call<FeedbackQuestionModel> getFeedbackQusetion(@Query(FEEDBACK_TYPE) String type);
 
 }

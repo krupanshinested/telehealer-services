@@ -1482,6 +1482,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, callRequest.getDoctorGuid());
                         feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
                         feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
+                        feedBackIntent.putExtra(ArgumentKeys.CALL_REQUEST, callRequest);
                         if (!UserType.isUserPatient())
                             feedBackIntent.putExtra(ArgumentKeys.PATIENT_ID, callRequest.getOtherPersonDetail().getUser_id());
                         feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
