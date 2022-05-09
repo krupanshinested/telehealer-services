@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -21,7 +22,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.OpenTok.OpenTokViewModel;
-import com.thealer.telehealer.apilayer.models.feedback.FeedbackApiViewModel;
+import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
 import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
 import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.procedure.ProcedureModel;
@@ -32,7 +33,6 @@ import com.thealer.telehealer.common.CommonObject;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
-import com.thealer.telehealer.common.Feedback.FeedbackPopUp;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.Procedure.ProcedureConstants;
@@ -53,6 +53,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+
+import org.json.JSONObject;
 
 /**
  * Created by rsekar on 1/11/19.
@@ -208,7 +210,8 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             public void onResponse(Call<FeedbackQuestionModel> call, Response<FeedbackQuestionModel> response) {
                 Log.d("TAG", "onResponse: " + response.body());
                 feedbackQuestionModel = response.body();
-                CommonObject.showDialog(CallFeedBackActivity.this, feedbackQuestionModel,callrequest, feedbackCallback);
+                dismissProgressDialog();
+                CommonObject.showDialog(CallFeedBackActivity.this, feedbackQuestionModel,callrequest,sessionId,to_guid,doctorGuid, feedbackCallback);
             }
 
             @Override
@@ -221,10 +224,34 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
 
     FeedbackCallback feedbackCallback = new FeedbackCallback() {
         @Override
-        public void onActionSuccess(String successMessage) {
-            Log.d("TAG", "onActionSuccess: " + successMessage);
+        public void onActionSuccess(HashMap<String, Object> data) {
+            submitFeedback(data);
         }
     };
+
+    private void submitFeedback(HashMap<String, Object> param) {
+        this.showProgressDialog();
+        Call<SubmitResponse> call = RetrofitManager.getInstance(getApplication()).getAuthApiService().submitFeedback(param);
+        call.enqueue(new Callback<SubmitResponse>() {
+            @Override
+            public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
+                Log.d("TAG", "onResponse: "+response.body());
+                dismissProgressDialog();
+                SubmitResponse submitResponse = response.body();
+                if (submitResponse.getSuccess()) {
+                    Toast.makeText(CallFeedBackActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SubmitResponse> call, Throwable t) {
+                call.cancel();
+                Log.d("TAG", "onFailure: ");
+                dismissProgressDialog();
+            }
+        });
+
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle saveInstance) {

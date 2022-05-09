@@ -38,6 +38,7 @@ import com.thealer.telehealer.apilayer.models.diet.DietUserListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.FoodDetailApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.FoodListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.diet.food.NutrientsDetailRequestModel;
+import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
 import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
 import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.getDoctorsModel.GetDoctorsApiResponseModel;
@@ -783,5 +784,8 @@ public interface ApiInterface {
 
     @GET("/api/feedback/question")
     Call<FeedbackQuestionModel> getFeedbackQusetion(@Query(FEEDBACK_TYPE) String type);
+
+    @POST("api/feedback")
+    Call<SubmitResponse> submitFeedback(@Body() HashMap<String, Object> req);
 
 }

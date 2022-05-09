@@ -12,9 +12,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.TypeKey;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -31,8 +34,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class CommonObject {
@@ -48,7 +55,7 @@ public class CommonObject {
     private static boolean insertdata;
     private static int insertposition;
 
-    public static void showDialog(Activity activity, FeedbackQuestionModel questionModel, CallRequest callRequest, FeedbackCallback feedbackCallback) {
+    public static void showDialog(Activity activity, FeedbackQuestionModel questionModel, CallRequest callRequest, String sessionId, String to_guid, String doctorGuid, FeedbackCallback feedbackCallback) {
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -115,41 +122,38 @@ public class CommonObject {
                 param.put("feedback_type", "call");
                 param.put("device", "android");
                 param.put("app_version", version);
-
-                if (responseModels.get(0).getAnswer().trim().equals("No")) {
-                    List<FeedbackResponseModel> temp = responseModels;
-                    responseModels.clear();
-                    responseModels.add(temp.get(0));
-                    temp.clear();
+                if (responseModels.size() != 0) {
+                    List<FeedbackResponseModel> temp = new ArrayList<>();
+                    temp.addAll(responseModels);
+                    if (!responseModels.get(0).getAnswer().trim().equals(questiondata.getData().get(0).getMainQuestionAnswer())) {
+                        responseModels.clear();
+                        responseModels.add(temp.get(0));
+                        temp.clear();
+                    }
                 }
-                JSONArray response = new JSONArray();
+
+                ArrayList<FeedbackResponseModel> responsedata = new ArrayList<>();
                 try {
                     for (int i = 0; i < responseModels.size(); i++) {
-                        JSONObject jObjd = new JSONObject();
-                        jObjd.put("feedbacks_questions_id", responseModels.get(i).getFeedbacksQuestionsId());
-                        jObjd.put("question", responseModels.get(i).getQuestion());
-                        jObjd.put("answer", responseModels.get(i).getAnswer());
-                        response.put(jObjd);
+                        responsedata.add(new FeedbackResponseModel(responseModels.get(i).getFeedbacksQuestionsId(),responseModels.get(i).getQuestion(),responseModels.get(i).getAnswer()));
                     }
-                    Log.d("TAG", response.toString());
-                } catch (JSONException ex) {
+                } catch (Exception ex) {
                     Log.d("TAG", "onClick: ");
                 }
-
-                param.put("feedback_respone", response);
+                param.put("feedback_respone", responsedata);
                 param.put("rating", 5);
-                param.put("session_id", callRequest.getSessionId());
-                param.put("taget_user_id", callRequest.getOtherUserGuid());
-                param.put("user_id", callRequest.getDoctorGuid());
+                param.put("session_id", sessionId);
+                param.put("taget_user_id", to_guid);
+                param.put("user_id", doctorGuid);
 
-                for (String name : param.keySet()) {
-                    String key = name.toString();
-                    String value = param.get(name).toString();
-                    Log.d("TAG", "onClick: " + key + "   " + value);
+                Log.d("TAG", "onClick: "+activity.getPackageName());
+                if (responseModels.size() != 0) {
+                    feedbackCallback.onActionSuccess(param);
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(activity, "Select atleast one option.", Toast.LENGTH_SHORT).show();
                 }
 
-                feedbackCallback.onActionSuccess("Hello");
-                dialog.dismiss();
 
             }
         });
@@ -162,7 +166,6 @@ public class CommonObject {
     }
 
     private static void addFeedbackResponse(Integer questionid, String question, String value) {
-        Log.d("TAG", "addFeedbackResponse: " + responseModels.size());
         insertdata = false;
         if (responseModels.size() == 0) {
             responseModels.add(new FeedbackResponseModel(questionid, question, value));
@@ -177,11 +180,10 @@ public class CommonObject {
 
             if (!insertdata) {
                 responseModels.add(new FeedbackResponseModel(questionid, question, value));
+            } else {
+                responseModels.set(insertposition, new FeedbackResponseModel(questionid, question, value));
             }
         }
-
-        Log.d("TAG", "addFeedbackResponse: " + responseModels.size());
-
     }
 
     private static void setcheckListner() {
@@ -301,6 +303,12 @@ public class CommonObject {
     }
 
     private static void setQuestion(FeedbackQuestionModel questionModel) {
+        Collections.sort(questionModel.getData(), new Comparator<FeedbackQuestionModel.Datum>() {
+            @Override
+            public int compare(FeedbackQuestionModel.Datum datum, FeedbackQuestionModel.Datum t1) {
+                return datum.getFeedbacksQuestionsId().compareTo(t1.getFeedbacksQuestionsId());
+            }
+        });
         for (int i = 0; i < questionModel.getData().size(); i++) {
             setQuestionAnswer(i);
         }

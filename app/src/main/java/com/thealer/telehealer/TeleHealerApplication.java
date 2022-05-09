@@ -19,6 +19,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.opentok.android.AudioDeviceManager;
 import com.stripe.android.PaymentConfiguration;
+import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
+import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
 import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -52,7 +54,11 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static boolean isVitalDeviceConnectionShown = false, isContentViewProceed = false, isInForeGround = false, isFromRegistration, isDestroyed = false;
     public static AppConfig appConfig;
     public static boolean stateChange = false;
+    public static boolean iscallendedbyphy = false;
     LockScreenReceiver lockScreenReceiver = new LockScreenReceiver();
+    public static FeedbackQuestionModel questiondata;
+    public static CallRequest callrequest;
+    public static String popsessionId, popto_guid, popdoctorGuid;
 
     @Override
     public void onCreate() {
