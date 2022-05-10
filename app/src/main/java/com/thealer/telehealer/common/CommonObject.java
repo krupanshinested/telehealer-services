@@ -135,7 +135,7 @@ public class CommonObject {
                 ArrayList<FeedbackResponseModel> responsedata = new ArrayList<>();
                 try {
                     for (int i = 0; i < responseModels.size(); i++) {
-                        responsedata.add(new FeedbackResponseModel(responseModels.get(i).getFeedbacksQuestionsId(),responseModels.get(i).getQuestion(),responseModels.get(i).getAnswer()));
+                        responsedata.add(new FeedbackResponseModel(responseModels.get(i).getFeedbacksQuestionsId(), responseModels.get(i).getQuestion(), responseModels.get(i).getAnswer()));
                     }
                 } catch (Exception ex) {
                     Log.d("TAG", "onClick: ");
@@ -143,10 +143,13 @@ public class CommonObject {
                 param.put("feedback_respone", responsedata);
                 param.put("rating", 5);
                 param.put("session_id", sessionId);
-                param.put("taget_user_id", to_guid);
-                param.put("user_id", doctorGuid);
-
-                Log.d("TAG", "onClick: "+activity.getPackageName());
+                if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+                    param.put("taget_user_id", doctorGuid);
+                    param.put("user_id", to_guid);
+                } else {
+                    param.put("taget_user_id", to_guid);
+                    param.put("user_id", doctorGuid);
+                }
                 if (responseModels.size() != 0) {
                     feedbackCallback.onActionSuccess(param);
                     dialog.dismiss();

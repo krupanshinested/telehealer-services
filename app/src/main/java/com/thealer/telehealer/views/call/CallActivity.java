@@ -1497,7 +1497,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onFailure(Call<FeedbackSettingModel> call, Throwable t) {
                 call.cancel();
-                Log.d("TAG", "onFailure: ");
             }
         });
     }
@@ -1513,7 +1512,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onFailure(Call<FeedbackQuestionModel> call, Throwable t) {
                 call.cancel();
-                Log.d("TAG", "onFailure: " + t.getMessage());
             }
         });
     }

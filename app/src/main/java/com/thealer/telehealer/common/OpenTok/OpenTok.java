@@ -209,7 +209,7 @@ public class OpenTok implements Session.SessionListener,
                 }
 
                 CallRequest callRequest = new CallRequest(apnsPayload.getUuid(),
-                        apnsPayload.getFrom(), null, apnsPayload.getDoctor_guid(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
+                        apnsPayload.getTo(), null, apnsPayload.getFrom(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
                 callRequest.update(callSettings);
 
                 boolean isInWaitingRoom = WaitingRoomActivity.isActive;

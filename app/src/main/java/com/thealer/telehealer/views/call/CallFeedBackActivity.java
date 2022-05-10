@@ -166,7 +166,6 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         call.enqueue(new Callback<FeedbackSettingModel>() {
             @Override
             public void onResponse(Call<FeedbackSettingModel> call, Response<FeedbackSettingModel> response) {
-                Log.d("TAG", "onResponse: " + response.body());
                 feedbackSettingModel = response.body();
                 String showFeedback = "", showFeedbackRating = "";
                 for (FeedbackSettingModel.Datum datum : feedbackSettingModel.getData()) {
@@ -196,8 +195,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onFailure(Call<FeedbackSettingModel> call, Throwable t) {
                 call.cancel();
-                Log.d("TAG", "onFailure: ");
-
+                dismissProgressDialog();
             }
         });
 
@@ -208,7 +206,6 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         call.enqueue(new Callback<FeedbackQuestionModel>() {
             @Override
             public void onResponse(Call<FeedbackQuestionModel> call, Response<FeedbackQuestionModel> response) {
-                Log.d("TAG", "onResponse: " + response.body());
                 feedbackQuestionModel = response.body();
                 dismissProgressDialog();
                 CommonObject.showDialog(CallFeedBackActivity.this, feedbackQuestionModel,callrequest,sessionId,to_guid,doctorGuid, feedbackCallback);
@@ -217,7 +214,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onFailure(Call<FeedbackQuestionModel> call, Throwable t) {
                 call.cancel();
-                Log.d("TAG", "onFailure: " + t.getMessage());
+                dismissProgressDialog();
             }
         });
     }
@@ -235,7 +232,6 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         call.enqueue(new Callback<SubmitResponse>() {
             @Override
             public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
-                Log.d("TAG", "onResponse: "+response.body());
                 dismissProgressDialog();
                 SubmitResponse submitResponse = response.body();
                 if (submitResponse.getSuccess()) {
@@ -246,7 +242,6 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onFailure(Call<SubmitResponse> call, Throwable t) {
                 call.cancel();
-                Log.d("TAG", "onFailure: ");
                 dismissProgressDialog();
             }
         });

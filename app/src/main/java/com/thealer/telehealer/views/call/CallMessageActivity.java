@@ -64,7 +64,6 @@ public class CallMessageActivity extends ContentActivity {
         call.enqueue(new Callback<SubmitResponse>() {
             @Override
             public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
-                Log.d("TAG", "onResponse: " + response.body());
                 dismissProgressDialog();
                 SubmitResponse submitResponse = response.body();
                 if (submitResponse.getSuccess()) {
@@ -75,7 +74,6 @@ public class CallMessageActivity extends ContentActivity {
             @Override
             public void onFailure(Call<SubmitResponse> call, Throwable t) {
                 call.cancel();
-                Log.d("TAG", "onFailure: ");
                 dismissProgressDialog();
             }
         });
