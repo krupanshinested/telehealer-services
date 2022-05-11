@@ -1458,7 +1458,7 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void addTimerForIncomingOrOutgoing() {
-        final int interval = 40000; // 30 Second
+        final int interval = 40000; // 40 Second
         Handler handler = new Handler();
         TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
             @Override

@@ -16,7 +16,9 @@ import android.media.MediaRecorder.AudioSource;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Build;
+
 import androidx.annotation.Nullable;
+
 import android.util.Log;
 
 import com.opentok.android.BaseAudioDevice;
@@ -299,8 +301,11 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             try {
-                outputSamplingRate = Integer.parseInt(
-                        audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+                if (audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE) != null)
+                    outputSamplingRate = Integer.parseInt(
+                            audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+                else
+                    outputSamplingRate = 0;
             } finally {
                 if (outputSamplingRate == 0) {
                     outputSamplingRate = DEFAULT_SAMPLE_RATE;

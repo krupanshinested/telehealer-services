@@ -485,8 +485,10 @@ public class AboutFragment extends BaseFragment {
 
             if (userDetail.getVitals() != null && userDetail.getVitals().size() > 0) {
                 vitalHistoryAdapter.setDataAdapter(userDetail.getVitals());
+                clVitalHistory.setVisibility(View.VISIBLE);
                 rvVitalHistory.setVisibility(View.VISIBLE);
             } else {
+                clVitalHistory.setVisibility(View.GONE);
                 rvVitalHistory.setVisibility(View.GONE);
             }
 
@@ -498,7 +500,7 @@ public class AboutFragment extends BaseFragment {
             }
 
         }else {
-            rvVitalHistory.setVisibility(View.GONE);
+            rvVitalHistory.setVisibility(View.VISIBLE);
             clHistory.setVisibility(View.GONE);
         }
     }
