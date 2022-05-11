@@ -16,7 +16,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -120,11 +123,15 @@ public class SplashActivity extends BaseActivity {
                         }
                     }
 
-                    FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-                        String token = task.getResult();
-                        TelehealerFirebaseMessagingService.assignToken(token);
-
-                    });
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                                @Override
+                                public void onSuccess(InstanceIdResult instanceIdResult) {
+                                    String token = instanceIdResult.getToken();
+                                    Log.d("TeleHealerApplication", "received token " + token);
+                                    TelehealerFirebaseMessagingService.assignToken(token);
+                                }
+                            });
 
                     finish();
                 }
