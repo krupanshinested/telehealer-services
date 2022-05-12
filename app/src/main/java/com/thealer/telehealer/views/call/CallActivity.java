@@ -1542,7 +1542,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 case OpenTokConstants.badNetwork:
                 case OpenTokConstants.timedOut:
                     Date endedTime = new Date();
-
+                    TeleHealerApplication.feedbackreason = callRejectionReason;
                     if (UserType.isUserPatient()) {
                         if (!showFeedback.equals("true")) {
                             if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
@@ -1580,6 +1580,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
                 case OpenTokConstants.notPickedUp:
                 case OpenTokConstants.busyInAnotherLine:
+                    TeleHealerApplication.feedbackreason = callRejectionReason;
                     if (!UserType.isUserPatient()) {
                         TeleHealerApplication.iscallendedbyphy = false;
                         Intent intent = new Intent(context, CallMessageActivity.class);

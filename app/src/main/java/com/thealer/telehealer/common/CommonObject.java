@@ -5,10 +5,12 @@ import android.app.Dialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.TypeKey;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.feedback.FeedbackResponseModel;
 import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
@@ -54,6 +57,7 @@ public class CommonObject {
     private static List<FeedbackResponseModel> responseModels = new ArrayList<>();
     private static boolean insertdata;
     private static int insertposition;
+    private static EditText commentbox;
 
     public static void showDialog(Activity activity, FeedbackQuestionModel questionModel, CallRequest callRequest, String sessionId, String to_guid, String doctorGuid, FeedbackCallback feedbackCallback) {
         final Dialog dialog = new Dialog(activity);
@@ -108,6 +112,8 @@ public class CommonObject {
         rbtngoodq7 = (RadioButton) dialog.findViewById(R.id.goodq7);
         rbtnbadq7 = (RadioButton) dialog.findViewById(R.id.badq7);
 
+        commentbox = (EditText) dialog.findViewById(R.id.commentbox);
+
         dialogButton = (AppCompatTextView) dialog.findViewById(R.id.txtSubmit);
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +146,29 @@ public class CommonObject {
                 } catch (Exception ex) {
                     Log.d("TAG", "onClick: ");
                 }
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("serial", Build.SERIAL);
+                    jsonObject.put("model", Build.MODEL);
+                    jsonObject.put("id", Build.ID);
+                    jsonObject.put("manufacturer", Build.MANUFACTURER);
+                    jsonObject.put("brand", Build.BRAND);
+                    jsonObject.put("type", Build.TYPE);
+                    jsonObject.put("user", Build.USER);
+                    jsonObject.put("base", Build.VERSION_CODES.BASE);
+                    jsonObject.put("incremental", Build.VERSION.INCREMENTAL);
+                    jsonObject.put("sdk", Build.VERSION.SDK);
+                    jsonObject.put("board", Build.BOARD);
+                    jsonObject.put("host", Build.HOST);
+                    jsonObject.put("fingerprint", Build.FINGERPRINT);
+                    jsonObject.put("versioncode", Build.VERSION.RELEASE);
+                } catch (Exception e) {
+                    Log.d("TAG", "onClick: " + e.getMessage());
+                }
+                param.put("feedback_message", commentbox.getText().toString().isEmpty() ? "" : commentbox.getText().toString());
+                param.put("error_reason", TeleHealerApplication.feedbackreason);
+                param.put("error_message", TeleHealerApplication.feedbackreason);
+                param.put("device_meta_info", jsonObject.toString());
                 param.put("feedback_respone", responsedata);
                 param.put("rating", 5);
                 param.put("session_id", sessionId);
@@ -156,8 +185,6 @@ public class CommonObject {
                 } else {
                     Toast.makeText(activity, "Select atleast one option.", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
 
