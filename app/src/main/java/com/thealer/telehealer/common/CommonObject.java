@@ -58,6 +58,7 @@ public class CommonObject {
     private static boolean insertdata;
     private static int insertposition;
     private static EditText commentbox;
+    private static String firstQ = "", secondQ = "", thirdQ = "", forthQ = "", fivthQ = "", sixthQ = "", seventhQ = "";
 
     public static void showDialog(Activity activity, FeedbackQuestionModel questionModel, CallRequest callRequest, String sessionId, String to_guid, String doctorGuid, FeedbackCallback feedbackCallback) {
         final Dialog dialog = new Dialog(activity);
@@ -180,6 +181,52 @@ public class CommonObject {
                     param.put("user_id", doctorGuid);
                 }
                 if (responseModels.size() != 0) {
+
+                    if (firstQ.trim().equals(questionModel.getData().get(0).getMainQuestionAnswer())){
+
+                        if (llquestiontwo.getVisibility() == View.VISIBLE){
+                            if (secondQ.isEmpty()){
+                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                        if (llquestionthree.getVisibility() == View.VISIBLE){
+                            if (thirdQ.isEmpty()){
+                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                        if (llquestionfour.getVisibility() == View.VISIBLE){
+                            if (forthQ.isEmpty()){
+                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                        if (llquestionfive.getVisibility() == View.VISIBLE){
+                            if (fivthQ.isEmpty()){
+                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                        if (llquestionsix.getVisibility() == View.VISIBLE){
+                            if (sixthQ.isEmpty()){
+                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                        if (llquestionseven.getVisibility() == View.VISIBLE){
+                            if (seventhQ.isEmpty()){
+                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                    }
                     feedbackCallback.onActionSuccess(param);
                     dialog.dismiss();
                 } else {
@@ -221,13 +268,19 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-
+                firstQ = rb.getText().toString();
                 if (rb.getText().toString().contains(questiondata.getData().get(0).getMainQuestionAnswer())) {
                     questionption.setVisibility(View.VISIBLE);
                     addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
                 } else {
                     questionption.setVisibility(View.GONE);
                     addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
+                    secondQ = "";
+                    thirdQ = "";
+                    forthQ = "";
+                    fivthQ = "";
+                    sixthQ = "";
+                    seventhQ = "";
                 }
             }
         });
@@ -236,6 +289,7 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+                secondQ = rb.getText().toString();
                 addFeedbackResponse(questiondata.getData().get(1).getFeedbacksQuestionsId(), questiondata.getData().get(1).getQuestion(), rb.getText().toString());
             }
         });
@@ -244,6 +298,7 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+                thirdQ = rb.getText().toString();
                 addFeedbackResponse(questiondata.getData().get(2).getFeedbacksQuestionsId(), questiondata.getData().get(2).getQuestion(), rb.getText().toString());
             }
         });
@@ -252,6 +307,7 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+                forthQ = rb.getText().toString();
                 addFeedbackResponse(questiondata.getData().get(3).getFeedbacksQuestionsId(), questiondata.getData().get(3).getQuestion(), rb.getText().toString());
             }
         });
@@ -260,6 +316,7 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+                fivthQ = rb.getText().toString();
                 addFeedbackResponse(questiondata.getData().get(4).getFeedbacksQuestionsId(), questiondata.getData().get(4).getQuestion(), rb.getText().toString());
             }
         });
@@ -268,6 +325,7 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+                sixthQ = rb.getText().toString();
                 addFeedbackResponse(questiondata.getData().get(5).getFeedbacksQuestionsId(), questiondata.getData().get(5).getQuestion(), rb.getText().toString());
             }
         });
@@ -276,6 +334,7 @@ public class CommonObject {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+                seventhQ = rb.getText().toString();
                 addFeedbackResponse(questiondata.getData().get(6).getFeedbacksQuestionsId(), questiondata.getData().get(6).getQuestion(), rb.getText().toString());
             }
         });
