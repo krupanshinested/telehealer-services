@@ -33,6 +33,7 @@ import com.thealer.telehealer.common.CommonObject;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.Procedure.ProcedureConstants;
@@ -157,7 +158,9 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         } else {
             rating_et.setVisibility(View.VISIBLE);
         }
-        getFeedbackSetting();
+        if (!callrequest.getCallType().equals(OpenTokConstants.oneWay)){
+            getFeedbackSetting();
+        }
     }
 
     private void getFeedbackSetting() {

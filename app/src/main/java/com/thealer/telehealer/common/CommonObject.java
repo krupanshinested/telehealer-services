@@ -27,6 +27,7 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.feedback.FeedbackResponseModel;
 import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
 
 import org.json.JSONArray;
@@ -435,7 +436,7 @@ public class CommonObject {
 
                 if (questiondata.getData().get(3).getIsPhysiciansQuestion() != null) {
 
-                    if (questiondata.getData().get(3).getIsPhysiciansQuestion()) {
+                    if (!questiondata.getData().get(3).getIsPhysiciansQuestion()) {
                         if (questiondata.getData().get(3).getQuestion().contains(callrequest.getCallType())) {
                             llquestionfour.setVisibility(View.VISIBLE);
                             questionsfour.setText("" + questiondata.getData().get(3).getQuestion());
@@ -452,7 +453,7 @@ public class CommonObject {
             case 4:
                 if (questiondata.getData().get(4).getIsPhysiciansQuestion() != null) {
 
-                    if (questiondata.getData().get(4).getIsPhysiciansQuestion()) {
+                    if (!questiondata.getData().get(4).getIsPhysiciansQuestion()) {
                         if (questiondata.getData().get(4).getQuestion().contains(callrequest.getCallType())) {
                             llquestionfive.setVisibility(View.VISIBLE);
                             questionsfive.setText("" + questiondata.getData().get(4).getQuestion());
@@ -470,12 +471,16 @@ public class CommonObject {
                 if (questiondata.getData().get(5).getIsPhysiciansQuestion() != null) {
 
                     if (questiondata.getData().get(5).getIsPhysiciansQuestion()) {
-                        if (questiondata.getData().get(5).getQuestion().contains(callrequest.getCallType())) {
-                            llquestionsix.setVisibility(View.VISIBLE);
-                            questionssix.setText("" + questiondata.getData().get(5).getQuestion());
-                            rbtngoodq6.setText("" + questiondata.getData().get(5).getOptions().get(0));
-                            rbtnbadq6.setText("" + questiondata.getData().get(5).getOptions().get(1));
-                        } else {
+                        if (!UserType.isUserPatient()){
+                            if (questiondata.getData().get(5).getQuestion().contains(callrequest.getCallType())) {
+                                llquestionsix.setVisibility(View.VISIBLE);
+                                questionssix.setText("" + questiondata.getData().get(5).getQuestion());
+                                rbtngoodq6.setText("" + questiondata.getData().get(5).getOptions().get(0));
+                                rbtnbadq6.setText("" + questiondata.getData().get(5).getOptions().get(1));
+                            } else {
+                                llquestionsix.setVisibility(View.GONE);
+                            }
+                        }else {
                             llquestionsix.setVisibility(View.GONE);
                         }
                     } else {
@@ -485,14 +490,17 @@ public class CommonObject {
                 break;
             case 6:
                 if (questiondata.getData().get(6).getIsPhysiciansQuestion() != null) {
-
                     if (questiondata.getData().get(6).getIsPhysiciansQuestion()) {
-                        if (questiondata.getData().get(6).getQuestion().contains(callrequest.getCallType())) {
-                            llquestionseven.setVisibility(View.VISIBLE);
-                            questionseven.setText("" + questiondata.getData().get(6).getQuestion());
-                            rbtngoodq7.setText("" + questiondata.getData().get(6).getOptions().get(0));
-                            rbtnbadq7.setText("" + questiondata.getData().get(6).getOptions().get(1));
-                        } else {
+                        if (!UserType.isUserPatient()){
+                            if (questiondata.getData().get(6).getQuestion().contains(callrequest.getCallType())) {
+                                llquestionseven.setVisibility(View.VISIBLE);
+                                questionseven.setText("" + questiondata.getData().get(6).getQuestion());
+                                rbtngoodq7.setText("" + questiondata.getData().get(6).getOptions().get(0));
+                                rbtnbadq7.setText("" + questiondata.getData().get(6).getOptions().get(1));
+                            } else {
+                                llquestionseven.setVisibility(View.GONE);
+                            }
+                        }else {
                             llquestionseven.setVisibility(View.GONE);
                         }
                     } else {
