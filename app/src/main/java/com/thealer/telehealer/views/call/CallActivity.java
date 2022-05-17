@@ -985,6 +985,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         switch (v.getId()) {
             case R.id.hang_iv:
 
+                if (UserType.isUserPatient()) {
+                    TeleHealerApplication.ispatientendedcall = true;
+                }
+
                 if (activeCall.getCallType().equals(OpenTokConstants.education)) {
 
                     if (activeCall.getConnectedDate() == null) {
@@ -1267,6 +1271,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         Log.d("CallActivity", "answerTheCall");
         EventRecorder.recordCallUpdates("CALL_ACCEPTED", null);
 
+        if (UserType.isUserPatient()) {
+            TeleHealerApplication.ispatientansweredcall = true;
+        }
+
         if (activeCall.isVideoCall()) {
             EventRecorder.recordCallUpdates("opening_video_call", null);
         } else {
@@ -1544,23 +1552,26 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     Date endedTime = new Date();
                     TeleHealerApplication.feedbackreason = callRejectionReason;
                     if (UserType.isUserPatient()) {
-                        if (!showFeedback.equals("true")) {
-                            if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
-                                TeleHealerApplication.iscallendedbyphy = false;
-                                Intent feedBackIntent = new Intent(context, CallFeedBackActivity.class);
-                                feedBackIntent.putExtra(ArgumentKeys.ORDER_ID, sessionId);
-                                feedBackIntent.putExtra(ArgumentKeys.TO_USER_GUID, to_guid);
-                                feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, callRequest.getDoctorGuid());
-                                feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
-                                feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
-                                feedBackIntent.putExtra(ArgumentKeys.CALL_REQUEST, callRequest);
-                                if (!UserType.isUserPatient())
-                                    feedBackIntent.putExtra(ArgumentKeys.PATIENT_ID, callRequest.getOtherPersonDetail().getUser_id());
-                                feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(feedBackIntent);
+                        if (TeleHealerApplication.ispatientansweredcall) {
+                            if (!showFeedback.equals("true")) {
+                                if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
+                                    TeleHealerApplication.iscallendedbyphy = false;
+                                    Intent feedBackIntent = new Intent(context, CallFeedBackActivity.class);
+                                    feedBackIntent.putExtra(ArgumentKeys.ORDER_ID, sessionId);
+                                    feedBackIntent.putExtra(ArgumentKeys.TO_USER_GUID, to_guid);
+                                    feedBackIntent.putExtra(ArgumentKeys.DOCTOR_GUID, callRequest.getDoctorGuid());
+                                    feedBackIntent.putExtra(ArgumentKeys.STARTED_DATE, startedTime);
+                                    feedBackIntent.putExtra(ArgumentKeys.ENDED_DATE, endedTime);
+                                    feedBackIntent.putExtra(ArgumentKeys.CALL_REQUEST, callRequest);
+                                    if (!UserType.isUserPatient())
+                                        feedBackIntent.putExtra(ArgumentKeys.PATIENT_ID, callRequest.getOtherPersonDetail().getUser_id());
+                                    feedBackIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(feedBackIntent);
+                                }
                             }
+                        }else {
+                            TeleHealerApplication.iscallendedbyphy = false;
                         }
-
                     } else {
                         if (startedTime != null && !TextUtils.isEmpty(sessionId) && endedTime.getTime() - startedTime.getTime() > 5) {
                             TeleHealerApplication.iscallendedbyphy = false;
@@ -1603,6 +1614,10 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         intent.putExtra(ArgumentKeys.DOCTOR_GUID, doctor_guid);
 
                         context.startActivity(intent);
+                    }else {
+                        if (TeleHealerApplication.ispatientendedcall){
+                            TeleHealerApplication.iscallendedbyphy = false;
+                        }
                     }
                     break;
             }

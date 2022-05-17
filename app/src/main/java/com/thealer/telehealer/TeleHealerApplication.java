@@ -56,6 +56,8 @@ public class TeleHealerApplication extends Application implements LifecycleObser
     public static boolean stateChange = false;
     public static boolean iscallendedbyphy = false;
     public static String feedbackreason = "";
+    public static boolean ispatientansweredcall = false;
+    public static boolean ispatientendedcall = false;
     LockScreenReceiver lockScreenReceiver = new LockScreenReceiver();
     public static FeedbackQuestionModel questiondata;
     public static CallRequest callrequest;

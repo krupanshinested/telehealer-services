@@ -60,9 +60,10 @@ public class CommonObject {
     private static int insertposition;
     private static EditText commentbox;
     private static String firstQ = "", secondQ = "", thirdQ = "", forthQ = "", fivthQ = "", sixthQ = "", seventhQ = "";
+    static Dialog dialog;
 
     public static void showDialog(Activity activity, FeedbackQuestionModel questionModel, CallRequest callRequest, String sessionId, String to_guid, String doctorGuid, FeedbackCallback feedbackCallback) {
-        final Dialog dialog = new Dialog(activity);
+        dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.feedback_popup);
@@ -183,45 +184,45 @@ public class CommonObject {
                 }
                 if (responseModels.size() != 0) {
 
-                    if (firstQ.trim().equals(questionModel.getData().get(0).getMainQuestionAnswer())){
+                    if (firstQ.trim().equals(questionModel.getData().get(0).getMainQuestionAnswer())) {
 
-                        if (llquestiontwo.getVisibility() == View.VISIBLE){
-                            if (secondQ.isEmpty()){
+                        if (llquestiontwo.getVisibility() == View.VISIBLE) {
+                            if (secondQ.isEmpty()) {
                                 Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
 
-                        if (llquestionthree.getVisibility() == View.VISIBLE){
-                            if (thirdQ.isEmpty()){
+                        if (llquestionthree.getVisibility() == View.VISIBLE) {
+                            if (thirdQ.isEmpty()) {
                                 Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
 
-                        if (llquestionfour.getVisibility() == View.VISIBLE){
-                            if (forthQ.isEmpty()){
+                        if (llquestionfour.getVisibility() == View.VISIBLE) {
+                            if (forthQ.isEmpty()) {
                                 Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
 
-                        if (llquestionfive.getVisibility() == View.VISIBLE){
-                            if (fivthQ.isEmpty()){
+                        if (llquestionfive.getVisibility() == View.VISIBLE) {
+                            if (fivthQ.isEmpty()) {
                                 Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
 
-                        if (llquestionsix.getVisibility() == View.VISIBLE){
-                            if (sixthQ.isEmpty()){
+                        if (llquestionsix.getVisibility() == View.VISIBLE) {
+                            if (sixthQ.isEmpty()) {
                                 Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
 
-                        if (llquestionseven.getVisibility() == View.VISIBLE){
-                            if (seventhQ.isEmpty()){
+                        if (llquestionseven.getVisibility() == View.VISIBLE) {
+                            if (seventhQ.isEmpty()) {
                                 Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -393,15 +394,22 @@ public class CommonObject {
     }
 
     private static void setQuestion(FeedbackQuestionModel questionModel) {
-        Collections.sort(questionModel.getData(), new Comparator<FeedbackQuestionModel.Datum>() {
-            @Override
-            public int compare(FeedbackQuestionModel.Datum datum, FeedbackQuestionModel.Datum t1) {
-                return datum.getFeedbacksQuestionsId().compareTo(t1.getFeedbacksQuestionsId());
+
+        if (questionModel != null) {
+
+            Collections.sort(questionModel.getData(), new Comparator<FeedbackQuestionModel.Datum>() {
+                @Override
+                public int compare(FeedbackQuestionModel.Datum datum, FeedbackQuestionModel.Datum t1) {
+                    return datum.getFeedbacksQuestionsId().compareTo(t1.getFeedbacksQuestionsId());
+                }
+            });
+            for (int i = 0; i < questionModel.getData().size(); i++) {
+                setQuestionAnswer(i);
             }
-        });
-        for (int i = 0; i < questionModel.getData().size(); i++) {
-            setQuestionAnswer(i);
+        } else {
+            dialog.dismiss();
         }
+
     }
 
     private static void setQuestionAnswer(int position) {
@@ -471,7 +479,7 @@ public class CommonObject {
                 if (questiondata.getData().get(5).getIsPhysiciansQuestion() != null) {
 
                     if (questiondata.getData().get(5).getIsPhysiciansQuestion()) {
-                        if (!UserType.isUserPatient()){
+                        if (!UserType.isUserPatient()) {
                             if (questiondata.getData().get(5).getQuestion().contains(callrequest.getCallType())) {
                                 llquestionsix.setVisibility(View.VISIBLE);
                                 questionssix.setText("" + questiondata.getData().get(5).getQuestion());
@@ -480,7 +488,7 @@ public class CommonObject {
                             } else {
                                 llquestionsix.setVisibility(View.GONE);
                             }
-                        }else {
+                        } else {
                             llquestionsix.setVisibility(View.GONE);
                         }
                     } else {
@@ -491,7 +499,7 @@ public class CommonObject {
             case 6:
                 if (questiondata.getData().get(6).getIsPhysiciansQuestion() != null) {
                     if (questiondata.getData().get(6).getIsPhysiciansQuestion()) {
-                        if (!UserType.isUserPatient()){
+                        if (!UserType.isUserPatient()) {
                             if (questiondata.getData().get(6).getQuestion().contains(callrequest.getCallType())) {
                                 llquestionseven.setVisibility(View.VISIBLE);
                                 questionseven.setText("" + questiondata.getData().get(6).getQuestion());
@@ -500,7 +508,7 @@ public class CommonObject {
                             } else {
                                 llquestionseven.setVisibility(View.GONE);
                             }
-                        }else {
+                        } else {
                             llquestionseven.setVisibility(View.GONE);
                         }
                     } else {
