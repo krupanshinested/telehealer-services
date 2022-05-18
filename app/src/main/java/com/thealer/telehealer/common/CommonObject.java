@@ -445,11 +445,15 @@ public class CommonObject {
                 if (questiondata.getData().get(3).getIsPhysiciansQuestion() != null) {
 
                     if (!questiondata.getData().get(3).getIsPhysiciansQuestion()) {
-                        if (questiondata.getData().get(3).getQuestion().contains(callrequest.getCallType())) {
-                            llquestionfour.setVisibility(View.VISIBLE);
-                            questionsfour.setText("" + questiondata.getData().get(3).getQuestion());
-                            rbtngoodq4.setText("" + questiondata.getData().get(3).getOptions().get(0));
-                            rbtnbadq4.setText("" + questiondata.getData().get(3).getOptions().get(1));
+                        if (UserType.isUserPatient()) {
+                            if (questiondata.getData().get(3).getQuestion().contains(callrequest.getCallType())) {
+                                llquestionfour.setVisibility(View.VISIBLE);
+                                questionsfour.setText("" + questiondata.getData().get(3).getQuestion());
+                                rbtngoodq4.setText("" + questiondata.getData().get(3).getOptions().get(0));
+                                rbtnbadq4.setText("" + questiondata.getData().get(3).getOptions().get(1));
+                            } else {
+                                llquestionfour.setVisibility(View.GONE);
+                            }
                         } else {
                             llquestionfour.setVisibility(View.GONE);
                         }
@@ -462,11 +466,15 @@ public class CommonObject {
                 if (questiondata.getData().get(4).getIsPhysiciansQuestion() != null) {
 
                     if (!questiondata.getData().get(4).getIsPhysiciansQuestion()) {
-                        if (questiondata.getData().get(4).getQuestion().contains(callrequest.getCallType())) {
-                            llquestionfive.setVisibility(View.VISIBLE);
-                            questionsfive.setText("" + questiondata.getData().get(4).getQuestion());
-                            rbtngoodq5.setText("" + questiondata.getData().get(4).getOptions().get(0));
-                            rbtnbadq5.setText("" + questiondata.getData().get(4).getOptions().get(1));
+                        if (UserType.isUserPatient()) {
+                            if (questiondata.getData().get(4).getQuestion().contains(callrequest.getCallType())) {
+                                llquestionfive.setVisibility(View.VISIBLE);
+                                questionsfive.setText("" + questiondata.getData().get(4).getQuestion());
+                                rbtngoodq5.setText("" + questiondata.getData().get(4).getOptions().get(0));
+                                rbtnbadq5.setText("" + questiondata.getData().get(4).getOptions().get(1));
+                            } else {
+                                llquestionfive.setVisibility(View.GONE);
+                            }
                         } else {
                             llquestionfive.setVisibility(View.GONE);
                         }
