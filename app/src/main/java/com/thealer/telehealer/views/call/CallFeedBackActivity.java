@@ -160,6 +160,10 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         }
         if (!callrequest.getCallType().equals(OpenTokConstants.oneWay)){
             getFeedbackSetting();
+        }else {
+            quality_tv.setVisibility(View.VISIBLE);
+            rating_bar.setVisibility(View.VISIBLE);
+            rating_et.setVisibility(View.VISIBLE);
         }
     }
 

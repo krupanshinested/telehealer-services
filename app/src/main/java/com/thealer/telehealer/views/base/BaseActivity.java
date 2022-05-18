@@ -43,6 +43,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -223,8 +224,10 @@ public class BaseActivity extends AppCompatActivity {
             Utils.checkIdealTime(this);
         }
         if (TeleHealerApplication.iscallendedbyphy) {
-            CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
-            TeleHealerApplication.iscallendedbyphy = false;
+            if (TeleHealerApplication.callrequest.getCallType() != OpenTokConstants.oneWay) {
+                CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
+                TeleHealerApplication.iscallendedbyphy = false;
+            }
         }
     }
 
