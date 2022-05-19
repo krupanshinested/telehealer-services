@@ -5,8 +5,10 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +32,18 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.DrawableImageViewTarget;
 import com.google.android.material.snackbar.Snackbar;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.manager.RetrofitManager;
+import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
+import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
+import com.thealer.telehealer.common.CommonObject;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.Feedback.FeedbackCallback;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
+import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -44,6 +53,14 @@ import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * Created by Aswin on 08,October,2018
  */
@@ -52,10 +69,12 @@ public class BaseActivity extends AppCompatActivity {
     private int showScreenType;
     private RelativeLayout relativeLayout;
     private int count = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     public void attachObserver(BaseApiViewModel mViewModel) {
 
         mViewModel.getErrorModelLiveData().observe(this, errorModel -> {
@@ -199,11 +218,48 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(Utils.isRefreshTokenExpire()){
-          invalidateUser();
-        }else {
+        if (Utils.isRefreshTokenExpire()) {
+            invalidateUser();
+        } else {
             Utils.checkIdealTime(this);
         }
+        if (TeleHealerApplication.iscallendedbyphy) {
+            if (!TeleHealerApplication.callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+                CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
+                TeleHealerApplication.iscallendedbyphy = false;
+            }
+        }
+    }
+
+    FeedbackCallback feedbackCallback = new FeedbackCallback() {
+        @Override
+        public void onActionSuccess(HashMap<String, Object> param) {
+
+            submitFeedback(param);
+
+        }
+    };
+
+    private void submitFeedback(HashMap<String, Object> param) {
+        this.showProgressDialog();
+        Call<SubmitResponse> call = RetrofitManager.getInstance(getApplication()).getAuthApiService().submitFeedback(param);
+        call.enqueue(new Callback<SubmitResponse>() {
+            @Override
+            public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
+                dismissProgressDialog();
+                SubmitResponse submitResponse = response.body();
+                if (submitResponse.getSuccess()) {
+                    Toast.makeText(BaseActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SubmitResponse> call, Throwable t) {
+                call.cancel();
+                dismissProgressDialog();
+            }
+        });
+
     }
 
     public void dismissScreen() {

@@ -1537,7 +1537,7 @@
     <string name="str_you_can_not_invite_yourself">La autoinvitación está prohibida.</string>
     <string name="str_new_device_setup">Configurar un nuevo dispositivo Tellihealth</string>
     <string name="EMPTY_DEVICE">No se agregó ningún dispositivo Tellihealth</string>
-    <string name="str_new_device_dummy_desc">1. Ingrese su ID de dispositivo aquí y luego guarde los cambios. Encuentre su ID de dispositivo en la unidad como número IMEI. Para encontrar el IMEI,  <font color='#FF0000'><b>Click here.</b></font></string>
+    <string name="str_new_device_dummy_desc">Ingrese su ID de dispositivo aquí y luego guarde los cambios. Encuentre su ID de dispositivo en la unidad como número IMEI. Para encontrar el IMEI,  <font color='#FF0000'><b>Click here.</b></font></string>
     <string name="str_new_device_get_vital_desc">Para obtener los signos vitales de Tellihealth a Telehealer, copie la URL a continuación y péguela en la URL de la API debajo de su tablero en Tellihealth.</string>
     <string name="str_new_device_dummy_desc2">SÓLO SUS signos vitales deben medirse con este dispositivo para garantizar la precisión de la atención médica.</string>
     <string name="enter_device_id">Ingrese el número IMEI del dispositivo</string>
@@ -1547,7 +1547,7 @@
     <string name="key_manage_devices">Administrar dispositivos Tellihealth</string>
     <string name="key_add_new_device">Agrega un nuevo dispositivo</string>
     <string name="key_device_delete_confirmation">Estás segura de que quieres eliminar este dispositivo?</string>
-    <string name="key_device_sms_enabled">2. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
+    <string name="key_device_sms_enabled">4. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
     <string name="key_device_sms_enabled_view">SMS para la siguiente médica:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
@@ -1560,5 +1560,8 @@
     <string name="tellihealthstep">1. Inicie sesión en el sitio <font color="#FF0000"><b><a href="https://tellihealth.com/my-account/">Tellihealth</a></b></font>. Si no está registrado, complete el registro. 2. Vaya a Desarrolladores desde el menú de la izquierda. 3. Aquí encontrará la URL de devolución de llamada API y la lista de productos. 4. Seleccione su producto de la lista y copie y pegue la siguiente URL única desde aquí y pegue la URL de devolución de llamada API y guarde los cambios.</string>
     <string name="lbl_add_providers">Añadir proveedores</string>
     <string name="disclaimer_for_secure_messaging">DESCARGO DE RESPONSABILIDAD: AL HABILITAR ESTA CONFIGURACIÓN SE ELIMINARÁN LAS RESTRICCIONES EXISTENTES EN LAS RESPUESTAS MODELADAS DEL PACIENTE Y EN SU LUGAR LE PERMITIRÁ ENVIAR CONTENIDO DE FORMA LIBRE EN EL ADELANTE.\\n\\nSi bien se le notificará al paciente que no use mensajes seguros para atención médica urgente o de emergencia, %s no asume ninguna responsabilidad u obligación que surja del uso de todas y cada una de las comunicaciones de mensajes seguros enviadas por y para el paciente.</string>
+    <string name="stepone">1. Ingrese el número IMEI del dispositivo:</string>
+    <string name="steptwo">2. Copiar URL:</string>
+    <string name="stepthree">3. Inicie sesión en tellihealth y pegue la URL de su API:</string>
 
 </resources>

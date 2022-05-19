@@ -591,6 +591,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             doctorName = doctorModel.getUserDisplay_name();
         }
 
+        if (doctorGuid == null) {
+            doctorGuid = UserDetailPreferenceManager.getUser_guid();
+        }
+
+        if (doctorName == null) {
+            doctorName = UserDetailPreferenceManager.getFirst_name() + " " + UserDetailPreferenceManager.getLast_name();
+        }
+
         CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
                 finalCommonUserApiResponseModel.getUser_guid(), finalCommonUserApiResponseModel, doctorGuid, doctorName, null, callType, true, null);
 

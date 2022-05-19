@@ -258,4 +258,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.9'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+
+    // Transition
+    implementation 'com.andkulikov:transitionseverywhere:1.7.4'
 }

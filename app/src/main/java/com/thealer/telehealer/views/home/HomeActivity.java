@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,6 +37,9 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.feedback.FeedbackApiViewModel;
+import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
+import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
@@ -77,7 +81,6 @@ import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -126,6 +129,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private SignoutApiViewModel signoutApiViewModel;
+    private FeedbackApiViewModel feedbackApiViewModel;
 
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
