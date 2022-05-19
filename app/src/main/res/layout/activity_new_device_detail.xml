@@ -427,7 +427,7 @@
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtSubmit"
-                            android:layout_width="150dp"
+                            android:layout_width="@dimen/_130sdp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_10sdp"
