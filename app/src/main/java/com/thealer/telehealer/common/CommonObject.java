@@ -286,6 +286,13 @@ public class CommonObject {
                 } else {
                     questionption.setVisibility(View.GONE);
                     addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
+                    unCheckButton();
+                    rbquestiontwo.clearCheck();
+                    rbquestionthree.clearCheck();
+                    rbquestionfour.clearCheck();
+                    rbquestionfive.clearCheck();
+                    rbquestionsix.clearCheck();
+                    rbquestionseven.clearCheck();
                     secondQ = "";
                     thirdQ = "";
                     forthQ = "";
@@ -429,7 +436,7 @@ public class CommonObject {
                 rbtnno.setText("" + questiondata.getData().get(position).getOptions().get(1));
                 break;
             case 1:
-                if (callrequest.getCallType().equals(OpenTokConstants.video)) {
+                if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                     llquestiontwo.setVisibility(View.VISIBLE);
                     questionstwo.setText("" + questiondata.getData().get(1).getQuestion());
                     rbtngood.setText("" + questiondata.getData().get(1).getOptions().get(0));
@@ -444,7 +451,7 @@ public class CommonObject {
                 }
                 break;
             case 2:
-                if (callrequest.getCallType().equals(OpenTokConstants.video)) {
+                if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                     llquestionthree.setVisibility(View.VISIBLE);
                     questionsthree.setText("" + questiondata.getData().get(2).getQuestion());
                     rbtngoodq3.setText("" + questiondata.getData().get(2).getOptions().get(0));
@@ -464,7 +471,7 @@ public class CommonObject {
 
                     if (!questiondata.getData().get(3).getIsPhysiciansQuestion()) {
                         if (UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video)|| callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionfour.setVisibility(View.VISIBLE);
                                 questionsfour.setText("" + questiondata.getData().get(3).getQuestion());
                                 rbtngoodq4.setText("" + questiondata.getData().get(3).getOptions().get(0));
@@ -490,7 +497,7 @@ public class CommonObject {
 
                     if (!questiondata.getData().get(4).getIsPhysiciansQuestion()) {
                         if (UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionfive.setVisibility(View.VISIBLE);
                                 questionsfive.setText("" + questiondata.getData().get(4).getQuestion());
                                 rbtngoodq5.setText("" + questiondata.getData().get(4).getOptions().get(0));
@@ -516,7 +523,7 @@ public class CommonObject {
 
                     if (questiondata.getData().get(5).getIsPhysiciansQuestion()) {
                         if (!UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video)|| callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionsix.setVisibility(View.VISIBLE);
                                 questionssix.setText("" + questiondata.getData().get(5).getQuestion());
                                 rbtngoodq6.setText("" + questiondata.getData().get(5).getOptions().get(0));
@@ -541,7 +548,7 @@ public class CommonObject {
                 if (questiondata.getData().get(6).getIsPhysiciansQuestion() != null) {
                     if (questiondata.getData().get(6).getIsPhysiciansQuestion()) {
                         if (!UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video)|| callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionseven.setVisibility(View.VISIBLE);
                                 questionseven.setText("" + questiondata.getData().get(6).getQuestion());
                                 rbtngoodq7.setText("" + questiondata.getData().get(6).getOptions().get(0));
