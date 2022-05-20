@@ -215,6 +215,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             public void onResponse(Call<FeedbackQuestionModel> call, Response<FeedbackQuestionModel> response) {
                 feedbackQuestionModel = response.body();
                 dismissProgressDialog();
+                CommonObject.dismissdialog();
                 CommonObject.showDialog(CallFeedBackActivity.this, feedbackQuestionModel,callrequest,sessionId,to_guid,doctorGuid, feedbackCallback);
             }
 
