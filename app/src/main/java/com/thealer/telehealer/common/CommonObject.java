@@ -12,6 +12,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -28,7 +30,9 @@ import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.feedback.FeedbackResponseModel;
 import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.common.Feedback.FeedbackAdapter;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
+import com.thealer.telehealer.common.Feedback.FeedbackTemp;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 
 import org.json.JSONArray;
@@ -62,9 +66,12 @@ public class CommonObject {
     private static EditText commentbox;
     private static String firstQ = "", secondQ = "", thirdQ = "", forthQ = "", fivthQ = "", sixthQ = "", seventhQ = "";
     static Dialog dialog;
+    private static ListView lvquestion;
+    private static FeedbackAdapter feedbackAdapter;
+    public static List<FeedbackTemp> tempdata = new ArrayList<>();
 
-    public static void dismissdialog() {
-        if (dialog != null) {
+    public static void dismissdialog(Activity activity) {
+        if (!activity.isFinishing() && dialog != null) {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
@@ -88,172 +95,176 @@ public class CommonObject {
 
         questionption = (LinearLayout) dialog.findViewById(R.id.ll_questionption);
 
-        llquestiontwo = (LinearLayout) dialog.findViewById(R.id.ll_questiontwo);
-        questionstwo = (AppCompatTextView) dialog.findViewById(R.id.tv_questiontwo);
-        rbquestiontwo = (RadioGroup) dialog.findViewById(R.id.rb_questiontwo);
-        rbtngood = (RadioButton) dialog.findViewById(R.id.good);
-        rbtnbad = (RadioButton) dialog.findViewById(R.id.bad);
-
-        llquestionthree = (LinearLayout) dialog.findViewById(R.id.ll_questionthree);
-        questionsthree = (AppCompatTextView) dialog.findViewById(R.id.tv_questionthree);
-        rbquestionthree = (RadioGroup) dialog.findViewById(R.id.rb_questionthree);
-        rbtngoodq3 = (RadioButton) dialog.findViewById(R.id.goodq3);
-        rbtnbadq3 = (RadioButton) dialog.findViewById(R.id.badq3);
-
-        llquestionfour = (LinearLayout) dialog.findViewById(R.id.ll_questionfour);
-        questionsfour = (AppCompatTextView) dialog.findViewById(R.id.tv_questionfour);
-        rbquestionfour = (RadioGroup) dialog.findViewById(R.id.rb_questionfour);
-        rbtngoodq4 = (RadioButton) dialog.findViewById(R.id.goodq4);
-        rbtnbadq4 = (RadioButton) dialog.findViewById(R.id.badq4);
-
-        llquestionfive = (LinearLayout) dialog.findViewById(R.id.ll_questionfive);
-        questionsfive = (AppCompatTextView) dialog.findViewById(R.id.tv_questionfive);
-        rbquestionfive = (RadioGroup) dialog.findViewById(R.id.rb_questionfive);
-        rbtngoodq5 = (RadioButton) dialog.findViewById(R.id.goodq5);
-        rbtnbadq5 = (RadioButton) dialog.findViewById(R.id.badq5);
-
-        llquestionsix = (LinearLayout) dialog.findViewById(R.id.ll_questionsix);
-        questionssix = (AppCompatTextView) dialog.findViewById(R.id.tv_questionsix);
-        rbquestionsix = (RadioGroup) dialog.findViewById(R.id.rb_questionsix);
-        rbtngoodq6 = (RadioButton) dialog.findViewById(R.id.goodq6);
-        rbtnbadq6 = (RadioButton) dialog.findViewById(R.id.badq6);
-
-        llquestionseven = (LinearLayout) dialog.findViewById(R.id.ll_questionseven);
-        questionseven = (AppCompatTextView) dialog.findViewById(R.id.tv_questionseven);
-        rbquestionseven = (RadioGroup) dialog.findViewById(R.id.rb_questionseven);
-        rbtngoodq7 = (RadioButton) dialog.findViewById(R.id.goodq7);
-        rbtnbadq7 = (RadioButton) dialog.findViewById(R.id.badq7);
+        lvquestion = (ListView) dialog.findViewById(R.id.lv_question);
+//        llquestiontwo = (LinearLayout) dialog.findViewById(R.id.ll_questiontwo);
+//        questionstwo = (AppCompatTextView) dialog.findViewById(R.id.tv_questiontwo);
+//        rbquestiontwo = (RadioGroup) dialog.findViewById(R.id.rb_questiontwo);
+//        rbtngood = (RadioButton) dialog.findViewById(R.id.good);
+//        rbtnbad = (RadioButton) dialog.findViewById(R.id.bad);
+//
+//        llquestionthree = (LinearLayout) dialog.findViewById(R.id.ll_questionthree);
+//        questionsthree = (AppCompatTextView) dialog.findViewById(R.id.tv_questionthree);
+//        rbquestionthree = (RadioGroup) dialog.findViewById(R.id.rb_questionthree);
+//        rbtngoodq3 = (RadioButton) dialog.findViewById(R.id.goodq3);
+//        rbtnbadq3 = (RadioButton) dialog.findViewById(R.id.badq3);
+//
+//        llquestionfour = (LinearLayout) dialog.findViewById(R.id.ll_questionfour);
+//        questionsfour = (AppCompatTextView) dialog.findViewById(R.id.tv_questionfour);
+//        rbquestionfour = (RadioGroup) dialog.findViewById(R.id.rb_questionfour);
+//        rbtngoodq4 = (RadioButton) dialog.findViewById(R.id.goodq4);
+//        rbtnbadq4 = (RadioButton) dialog.findViewById(R.id.badq4);
+//
+//        llquestionfive = (LinearLayout) dialog.findViewById(R.id.ll_questionfive);
+//        questionsfive = (AppCompatTextView) dialog.findViewById(R.id.tv_questionfive);
+//        rbquestionfive = (RadioGroup) dialog.findViewById(R.id.rb_questionfive);
+//        rbtngoodq5 = (RadioButton) dialog.findViewById(R.id.goodq5);
+//        rbtnbadq5 = (RadioButton) dialog.findViewById(R.id.badq5);
+//
+//        llquestionsix = (LinearLayout) dialog.findViewById(R.id.ll_questionsix);
+//        questionssix = (AppCompatTextView) dialog.findViewById(R.id.tv_questionsix);
+//        rbquestionsix = (RadioGroup) dialog.findViewById(R.id.rb_questionsix);
+//        rbtngoodq6 = (RadioButton) dialog.findViewById(R.id.goodq6);
+//        rbtnbadq6 = (RadioButton) dialog.findViewById(R.id.badq6);
+//
+//        llquestionseven = (LinearLayout) dialog.findViewById(R.id.ll_questionseven);
+//        questionseven = (AppCompatTextView) dialog.findViewById(R.id.tv_questionseven);
+//        rbquestionseven = (RadioGroup) dialog.findViewById(R.id.rb_questionseven);
+//        rbtngoodq7 = (RadioButton) dialog.findViewById(R.id.goodq7);
+//        rbtnbadq7 = (RadioButton) dialog.findViewById(R.id.badq7);
 
         commentbox = (EditText) dialog.findViewById(R.id.commentbox);
 
         dialogButton = (AppCompatTextView) dialog.findViewById(R.id.txtSubmit);
-        dialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        dialogButton.setOnClickListener(v -> {
 
-                HashMap<String, Object> param = new HashMap<>();
-                String version = BuildConfig.VERSION_NAME;
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String date = df.format(Calendar.getInstance().getTime());
-                param.put("dateTime", date);
-                param.put("feedback_type", "call");
-                param.put("device", "android");
-                param.put("app_version", version);
-                if (responseModels.size() != 0) {
-                    List<FeedbackResponseModel> temp = new ArrayList<>();
-                    temp.addAll(responseModels);
-                    if (!responseModels.get(0).getAnswer().trim().equals(questiondata.getData().get(0).getMainQuestionAnswer())) {
-                        responseModels.clear();
-                        responseModels.add(temp.get(0));
-                        temp.clear();
+            HashMap<String, Object> param = new HashMap<>();
+            String version = BuildConfig.VERSION_NAME;
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String date = df.format(Calendar.getInstance().getTime());
+            param.put("dateTime", date);
+            param.put("feedback_type", "call");
+            param.put("device", "android");
+            param.put("app_version", version);
+            if (responseModels.size() != 0) {
+                List<FeedbackResponseModel> temp = new ArrayList<>();
+                temp.addAll(responseModels);
+                if (!responseModels.get(0).getAnswer().trim().equals(questiondata.getData().get(0).getMainQuestionAnswer())) {
+                    responseModels.clear();
+                    responseModels.add(temp.get(0));
+                    temp.clear();
+                }
+            }
+
+            ArrayList<FeedbackResponseModel> responsedata = new ArrayList<>();
+            try {
+                for (int i = 0; i < responseModels.size(); i++) {
+                    responsedata.add(new FeedbackResponseModel(responseModels.get(i).getFeedbacksQuestionsId(), responseModels.get(i).getQuestion(), responseModels.get(i).getAnswer()));
+                }
+            } catch (Exception ex) {
+                Log.d("TAG", "onClick: ");
+            }
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("serial", Build.SERIAL);
+                jsonObject.put("model", Build.MODEL);
+                jsonObject.put("id", Build.ID);
+                jsonObject.put("manufacturer", Build.MANUFACTURER);
+                jsonObject.put("brand", Build.BRAND);
+                jsonObject.put("type", Build.TYPE);
+                jsonObject.put("user", Build.USER);
+                jsonObject.put("base", Build.VERSION_CODES.BASE);
+                jsonObject.put("incremental", Build.VERSION.INCREMENTAL);
+                jsonObject.put("sdk", Build.VERSION.SDK);
+                jsonObject.put("board", Build.BOARD);
+                jsonObject.put("host", Build.HOST);
+                jsonObject.put("fingerprint", Build.FINGERPRINT);
+                jsonObject.put("versioncode", Build.VERSION.RELEASE);
+            } catch (Exception e) {
+                Log.d("TAG", "onClick: " + e.getMessage());
+            }
+            param.put("feedback_message", commentbox.getText().toString().isEmpty() ? "" : commentbox.getText().toString());
+            param.put("error_reason", TeleHealerApplication.feedbackreason);
+            param.put("error_message", TeleHealerApplication.feedbackreason);
+            param.put("device_meta_info", jsonObject.toString());
+            param.put("feedback_respone", responsedata);
+            param.put("rating", 5);
+            param.put("session_id", sessionId);
+            if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+                param.put("taget_user_id", doctorGuid);
+                param.put("user_id", to_guid);
+            } else {
+                param.put("taget_user_id", to_guid);
+                param.put("user_id", doctorGuid);
+            }
+            if (responseModels.size() != 0) {
+
+                if (firstQ.trim().equals(questionModel.getData().get(0).getMainQuestionAnswer())) {
+
+//                    if (llquestiontwo.getVisibility() == View.VISIBLE) {
+//                        if (secondQ.isEmpty()) {
+//                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }
+//
+//                    if (llquestionthree.getVisibility() == View.VISIBLE) {
+//                        if (thirdQ.isEmpty()) {
+//                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }
+//
+//                    if (llquestionfour.getVisibility() == View.VISIBLE) {
+//                        if (forthQ.isEmpty()) {
+//                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }
+//
+//                    if (llquestionfive.getVisibility() == View.VISIBLE) {
+//                        if (fivthQ.isEmpty()) {
+//                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }
+//
+//                    if (llquestionsix.getVisibility() == View.VISIBLE) {
+//                        if (sixthQ.isEmpty()) {
+//                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }
+//
+//                    if (llquestionseven.getVisibility() == View.VISIBLE) {
+//                        if (seventhQ.isEmpty()) {
+//                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }
+
+                    for (int i =0;i<tempdata.size();i++){
+                        if (tempdata.get(i).value == null || tempdata.get(i).value.isEmpty()){
+                            Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                     }
                 }
-
-                ArrayList<FeedbackResponseModel> responsedata = new ArrayList<>();
-                try {
-                    for (int i = 0; i < responseModels.size(); i++) {
-                        responsedata.add(new FeedbackResponseModel(responseModels.get(i).getFeedbacksQuestionsId(), responseModels.get(i).getQuestion(), responseModels.get(i).getAnswer()));
-                    }
-                } catch (Exception ex) {
-                    Log.d("TAG", "onClick: ");
-                }
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("serial", Build.SERIAL);
-                    jsonObject.put("model", Build.MODEL);
-                    jsonObject.put("id", Build.ID);
-                    jsonObject.put("manufacturer", Build.MANUFACTURER);
-                    jsonObject.put("brand", Build.BRAND);
-                    jsonObject.put("type", Build.TYPE);
-                    jsonObject.put("user", Build.USER);
-                    jsonObject.put("base", Build.VERSION_CODES.BASE);
-                    jsonObject.put("incremental", Build.VERSION.INCREMENTAL);
-                    jsonObject.put("sdk", Build.VERSION.SDK);
-                    jsonObject.put("board", Build.BOARD);
-                    jsonObject.put("host", Build.HOST);
-                    jsonObject.put("fingerprint", Build.FINGERPRINT);
-                    jsonObject.put("versioncode", Build.VERSION.RELEASE);
-                } catch (Exception e) {
-                    Log.d("TAG", "onClick: " + e.getMessage());
-                }
-                param.put("feedback_message", commentbox.getText().toString().isEmpty() ? "" : commentbox.getText().toString());
-                param.put("error_reason", TeleHealerApplication.feedbackreason);
-                param.put("error_message", TeleHealerApplication.feedbackreason);
-                param.put("device_meta_info", jsonObject.toString());
-                param.put("feedback_respone", responsedata);
-                param.put("rating", 5);
-                param.put("session_id", sessionId);
-                if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
-                    param.put("taget_user_id", doctorGuid);
-                    param.put("user_id", to_guid);
-                } else {
-                    param.put("taget_user_id", to_guid);
-                    param.put("user_id", doctorGuid);
-                }
-                if (responseModels.size() != 0) {
-
-                    if (firstQ.trim().equals(questionModel.getData().get(0).getMainQuestionAnswer())) {
-
-                        if (llquestiontwo.getVisibility() == View.VISIBLE) {
-                            if (secondQ.isEmpty()) {
-                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
-
-                        if (llquestionthree.getVisibility() == View.VISIBLE) {
-                            if (thirdQ.isEmpty()) {
-                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
-
-                        if (llquestionfour.getVisibility() == View.VISIBLE) {
-                            if (forthQ.isEmpty()) {
-                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
-
-                        if (llquestionfive.getVisibility() == View.VISIBLE) {
-                            if (fivthQ.isEmpty()) {
-                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
-
-                        if (llquestionsix.getVisibility() == View.VISIBLE) {
-                            if (sixthQ.isEmpty()) {
-                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
-
-                        if (llquestionseven.getVisibility() == View.VISIBLE) {
-                            if (seventhQ.isEmpty()) {
-                                Toast.makeText(activity, "All question's are mandatory", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
-
-                    }
-                    feedbackCallback.onActionSuccess(param);
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(activity, "Select atleast one option.", Toast.LENGTH_SHORT).show();
-                }
+                feedbackCallback.onActionSuccess(param);
+                dialog.dismiss();
+            } else {
+                Toast.makeText(activity, "Select atleast one option.", Toast.LENGTH_SHORT).show();
             }
         });
 
         dialog.show();
 
-        setQuestion(questionModel);
+        setQuestion(questionModel, activity);
         setcheckListner();
 
     }
 
-    private static void addFeedbackResponse(Integer questionid, String question, String value) {
+    public static void addFeedbackResponse(Integer questionid, String question, String value) {
         insertdata = false;
         if (responseModels.size() == 0) {
             responseModels.add(new FeedbackResponseModel(questionid, question, value));
@@ -275,87 +286,75 @@ public class CommonObject {
     }
 
     private static void setcheckListner() {
-        rbquestionone.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                firstQ = rb.getText().toString();
-                if (rb.getText().toString().contains(questiondata.getData().get(0).getMainQuestionAnswer())) {
-                    questionption.setVisibility(View.VISIBLE);
-                    addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
-                } else {
-                    questionption.setVisibility(View.GONE);
-                    addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
-                    unCheckButton();
-                    rbquestiontwo.clearCheck();
-                    rbquestionthree.clearCheck();
-                    rbquestionfour.clearCheck();
-                    rbquestionfive.clearCheck();
-                    rbquestionsix.clearCheck();
-                    rbquestionseven.clearCheck();
-                    secondQ = "";
-                    thirdQ = "";
-                    forthQ = "";
-                    fivthQ = "";
-                    sixthQ = "";
-                    seventhQ = "";
-                }
+        rbquestionone.setOnCheckedChangeListener((radioGroup, i) -> {
+            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+            firstQ = rb.getText().toString();
+            if (rb.getText().toString().contains(questiondata.getData().get(0).getMainQuestionAnswer())) {
+                questionption.setVisibility(View.VISIBLE);
+                addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
+            } else {
+                questionption.setVisibility(View.GONE);
+                addFeedbackResponse(questiondata.getData().get(0).getFeedbacksQuestionsId(), questiondata.getData().get(0).getQuestion(), rb.getText().toString());
+                clearSelection();
+//                unCheckButton();
+//                rbquestiontwo.clearCheck();
+//                rbquestionthree.clearCheck();
+//                rbquestionfour.clearCheck();
+//                rbquestionfive.clearCheck();
+//                rbquestionsix.clearCheck();
+//                rbquestionseven.clearCheck();
+                secondQ = "";
+                thirdQ = "";
+                forthQ = "";
+                fivthQ = "";
+                sixthQ = "";
+                seventhQ = "";
             }
         });
 
-        rbquestiontwo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                secondQ = rb.getText().toString();
-                addFeedbackResponse(questiondata.getData().get(1).getFeedbacksQuestionsId(), questiondata.getData().get(1).getQuestion(), rb.getText().toString());
-            }
-        });
+//        rbquestiontwo.setOnCheckedChangeListener((radioGroup, i) -> {
+//            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+//            secondQ = rb.getText().toString();
+//            addFeedbackResponse(questiondata.getData().get(1).getFeedbacksQuestionsId(), questiondata.getData().get(1).getQuestion(), rb.getText().toString());
+//        });
+//
+//        rbquestionthree.setOnCheckedChangeListener((radioGroup, i) -> {
+//            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+//            thirdQ = rb.getText().toString();
+//            addFeedbackResponse(questiondata.getData().get(2).getFeedbacksQuestionsId(), questiondata.getData().get(2).getQuestion(), rb.getText().toString());
+//        });
+//
+//        rbquestionfour.setOnCheckedChangeListener((radioGroup, i) -> {
+//            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+//            forthQ = rb.getText().toString();
+//            addFeedbackResponse(questiondata.getData().get(3).getFeedbacksQuestionsId(), questiondata.getData().get(3).getQuestion(), rb.getText().toString());
+//        });
+//
+//        rbquestionfive.setOnCheckedChangeListener((radioGroup, i) -> {
+//            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+//            fivthQ = rb.getText().toString();
+//            addFeedbackResponse(questiondata.getData().get(4).getFeedbacksQuestionsId(), questiondata.getData().get(4).getQuestion(), rb.getText().toString());
+//        });
+//
+//        rbquestionsix.setOnCheckedChangeListener((radioGroup, i) -> {
+//            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+//            sixthQ = rb.getText().toString();
+//            addFeedbackResponse(questiondata.getData().get(5).getFeedbacksQuestionsId(), questiondata.getData().get(5).getQuestion(), rb.getText().toString());
+//        });
+//
+//        rbquestionseven.setOnCheckedChangeListener((radioGroup, i) -> {
+//            RadioButton rb = (RadioButton) radioGroup.findViewById(i);
+//            seventhQ = rb.getText().toString();
+//            addFeedbackResponse(questiondata.getData().get(6).getFeedbacksQuestionsId(), questiondata.getData().get(6).getQuestion(), rb.getText().toString());
+//        });
+    }
 
-        rbquestionthree.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                thirdQ = rb.getText().toString();
-                addFeedbackResponse(questiondata.getData().get(2).getFeedbacksQuestionsId(), questiondata.getData().get(2).getQuestion(), rb.getText().toString());
-            }
-        });
+    private static void clearSelection() {
 
-        rbquestionfour.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                forthQ = rb.getText().toString();
-                addFeedbackResponse(questiondata.getData().get(3).getFeedbacksQuestionsId(), questiondata.getData().get(3).getQuestion(), rb.getText().toString());
-            }
-        });
-
-        rbquestionfive.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                fivthQ = rb.getText().toString();
-                addFeedbackResponse(questiondata.getData().get(4).getFeedbacksQuestionsId(), questiondata.getData().get(4).getQuestion(), rb.getText().toString());
-            }
-        });
-
-        rbquestionsix.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                sixthQ = rb.getText().toString();
-                addFeedbackResponse(questiondata.getData().get(5).getFeedbacksQuestionsId(), questiondata.getData().get(5).getQuestion(), rb.getText().toString());
-            }
-        });
-
-        rbquestionseven.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton rb = (RadioButton) radioGroup.findViewById(i);
-                seventhQ = rb.getText().toString();
-                addFeedbackResponse(questiondata.getData().get(6).getFeedbacksQuestionsId(), questiondata.getData().get(6).getQuestion(), rb.getText().toString());
-            }
-        });
+        for (int i = 0; i < questiondata.getData().size(); i++) {
+            questiondata.getData().get(i).setuserSelect("");
+        }
+        feedbackAdapter.notifyDataSetChanged();
     }
 
     private static void unCheckButton() {
@@ -409,7 +408,7 @@ public class CommonObject {
         }
     }
 
-    private static void setQuestion(FeedbackQuestionModel questionModel) {
+    private static void setQuestion(FeedbackQuestionModel questionModel, Activity activity) {
 
         if (questionModel != null) {
 
@@ -419,9 +418,11 @@ public class CommonObject {
                     return datum.getFeedbacksQuestionsId().compareTo(t1.getFeedbacksQuestionsId());
                 }
             });
-            for (int i = 0; i < questionModel.getData().size(); i++) {
+            for (int i = 0; i < 1; i++) {
                 setQuestionAnswer(i);
             }
+            feedbackAdapter = new FeedbackAdapter(activity, questionModel.getData(), callrequest);
+            lvquestion.setAdapter((ListAdapter) feedbackAdapter);
         } else {
             dialog.dismiss();
         }
@@ -471,7 +472,7 @@ public class CommonObject {
 
                     if (!questiondata.getData().get(3).getIsPhysiciansQuestion()) {
                         if (UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)|| callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionfour.setVisibility(View.VISIBLE);
                                 questionsfour.setText("" + questiondata.getData().get(3).getQuestion());
                                 rbtngoodq4.setText("" + questiondata.getData().get(3).getOptions().get(0));
@@ -523,7 +524,7 @@ public class CommonObject {
 
                     if (questiondata.getData().get(5).getIsPhysiciansQuestion()) {
                         if (!UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)|| callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionsix.setVisibility(View.VISIBLE);
                                 questionssix.setText("" + questiondata.getData().get(5).getQuestion());
                                 rbtngoodq6.setText("" + questiondata.getData().get(5).getOptions().get(0));
@@ -548,7 +549,7 @@ public class CommonObject {
                 if (questiondata.getData().get(6).getIsPhysiciansQuestion() != null) {
                     if (questiondata.getData().get(6).getIsPhysiciansQuestion()) {
                         if (!UserType.isUserPatient()) {
-                            if (callrequest.getCallType().equals(OpenTokConstants.video)|| callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+                            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
                                 llquestionseven.setVisibility(View.VISIBLE);
                                 questionseven.setText("" + questiondata.getData().get(6).getQuestion());
                                 rbtngoodq7.setText("" + questiondata.getData().get(6).getOptions().get(0));

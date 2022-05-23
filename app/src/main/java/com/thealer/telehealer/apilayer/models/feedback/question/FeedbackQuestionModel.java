@@ -68,6 +68,7 @@ public class FeedbackQuestionModel {
         @SerializedName("is_physicians_question")
         @Expose
         private Boolean isPhysiciansQuestion;
+        private String userSelect;
 
         public Integer getFeedbacksQuestionsId() {
             return feedbacksQuestionsId;
@@ -75,6 +76,14 @@ public class FeedbackQuestionModel {
 
         public void setFeedbacksQuestionsId(Integer feedbacksQuestionsId) {
             this.feedbacksQuestionsId = feedbacksQuestionsId;
+        }
+
+        public String getuserSelect() {
+            return userSelect;
+        }
+
+        public void setuserSelect(String userSelect) {
+            this.userSelect = userSelect;
         }
 
         public String getFeedbackType() {

@@ -225,7 +225,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         if (TeleHealerApplication.iscallendedbyphy) {
 //            if (!TeleHealerApplication.callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
-                CommonObject.dismissdialog();
+                CommonObject.dismissdialog(this);
                 CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
                 TeleHealerApplication.iscallendedbyphy = false;
 //            }
@@ -235,7 +235,7 @@ public class BaseActivity extends AppCompatActivity {
     FeedbackCallback feedbackCallback = new FeedbackCallback() {
         @Override
         public void onActionSuccess(HashMap<String, Object> param) {
-
+            CommonObject.tempdata.clear();
             submitFeedback(param);
 
         }
