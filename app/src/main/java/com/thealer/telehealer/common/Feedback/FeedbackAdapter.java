@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.Feedback;
 
+import static com.thealer.telehealer.common.CommonObject.getCallType;
+
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +62,10 @@ public class FeedbackAdapter extends BaseAdapter {
         LinearLayout llquestion = (LinearLayout) view.findViewById(R.id.ll_question);
         LinearLayout mainview = (LinearLayout) view.findViewById(R.id.ll_mainview);
 
+        if (i == 0) {
+            mainview.removeView(llquestion);
+        }
+
         if (questionsList.get(i).getuserSelect() == null || questionsList.get(i).getuserSelect().isEmpty()) {
             yes.setChecked(false);
             no.setChecked(false);
@@ -107,7 +113,7 @@ public class FeedbackAdapter extends BaseAdapter {
                     if (insertdata) {
                         CommonObject.tempdata.set(insertposition, new FeedbackTemp(i, no.getText().toString()));
                     }
-                    CommonObject.addFeedbackResponse(questionsList.get(i).getFeedbacksQuestionsId(), questionsList.get(i).getQuestion(), yes.getText().toString());
+                    CommonObject.addFeedbackResponse(questionsList.get(i).getFeedbacksQuestionsId(), questionsList.get(i).getQuestion(), no.getText().toString());
                 }
             }
         });
@@ -116,15 +122,10 @@ public class FeedbackAdapter extends BaseAdapter {
 
             if (!questionsList.get(i).getIsPhysiciansQuestion()) {
                 if (UserType.isUserPatient()) {
-                    if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+
+                    if (questionsList.get(i).getVisibility().contains(getCallType(callrequest.getCallType()))) {
                         llquestion.setVisibility(View.VISIBLE);
-                        checkValue(i,"");
-                        question.setText("" + questionsList.get(i).getQuestion());
-                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-                        no.setText("" + questionsList.get(i).getOptions().get(1));
-                    } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
-                        llquestion.setVisibility(View.VISIBLE);
-                        checkValue(i,"");
+                        checkValue(i, "");
                         question.setText("" + questionsList.get(i).getQuestion());
                         yes.setText("" + questionsList.get(i).getOptions().get(0));
                         no.setText("" + questionsList.get(i).getOptions().get(1));
@@ -132,39 +133,65 @@ public class FeedbackAdapter extends BaseAdapter {
                         llquestion.setVisibility(View.GONE);
                         mainview.removeView(llquestion);
                     }
+//                    if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+//                        llquestion.setVisibility(View.VISIBLE);
+//                        checkValue(i, "");
+//                        question.setText("" + questionsList.get(i).getQuestion());
+//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
+//                        no.setText("" + questionsList.get(i).getOptions().get(1));
+//                    } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
+//                        llquestion.setVisibility(View.VISIBLE);
+//                        checkValue(i, "");
+//                        question.setText("" + questionsList.get(i).getQuestion());
+//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
+//                        no.setText("" + questionsList.get(i).getOptions().get(1));
+//                    } else {
+//                        llquestion.setVisibility(View.GONE);
+//                        mainview.removeView(llquestion);
+//                    }
                 } else {
-                    if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
-                        llquestion.setVisibility(View.VISIBLE);
-                        checkValue(i,"");
-                        question.setText("" + questionsList.get(i).getQuestion());
-                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-                        no.setText("" + questionsList.get(i).getOptions().get(1));
-                    } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
-                        llquestion.setVisibility(View.VISIBLE);
-                        checkValue(i,"");
-                        question.setText("" + questionsList.get(i).getQuestion());
-                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-                        no.setText("" + questionsList.get(i).getOptions().get(1));
-                    } else {
-                        llquestion.setVisibility(View.GONE);
-                        mainview.removeView(llquestion);
-                    }
+                    llquestion.setVisibility(View.GONE);
+                    mainview.removeView(llquestion);
                 }
             } else {
-                llquestion.setVisibility(View.GONE);
-                mainview.removeView(llquestion);
+                if (!UserType.isUserPatient()) {
+
+                    if (questionsList.get(i).getVisibility().contains(getCallType(callrequest.getCallType()))) {
+                        llquestion.setVisibility(View.VISIBLE);
+                        checkValue(i, "");
+                        question.setText("" + questionsList.get(i).getQuestion());
+                        yes.setText("" + questionsList.get(i).getOptions().get(0));
+                        no.setText("" + questionsList.get(i).getOptions().get(1));
+                    } else {
+                        llquestion.setVisibility(View.GONE);
+                        mainview.removeView(llquestion);
+                    }
+//                    if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+//                        llquestion.setVisibility(View.VISIBLE);
+//                        checkValue(i, "");
+//                        question.setText("" + questionsList.get(i).getQuestion());
+//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
+//                        no.setText("" + questionsList.get(i).getOptions().get(1));
+//                    } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
+//                        llquestion.setVisibility(View.VISIBLE);
+//                        checkValue(i, "");
+//                        question.setText("" + questionsList.get(i).getQuestion());
+//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
+//                        no.setText("" + questionsList.get(i).getOptions().get(1));
+//                    } else {
+//                        llquestion.setVisibility(View.GONE);
+//                        mainview.removeView(llquestion);
+//                    }
+                } else {
+                    llquestion.setVisibility(View.GONE);
+                    mainview.removeView(llquestion);
+                }
             }
         } else {
 
-            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+            if (questionsList.get(i).getVisibility().contains(getCallType(callrequest.getCallType()))) {
                 llquestion.setVisibility(View.VISIBLE);
-                checkValue(i,"");
-                question.setText("" + questionsList.get(i).getQuestion());
-                yes.setText("" + questionsList.get(i).getOptions().get(0));
-                no.setText("" + questionsList.get(i).getOptions().get(1));
-            } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
-                llquestion.setVisibility(View.VISIBLE);
-                checkValue(i,"");
+                checkValue(i, "");
                 question.setText("" + questionsList.get(i).getQuestion());
                 yes.setText("" + questionsList.get(i).getOptions().get(0));
                 no.setText("" + questionsList.get(i).getOptions().get(1));
@@ -172,11 +199,27 @@ public class FeedbackAdapter extends BaseAdapter {
                 llquestion.setVisibility(View.GONE);
                 mainview.removeView(llquestion);
             }
+//            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
+//                llquestion.setVisibility(View.VISIBLE);
+//                checkValue(i, "");
+//                question.setText("" + questionsList.get(i).getQuestion());
+//                yes.setText("" + questionsList.get(i).getOptions().get(0));
+//                no.setText("" + questionsList.get(i).getOptions().get(1));
+//            } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
+//                llquestion.setVisibility(View.VISIBLE);
+//                checkValue(i, "");
+//                question.setText("" + questionsList.get(i).getQuestion());
+//                yes.setText("" + questionsList.get(i).getOptions().get(0));
+//                no.setText("" + questionsList.get(i).getOptions().get(1));
+//            } else {
+//                llquestion.setVisibility(View.GONE);
+//                mainview.removeView(llquestion);
+//            }
         }
         return view;
     }
 
-    public void checkValue(int i,String value){
+    public void checkValue(int i, String value) {
         boolean insertdata = false;
         int insertposition = -1;
         for (int pos = 0; pos < CommonObject.tempdata.size(); pos++) {
