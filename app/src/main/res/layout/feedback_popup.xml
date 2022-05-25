@@ -351,7 +351,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtSubmit"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/ll_questionption"
             android:layout_centerHorizontal="true"
