@@ -175,6 +175,7 @@ public class CommonObject {
                     }
                 }
                 feedbackCallback.onActionSuccess(param);
+                responseModels.clear();
                 dialog.dismiss();
             } else {
                 Toast.makeText(activity, "Select atleast one option.", Toast.LENGTH_SHORT).show();
