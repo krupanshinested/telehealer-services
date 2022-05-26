@@ -158,13 +158,13 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         } else {
             rating_et.setVisibility(View.VISIBLE);
         }
-        if (!callrequest.getCallType().equals(OpenTokConstants.oneWay)){
+//        if (!callrequest.getCallType().equals(OpenTokConstants.oneWay)){
             getFeedbackSetting();
-        }else {
-            quality_tv.setVisibility(View.VISIBLE);
-            rating_bar.setVisibility(View.VISIBLE);
-            rating_et.setVisibility(View.VISIBLE);
-        }
+//        }else {
+//            quality_tv.setVisibility(View.VISIBLE);
+//            rating_bar.setVisibility(View.VISIBLE);
+//            rating_et.setVisibility(View.VISIBLE);
+//        }
     }
 
     private void getFeedbackSetting() {
@@ -215,6 +215,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             public void onResponse(Call<FeedbackQuestionModel> call, Response<FeedbackQuestionModel> response) {
                 feedbackQuestionModel = response.body();
                 dismissProgressDialog();
+                CommonObject.dismissdialog(CallFeedBackActivity.this);
                 CommonObject.showDialog(CallFeedBackActivity.this, feedbackQuestionModel,callrequest,sessionId,to_guid,doctorGuid, feedbackCallback);
             }
 
@@ -229,6 +230,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     FeedbackCallback feedbackCallback = new FeedbackCallback() {
         @Override
         public void onActionSuccess(HashMap<String, Object> data) {
+            CommonObject.tempdata.clear();
             submitFeedback(data);
         }
     };

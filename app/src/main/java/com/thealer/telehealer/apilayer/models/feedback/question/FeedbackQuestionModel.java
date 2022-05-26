@@ -56,6 +56,9 @@ public class FeedbackQuestionModel {
         @SerializedName("options")
         @Expose
         private List<String> options = null;
+        @SerializedName("visibility")
+        @Expose
+        private List<String> visibility = null;
         @SerializedName("question")
         @Expose
         private String question;
@@ -68,6 +71,7 @@ public class FeedbackQuestionModel {
         @SerializedName("is_physicians_question")
         @Expose
         private Boolean isPhysiciansQuestion;
+        private String userSelect;
 
         public Integer getFeedbacksQuestionsId() {
             return feedbacksQuestionsId;
@@ -75,6 +79,14 @@ public class FeedbackQuestionModel {
 
         public void setFeedbacksQuestionsId(Integer feedbacksQuestionsId) {
             this.feedbacksQuestionsId = feedbacksQuestionsId;
+        }
+
+        public String getuserSelect() {
+            return userSelect;
+        }
+
+        public void setuserSelect(String userSelect) {
+            this.userSelect = userSelect;
         }
 
         public String getFeedbackType() {
@@ -99,6 +111,14 @@ public class FeedbackQuestionModel {
 
         public void setOptions(List<String> options) {
             this.options = options;
+        }
+
+        public List<String> getVisibility() {
+            return visibility;
+        }
+
+        public void setVisibility(List<String> visibility) {
+            this.visibility = visibility;
         }
 
         public String getQuestion() {

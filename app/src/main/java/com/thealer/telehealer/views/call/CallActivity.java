@@ -1486,20 +1486,23 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onResponse(Call<FeedbackSettingModel> call, Response<FeedbackSettingModel> response) {
                 feedbackSettingModel = response.body();
-                for (FeedbackSettingModel.Datum datum : feedbackSettingModel.getData()) {
-                    if (datum.getCode().equals("CALL_REVIEW")) {
-                        showFeedback = datum.getValue();
+                try {
+                    for (FeedbackSettingModel.Datum datum : feedbackSettingModel.getData()) {
+                        if (datum.getCode().equals("CALL_REVIEW")) {
+                            showFeedback = datum.getValue();
+                        }
+
+                        if (datum.getCode().equals("CALL_RATING_REVIEW")) {
+                            showFeedbackRating = datum.getValue();
+                        }
                     }
 
-                    if (datum.getCode().equals("CALL_RATING_REVIEW")) {
-                        showFeedbackRating = datum.getValue();
+                    if (showFeedback.equals("true")) {
+                        getFeedbackQuestion();
                     }
+                } catch (Exception e) {
+                    Log.d("TAG", "onResponse: " + e.getMessage());
                 }
-
-                if (showFeedback.equals("true")) {
-                    getFeedbackQuestion();
-                }
-
             }
 
             @Override
@@ -1514,7 +1517,12 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         call.enqueue(new Callback<FeedbackQuestionModel>() {
             @Override
             public void onResponse(Call<FeedbackQuestionModel> call, Response<FeedbackQuestionModel> response) {
-                feedbackQuestionModel = response.body();
+                try {
+                    feedbackQuestionModel = response.body();
+                }catch (Exception e){
+                    Log.d("TAG", "onResponse: "+e.getMessage());
+                }
+
             }
 
             @Override
@@ -1569,7 +1577,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                                     context.startActivity(feedBackIntent);
                                 }
                             }
-                        }else {
+                        } else {
                             TeleHealerApplication.iscallendedbyphy = false;
                         }
                     } else {
@@ -1614,8 +1622,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                         intent.putExtra(ArgumentKeys.DOCTOR_GUID, doctor_guid);
 
                         context.startActivity(intent);
-                    }else {
-                        if (TeleHealerApplication.ispatientendedcall){
+                    } else {
+                        if (TeleHealerApplication.ispatientendedcall) {
                             TeleHealerApplication.iscallendedbyphy = false;
                         }
                     }
