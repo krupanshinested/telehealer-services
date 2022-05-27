@@ -207,11 +207,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    Map<String, String> headers = new HashMap<>();
-                    if(UserType.isUserAssistant()) {
-                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MAKE_CALLS_CODE);
-                    }
-                    getAuthApiService().postaVOIPCall(headers,doctorGuid, result)
+                    getAuthApiService().postaVOIPCall(doctorGuid, result)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<CallSettings>(Constants.SHOW_PROGRESS) {
                                 @Override

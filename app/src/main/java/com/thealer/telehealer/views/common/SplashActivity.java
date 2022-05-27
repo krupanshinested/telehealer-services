@@ -8,23 +8,22 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.DrawableImageViewTarget;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
-import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
-import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
-import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -33,16 +32,13 @@ import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.appupdate.AppUpdateResponse;
 import com.thealer.telehealer.views.appupdate.AppUpdateViewModel;
 import com.thealer.telehealer.views.base.BaseActivity;
-import com.thealer.telehealer.views.call.CallFeedBackActivity;
-import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
-import com.thealer.telehealer.views.transaction.AddChargeActivity;
-import com.thealer.telehealer.views.transaction.TransactionFilterActivity;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Aswin on 10,October,2018

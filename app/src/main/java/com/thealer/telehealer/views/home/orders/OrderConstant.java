@@ -26,6 +26,7 @@ public class OrderConstant {
     public static final String ORDER_TYPE_FILES = "files";
     public static final String ORDER_TYPE_MISC = "miscellaneous";
     public static final String ORDER_TYPE_EDUCATIONAL_VIDEO = "educational-video";
+    public static String USER_GUID = "";
 
     public static String CALL_STATUS_STARTED = "STARTED";
     public static String CALL_STATUS_NO_ANSWER = "NOANSWER";

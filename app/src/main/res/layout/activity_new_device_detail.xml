@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/appbar_back_with_title_app_color" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_10sdp"
+            android:padding="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="@dimen/_5sdp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_15sdp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/deviceTv"
+                            android:layout_width="@dimen/_120sdp"
+                            android:layout_height="@dimen/_100sdp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:src="@drawable/drawable_ic_play"
+                            tools:src="@tools:sample/avatars" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/str_new_device_dummy_desc" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/device_link1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_10sdp"
+                                android:ellipsize="end"
+                                android:ems="3"
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center|left"
+                                android:onClick="onClick"
+                                android:text="@string/key_download_product_sheet"
+                                android:textColor="@color/bt_theme_blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:fontFamily="@font/open_sans_semibold"
+                                tools:text="@string/key_download_product_sheet" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/device_link2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:ellipsize="end"
+                                android:ems="3"
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center|left"
+                                android:onClick="onClick"
+                                android:text="@string/key_download_user_manual"
+                                android:textColor="@color/bt_theme_blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:fontFamily="@font/open_sans_semibold"
+                                tools:text="@string/key_download_user_manual" />
+
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@color/colorGrey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_telehealerstep"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/stepone"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_12ssp"
+                            android:textStyle="bold"
+                            tools:text="@string/stepone" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            android:visibility="visible"
+                            tools:text="@string/str_new_device_dummy_desc" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_get_vital"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_get_vital_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            android:visibility="gone"
+                            tools:text="@string/str_new_device_get_vital_desc" />
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/edt_device_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_5sdp"
+                            android:background="@drawable/device_id_background"
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:hint="@string/enter_device_id"
+                            android:inputType="textNoSuggestions"
+                            android:padding="@dimen/_10sdp"
+                            android:singleLine="true"
+                            android:textColorHint="@color/colorBlack"
+                            android:textSize="@dimen/_12ssp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@color/colorGrey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_steptwo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/steptwo"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_12ssp"
+                            android:textStyle="bold"
+                            tools:text="@string/steptwo" />
+
+                        <LinearLayout
+                            android:id="@+id/linkLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/device_id_background"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/_7sdp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/device_link"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/open_sans_semibold"
+                                android:gravity="center|left"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="@dimen/_11ssp"
+                                tools:text="@string/str_new_device_dummy_desc" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/copy_device_link"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:background="@drawable/copy_btn_background"
+                                android:fontFamily="@font/open_sans"
+                                android:gravity="center"
+                                android:onClick="onClick"
+                                android:paddingHorizontal="@dimen/_12sdp"
+                                android:paddingVertical="@dimen/_4sdp"
+                                android:text="@string/key_copy"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="@dimen/_11ssp"
+                                tools:text="@string/key_copy" />
+
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_donot"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/donotshare"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_11ssp"
+                            android:visibility="visible"
+                            tools:text="@string/donotshare" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@color/colorGrey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_stepnotes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:visibility="gone"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/tellihealthnotes"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_11ssp"
+                            android:textStyle="bold"
+                            tools:text="@string/tellihealthnotes" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_stepinfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/stepthree"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_12ssp"
+                            android:textStyle="bold"
+                            tools:text="@string/stepthree" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_step"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/tellihealthstep"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/tellihealthstep" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@color/colorGrey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_sms_physician"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:gravity="center|left"
+                            android:text="@string/key_device_sms_enabled"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/key_device_sms_enabled" />
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/_5sdp">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/physician_crv"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:layout_marginEnd="@dimen/_12sdp"
+                                android:fitsSystemWindows="true"
+                                android:orientation="horizontal"
+                                android:padding="@dimen/_2sdp"
+                                android:scrollbars="horizontal"
+                                android:fadeScrollbars="false"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/adapter_sms_physician" />
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/vw_previous"
+                                android:layout_width="@dimen/_22sdp"
+                                android:layout_height="@dimen/_22sdp"
+                                android:layout_gravity="center_vertical|start"
+                                android:elevation="0dp"
+                                app:cardBackgroundColor="@android:color/transparent"
+                                app:cardCornerRadius="@dimen/_15sdp"
+                                app:cardElevation="0dp">
+
+                                <com.skyfishjy.library.RippleBackground
+                                    android:id="@+id/contentprevious"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_vertical"
+                                    app:rb_color="#E0E0E0"
+                                    app:rb_duration="2000"
+                                    app:rb_radius="32dp"
+                                    app:rb_rippleAmount="2"
+                                    app:rb_scale="1">
+
+                                    <ImageView
+                                        android:id="@+id/ibtn_previous"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:src="@drawable/ic_previous" />
+                                </com.skyfishjy.library.RippleBackground>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/vw_next"
+                                android:layout_width="@dimen/_22sdp"
+                                android:layout_height="@dimen/_22sdp"
+                                android:layout_gravity="center_vertical|end"
+                                android:elevation="0dp"
+                                app:cardBackgroundColor="@android:color/transparent"
+                                app:cardCornerRadius="@dimen/_15sdp"
+                                app:cardElevation="0dp">
+
+                                <com.skyfishjy.library.RippleBackground
+                                    android:id="@+id/contentpreviouss"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    app:rb_color="#E0E0E0"
+                                    app:rb_duration="2000"
+                                    app:rb_radius="35dp"
+                                    app:rb_rippleAmount="2"
+                                    app:rb_scale="1">
+
+                                    <ImageView
+                                        android:id="@+id/ibtn_next"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_centerInParent="true"
+                                        android:src="@drawable/ic_next" />
+                                </com.skyfishjy.library.RippleBackground>
+
+                            </androidx.cardview.widget.CardView>
+
+
+                        </FrameLayout>
+
+                        <!--                        <androidx.recyclerview.widget.RecyclerView-->
+                        <!--                            android:id="@+id/physician_crv"-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="match_parent"-->
+                        <!--                            android:layout_marginTop="@dimen/_5sdp"-->
+                        <!--                            android:fadeScrollbars="false"-->
+                        <!--                            android:fitsSystemWindows="true"-->
+                        <!--                            android:padding="@dimen/_5sdp"-->
+                        <!--                            android:scrollbars="horizontal" />-->
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_description_vital"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc2"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_11ssp"
+                            tools:text="@string/str_new_device_dummy_desc2" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtSubmit"
+                            android:layout_width="@dimen/_130sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/submit_btn_background"
+                            android:backgroundTint="@color/app_gradient_start"
+                            android:gravity="center"
+                            android:onClick="onClick"
+                            android:paddingHorizontal="@dimen/_20sdp"
+                            android:paddingVertical="@dimen/_10sdp"
+                            android:text="@string/submit"
+                            android:textColor="@color/bt_white"
+                            android:textSize="@dimen/_13sdp"
+                            tools:text="@string/submit" />
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+            </RelativeLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

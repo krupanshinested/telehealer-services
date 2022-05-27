@@ -30,9 +30,8 @@ public class AboutHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int VIEW_TYPE_MEDICATION = 3;
 
 
-    public AboutHistoryAdapter(FragmentActivity activity, List historyList) {
+    public AboutHistoryAdapter(FragmentActivity activity) {
         this.activity = activity;
-        this.historyList = historyList;
     }
 
     @NonNull
@@ -115,6 +114,11 @@ public class AboutHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         return historyList.size();
+    }
+
+    public void setDataAdapter(List historyList) {
+        this.historyList=historyList;
+        notifyDataSetChanged();
     }
 
     private class VitalHolder extends RecyclerView.ViewHolder {

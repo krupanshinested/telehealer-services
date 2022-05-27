@@ -117,6 +117,7 @@ public class RetrofitManager extends ContextWrapper {
         httpClient.addInterceptor(chain -> {
             Request original = chain.request();
             String token = TeleHealerApplication.appPreference.getString(PreferenceConstants.USER_AUTH_TOKEN);
+            Log.d("TAG", "createAuthRetrofit: "+token);
             Request request = original.newBuilder()
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")

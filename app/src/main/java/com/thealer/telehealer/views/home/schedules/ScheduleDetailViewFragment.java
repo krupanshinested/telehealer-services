@@ -403,6 +403,10 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                             callType = OpenTokConstants.oneWay;
                         }
 
+                        if (doctorGuid == null || doctorGuid.isEmpty()) {
+                            doctorGuid = UserDetailPreferenceManager.getUser_guid();
+                        }
+
 
                         CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
                                 resultBean.getPatient().getUser_guid(), resultBean.getPatient(), doctorGuid, doctorName, String.valueOf(resultBean.getSchedule_id()), callType, true, String.valueOf(resultBean.getSchedule_id()));

@@ -182,7 +182,7 @@ public class OpenTok implements Session.SessionListener,
     private Float otherPersonBatteryLevel = null;
 
     Handler handlerRefreshToken = new Handler();
-    Runnable runnable;
+    Runnable runnableRefreshToken;
 
     @Nullable
     private AudioFocusRequest audioFocusRequest;
@@ -209,7 +209,7 @@ public class OpenTok implements Session.SessionListener,
                 }
 
                 CallRequest callRequest = new CallRequest(apnsPayload.getUuid(),
-                        apnsPayload.getFrom(), null, apnsPayload.getDoctor_guid(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
+                        apnsPayload.getTo(), null, apnsPayload.getFrom(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
                 callRequest.update(callSettings);
 
                 boolean isInWaitingRoom = WaitingRoomActivity.isActive;
@@ -811,7 +811,7 @@ public class OpenTok implements Session.SessionListener,
 
     public void endCall(String callRejectionReason) {
         Log.d("openTok", "endCall"+callRejectionReason );
-        handlerRefreshToken.removeCallbacks(runnable);
+        handlerRefreshToken.removeCallbacks(runnableRefreshToken);
         if (!isActive()) {
             CallManager.shared.removeCall(this);
             Log.d("openTok", "*********Call end called already, returing back");
@@ -844,7 +844,7 @@ public class OpenTok implements Session.SessionListener,
         }
 
         if (mSession != null) {
-            handlerRefreshToken.removeCallbacks(runnable);
+            handlerRefreshToken.removeCallbacks(runnableRefreshToken);
             mSession.disconnect();
 
         }
@@ -1079,7 +1079,7 @@ public class OpenTok implements Session.SessionListener,
         });
 
         screenCapturerTimer = runnable;
-        handler.postDelayed(runnable, 30000);
+        handler.postDelayed(runnable, 40000);
     }
 
     private void captureScreenshot() {
@@ -1162,9 +1162,10 @@ public class OpenTok implements Session.SessionListener,
                 if (tokBoxUIInterface != null) {
                     Log.d("TokBox", "ringing");
                     tokBoxUIInterface.updateCallInfo(application.getString(R.string.ringing));
+                    startRingTone();
                 }
 
-                startRingTone();
+
             }
         });
 
@@ -1457,7 +1458,7 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void addTimerForIncomingOrOutgoing() {
-        final int interval = 30000; // 30 Second
+        final int interval = 40000; // 40 Second
         Handler handler = new Handler();
         TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
             @Override
@@ -1550,7 +1551,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onDisconnected(Session session) {
         Log.d("TokBox", "onDisconnected");
-        handlerRefreshToken.removeCallbacks(runnable);
+        handlerRefreshToken.removeCallbacks(runnableRefreshToken);
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "success");
         detail.put("event", "disconnect");
@@ -1562,7 +1563,7 @@ public class OpenTok implements Session.SessionListener,
     @Override
     public void onStreamReceived(Session session, Stream stream) {
         Log.d("TokBox", "onStreamReceived");
-
+        stopRingtone();
         if (mSubscriber == null) {
             doSubscribe(stream);
         } else {
@@ -1685,7 +1686,7 @@ public class OpenTok implements Session.SessionListener,
 
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-        Log.d("TokBox", "onError subscriber " + opentokError.getMessage());
+        Log.d("TokBox", "onError subscriber " + opentokError.getMessage()+"   "+opentokError.getMessage());
 
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "fail");
@@ -1726,9 +1727,9 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void callRefreshToken() {
-        handlerRefreshToken.postDelayed(runnable = new Runnable() {
+        handlerRefreshToken.postDelayed(runnableRefreshToken = new Runnable() {
             public void run() {
-                handlerRefreshToken.postDelayed(runnable, Constants.IdealTime);
+                handlerRefreshToken.postDelayed(runnableRefreshToken, Constants.IdealTime);
                 openTokViewModel.refreshToken();
             }
         }, Constants.IdealTime);

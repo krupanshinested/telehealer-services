@@ -232,6 +232,15 @@
         <activity
             android:name=".views.transaction.TransactionDetailsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.settings.newDeviceSupport.NewDeviceSupportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.settings.newDeviceSupport.MyDeviceListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.settings.newDeviceSupport.NewDeviceDetailActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
