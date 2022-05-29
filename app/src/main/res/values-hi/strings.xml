@@ -1525,7 +1525,7 @@
     <string name="str_you_can_not_invite_yourself">स्वयं आमंत्रण निषिद्ध है।</string>
     <string name="str_new_device_setup">नया टेलिहेल्थ डिवाइस सेटअप करें</string>
     <string name="EMPTY_DEVICE">कोई टेलिहेल्थ डिवाइस नहीं जोड़ा गया</string>
-    <string name="str_new_device_dummy_desc">1. यहां अपना डिवाइस आईडी दर्ज करें फिर परिवर्तन सहेजें। यूनिट पर IMEI नंबर के रूप में अपना डिवाइस आईडी खोजें। आईएमईआई खोजने के लिए, <font color='#FF0000'><b>Click here.</b></font></string>
+    <string name="str_new_device_dummy_desc">यहां अपना डिवाइस आईडी दर्ज करें फिर परिवर्तन सहेजें। यूनिट पर IMEI नंबर के रूप में अपना डिवाइस आईडी खोजें। आईएमईआई खोजने के लिए, <font color='#FF0000'><b>Click here.</b></font></string>
     <string name="str_new_device_get_vital_desc">टेलिहेल्थ से टेलीहीलर तक की जानकारी प्राप्त करने के लिए, नीचे दिए गए यूआरएल को कॉपी करें और एपीआई यूआरएल में टेलिहेल्थ में अपने डैशबोर्ड के नीचे पेस्ट करें।</string>
     <string name="str_new_device_dummy_desc2">चिकित्सा देखभाल की सटीकता सुनिश्चित करने के लिए इस उपकरण से केवल आपके महत्वपूर्ण अंगों को मापा जाना चाहिए।</string>
     <string name="enter_device_id">डिवाइस IMEI नंबर दर्ज करें</string>
@@ -1535,7 +1535,7 @@
     <string name="key_manage_devices">टेलीहेल्थ डिवाइस प्रबंधित करें</string>
     <string name="key_add_new_device">नया उपकरण जोड़ें</string>
     <string name="key_device_delete_confirmation">क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?</string>
-    <string name="key_device_sms_enabled">2. अपने जरूरी कामों के बारे में फीडबैक प्राप्त करने के लिए प्रदाता का चयन करें:</string>
+    <string name="key_device_sms_enabled">4. अपनी ज़रूरी जानकारी के बारे में फ़ीडबैक पाने के लिए प्रदाता का चयन करें:</string>
     <string name="key_device_sms_enabled_view">निम्नलिखित चिकित्सक के लिए एसएमएस:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
@@ -1548,5 +1548,8 @@
     <string name="tellihealthstep">1. <font color="#FF0000"><b><a href="https://tellihealth.com/my-account/">Tellihealth</a></b></font> साइट पर लॉग इन करें। यदि पंजीकृत नहीं है तो कृपया पंजीकरण पूरा करें। 2. बाएँ मेनू से Developers पर जाएँ। 3. यहां आपको एपीआई कॉलबैक यूआरएल और उत्पाद सूची मिलेगी। 4. सूची से अपने उत्पाद का चयन करें और यहां से नीचे दिए गए अद्वितीय यूआरएल को कॉपी पेस्ट करें और एपीआई कॉलबैक यूआरएल में पेस्ट करें और परिवर्तनों को सहेजें।</string>
     <string name="str_with_htmltag"><![CDATA[%s]]></string>
     <string name="disclaimer_for_secure_messaging">अस्वीकरण: इस सेटिंग को सक्षम करने से रोगी से प्रतिरूपित प्रतिक्रियाओं पर मौजूदा प्रतिबंध हटा दिए जाएंगे और इसके बजाय उन्हें मुफ़्त-फ़ॉर्म सामग्री भेजने की अनुमति मिल जाएगी।\\n\\nहालांकि रोगी को सूचित किया जाएगा कि तत्काल या आपातकालीन चिकित्सा के लिए सुरक्षित संदेश का उपयोग न करें, %s रोगी द्वारा और उसे भेजे गए किसी भी और सभी सुरक्षित संदेश संचार के उपयोग से उत्पन्न होने वाली कोई जिम्मेदारी या दायित्व नहीं लेता है।</string>
+    <string name="stepone">1. डिवाइस से IMEI नंबर दर्ज करें:</string>
+    <string name="steptwo">2. यूआरएल कॉपी करें:</string>
+    <string name="stepthree">3. टेलिहेल्थ में लॉग इन करें और अपना एपीआई यूआरएल पेस्ट करें:</string>
 
 </resources>

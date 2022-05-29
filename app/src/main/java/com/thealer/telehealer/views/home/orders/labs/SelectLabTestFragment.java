@@ -111,7 +111,7 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
                     TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
                         @Override
                         public void run() {
-                            selectLabTestAdapter.setTestList(getFilteredList(searchEt.toString()));
+                            selectLabTestAdapter.setTestList(getFilteredList(searchEt.getText().toString()));
                         }
                     });
                     uiToggleTimer = runnable;
@@ -142,7 +142,7 @@ public class SelectLabTestFragment extends OrdersBaseFragment implements View.On
         List<String> resultList = new ArrayList<>();
 
         for (String test : testList) {
-            if (test.contains(s)) {
+            if (test.toLowerCase().contains(s.toLowerCase())) {
                 resultList.add(test);
             }
         }

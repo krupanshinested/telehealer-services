@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:gravity="center">
         <shape android:shape="rectangle">
-            <solid android:color="@color/bt_theme_blue"/>
+            <solid android:color="@color/app_gradient_start"/>
             <stroke android:color="@android:color/transparent" android:width="1dp"/>
             <corners android:radius="25dp"/>
         </shape>

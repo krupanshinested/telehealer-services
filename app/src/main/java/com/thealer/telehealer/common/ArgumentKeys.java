@@ -213,6 +213,7 @@ public class ArgumentKeys {
 
     public static final String TO_USER_GUID = "TO_USER_GUID";
 
+    public static final String CALL_REQUEST = "call_request";
 
     public static final String TRANSACTION = "TRANSACTION";
     public static String NOTIFICATION_ID = "notification-id";
