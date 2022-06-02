@@ -422,7 +422,7 @@
                             android:gravity="center|left"
                             android:text="@string/str_new_device_dummy_desc2"
                             android:textColor="@color/device_description_color"
-                            android:textSize="@dimen/_11ssp"
+                            android:textSize="@dimen/_13ssp"
                             tools:text="@string/str_new_device_dummy_desc2" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -439,7 +439,7 @@
                             android:paddingVertical="@dimen/_10sdp"
                             android:text="@string/submit"
                             android:textColor="@color/bt_white"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_15sdp"
                             tools:text="@string/submit" />
 
                     </LinearLayout>
