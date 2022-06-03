@@ -153,7 +153,7 @@ public class CommonObject {
             param.put("error_message", TeleHealerApplication.feedbackreason);
             param.put("device_meta_info", jsonObject.toString());
             param.put("feedback_respone", responsedata);
-            param.put("call_type", getCallType(callRequest.getCallType()));
+            param.put("module", getCallType(callRequest.getCallType()));
             param.put("rating", 5);
             param.put("session_id", sessionId);
             if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
