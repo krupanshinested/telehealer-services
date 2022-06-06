@@ -256,10 +256,16 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         tempList = new ArrayList<>();
 
         tempList.add("Select your reason");
-        tempList.add("Reason 1");
-        tempList.add("Reason 2");
-        tempList.add("Reason 3");
-        tempList.add("Reason 4");
+        tempList.add("Pricing");
+        tempList.add("Ease of use");
+        tempList.add("Poor Connection");
+        tempList.add("Lack of Features");
+        tempList.add("Lack of integration with EMR");
+        tempList.add("Lack of integration with Pharmacy");
+        tempList.add("Lack of integration with Radiology");
+        tempList.add("Lack of integration with Lab");
+        tempList.add("Lack of integration with Stethoscope");
+        tempList.add("To complex for Patients");
         tempList.add("Other");
         commentsEt.setVisibility(View.GONE);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, tempList);

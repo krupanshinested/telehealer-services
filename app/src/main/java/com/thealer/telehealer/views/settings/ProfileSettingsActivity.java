@@ -90,6 +90,7 @@ import com.thealer.telehealer.views.transaction.TransactionListFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.common.Constants.activatedPlan;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -359,6 +360,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 startActivity(new Intent(this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
                 break;
             case R.id.subscription:
+                activatedPlan = -1;
                 ActivePlanFragment activePlanFragment = new ActivePlanFragment();
                 showSubFragment(activePlanFragment);
                 break;
