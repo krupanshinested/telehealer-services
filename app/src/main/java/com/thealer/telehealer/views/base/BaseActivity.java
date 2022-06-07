@@ -225,9 +225,9 @@ public class BaseActivity extends AppCompatActivity {
         }
         if (TeleHealerApplication.iscallendedbyphy) {
 //            if (!TeleHealerApplication.callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
-                CommonObject.dismissdialog(this);
-                CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
-                TeleHealerApplication.iscallendedbyphy = false;
+            CommonObject.dismissdialog(this);
+            CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
+            TeleHealerApplication.iscallendedbyphy = false;
 //            }
         }
     }
@@ -235,7 +235,7 @@ public class BaseActivity extends AppCompatActivity {
     FeedbackCallback feedbackCallback = new FeedbackCallback() {
         @Override
         public void onActionSuccess(HashMap<String, Object> param) {
-            CommonObject.tempdata.clear();
+//            CommonObject.tempdata.clear();
             submitFeedback(param);
 
         }
@@ -249,8 +249,10 @@ public class BaseActivity extends AppCompatActivity {
             public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
                 dismissProgressDialog();
                 SubmitResponse submitResponse = response.body();
-                if (submitResponse.getSuccess()) {
-                    Toast.makeText(BaseActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                if (submitResponse.getSuccess() != null) {
+                    if (submitResponse.getSuccess()) {
+                        Toast.makeText(BaseActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 

@@ -3,6 +3,7 @@ package com.thealer.telehealer.common.Feedback;
 import static com.thealer.telehealer.common.CommonObject.getCallType;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
@@ -30,12 +33,14 @@ public class FeedbackAdapter extends BaseAdapter {
     LayoutInflater inflter;
     List<FeedbackQuestionModel.Datum> questionsList = new ArrayList<>();
     CallRequest callrequest;
+    List<FeedbackTemp> tempdata = new ArrayList<>();
 
-    public FeedbackAdapter(Activity applicationContext, List<FeedbackQuestionModel.Datum> questionsList, CallRequest callrequest) {
+    public FeedbackAdapter(Activity applicationContext, List<FeedbackQuestionModel.Datum> questionsList, CallRequest callrequest, List<FeedbackTemp> tempdata) {
         this.context = context;
         this.questionsList = questionsList;
         inflter = (LayoutInflater.from(applicationContext));
         this.callrequest = callrequest;
+        this.tempdata = tempdata;
     }
 
     @Override
@@ -133,22 +138,6 @@ public class FeedbackAdapter extends BaseAdapter {
                         llquestion.setVisibility(View.GONE);
                         mainview.removeView(llquestion);
                     }
-//                    if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
-//                        llquestion.setVisibility(View.VISIBLE);
-//                        checkValue(i, "");
-//                        question.setText("" + questionsList.get(i).getQuestion());
-//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-//                        no.setText("" + questionsList.get(i).getOptions().get(1));
-//                    } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
-//                        llquestion.setVisibility(View.VISIBLE);
-//                        checkValue(i, "");
-//                        question.setText("" + questionsList.get(i).getQuestion());
-//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-//                        no.setText("" + questionsList.get(i).getOptions().get(1));
-//                    } else {
-//                        llquestion.setVisibility(View.GONE);
-//                        mainview.removeView(llquestion);
-//                    }
                 } else {
                     llquestion.setVisibility(View.GONE);
                     mainview.removeView(llquestion);
@@ -166,22 +155,6 @@ public class FeedbackAdapter extends BaseAdapter {
                         llquestion.setVisibility(View.GONE);
                         mainview.removeView(llquestion);
                     }
-//                    if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
-//                        llquestion.setVisibility(View.VISIBLE);
-//                        checkValue(i, "");
-//                        question.setText("" + questionsList.get(i).getQuestion());
-//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-//                        no.setText("" + questionsList.get(i).getOptions().get(1));
-//                    } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
-//                        llquestion.setVisibility(View.VISIBLE);
-//                        checkValue(i, "");
-//                        question.setText("" + questionsList.get(i).getQuestion());
-//                        yes.setText("" + questionsList.get(i).getOptions().get(0));
-//                        no.setText("" + questionsList.get(i).getOptions().get(1));
-//                    } else {
-//                        llquestion.setVisibility(View.GONE);
-//                        mainview.removeView(llquestion);
-//                    }
                 } else {
                     llquestion.setVisibility(View.GONE);
                     mainview.removeView(llquestion);
@@ -199,22 +172,6 @@ public class FeedbackAdapter extends BaseAdapter {
                 llquestion.setVisibility(View.GONE);
                 mainview.removeView(llquestion);
             }
-//            if (callrequest.getCallType().equals(OpenTokConstants.video) || callrequest.getCallType().equals(OpenTokConstants.oneWay)) {
-//                llquestion.setVisibility(View.VISIBLE);
-//                checkValue(i, "");
-//                question.setText("" + questionsList.get(i).getQuestion());
-//                yes.setText("" + questionsList.get(i).getOptions().get(0));
-//                no.setText("" + questionsList.get(i).getOptions().get(1));
-//            } else if (questionsList.get(i).getQuestion().contains(callrequest.getCallType())) {
-//                llquestion.setVisibility(View.VISIBLE);
-//                checkValue(i, "");
-//                question.setText("" + questionsList.get(i).getQuestion());
-//                yes.setText("" + questionsList.get(i).getOptions().get(0));
-//                no.setText("" + questionsList.get(i).getOptions().get(1));
-//            } else {
-//                llquestion.setVisibility(View.GONE);
-//                mainview.removeView(llquestion);
-//            }
         }
         return view;
     }
@@ -231,9 +188,11 @@ public class FeedbackAdapter extends BaseAdapter {
         }
 
         if (insertdata) {
-            CommonObject.tempdata.set(insertposition, new FeedbackTemp(i, value));
+            if (tempdata.get(insertposition).value.isEmpty()) {
+                tempdata.set(insertposition, new FeedbackTemp(i, value));
+            }
         } else {
-            CommonObject.tempdata.add(new FeedbackTemp(i, ""));
+            tempdata.add(new FeedbackTemp(i, ""));
         }
     }
 
