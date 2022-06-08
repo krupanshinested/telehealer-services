@@ -68,8 +68,10 @@ public class CallMessageActivity extends ContentActivity {
             public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
                 dismissProgressDialog();
                 SubmitResponse submitResponse = response.body();
-                if (submitResponse.getSuccess()) {
-                    Toast.makeText(CallMessageActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                if (submitResponse.getSuccess() != null) {
+                    if (submitResponse.getSuccess()) {
+                        Toast.makeText(CallMessageActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
