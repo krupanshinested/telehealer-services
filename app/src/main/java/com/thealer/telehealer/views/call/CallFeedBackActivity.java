@@ -230,7 +230,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     FeedbackCallback feedbackCallback = new FeedbackCallback() {
         @Override
         public void onActionSuccess(HashMap<String, Object> data) {
-            CommonObject.tempdata.clear();
+//            CommonObject.tempdata.clear();
             submitFeedback(data);
         }
     };
@@ -243,8 +243,10 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
                 dismissProgressDialog();
                 SubmitResponse submitResponse = response.body();
-                if (submitResponse.getSuccess()) {
-                    Toast.makeText(CallFeedBackActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                if (submitResponse.getSuccess() != null) {
+                    if (submitResponse.getSuccess()) {
+                        Toast.makeText(CallFeedBackActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
