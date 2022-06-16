@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/_14sdp" />
+                android:textSize="@dimen/sub_title_size" />
 
             <RadioGroup
                 android:id="@+id/rb_questionone"
@@ -46,7 +46,7 @@
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:buttonTint="@color/app_gradient_start"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/_13ssp"
+                    android:textSize="@dimen/sub_title_size"
                     android:checked="false" />
 
                 <RadioButton
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/app_gradient_start"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/_13ssp"
+                    android:textSize="@dimen/sub_title_size"
                     android:checked="false" />
             </RadioGroup>
 
@@ -70,263 +70,14 @@
             android:visibility="gone"
             android:orientation="vertical">
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/ll_questiontwo"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_questiontwo"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="@color/colorBlack"-->
-<!--                    android:textSize="@dimen/_14sdp" />-->
-
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/rb_questiontwo"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/_15sdp"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/good"-->
-<!--                        android:layout_width="@dimen/_80sdp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/_4sdp"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/bad"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-<!--                </RadioGroup>-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:id="@+id/ll_questionthree"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_questionthree"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="@color/colorBlack"-->
-<!--                    android:textSize="@dimen/_14sdp" />-->
-
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/rb_questionthree"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/_15sdp"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/goodq3"-->
-<!--                        android:layout_width="@dimen/_80sdp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/_4sdp"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:checked="false" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/badq3"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-<!--                </RadioGroup>-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:id="@+id/ll_questionfour"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_questionfour"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="@color/colorBlack"-->
-<!--                    android:textSize="@dimen/_14sdp" />-->
-
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/rb_questionfour"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/_15sdp"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/goodq4"-->
-<!--                        android:layout_width="@dimen/_80sdp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/_4sdp"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/badq4"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-<!--                </RadioGroup>-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:id="@+id/ll_questionfive"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_questionfive"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="@color/colorBlack"-->
-<!--                    android:textSize="@dimen/_14sdp" />-->
-
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/rb_questionfive"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/_15sdp"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/goodq5"-->
-<!--                        android:layout_width="@dimen/_80sdp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/_4sdp"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/badq5"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:checked="false"-->
-<!--                        android:textSize="@dimen/_13ssp" />-->
-<!--                </RadioGroup>-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:id="@+id/ll_questionsix"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_questionsix"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="@color/colorBlack"-->
-<!--                    android:textSize="@dimen/_14sdp" />-->
-
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/rb_questionsix"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/_15sdp"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/goodq6"-->
-<!--                        android:layout_width="@dimen/_80sdp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/_4sdp"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/badq6"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-<!--                </RadioGroup>-->
-
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:id="@+id/ll_questionseven"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_questionseven"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="@color/colorBlack"-->
-<!--                    android:textSize="@dimen/_14sdp" />-->
-
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/rb_questionseven"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/_15sdp"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/goodq7"-->
-<!--                        android:layout_width="@dimen/_80sdp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/_4sdp"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/badq7"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:textColor="@color/colorBlack"-->
-<!--                        android:buttonTint="@color/app_gradient_start"-->
-<!--                        android:textSize="@dimen/_13ssp"-->
-<!--                        android:checked="false"/>-->
-<!--                </RadioGroup>-->
-
-<!--            </LinearLayout>-->
-
             <ListView
                 android:id="@+id/lv_question"
                 android:scrollbars="none"
                 android:overScrollMode="never"
                 android:layout_width="match_parent"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:focusedByDefault="false"
                 android:layout_height="wrap_content"/>
 
             <EditText
@@ -338,7 +89,7 @@
                 android:gravity="start"
                 android:hint="Share your experience and help us to improve call performance."
                 android:padding="@dimen/_4sdp"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/sub_title_size"
                 android:textColor="@color/colorBlack"
                 android:inputType="textMultiLine"
                 android:singleLine="false"
@@ -365,7 +116,6 @@
             android:paddingVertical="@dimen/_10sdp"
             android:text="@string/submit"
             android:textColor="@color/bt_white"
-            android:textSize="@dimen/_13sdp"
             tools:text="@string/submit" />
     </RelativeLayout>
 </RelativeLayout>

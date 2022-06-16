@@ -19,6 +19,8 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -153,7 +155,7 @@ public class CommonObject {
             param.put("error_message", TeleHealerApplication.feedbackreason);
             param.put("device_meta_info", jsonObject.toString());
             param.put("feedback_respone", responsedata);
-            param.put("call_type", getCallType(callRequest.getCallType()));
+            param.put("module", getCallType(callRequest.getCallType()));
             param.put("rating", 5);
             param.put("session_id", sessionId);
             if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
@@ -176,6 +178,7 @@ public class CommonObject {
                 }
                 feedbackCallback.onActionSuccess(param);
                 responseModels.clear();
+                tempdata.clear();
                 dialog.dismiss();
             } else {
                 Toast.makeText(activity, "Select atleast one option.", Toast.LENGTH_SHORT).show();
@@ -246,7 +249,7 @@ public class CommonObject {
             for (int i = 0; i < 1; i++) {
                 setQuestionAnswer(i);
             }
-            feedbackAdapter = new FeedbackAdapter(activity, questionModel.getData(), callrequest);
+            feedbackAdapter = new FeedbackAdapter(activity,questionModel.getData(), callrequest,tempdata);
             lvquestion.setAdapter((ListAdapter) feedbackAdapter);
         } else {
             dialog.dismiss();
