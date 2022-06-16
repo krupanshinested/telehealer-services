@@ -54,9 +54,13 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private SubscriptionPlanAdapter subscriptionPlanAdapter;
     private SubscriptionViewModel subscriptionViewModel;
     private AttachObserverInterface attachObserverInterface;
-    private  boolean isChangePlan=false;
-    private  boolean isHideBack=false;
+    private boolean isChangePlan = false;
+    public static boolean isContinuePlan = false;
+    public static boolean isCurrentPlan = true;
+    private boolean isResubscriptPlan = false;
+    private boolean isHideBack = false;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
+
     public SubscriptionPlanFragment() {
         // Required empty public constructor
     }
@@ -64,8 +68,10 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             isChangePlan = getArguments().getBoolean(ArgumentKeys.IS_CHANGE_PLAN, false);
+            isContinuePlan = getArguments().getBoolean(ArgumentKeys.IS_CONTINUE_PLAN, false);
+            isResubscriptPlan = getArguments().getBoolean(ArgumentKeys.IS_RESUBSCRIBE_PLAN, false);
             isHideBack = getArguments().getBoolean(ArgumentKeys.IS_HIDE_BACK, false);
         }
 
@@ -152,7 +158,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         toolbarTitle.setText(getString(R.string.lbl_subscriptions_plan));
         subscriptionPlanRv = subscriptionPlanListCrv.getRecyclerView();
 
-        if(isHideBack)
+        if (isHideBack)
             backIv.setVisibility(View.GONE);
 
         subscriptionPlanAdapter = new SubscriptionPlanAdapter(getActivity(), this);
@@ -177,11 +183,21 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         if (bundle != null) {
             int pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
             activatedPlan = pos;
-            if(isChangePlan) {
+
+            if (isChangePlan) {
                 subscriptionViewModel.changeSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID));
-            }else {
+            } else if (isContinuePlan) {
+                subscriptionViewModel.purchaseSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID), bundle.getString(ArgumentKeys.BillingCycle));
+            } else if (isResubscriptPlan) {
+                subscriptionViewModel.purchaseSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID), bundle.getString(ArgumentKeys.BillingCycle));
+            } else {
                 subscriptionViewModel.purchaseSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID), bundle.getString(ArgumentKeys.BillingCycle));
             }
+
+//            if(isChangePlan) {
+//                subscriptionViewModel.changeSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID));
+//            }else {
+//                subscriptionViewModel.purchaseSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID), bundle.getString(ArgumentKeys.BillingCycle));
         }
     }
 }

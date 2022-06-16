@@ -18,6 +18,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:cardCornerRadius="10dp"
+        android:visibility="gone"
         app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -129,6 +130,35 @@
                         android:clickable="true"
                         android:layout_margin="10dp"
                         android:textAllCaps="false"
+                        android:visibility="gone"
+                        android:textColor="@color/colorWhite" />
+                    <Button
+                        android:id="@+id/btn_contisubscribe"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/bt_theme_orange"
+                        android:text="@string/str_contsubscribe"
+                        android:textSize="16sp"
+                        android:clickable="true"
+                        android:layout_margin="10dp"
+                        android:textAllCaps="false"
+                        android:visibility="gone"
+                        android:textColor="@color/colorWhite" />
+                    <Button
+                        android:id="@+id/btn_resubscribe"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/bt_theme_orange"
+                        android:text="@string/str_resubscribe"
+                        android:textSize="16sp"
+                        android:clickable="true"
+                        android:visibility="gone"
+                        android:layout_margin="10dp"
+                        android:textAllCaps="false"
                         android:textColor="@color/colorWhite" />
                     <Button
                         android:id="@+id/btn_change"
@@ -140,6 +170,7 @@
                         android:text="@string/lbl_change_plan"
                         android:textSize="16sp"
                         android:clickable="true"
+                        android:visibility="gone"
                         android:layout_margin="10dp"
                         android:textAllCaps="false"
                         android:textColor="@color/colorWhite" />

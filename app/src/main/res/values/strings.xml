@@ -1612,12 +1612,14 @@
     <string name="str_current_plan">Current Plan</string>
     <string name="str_start_with_basic">Start with Basic</string>
     <string name="str_start_with_limited">Start with Limited</string>
+    <string name="str_start_with_current">Continue with Current Plan</string>
     <string name="str_start_with_better">Start with Better</string>
     <string name="str_start_with_ideal">Start with Ideal</string>
     <string name="str_plan_is_continue_till">This plan will continue till the end of the month. Thank you for your business.</string>
     <string name="str_unsubscribe">UnSubscribe</string>
     <string name="str_subscribe">Subscribe</string>
     <string name="str_resubscribe">Resubscribe</string>
+    <string name="str_contsubscribe">Continue Subscribe</string>
     <string name="str_plan_already_activate">Plan already activated</string>
     <string name="retrive_pricing_plan">Retrieving pricing plan for you</string>
     <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>

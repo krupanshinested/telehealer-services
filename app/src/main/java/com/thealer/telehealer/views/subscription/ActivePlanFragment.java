@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +18,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
@@ -41,7 +45,12 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.thealer.telehealer.common.Constants.activatedPlan;
@@ -57,8 +66,9 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private TextView toolbarTitle, tvPlanName, tvTotalRpm;
     private ImageView backIv;
     private SubscriptionViewModel subscriptionViewModel;
-    private Button btnUnsubscribe, btnChange;
+    private Button btnUnsubscribe, btnChange, btncontsubscribe, btnresubscribe;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
+    private CardView mainview;
 
     public ActivePlanFragment() {
         // Required empty public constructor
@@ -145,14 +155,19 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        mainview = (CardView) view.findViewById(R.id.cv_root);
         tvPlanName = (TextView) view.findViewById(R.id.tv_plan_name);
         tvTotalRpm = (TextView) view.findViewById(R.id.tv_total_rpm);
         btnChange = (Button) view.findViewById(R.id.btn_change);
         btnUnsubscribe = (Button) view.findViewById(R.id.btn_unsubscribe);
+        btncontsubscribe = (Button) view.findViewById(R.id.btn_contisubscribe);
+        btnresubscribe = (Button) view.findViewById(R.id.btn_resubscribe);
         toolbarTitle.setText(getString(R.string.lbl_my_subscriptions));
 
         backIv.setOnClickListener(this);
         btnUnsubscribe.setOnClickListener(this);
+        btnresubscribe.setOnClickListener(this);
+        btncontsubscribe.setOnClickListener(this);
         btnChange.setOnClickListener(this);
 
         if (activatedPlan == -1 && isFromSubscriptionPlan) {
@@ -174,26 +189,98 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 }
             }
 
+            if (activatedPlan < 0) {
+
+                for (int i = 0; i < planList.size(); i++) {
+                    PlanInfoBean.Result currentPlan = planList.get(i);
+                    if (currentPlan.isCancelled()) {
+                        activatedPlan = i;
+                        i = planList.size() + 1;
+                    }
+                }
+
+            }
+
+
             if (activatedPlan >= 0) {
                 PlanInfoBean.Result currentPlanInfo = planList.get(activatedPlan);
-                if (currentPlanInfo.isCanReshedule()) {
-                    btnUnsubscribe.setText(getString(R.string.str_subscribe));
-                }else {
-                    btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
-                }
-                if (currentPlanInfo.isCancelled() && currentPlanInfo.isPurchased()) {
-                    btnUnsubscribe.setVisibility(View.GONE);
-                }else{
-                    btnUnsubscribe.setVisibility(View.VISIBLE);
+                btnUnsubscribe.setVisibility(View.VISIBLE);
+                btnChange.setVisibility(View.VISIBLE);
+
+                if (!currentPlanInfo.isPurchased()) {
+
+                    if (currentPlanInfo.isCanReshedule()) {
+                        btnUnsubscribe.setText(getString(R.string.str_subscribe));
+                    } else {
+                        btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+                    }
+                    if (currentPlanInfo.isCancelled() && currentPlanInfo.isPurchased()) {
+                        btnUnsubscribe.setVisibility(View.GONE);
+                    } else {
+                        btnUnsubscribe.setVisibility(View.VISIBLE);
+                    }
                 }
                 tvPlanName.setText(currentPlanInfo.getName());
                 tvTotalRpm.setText(currentPlanInfo.getRpm_count());
+
+                if (!currentPlanInfo.isPurchased() && currentPlanInfo.isCancelled()) {
+                    btnChange.setVisibility(View.GONE);
+                    btnUnsubscribe.setVisibility(View.GONE);
+
+                    if (isMonthEnd(currentPlanInfo.getCancelled_at())) {
+                        btnresubscribe.setVisibility(View.VISIBLE);
+                        btncontsubscribe.setVisibility(View.GONE);
+                    } else {
+                        btnresubscribe.setVisibility(View.GONE);
+                        btncontsubscribe.setVisibility(View.VISIBLE);
+                    }
+                }
+                mainview.setVisibility(View.VISIBLE);
             } else {
                 visitSubscriptionPlan();
             }
         } else {
             visitSubscriptionPlan();
         }
+
+    }
+
+    public boolean isMonthEnd(String givendate) {
+
+        try {
+            Date today = new Date();
+            Date givenday = new Date();
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            givenday = format.parse(givendate);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(givenday);
+
+            calendar.add(Calendar.MONTH, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.DATE, -1);
+
+            Date lastDayOfMonth = calendar.getTime();
+
+            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date datetoday = sdf.parse(sdf.format(today));
+            Date lastday = sdf.parse(sdf.format(lastDayOfMonth));
+
+            Log.d("TAG", "isMonthEnd: " + sdf.format(today) + "   " + sdf.format(lastDayOfMonth));
+            Log.d("TAG", "isMonthEnd: " + datetoday.getTime() + "   " + lastday.getTime());
+
+            if (datetoday.getTime() > lastday.getTime()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+
 
     }
 
@@ -211,12 +298,26 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             case R.id.btn_unsubscribe:
                 manageSubscription(v);
                 break;
-            case R.id.btn_change:
+            case R.id.btn_contisubscribe:
                 SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(ArgumentKeys.IS_CHANGE_PLAN, true);
+                bundle.putBoolean(ArgumentKeys.IS_CONTINUE_PLAN, true);
                 subscriptionPlanFragment.setArguments(bundle);
                 showSubFragmentInterface.onShowFragment(subscriptionPlanFragment);
+                break;
+            case R.id.btn_resubscribe:
+                SubscriptionPlanFragment resubscribesubscriptionPlanFragment = new SubscriptionPlanFragment();
+                Bundle resubscribebundle = new Bundle();
+                resubscribebundle.putBoolean(ArgumentKeys.IS_RESUBSCRIBE_PLAN, true);
+                resubscribesubscriptionPlanFragment.setArguments(resubscribebundle);
+                showSubFragmentInterface.onShowFragment(resubscribesubscriptionPlanFragment);
+                break;
+            case R.id.btn_change:
+                SubscriptionPlanFragment changesubscriptionPlanFragment = new SubscriptionPlanFragment();
+                Bundle changebundle = new Bundle();
+                changebundle.putBoolean(ArgumentKeys.IS_CHANGE_PLAN, true);
+                changesubscriptionPlanFragment.setArguments(changebundle);
+                showSubFragmentInterface.onShowFragment(changesubscriptionPlanFragment);
                 break;
         }
     }
@@ -224,13 +325,16 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private void manageSubscription(View v) {
         if (activatedPlan >= 0 && planList.size() > 0) {
             PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
-            if (currentPlan.isCanReshedule())
-                subscriptionViewModel.purchaseSubscriptionPlan(currentPlan.getPlan_id(), currentPlan.getBilling_cycle());
-            else if(currentPlan.isCancelled() && currentPlan.isPurchased()){
-                showToast(getString(R.string.str_plan_is_continue_till));
-            }
-            else
+            if (currentPlan.isPurchased()){
                 selectReason(v);
+            }else {
+                if (currentPlan.isCanReshedule())
+                    subscriptionViewModel.purchaseSubscriptionPlan(currentPlan.getPlan_id(), currentPlan.getBilling_cycle());
+                else if (currentPlan.isCancelled() && currentPlan.isPurchased()) {
+                    showToast(getString(R.string.str_plan_is_continue_till));
+                } else
+                    selectReason(v);
+            }
         }
     }
 
