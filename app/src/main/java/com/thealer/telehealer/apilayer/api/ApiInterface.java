@@ -810,8 +810,8 @@ public interface ApiInterface {
     @POST("/api/users/change-plan")
     Observable<BaseApiResponseModel> changePlan(@Body() HashMap<String, String> req);
 
-    @GET("/api/users/cancel-plan")
-    Observable<PlanInfoBean> unSubscribePlan();
+    @POST("/api/users/cancel-plan")
+    Observable<PlanInfoBean> unSubscribePlan(@Body() HashMap<String, String> req);
 
     @GET("/api/feedback/getSetting")
     Call<FeedbackSettingModel> getFeedbackSetting();

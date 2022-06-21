@@ -69,6 +69,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private Button btnUnsubscribe, btnChange, btncontsubscribe, btnresubscribe;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private CardView mainview;
+    String reason = "";
 
     public ActivePlanFragment() {
         // Required empty public constructor
@@ -122,7 +123,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                     if (baseApiResponseModel instanceof PlanInfoBean) {
                         PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
-                            if (planList == null || planList.isEmpty())
+//                            if (planList == null || planList.isEmpty())
                                 planList = planInfoBean.getResults();
 
                             prePareData();
@@ -207,7 +208,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 btnUnsubscribe.setVisibility(View.VISIBLE);
                 btnChange.setVisibility(View.VISIBLE);
 
-                if (!currentPlanInfo.isPurchased()) {
+                if (currentPlanInfo.isPurchased()) {
 
                     if (currentPlanInfo.isCanReshedule()) {
                         btnUnsubscribe.setText(getString(R.string.str_subscribe));
@@ -384,6 +385,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 } else {
                     commentsEt.setVisibility(View.GONE);
                 }
+                reason = finalTempList.get(position);
             }
 
             @Override
@@ -401,10 +403,15 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                subscriptionViewModel.unSubscriptionPlan();
-                dialog.dismiss();
-                isFromSubscriptionPlan = false;
-                onCloseActionInterface.onClose(false);
+
+                if (reason.isEmpty()||reason.equals("Select your reason")){
+                    Toast.makeText(getActivity(), "Please select reason for Unsubscribe", Toast.LENGTH_SHORT).show();
+                }else {
+                    subscriptionViewModel.unSubscriptionPlan(reason);
+                    dialog.dismiss();
+                    isFromSubscriptionPlan = false;
+                    onCloseActionInterface.onClose(false);
+                }
             }
         });
 

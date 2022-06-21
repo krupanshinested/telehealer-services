@@ -57,7 +57,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private boolean isChangePlan = false;
     public static boolean isContinuePlan = false;
     public static boolean isCurrentPlan = true;
-    private boolean isResubscriptPlan = false;
+    public static boolean isResubscriptPlan = false;
     private boolean isHideBack = false;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
 

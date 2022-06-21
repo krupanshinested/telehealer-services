@@ -124,11 +124,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     }
                     break;
             }
-            if (!SubscriptionPlanFragment.isContinuePlan ) {
-                if (currentPlan.isPurchased() || currentPlan.isCanReshedule()) {
-                    holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_50)));
-                } else {
-                    holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
+            if (!SubscriptionPlanFragment.isContinuePlan) {
+                if (!SubscriptionPlanFragment.isResubscriptPlan) {
+                    if (currentPlan.isPurchased() || currentPlan.isCanReshedule()) {
+                        holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_50)));
+                    } else {
+                        holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
+                    }
                 }
             }
             holder.btnStartWith.setText(btnStr);
@@ -179,7 +181,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.btnStartWith.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SubscriptionPlanFragment.isContinuePlan) {
+                if (SubscriptionPlanFragment.isContinuePlan || SubscriptionPlanFragment.isResubscriptPlan) {
                     Bundle bundle = new Bundle();
                     bundle.putString(ArgumentKeys.PlanID, currentPlan.getPlan_id());
                     bundle.putString(ArgumentKeys.BillingCycle, currentPlan.getBilling_cycle());

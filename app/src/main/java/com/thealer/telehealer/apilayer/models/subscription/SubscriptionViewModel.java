@@ -17,13 +17,13 @@ import java.util.HashMap;
  * Created by Nimesh Patel
  * Created Date: 07,September,2021
  **/
-public class SubscriptionViewModel  extends BaseApiViewModel {
+public class SubscriptionViewModel extends BaseApiViewModel {
 
     public SubscriptionViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public  void fetchSubscriptionPlanList(){
+    public void fetchSubscriptionPlanList() {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -41,9 +41,9 @@ public class SubscriptionViewModel  extends BaseApiViewModel {
         });
     }
 
-    public  void purchaseSubscriptionPlan(String planId,String billingCycle){
+    public void purchaseSubscriptionPlan(String planId, String billingCycle) {
         HashMap<String, String> param = new HashMap<>();
-        param.put(ArgumentKeys.PlanID,planId);
+        param.put(ArgumentKeys.PlanID, planId);
         param.put(ArgumentKeys.BillingCycle, billingCycle);
 
         fetchToken(new BaseViewInterface() {
@@ -63,9 +63,9 @@ public class SubscriptionViewModel  extends BaseApiViewModel {
         });
     }
 
-    public  void changeSubscriptionPlan(String planId){
+    public void changeSubscriptionPlan(String planId) {
         HashMap<String, String> param = new HashMap<>();
-        param.put(ArgumentKeys.PlanID,planId);
+        param.put(ArgumentKeys.PlanID, planId);
 
         fetchToken(new BaseViewInterface() {
             @Override
@@ -83,12 +83,15 @@ public class SubscriptionViewModel  extends BaseApiViewModel {
             }
         });
     }
-    public  void unSubscriptionPlan(){
+
+    public void unSubscriptionPlan(String reason) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put(ArgumentKeys.Reason, reason);
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().unSubscribePlan()
+                    getAuthApiService().unSubscribePlan(param)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
