@@ -36,8 +36,11 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -53,6 +56,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.thealer.telehealer.common.Constants.USER_TYPE;
 import static com.thealer.telehealer.common.Constants.activatedPlan;
 import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
 
@@ -70,6 +74,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private CardView mainview;
     String reason = "";
+    private boolean iscontinue = false;
 
     public ActivePlanFragment() {
         // Required empty public constructor
@@ -124,7 +129,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                         PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
-                                planList = planInfoBean.getResults();
+                            planList = planInfoBean.getResults();
 
                             prePareData();
 
@@ -133,7 +138,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                         Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                onCloseActionInterface.onClose(false);
+                                if (iscontinue) {
+                                    subscriptionViewModel.fetchSubscriptionPlanList();
+                                } else {
+                                    onCloseActionInterface.onClose(false);
+                                }
                             }
                         }, null);
                     }
@@ -207,13 +216,19 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 PlanInfoBean.Result currentPlanInfo = planList.get(activatedPlan);
                 btnUnsubscribe.setVisibility(View.VISIBLE);
                 btnChange.setVisibility(View.VISIBLE);
+                btnresubscribe.setVisibility(View.GONE);
+                btncontsubscribe.setVisibility(View.GONE);
 
                 if (currentPlanInfo.isPurchased()) {
 
                     if (currentPlanInfo.isCanReshedule()) {
                         btnUnsubscribe.setText(getString(R.string.str_subscribe));
                     } else {
-                        btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+                        if (!UserDetailPreferenceManager.getTrialExpired()){
+                            btnUnsubscribe.setText(getString(R.string.str_dontsubscribe));
+                        }else {
+                            btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+                        }
                     }
                     if (currentPlanInfo.isCancelled() && currentPlanInfo.isPurchased()) {
                         btnUnsubscribe.setVisibility(View.GONE);
@@ -300,11 +315,19 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 manageSubscription(v);
                 break;
             case R.id.btn_contisubscribe:
-                SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(ArgumentKeys.IS_CONTINUE_PLAN, true);
-                subscriptionPlanFragment.setArguments(bundle);
-                showSubFragmentInterface.onShowFragment(subscriptionPlanFragment);
+//                SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putBoolean(ArgumentKeys.IS_CONTINUE_PLAN, true);
+//                subscriptionPlanFragment.setArguments(bundle);
+//                showSubFragmentInterface.onShowFragment(subscriptionPlanFragment);
+
+                if (activatedPlan >= 0 && planList.size() > 0) {
+                    iscontinue = true;
+                    PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
+                    subscriptionViewModel.purchaseSubscriptionPlan(currentPlan.getPlan_id(), currentPlan.getBilling_cycle());
+                }
+
+
                 break;
             case R.id.btn_resubscribe:
                 SubscriptionPlanFragment resubscribesubscriptionPlanFragment = new SubscriptionPlanFragment();
@@ -326,9 +349,9 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private void manageSubscription(View v) {
         if (activatedPlan >= 0 && planList.size() > 0) {
             PlanInfoBean.Result currentPlan = planList.get(activatedPlan);
-            if (currentPlan.isPurchased()){
+            if (currentPlan.isPurchased()) {
                 selectReason(v);
-            }else {
+            } else {
                 if (currentPlan.isCanReshedule())
                     subscriptionViewModel.purchaseSubscriptionPlan(currentPlan.getPlan_id(), currentPlan.getBilling_cycle());
                 else if (currentPlan.isCancelled() && currentPlan.isPurchased()) {
@@ -404,9 +427,9 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onClick(View v) {
 
-                if (reason.isEmpty()||reason.equals("Select your reason")){
+                if (reason.isEmpty() || reason.equals("Select your reason")) {
                     Toast.makeText(getActivity(), "Please select reason for Unsubscribe", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     subscriptionViewModel.unSubscriptionPlan(reason);
                     dialog.dismiss();
                     isFromSubscriptionPlan = false;

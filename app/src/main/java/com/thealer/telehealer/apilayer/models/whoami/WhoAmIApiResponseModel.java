@@ -12,7 +12,16 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
     private String install_type;
     private boolean orders_enabled;
     private boolean integration_requests;
+    private boolean isTrialExpired = false;
     private boolean first_time_subscription_purchased=false;
+
+    public boolean getisTrialExpired() {
+        return isTrialExpired;
+    }
+
+    public void setisTrialExpired(boolean isTrialExpired) {
+        this.isTrialExpired = isTrialExpired;
+    }
 
     public boolean isFirst_time_subscription_purchased() {
         return first_time_subscription_purchased;
