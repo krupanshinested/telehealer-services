@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--        <string name="api_base_url">http://192.168.0.190:8082/</string>-->
-    <string name="api_base_url">https://9b64-2401-4900-1953-4cc1-f4a1-5730-1112-9e55.in.ngrok.io/</string>
-<!--    <string name="api_base_url">https://api.telehealer.knovator.in/</string>-->
+    <string name="api_base_url">https://api.telehealer.knovator.in/</string>
 <!--    <string name="api_base_url">https://api.dev.telehealer.com/</string>-->
 <!--    <string name="api_base_url">http://44.238.77.66:8082/</string>-->
     <!--    <string name="api_base_url">http://192.168.0.190:8082/</string>-->
