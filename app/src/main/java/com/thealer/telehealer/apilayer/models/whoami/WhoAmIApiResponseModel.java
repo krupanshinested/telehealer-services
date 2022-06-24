@@ -13,6 +13,8 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
     private boolean orders_enabled;
     private boolean integration_requests;
     private boolean isTrialExpired = false;
+    private boolean isPlanActive = false;
+    private boolean isCancelledPlan = false;
     private boolean first_time_subscription_purchased=false;
 
     public boolean getisTrialExpired() {
@@ -21,6 +23,22 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
 
     public void setisTrialExpired(boolean isTrialExpired) {
         this.isTrialExpired = isTrialExpired;
+    }
+
+    public boolean getisPlanActive() {
+        return isPlanActive;
+    }
+
+    public void setisPlanActive(boolean isPlanActive) {
+        this.isPlanActive = isPlanActive;
+    }
+
+    public boolean getisCancelledPlan() {
+        return isCancelledPlan;
+    }
+
+    public void setisCancelledPlan(boolean isCancelledPlan) {
+        this.isCancelledPlan = isCancelledPlan;
     }
 
     public boolean isFirst_time_subscription_purchased() {

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -54,7 +56,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private SubscriptionPlanAdapter subscriptionPlanAdapter;
     private SubscriptionViewModel subscriptionViewModel;
     private AttachObserverInterface attachObserverInterface;
-    private boolean isChangePlan = false;
+    public static boolean isChangePlan = false;
     public static boolean isContinuePlan = false;
     public static boolean isCurrentPlan = true;
     public static boolean isResubscriptPlan = false;
@@ -83,7 +85,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String title = getString(R.string.failure);
-                if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
                     paymentInfo.setCCCaptured(errorModel.isCCCaptured());
@@ -91,6 +93,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
                     paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 } else {
+                    Toast.makeText(context, ""+errorModel.getMessage(), Toast.LENGTH_SHORT).show();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));

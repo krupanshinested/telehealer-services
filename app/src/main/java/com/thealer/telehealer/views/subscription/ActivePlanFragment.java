@@ -95,7 +95,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String title = getString(R.string.failure);
-                if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
                     paymentInfo.setCCCaptured(errorModel.isCCCaptured());
@@ -103,6 +103,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                     paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 } else {
+                    Toast.makeText(context, ""+errorModel.getMessage(), Toast.LENGTH_SHORT).show();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -221,15 +222,15 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
                 if (currentPlanInfo.isPurchased()) {
 
-                    if (currentPlanInfo.isCanReshedule()) {
-                        btnUnsubscribe.setText(getString(R.string.str_subscribe));
-                    } else {
+//                    if (currentPlanInfo.isCanReshedule()) {
+//                        btnUnsubscribe.setText(getString(R.string.str_subscribe));
+//                    } else {
                         if (!UserDetailPreferenceManager.getTrialExpired()){
                             btnUnsubscribe.setText(getString(R.string.str_dontsubscribe));
                         }else {
-                            btnUnsubscribe.setText(getString(R.string.str_unsubscribe));
+                            btnUnsubscribe.setText(getString(R.string.cancel));
                         }
-                    }
+//                    }
                     if (currentPlanInfo.isCancelled() && currentPlanInfo.isPurchased()) {
                         btnUnsubscribe.setVisibility(View.GONE);
                     } else {
