@@ -24,11 +24,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -41,6 +44,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListApiViewModel;
+import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.associationlist.UpdateAssociationRequestModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -51,6 +56,7 @@ import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
+import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.OnUpdateListener;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
@@ -132,6 +138,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private GuestloginViewModel guestloginViewModel;
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
     private AskToAddCardViewModel askToAddCardViewModel;
+    private ConnectionListApiViewModel connectionListApiViewModel;
+    private DesignationResponseModel designationResponseModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -149,7 +157,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private int doctorId = 0, patientId = 0;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
-            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7,paymentHistoryTab=8;
+    private List<String> designationList = new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
@@ -159,8 +168,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         onActionCompleteInterface = (OnActionCompleteInterface) getActivity();
 
+        connectionListApiViewModel = new ViewModelProvider(this).get(ConnectionListApiViewModel.class);
         getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        attachObserverInterface.attachObserver(connectionListApiViewModel);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
+        connectionListApiViewModel.getDesignationList();
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
@@ -191,6 +203,19 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             }
         });
 
+        connectionListApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof DesignationResponseModel) {
+                        designationResponseModel = (DesignationResponseModel) baseApiResponseModel;
+                        if (designationResponseModel.isSuccess() && designationResponseModel.getResult() != null) {
+                            designationList = designationResponseModel.getResult();
+                        }
+                    }
+                }
+            }
+        });
         associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
         associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
@@ -285,7 +310,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                Utils.showAlertDialog(getContext(), getString(R.string.app_name),
+                Utils.showAlertDialog(getContext(), getString(R.string.error),
                         errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                         null, getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
@@ -493,6 +518,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Bundle inviteBundle=getArguments();
+                    if(inviteBundle==null)
+                        inviteBundle=new Bundle();
+
+                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
                     Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
@@ -538,11 +568,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 userGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_guid();
-                patientId = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_id();
-                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null) {
+                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null)
                     doctorGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_guid();
-                    doctorId = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_id();
-                }
             } else {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
@@ -721,8 +748,8 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         }
         if (resultBean != null) {
             userGuid = resultBean.getUser_guid();
-            toolbarTitle.setText(resultBean.getUserDisplay_name());
-            userNameTv.setText(resultBean.getUserDisplay_name());
+            toolbarTitle.setText(resultBean.getDisplayName());
+            userNameTv.setText(resultBean.getDisplayName());
             userDobTv.setText(resultBean.getDisplayInfo());
             Utils.setGenderImage(getActivity(), genderIv, resultBean.getGender());
 
@@ -833,7 +860,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 tabs.add(paymentHistoryTab);
                             }
                             break;
-
                         case Constants.ROLE_DOCTOR:
                             if (UserType.isUserAssistant()) {
                                 tabs.add(schedulesTab);
@@ -873,6 +899,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.HIDE_ADD, true);
                             bundle.putBoolean(ArgumentKeys.HIDE_SEARCH, true);
+
                             SchedulesListFragment schedulesListFragment = new SchedulesListFragment();
                             schedulesListFragment.setArguments(bundle);
                             addFragment(getString(R.string.schedules), schedulesListFragment);
@@ -916,6 +943,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle.putInt(ArgumentKeys.DOCTOR_ID, doctorId);
                             bundle.putInt(ArgumentKeys.PATIENT_ID, patientId);
                             bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE, true);
+                            bundle.putString(ArgumentKeys.USER_GUID, userGuid);
                             transactionListFragment.setArguments(bundle);
                             addFragment(getString(R.string.lbl_payment_history), transactionListFragment);
                             break;
@@ -1091,16 +1119,22 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             actionBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.vibrate(getActivity());
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
-                    bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
-                    bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
-                    bundle.putSerializable(Constants.USER_DETAIL, resultBean);
-                    bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
-                    bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
+                    if (actionBtn.getText().equals(getString(R.string.add_connection_connect)) && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
+                        selectDesignation(v, resultBean);
+                    } else {
+                        Utils.vibrate(getActivity());
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
+                        bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
+                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                        bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+                        bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                        bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
 
-                    onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
+                        onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
+
+
+                    }
 
                 }
             });
@@ -1160,5 +1194,89 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             startActivity(i);
         }
     }
+
+    //Allow physician to view list of support staff. Also physician can request to add them.
+    private void selectDesignation(View v, CommonUserApiResponseModel apiResponseModelList) {
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View layoutInflateView = layoutInflater.inflate
+                (R.layout.designation_alert, (ViewGroup) v.findViewById(R.id.cl_root));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setView(layoutInflateView);
+        alertDialog.setCancelable(false);
+        AlertDialog dialog = alertDialog.create();
+        TextView headerTitle = layoutInflateView.findViewById(R.id.header_title);
+        RecyclerView rvDesignation = layoutInflateView.findViewById(R.id.rv_designation);
+        rvDesignation.setLayoutManager(new LinearLayoutManager(getActivity()));
+        Button btnYes = layoutInflateView.findViewById(R.id.btn_yes);
+        TextView noRecordFound = layoutInflateView.findViewById(R.id.no_record_found);
+        Button btnCancel = layoutInflateView.findViewById(R.id.btn_cancel);
+        View viewDevider = layoutInflateView.findViewById(R.id.view_devider);
+
+
+        headerTitle.setText(String.format(getActivity().getString(R.string.str_select_designation_for), apiResponseModelList.getUserDisplay_name()));
+
+        if (designationList.size() == 0) {
+            rvDesignation.setVisibility(View.GONE);
+            noRecordFound.setVisibility(View.VISIBLE);
+            btnYes.setVisibility(View.GONE);
+            viewDevider.setVisibility(View.GONE);
+        } else {
+            rvDesignation.setVisibility(View.VISIBLE);
+            noRecordFound.setVisibility(View.GONE);
+            btnYes.setVisibility(View.VISIBLE);
+            viewDevider.setVisibility(View.VISIBLE);
+        }
+        DesignationListAdapter designationListAdapter = new DesignationListAdapter(getActivity(), designationList, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+
+            }
+        });
+        rvDesignation.setAdapter(designationListAdapter);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (designationListAdapter != null) {
+                    Utils.vibrate(getActivity());
+                    String designation = designationListAdapter.getSpecialistInfo();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.getUser_id());
+
+                    if (designation != null)
+                        bundle.putString(Constants.DESIGNATION, designation);
+
+                    bundle.putString(ArgumentKeys.USER_GUID, apiResponseModelList.getUser_guid());
+                    bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
+                    bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                    bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
+
+                    onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
+
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionBtn.setText(getString(R.string.add_connection_pending));
+                    }
+                });
+                dialog.dismiss();
+
+            }
+        });
+
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
 
 }

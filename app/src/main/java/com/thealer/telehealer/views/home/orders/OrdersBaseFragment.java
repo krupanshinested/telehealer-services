@@ -319,8 +319,10 @@ public class OrdersBaseFragment extends BaseFragment {
         isSendFax = sendFax;
 
         showSuccessView();
+        if(!UserType.isUserAssistant())
+            userGuid="";
 
-        ordersCreateApiViewModel.assignSpecialist(status, requestModel, doctorGuid, false);
+        ordersCreateApiViewModel.assignSpecialist(userGuid,status, requestModel, doctorGuid, false);
     }
 
     public void createPrescription(Boolean status, CreatePrescriptionRequestModel prescriptionModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
@@ -330,8 +332,11 @@ public class OrdersBaseFragment extends BaseFragment {
         isSendFax = sendFax;
 
         showSuccessView();
+        if(!UserType.isUserAssistant()){
+            userGuid="";
+        }
+        ordersCreateApiViewModel.createPrescription(userGuid, status, prescriptionModel, doctorGuid);
 
-        ordersCreateApiViewModel.createPrescription(status, prescriptionModel, doctorGuid);
     }
 
     public void createNewRadiologyOrder(Boolean status, CreateRadiologyRequestModel requestModel, String userDisplay_name, String doctorGuid, boolean sendFax) {
@@ -341,7 +346,10 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createRadiologyOrder(status, requestModel, doctorGuid);
+        if(!UserType.isUserAssistant())
+            userGuid="";
+
+        ordersCreateApiViewModel.createRadiologyOrder(userGuid,status, requestModel, doctorGuid);
     }
 
     public void createNewLabOrder(Boolean status, CreateTestApiRequestModel createTestApiRequestModel, String username, String doctorGuid, boolean sendFax) {
@@ -351,8 +359,10 @@ public class OrdersBaseFragment extends BaseFragment {
         isSendFax = sendFax;
 
         showSuccessView();
+        if(!UserType.isUserAssistant())
+            userGuid="";
 
-        ordersCreateApiViewModel.createLabOrder(status, createTestApiRequestModel, doctorGuid);
+        ordersCreateApiViewModel.createLabOrder(userGuid,status, createTestApiRequestModel, doctorGuid);
     }
 
     public void createNewMiscellaneousOrder(CreateMiscellaneousRequestModel miscellaneousOrderRequest, String userDisplay_name, String doctorGuid, boolean sendFax) {
@@ -362,7 +372,10 @@ public class OrdersBaseFragment extends BaseFragment {
 
         showSuccessView();
 
-        ordersCreateApiViewModel.createMiscellaneousOrder(miscellaneousOrderRequest, doctorGuid);
+        if(!UserType.isUserAssistant())
+            userGuid="";
+
+        ordersCreateApiViewModel.createMiscellaneousOrder(userGuid,miscellaneousOrderRequest, doctorGuid);
     }
 
     public void getPatientsRecentsList(String userGuid, String doctorGuid) {

@@ -87,6 +87,7 @@ import com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity;
 import com.thealer.telehealer.views.inviteUser.InviteContactUserActivity;
 import com.thealer.telehealer.views.inviteUser.InviteUserActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
+import com.thealer.telehealer.views.inviteUser.InvitedListActivity;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryConstants;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.SignUpActivity;
@@ -658,6 +659,10 @@ public class Utils {
 
     public static String getDoctorDisplayName(String first_name, String last_name, String title) {
         return first_name + " " + last_name + " " + ((title != null) ? title : "");
+    }
+
+    public static String getSupportStaffDisplayName(String first_name, String last_name, String designation) {
+        return first_name + " " + last_name + ((designation != null) ? ", " + designation : "");
     }
 
     public static String getPatientDisplayName(String first_name, String last_name) {
@@ -1576,8 +1581,11 @@ public class Utils {
         TextView inviteContactsTv;
         TextView broadcastAllTv;
         View broadcastView;
+        TextView invitedListTv;
+        View invitedListView;
         CardView cancelCv;
-
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (View) alertView.findViewById(R.id.invited_list_view);
         inviteManuallyTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         inviteContactsTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1585,6 +1593,29 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
         cancelCv = (CardView) alertView.findViewById(R.id.cancel_cv);
+
+        if (bundle != null) {
+            Boolean isInvitedVisible = bundle.getBoolean(ArgumentKeys.IS_INVITED_VISIBLE, false);
+            if (isInvitedVisible) {
+                invitedListTv.setVisibility(View.VISIBLE);
+                invitedListView.setVisibility(View.VISIBLE);
+            } else {
+                invitedListTv.setVisibility(View.GONE);
+                invitedListView.setVisibility(View.GONE);
+            }
+        }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         inviteManuallyTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1624,7 +1655,7 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static void showDoctorOverflowMenu(FragmentActivity context) {
+    public static void showDoctorOverflowMenu(FragmentActivity context, Bundle bundle) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View alertView = LayoutInflater.from(context).inflate(R.layout.view_invite_alert, null);
         builder.setView(alertView);
@@ -1635,8 +1666,13 @@ public class Utils {
         TextView broadCastMessageTv;
         TextView broadcastAllTv;
         View broadcastView;
+        TextView invitedListTv;
+        View invitedListView;
+        View pendingInvitesView;
         CardView cancelCv;
 
+        invitedListTv = (TextView) alertView.findViewById(R.id.invited_list);
+        invitedListView = (TextView) alertView.findViewById(R.id.invited_list);
         pendingInvitesTv = (TextView) alertView.findViewById(R.id.invite_manually_tv);
         broadCastMessageTv = (TextView) alertView.findViewById(R.id.invite_contacts_tv);
         broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
@@ -1644,9 +1680,20 @@ public class Utils {
         broadcastView.setVisibility(View.GONE);
         broadcastAllTv.setVisibility(View.GONE);
 
+        broadcastAllTv = (TextView) alertView.findViewById(R.id.broadcast_all_tv);
+        broadcastView = (View) alertView.findViewById(R.id.broadcast_view);
+        pendingInvitesView = (View) alertView.findViewById(R.id.invite_manually_view);
+        broadcastView.setVisibility(View.GONE);
+        broadcastAllTv.setVisibility(View.GONE);
+
         pendingInvitesTv.setText(R.string.pending_invites);
         broadCastMessageTv.setText(R.string.broadcast_messages);
         broadcastAllTv.setText(R.string.broadcast_messages_all);
+        broadcastAllTv.setText(R.string.broadcast_messages_all);
+
+        invitedListTv.setVisibility(View.GONE);
+        invitedListView.setVisibility(View.GONE);
+
         broadCastMessageTv.setVisibility(View.VISIBLE);
         broadcastView.setVisibility(View.VISIBLE);
         broadcastAllTv.setVisibility(View.VISIBLE);
@@ -1657,6 +1704,48 @@ public class Utils {
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
         }
+
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
+            invitedListTv.setVisibility(View.VISIBLE);
+            invitedListView.setVisibility(View.VISIBLE);
+            pendingInvitesTv.setVisibility(View.GONE);
+            pendingInvitesView.setVisibility(View.GONE);
+            broadCastMessageTv.setVisibility(View.GONE);
+            broadcastView.setVisibility(View.GONE);
+            broadcastAllTv.setVisibility(View.GONE);
+        } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_DOCTOR)) {
+            if (bundle != null) {
+                String role = bundle.getString(ArgumentKeys.ROLE, "");
+                if (role.equals(Constants.ROLE_ASSISTANT)) {
+                    invitedListTv.setVisibility(View.VISIBLE);
+                    invitedListView.setVisibility(View.VISIBLE);
+                    pendingInvitesTv.setVisibility(View.GONE);
+                    pendingInvitesView.setVisibility(View.GONE);
+                    broadCastMessageTv.setVisibility(View.GONE);
+                    broadcastView.setVisibility(View.GONE);
+                    broadcastAllTv.setVisibility(View.GONE);
+                }
+            }
+
+        }
+
+        invitedListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                Intent intent = new Intent(context, InvitedListActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
+                context.startActivity(intent);
+            }
+        });
 
         pendingInvitesTv.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -49,7 +49,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         }
         holder.tvCharge.setText(list.get(position).getAmountString());
         holder.tvReason.setText(list.get(position).getCommaSeparatedReason(holder.itemView.getContext()));
-        holder.tvDate.setText(Utils.getFormatedDateTime(list.get(position).getCreatedAt(), Utils.dd_mmm_yyyy_hh_mm_a));
         holder.failureReasonRow.setVisibility(View.GONE);
         if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESS_FAILED) {
             if (list.get(position).getErrorDescription() != null && list.get(position).getErrorDescription().length() > 0) {

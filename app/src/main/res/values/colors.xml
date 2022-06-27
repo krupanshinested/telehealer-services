@@ -8,6 +8,7 @@
     <color name="colorBlack_14">#24000000</color>
     <color name="colorBlack_8">#14000000</color>
     <color name="colorWhite_25">#40FFFFFF</color>
+    <color name="colorWhite_50">#70FFFFFF</color>
     <color name="colorWhite_85">#D9FFFFFF</color>
     <color name="colorGrey">#808080</color>
     <color name="colorGrey_light">#D6D6D6</color>
@@ -46,8 +47,10 @@
     <color name="bt_very_light_gray">#E2E2E3</color>
 
     <color name="bt_theme_green">#63EE63</color>
+    <color name="bt_theme_parot">#00C436</color>
     <color name="bt_theme_orange">#FF9233</color>
     <color name="bt_theme_blue">#3B9EFF</color>
+    <color name="bt_theme_white">#FFFFFF</color>
 
     <color name="device_description_color">#9B9B9B</color>
 </resources>

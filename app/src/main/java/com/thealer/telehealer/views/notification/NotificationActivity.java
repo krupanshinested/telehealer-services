@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.CommonInterface.ToolBarInterface;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OnFilterSelectedInterface;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -237,8 +238,12 @@ public class NotificationActivity extends BaseActivity implements AttachObserver
             successViewDialogFragment.setArguments(bundle);
 
             successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+            String designation = bundle.getString(Constants.DESIGNATION);
+            String currentUserGuid=userGuid;
+            if(!UserType.isUserAssistant())
+                currentUserGuid="";
 
-            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
+            addConnectionApiViewModel.connectUser(currentUserGuid,userGuid, doctorGuid, String.valueOf(selectedId),designation);
         } else if (string.equals(RequestID.REQ_SHOW_DETAIL_VIEW)) {
             bundle.putString(Constants.VIEW_TYPE, Constants.VIEW_ASSOCIATION_DETAIL);
             DoctorPatientDetailViewFragment doctorPatientDetailViewFragment = new DoctorPatientDetailViewFragment();

@@ -1512,12 +1512,15 @@
     <string name="str_current_plan">वर्तमान योजना</string>
     <string name="str_start_with_basic">बेसिक से शुरू करें</string>
     <string name="str_start_with_limited">लिमिटेड से शुरू करें</string>
+    <string name="str_start_with_current">वर्तमान योजना के साथ जारी रखें</string>
     <string name="str_start_with_better">बेहतर से शुरू करें</string>
     <string name="str_start_with_ideal">आदर्श से शुरू करें</string>
     <string name="str_plan_is_continue_till">यह योजना महीने के अंत तक जारी रहेगी। आपके व्यापार के लिए धन्यवाद।</string>
     <string name="str_unsubscribe">सदस्यता समाप्त</string>
+    <string name="str_dontsubscribe">जारी नहीं रखना चाहता</string>
     <string name="str_subscribe">सदस्यता</string>
     <string name="str_resubscribe">पुन: सदस्यता</string>
+    <string name="str_contsubscribe">सदस्यता जारी रखें</string>
     <string name="str_plan_already_activate">योजना पहले से सक्रिय</string>
     <string name="retrive_pricing_plan">आपके लिए मूल्य निर्धारण योजना प्राप्त करना</string>
     <string name="str_please_ask_for_permission">कृपया अपने प्रदाता से इन सुविधाओं को सक्षम करने के लिए कहें।</string>
@@ -1551,5 +1554,26 @@
     <string name="stepone">1. डिवाइस से IMEI नंबर दर्ज करें:</string>
     <string name="steptwo">2. यूआरएल कॉपी करें:</string>
     <string name="stepthree">3. टेलिहेल्थ में लॉग इन करें और अपना एपीआई यूआरएल पेस्ट करें:</string>
-
+    <string name="confirm">Confirm</string>
+    <string name="lbl_type_your_reason_here">Type your reason here</string>
+    <string name="str_select_designation_for">Select designation for %s</string>
+    <string name="user_permission">Permissions</string>
+    <string name="lbl_plan_name">Plan Name</string>
+    <string name="lbl_monitored_patients_for_month">Monitored Patients for Month \n (RPM / BHI/ CCM)</string>
+    <string name="lbl_plan_note">All subscription plans are renewed every month until \n you cancel and changes are not Proratable.</string>
+    <string name="lbl_change_plan">Change Plan</string>
+    <string name="lbl_my_subscriptions">My Subscriptions</string>
+    <string name="select_whome_you_want_to_send_invitation">Select to Whom you want to send invitation</string>
+    <string name="lbl_add_staff">Add Staff</string>
+    <string name="view_invited_list">View Invited List</string>
+    <string name="send_invitation">Send Invitation</string>
+    <string name="add_support_staff">Add Support Staff</string>
+    <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
+    <string name="help_content_invite_patient">Send manual invitation to provider and its support staff.</string>
+    <string name="help_content_invite_assistant">As being support staff you can send manually invitation to provider, patient as well as other support staff.</string>
+    <string name="help_content_invite_provider">As being provider you can send manually invitation to support staff as well as patient</string>
+    <string name="invited_user_list">Invited User List</string>
+    <string name="str_select_your_physician">Select your physician</string>
+    <string name="lbl_subscriptions_plan">Subscription Plan</string>
+    <string name="symbol_dollar">$</string>
 </resources>

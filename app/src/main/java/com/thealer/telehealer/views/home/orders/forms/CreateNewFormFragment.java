@@ -29,6 +29,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
@@ -235,7 +236,10 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     }
 
     private void assignForms() {
-        ordersCreateApiViewModel.createForm(new CreateFormRequestModel(selectedFormIds.get(0), userGuid, getVistOrderId()), doctorGuid, false);
+        if(!UserType.isUserAssistant())
+            userGuid="";
+
+        ordersCreateApiViewModel.createForm(userGuid,new CreateFormRequestModel(selectedFormIds.get(0), userGuid, getVistOrderId()), doctorGuid, false);
         selectedFormIds.remove(0);
     }
 

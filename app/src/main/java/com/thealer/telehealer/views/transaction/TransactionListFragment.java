@@ -94,7 +94,7 @@ public class TransactionListFragment extends BaseFragment {
     private Boolean isFromProfile=false;
     private TransactionItem selectedTransaction = null;
     private boolean isAllItemLoaded = false;
-
+    private String userGuid="";
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -109,6 +109,7 @@ public class TransactionListFragment extends BaseFragment {
             doctorId=getArguments().getInt(ArgumentKeys.DOCTOR_ID,0);
             patientId=getArguments().getInt(ArgumentKeys.PATIENT_ID,0);
             isFromProfile=getArguments().getBoolean(ArgumentKeys.IS_FROM_PROFILE,false);
+            userGuid=getArguments().getString(ArgumentKeys.USER_GUID,"");
         }
 
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -194,7 +195,16 @@ public class TransactionListFragment extends BaseFragment {
                                         Utils.showAlertDialog(getContext(), getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                                                String currentUserGuid="";
+                                                try{
+                                                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                                                }catch (Exception e){
+                                                    currentUserGuid="";
+                                                }
+                                                if(!UserType.isUserAssistant())
+                                                    currentUserGuid="";
+
+                                                transactionListViewModel.processPayment(currentUserGuid,selectedTransaction.getId(), Constants.PaymentMode.CASH);
                                                 dialog.dismiss();
                                             }
                                         }, (dialog, which) -> {
@@ -213,7 +223,15 @@ public class TransactionListFragment extends BaseFragment {
                                         Runnable proceedOfflineListener = new Runnable() {
                                             @Override
                                             public void run() {
-                                                transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                                                String currentUserGuid="";
+                                                try{
+                                                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                                                }catch (Exception e){
+                                                    currentUserGuid="";
+                                                }
+                                                if(!UserType.isUserAssistant())
+                                                    currentUserGuid="";
+                                                transactionListViewModel.processPayment(currentUserGuid,selectedTransaction.getId(), Constants.PaymentMode.CASH);
                                             }
                                         };
 
@@ -277,7 +295,15 @@ public class TransactionListFragment extends BaseFragment {
             Utils.showAlertDialog(getContext(), getString(R.string.app_name), message, getString(R.string.lbl_proceed_offline), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                    String currentUserGuid="";
+                    try{
+                        currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                    }catch (Exception e){
+                        currentUserGuid="";
+                    }
+                    if(!UserType.isUserAssistant())
+                        currentUserGuid="";
+                    transactionListViewModel.processPayment(currentUserGuid,selectedTransaction.getId(), Constants.PaymentMode.CASH);
                     dialog.dismiss();
                 }
             }, (dialog, which) -> dialog.dismiss()).getWindow().setBackgroundDrawableResource(R.drawable.border_red);
@@ -286,11 +312,18 @@ public class TransactionListFragment extends BaseFragment {
         ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), message, options, new PickerListener() {
             @Override
             public void didSelectedItem(int position) {
-
+                String currentUserGuid="";
+                try{
+                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                }catch (Exception e){
+                    currentUserGuid="";
+                }
+                if(!UserType.isUserAssistant())
+                    currentUserGuid="";
                 if (getString(R.string.lbl_ask_to_add_credit_card).equals(options.get(position))) {
-                    askToAddCardViewModel.askToAddCard(selectedTransaction.getPatientId().getUser_guid(), selectedTransaction.getDoctorId().getUser_guid());
+                    askToAddCardViewModel.askToAddCard(currentUserGuid, selectedTransaction.getDoctorId().getUser_guid());
                 } else if (getString(R.string.lbl_proceed_offline).equals(options.get(position))) {
-                    transactionListViewModel.processPayment(selectedTransaction.getId(), Constants.PaymentMode.CASH);
+                    transactionListViewModel.processPayment(currentUserGuid,selectedTransaction.getId(), Constants.PaymentMode.CASH);
                 }
 
             }
@@ -308,7 +341,6 @@ public class TransactionListFragment extends BaseFragment {
     private void loadTransactions(boolean showProgress) {
         selectedTransaction = null;
         transactionListViewModel.loadTransactions(showProgress,doctorId,patientId,isFromProfile);
-
     }
 
     private void showEmptyState() {
@@ -426,13 +458,29 @@ public class TransactionListFragment extends BaseFragment {
                 if (selectedTransaction.getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESS_FAILED) {
                     if (selectedTransaction.getMaxRetries() >= Constants.MAX_TRANSACTION_RETRY) {
                         Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.msg_transaction_failed, selectedTransaction.getPatientId().getDisplayName()), getString(R.string.lbl_proceed_offline), getString(R.string.cancel), (dialog, which) -> {
-                            transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.CASH);
+                            String currentUserGuid="";
+                            try{
+                                currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                            }catch (Exception e){
+                                currentUserGuid="";
+                            }
+                            if(!UserType.isUserAssistant())
+                                currentUserGuid="";
+                            transactionListViewModel.processPayment(currentUserGuid,transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.CASH);
                             dialog.dismiss();
                         }, null);
                         return;
                     }
                 }
-                transactionListViewModel.processPayment(transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.STRIPE);
+                String currentUserGuid="";
+                try{
+                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                }catch (Exception e){
+                    currentUserGuid="";
+                }
+                if(!UserType.isUserAssistant())
+                    currentUserGuid="";
+                transactionListViewModel.processPayment(currentUserGuid,transactionListViewModel.getTransactions().get(pos).getId(), Constants.PaymentMode.STRIPE);
             }
 
             @Override
@@ -529,7 +577,10 @@ public class TransactionListFragment extends BaseFragment {
                                 textView.setVisibility(View.GONE);
                                 RefundReq req = new RefundReq();
                                 req.setRefundAmount(Double.parseDouble(inputText));
-                                refundViewModel.processRefund(transactionListViewModel.getTransactions().get(pos).getId(), req);
+                                String currentDoctorGuid=selectedTransaction.getDoctorId().getUser_guid();
+
+
+                                refundViewModel.processRefund(currentDoctorGuid,transactionListViewModel.getTransactions().get(pos).getId(), req);
                                 dialog.dismiss();
                             }
                         } else {

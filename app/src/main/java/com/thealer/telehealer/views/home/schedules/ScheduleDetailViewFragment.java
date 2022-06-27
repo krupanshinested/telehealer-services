@@ -347,7 +347,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                             public void onClick(DialogInterface dialog, int which) {
                                 cancelIsClicked = true;
                                 dialog.dismiss();
-                                schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), resultBean.getScheduled_by_user().getUser_guid(), doctorGuid, true);
+                                String currentUserGuid=resultBean.getScheduled_by_user().getUser_guid();
+                                if(!UserType.isUserAssistant())
+                                    currentUserGuid="";
+
+                                schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), currentUserGuid, doctorGuid, true);
                             }
                         },
                         new DialogInterface.OnClickListener() {

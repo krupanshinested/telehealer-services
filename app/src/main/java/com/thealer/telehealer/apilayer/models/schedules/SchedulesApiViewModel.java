@@ -7,14 +7,16 @@ import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.ResultFetcher;
-import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
-import com.thealer.telehealer.common.pubNub.PubnubUtil;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Aswin on 18,December,2018
@@ -81,7 +83,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createSchedule(String doctorGuid, String toGuid, SchedulesCreateRequestModel createRequestModel, boolean isShowBoolean) {
+    public void createSchedule(String userGuid,String doctorGuid, String toGuid, SchedulesCreateRequestModel createRequestModel, boolean isShowBoolean) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -102,7 +104,7 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void deleteSchedule(int scheduleId, String time, String user_guid, String doctorGuid, boolean isShowProgress) {
+    public void deleteSchedule(int scheduleId, String time, String userGuid, String doctorGuid, boolean isShowProgress) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

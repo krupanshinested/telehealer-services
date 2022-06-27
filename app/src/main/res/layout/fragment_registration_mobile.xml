@@ -3,71 +3,89 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:maxWidth="@dimen/max_width"
-    android:padding="@dimen/padding_default">
+    android:layout_gravity="center">
 
-    <TextView
-        android:id="@+id/title_tv"
-        style="@style/registration_text_title"
-        android:text="@string/enter_your_mobile_number"
-        app:layout_constraintBottom_toTopOf="@+id/number_rl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <RelativeLayout
-        android:id="@+id/number_rl"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="@dimen/max_width">
 
-
-        <com.hbb20.CountryCodePicker
-            android:id="@+id/county_code"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            app:ccp_autoDetectCountry="true"
-            app:ccp_autoFormatNumber="true"
-            app:ccp_autoDetectLanguage="true"
-            app:ccp_defaultNameCode="US"
-            app:ccp_showFlag="false"
-            app:ccp_showNameCode="false" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/number_til"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_toEndOf="@+id/county_code"
-            app:hintEnabled="false">
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_default"
+            android:paddingTop="@dimen/padding_default">
 
-            <EditText
-                android:id="@+id/number_et"
+
+            <TextView
+                android:id="@+id/title_tv"
+                style="@style/registration_text_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:inputType="phone" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </RelativeLayout>
+                android:text="@string/enter_your_mobile_number"
+                app:layout_constraintBottom_toTopOf="@+id/number_rl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/page_hint_tv"
-        style="@style/text_sub_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_default"
-        android:fontFamily="@font/open_sans"
-        android:gravity="center|left"
-        android:text="@string/phone_info"
-        app:layout_constraintEnd_toEndOf="@id/number_rl"
-        app:layout_constraintStart_toStartOf="@id/number_rl"
-        app:layout_constraintTop_toBottomOf="@+id/number_rl"
-        app:layout_constraintWidth_max="@dimen/max_width" />
+            <RelativeLayout
+                android:id="@+id/number_rl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv"
+                app:layout_constraintWidth_max="@dimen/max_width">
+
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/county_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    app:ccp_autoDetectCountry="true"
+                    app:ccp_autoDetectLanguage="true"
+                    app:ccp_autoFormatNumber="true"
+                    app:ccp_defaultNameCode="US"
+                    app:ccp_showFlag="false"
+                    app:ccp_showNameCode="false" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/number_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_toEndOf="@+id/county_code"
+                    app:hintEnabled="false">
+
+                    <EditText
+                        android:id="@+id/number_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:inputType="phone" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/page_hint_tv"
+                style="@style/text_sub_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_default"
+                android:fontFamily="@font/open_sans"
+                android:gravity="center|left"
+                android:text="@string/phone_info"
+                app:layout_constraintEnd_toEndOf="@id/number_rl"
+                app:layout_constraintStart_toStartOf="@id/number_rl"
+                app:layout_constraintTop_toBottomOf="@+id/number_rl"
+                app:layout_constraintWidth_max="@dimen/max_width" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

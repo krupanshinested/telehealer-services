@@ -4,8 +4,8 @@
     android:id="@+id/appbar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/app_background_gradient"
     app:elevation="0dp"
+    android:background="@drawable/app_background_gradient"
     android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar

@@ -41,7 +41,6 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
-import com.thealer.telehealer.views.quickLogin.QuickLoginPinFragment;
 
 import java.util.ArrayList;
 
@@ -49,10 +48,12 @@ public class EducationalVideoDetailFragment extends BaseFragment {
 
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
-    private ImageView backIv,delete_iv,full_view;
-    private TextView toolbarTitle,edit_tv;
+    private ImageView backIv, delete_iv, full_view;
+    private TextView toolbarTitle, edit_tv;
     private PlayerView playerView;
     private TextView description_tv;
+    String doctorGuid;
+
 
     private EducationalVideo educationalVideo;
     @Nullable
@@ -85,10 +86,10 @@ public class EducationalVideoDetailFragment extends BaseFragment {
             Object videoObject = getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO);
 
             if (videoObject == null) {
-                String doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
+                 doctorGuid= getArguments().getString(ArgumentKeys.DOCTOR_GUID);
                 String id = getArguments().getString(ArgumentKeys.EDUCATIONAL_VIDEO_ID);
                 String userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
-                educationalVideoViewModel.getEducationalVideos(doctorGuid,id,userGuid);
+                educationalVideoViewModel.getEducationalVideos(doctorGuid, id, userGuid);
             } else if (videoObject instanceof EducationalVideo) {
                 educationalVideo = (EducationalVideo) videoObject;
                 updateUI();
@@ -137,11 +138,11 @@ public class EducationalVideoDetailFragment extends BaseFragment {
 
         if (educationalVideo != null && !TextUtils.isEmpty(educationalVideo.getUrl())) {
             if (educationalVideoOrder != null && UserType.isUserPatient()) {
-                educationalVideoViewModel.patchEducationalVideo(educationalVideoOrder.getUser_video_id()+"");
+                educationalVideoViewModel.patchEducationalVideo(educationalVideoOrder.getUser_video_id() + "");
             }
             setUpPlayer(educationalVideo.getUrl());
         } else {
-            Utils.showAlertDialog(getActivity(),getString(R.string.pending),getString(R.string.educational_video_created),getString(R.string.ok),null,null,null);
+            Utils.showAlertDialog(getActivity(), getString(R.string.pending), getString(R.string.educational_video_created), getString(R.string.ok), null, null, null);
         }
 
         if (educationalVideoOrder != null && !UserType.isUserPatient()) {
@@ -175,7 +176,9 @@ public class EducationalVideoDetailFragment extends BaseFragment {
             public void onClick(View view) {
                 if (getActivity() instanceof ShowSubFragmentInterface) {
                     EducationalCreateFragment fragment = new EducationalCreateFragment();
-                    fragment.setArguments(getArguments());
+                    Bundle bundle =new Bundle();
+                    bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    fragment.setArguments(bundle);
                     ((ShowSubFragmentInterface) getActivity()).onShowFragment(fragment);
                 }
             }
@@ -196,16 +199,19 @@ public class EducationalVideoDetailFragment extends BaseFragment {
                                 doctor_guid = educationalVideoOrder.getDoctor().getUser_guid();
                             }
 
-                            educationalVideoViewModel.unAssociateEducationalVideoOrder(doctor_guid,educationalVideoOrder.getPatient().getUser_guid(),ids);
+                            educationalVideoViewModel.unAssociateEducationalVideoOrder(doctor_guid, educationalVideoOrder.getPatient().getUser_guid(), ids);
                         }
-                    },null);
+                    }, null);
                 } else {
                     Utils.showAlertDialog(getActivity(), getString(R.string.delete), getString(R.string.delete_educational_video), getString(R.string.delete), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            educationalVideoViewModel.deleteEducationalVideo(educationalVideo.getVideo_id());
+                            String currentUserGuid = UserDetailPreferenceManager.getUser_guid();
+                            if (!UserType.isUserAssistant())
+                                currentUserGuid = "";
+                            educationalVideoViewModel.deleteEducationalVideo(currentUserGuid, educationalVideo.getVideo_id());
                         }
-                    },null);
+                    }, null);
                 }
             }
         });
