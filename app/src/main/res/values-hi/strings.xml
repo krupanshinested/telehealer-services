@@ -1576,4 +1576,5 @@
     <string name="str_select_your_physician">Select your physician</string>
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
+    <string name="subscription_history">Subscription history</string>
 </resources>

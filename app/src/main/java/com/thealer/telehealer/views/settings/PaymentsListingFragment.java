@@ -50,7 +50,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     private OnActionCompleteInterface onActionCompleteInterface;
 
-    private TransactionApiViewModel transactionApiViewModel;
+    private TransactionApiViewModel transactionApiViewModel, invoiceApiViewModel;
 
 
     private PaymentAdapter paymentAdapter;
@@ -127,6 +127,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             //addCardButton.performClick();
         } else
             transactionApiViewModel.getTransactions();
+        invoiceApiViewModel.getInvoice();
         if (UserType.isUserAssistant()) {
             addCardButton.setVisibility(View.GONE);
         }
@@ -134,6 +135,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     private void addObserver() {
         transactionApiViewModel = new ViewModelProvider(this).get(TransactionApiViewModel.class);
+        invoiceApiViewModel = new ViewModelProvider(this).get(TransactionApiViewModel.class);
 
         transactionApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -167,8 +169,41 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             }
         });
 
+        invoiceApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof TransactionResponse) {
+                        TransactionResponse transactionResponse = (TransactionResponse) baseApiResponseModel;
+                        ArrayList<Transaction> transactions = transactionResponse.mergeTransactions();
+
+//                        if (transactions.size() == 0) {
+//                            loadEmptyView();
+//                        }
+//
+//                        paymentAdapter.update(transactions);
+                    } else {
+                        loadEmptyView();
+                    }
+                } else {
+                    loadEmptyView();
+                }
+
+            }
+        });
+
+        invoiceApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null)
+                    loadEmptyView();
+            }
+        });
+
         if (getActivity() instanceof BaseActivity) {
             ((BaseActivity) getActivity()).attachObserver(transactionApiViewModel);
+            ((BaseActivity) getActivity()).attachObserver(invoiceApiViewModel);
 
         }
     }

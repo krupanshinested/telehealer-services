@@ -40,6 +40,24 @@ public class TransactionApiViewModel extends BaseApiViewModel {
         });
     }
 
+    public void getInvoice() {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getInvoice(true, 1, Constants.PAGINATION_SIZE)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<TransactionResponse>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(TransactionResponse transactionResponse) {
+                                    baseApiResponseModelMutableLiveData.setValue(transactionResponse);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
 
     public void getVitalVisit(String forMonth) {
         fetchToken(new BaseViewInterface() {

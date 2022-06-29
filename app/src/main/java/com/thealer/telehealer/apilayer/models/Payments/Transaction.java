@@ -18,7 +18,33 @@ public class Transaction implements Serializable {
     private String created_at;
     private String amount;
     private String status;
+    private String invoice_number;
+    private String total_price;
+    private String date;
 
+    public String getInvoice_number() {
+        return invoice_number;
+    }
+
+    public void setInvoice_number(String invoice_number) {
+        this.invoice_number = invoice_number;
+    }
+
+    public String getTotal_price() {
+        return total_price;
+    }
+
+    public void setTotal_price(String total_price) {
+        this.total_price = total_price;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getId() {
         return id;

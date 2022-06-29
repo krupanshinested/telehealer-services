@@ -41,6 +41,24 @@ public class SubscriptionViewModel extends BaseApiViewModel {
         });
     }
 
+    public void fetchSubscriptionHistoryList(int page) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().fetchSubscriptionHistoryList(page, 10,true)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<PlanInfoBean>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(PlanInfoBean baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
     public void purchaseSubscriptionPlan(String planId, String billingCycle) {
         HashMap<String, String> param = new HashMap<>();
         param.put(ArgumentKeys.PlanID, planId);
