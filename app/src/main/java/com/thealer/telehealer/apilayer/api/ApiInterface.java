@@ -804,8 +804,8 @@ public interface ApiInterface {
     @GET("api/subscription-plans")
     Observable<PlanInfoBean> fetchSubscriptionList();
 
-    @GET("api/users/subscription-history")
-    Observable<PlanInfoBean> fetchSubscriptionHistoryList(@Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(PAGINATE) boolean paginate);
+    @GET("api/users/subscription-history-message")
+    Call<BaseApiResponseModel> fetchSubscriptionHistoryList();
 
     @POST("/api/users/purchase-plan")
     Observable<BaseApiResponseModel> purchasePlan(@Body() HashMap<String, String> req);

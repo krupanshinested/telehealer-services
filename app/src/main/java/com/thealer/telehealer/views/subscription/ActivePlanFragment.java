@@ -33,6 +33,8 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.manager.RetrofitManager;
+import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
@@ -44,6 +46,7 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.call.CallFeedBackActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -60,6 +63,10 @@ import static com.thealer.telehealer.common.Constants.USER_TYPE;
 import static com.thealer.telehealer.common.Constants.activatedPlan;
 import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class ActivePlanFragment extends BaseFragment implements View.OnClickListener {
     private OnCloseActionInterface onCloseActionInterface;
@@ -69,7 +76,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private Toolbar toolbar;
     private TextView toolbarTitle, tvPlanName, tvTotalRpm, subscriphistory;
     private ImageView backIv;
-    private SubscriptionViewModel subscriptionViewModel,subscriptionHistory;
+    private SubscriptionViewModel subscriptionViewModel, subscriptionHistory;
     private Button btnUnsubscribe, btnChange, btncontsubscribe, btnresubscribe;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private CardView mainview;
@@ -133,7 +140,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
                             planList = planInfoBean.getResults();
-
+                            getSubscriptionHistory();
                             prePareData();
 
                         }
@@ -431,6 +438,20 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         }
     }
 
+    private void getSubscriptionHistory() {
+        Call<BaseApiResponseModel> call = RetrofitManager.getInstance(getActivity()).getAuthApiService().fetchSubscriptionHistoryList();
+        call.enqueue(new Callback<BaseApiResponseModel>() {
+            @Override
+            public void onResponse(Call<BaseApiResponseModel> call, Response<BaseApiResponseModel> response) {
+                subscriphistory.setText(response.body().getMessage());
+            }
+
+            @Override
+            public void onFailure(Call<BaseApiResponseModel> call, Throwable t) {
+                call.cancel();
+            }
+        });
+    }
 
     //Allow physician to view list of support staff. Also physician can request to add them.
     private void selectReason(View v) {

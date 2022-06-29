@@ -122,7 +122,7 @@ public class SubscriptionHistoryActivity extends BaseActivity implements OnAdapt
 
     private void makeApiCall() {
 
-        subscriptionViewModel.fetchSubscriptionHistoryList(page);
+//        subscriptionViewModel.fetchSubscriptionHistoryList(page);
 
     }
 

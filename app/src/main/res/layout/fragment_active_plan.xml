@@ -188,7 +188,6 @@
         android:gravity="center"
         android:layout_height="wrap_content"
         android:textColor="@color/bt_theme_orange"
-        android:text="@string/subscription_history"
         android:textStyle="bold"
         android:textSize="@dimen/_13sdp"
         app:layout_constraintLeft_toLeftOf="parent"
