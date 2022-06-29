@@ -100,9 +100,9 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+                    paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                    paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                    paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 } else {
                     Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();

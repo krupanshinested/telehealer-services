@@ -29,6 +29,7 @@ import com.thealer.telehealer.common.OpenTok.CustomAudioDevice;
 import com.thealer.telehealer.common.OpenTok.openTokInterfaces.AudioInterface;
 import com.thealer.telehealer.common.PermissionChecker;
 import com.thealer.telehealer.common.PermissionConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseActivity;
 
@@ -130,11 +131,11 @@ public class CallNetworkTestActivity extends BaseActivity implements
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if(!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                    if(!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                         PaymentInfo paymentInfo = new PaymentInfo();
-                        paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                        paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                        paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+                        paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                        paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                        paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(CallNetworkTestActivity.this, paymentInfo,"");
                     }else {
                         showResult(getString(R.string.networkTestFailed), errorModel.getMessage(), false);

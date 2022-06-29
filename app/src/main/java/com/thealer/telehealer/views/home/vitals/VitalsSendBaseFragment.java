@@ -26,6 +26,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
@@ -178,12 +179,12 @@ public class VitalsSendBaseFragment extends BaseFragment {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
                 String title = getString(R.string.failure);
                 callFailureView(errorModel);
-                if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
+                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+                    paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                    paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                    paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 }
 
