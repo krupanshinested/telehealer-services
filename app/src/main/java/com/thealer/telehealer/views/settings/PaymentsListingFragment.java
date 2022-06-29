@@ -1,8 +1,10 @@
 package com.thealer.telehealer.views.settings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +17,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.Payments.Transaction;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionApiViewModel;
 import com.thealer.telehealer.apilayer.models.Payments.TransactionResponse;
+import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -35,7 +41,9 @@ import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.DoCurrentTransactionInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.ConnectionListAdapter;
 import com.thealer.telehealer.views.settings.Adapters.PaymentAdapter;
+import com.thealer.telehealer.views.transaction.TransactionFilterActivity;
 
 import java.util.ArrayList;
 
@@ -53,7 +61,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     private TransactionApiViewModel transactionApiViewModel, invoiceApiViewModel;
 
 
-//    private PaymentAdapter paymentAdapter;
+    //    private PaymentAdapter paymentAdapter;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
@@ -62,6 +70,11 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     private ImageView closeIv;
     private LinearLayout addCardButton;
     private InvoiceAdapter invoiceAdapter;
+    String start = "", end = "";
+    int page = 1;
+    private LinearLayoutManager linearLayoutManager;
+    ArrayList<Transaction> transactions = new ArrayList<>();
+    int pastVisibleItems, visibleItemCount, totalItemCount;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +103,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         nextTv = (TextView) view.findViewById(R.id.next_tv);
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
+
         addCardButton = (LinearLayout) view.findViewById(R.id.btnAddCard);
         recyclerContainer = view.findViewById(R.id.recyclerContainer);
         recyclerContainer.setScrollable(false);
@@ -111,7 +125,10 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         });
 
         invoiceAdapter = new InvoiceAdapter(getActivity(), new ArrayList<>());
+//        linearLayoutManager = new LinearLayoutManager(getActivity());
+//        recyclerContainer.getRecyclerView().setLayoutManager(linearLayoutManager);
         recyclerContainer.getRecyclerView().setAdapter(invoiceAdapter);
+        linearLayoutManager = recyclerContainer.getLayoutManager();
 //        paymentAdapter = new PaymentAdapter(getActivity(), new ArrayList<>());
 //        recyclerContainer.getRecyclerView().setAdapter(paymentAdapter);
 
@@ -130,10 +147,44 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             //addCardButton.performClick();
         } else
 //            transactionApiViewModel.getTransactions();
-        invoiceApiViewModel.getInvoice();
+            invoiceApiViewModel.getInvoice(start, end, page);
         if (UserType.isUserAssistant()) {
             addCardButton.setVisibility(View.GONE);
         }
+
+        recyclerContainer.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    visibleItemCount = linearLayoutManager.getChildCount();
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
+//                    if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+//                        page = page + 1;
+//                        invoiceApiViewModel.getInvoice(start, end, page);
+//                    }
+                    if (visibleItemCount + pastVisibleItems == totalItemCount - 1) {
+                        page = page + 1;
+                        invoiceApiViewModel.getInvoice(start, end, page);
+                    }
+
+                }
+
+                //
+//                if (linearLayoutManager.getItemCount() > 0 && linearLayoutManager.getItemCount() < transactions.size()) {
+//                    if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
+//                        page = page + 1;
+//                        invoiceApiViewModel.getInvoice(start, end, page);
+//
+//                    } else {
+//                    }
+//                } else {
+//                }
+            }
+        });
+
     }
 
     private void addObserver() {
@@ -179,7 +230,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof TransactionResponse) {
                         TransactionResponse transactionResponse = (TransactionResponse) baseApiResponseModel;
-                        ArrayList<Transaction> transactions = transactionResponse.getResult();
+                        transactions.addAll(transactionResponse.getResult());
 
                         invoiceAdapter.update(transactions);
                     } else {
@@ -214,7 +265,31 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
 
     @Override
     public void doCurrentTransaction() {
-        startActivity(new Intent(getActivity(), PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
+//        startActivity(new Intent(getActivity(), PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
 //        onActionCompleteInterface.onCompletionResult(RequestID.CARD_INFORMATION_VIEW, true, null);
+        startActivityForResult(new Intent(getActivity(), DateFilterActivity.class), 123);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK && requestCode == 123) {
+            start = data.getStringExtra("START_DATE");
+            end = data.getStringExtra("END_DATE");
+
+            page = 1;
+
+            invoiceApiViewModel.getInvoice(start, end, page);
+        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == 123) {
+            start = "";
+            end = "";
+
+            page = 1;
+            transactions.clear();
+            invoiceApiViewModel.getInvoice(start, end, page);
+        }
+
+    }
+
 }

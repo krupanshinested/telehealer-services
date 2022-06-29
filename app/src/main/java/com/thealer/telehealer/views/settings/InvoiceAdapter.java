@@ -87,8 +87,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.Viewhold
     }
 
     public void update(ArrayList<Transaction> transactions) {
-        this.transactions = transactions;
-        notifyDataSetChanged();
+        this.transactions.clear();
+        this.transactions.addAll(transactions);
+        this.notifyDataSetChanged();
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {

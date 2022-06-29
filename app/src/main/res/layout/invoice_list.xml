@@ -177,12 +177,10 @@
 
                 <TextView
                     style="@style/TransactionRowLbl"
-                    android:text="@string/lbl_transaction_date_time"
-                    android:visibility="gone" />
+                    android:text="Date" />
 
                 <TextView
                     android:id="@+id/tv_invdate"
-                    android:textStyle="bold"
                     style="@style/TransactionRowValue" />
             </TableRow>
 
@@ -341,10 +339,10 @@
                     android:layout_marginStart="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_20sdp"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_theme_orange"
+                    android:background="@drawable/btn_theme_blue"
                     android:text="Download"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/bt_white"
                     android:visibility="visible"
                     tools:visibility="visible" />
             </TableRow>
