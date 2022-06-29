@@ -21,6 +21,25 @@ public class Transaction implements Serializable {
     private String invoice_number;
     private String total_price;
     private String date;
+    private int payment_status;
+
+    public int getPayment_status() {
+        return payment_status;
+    }
+
+    public void setPayment_status(int payment_status) {
+        this.payment_status = payment_status;
+    }
+
+    public String getInvoice_pdf_path() {
+        return invoice_pdf_path;
+    }
+
+    public void setInvoice_pdf_path(String invoice_pdf_path) {
+        this.invoice_pdf_path = invoice_pdf_path;
+    }
+
+    private String invoice_pdf_path;
 
     public String getInvoice_number() {
         return invoice_number;
