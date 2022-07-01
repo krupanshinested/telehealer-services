@@ -187,8 +187,8 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
 
 //            if (position == 0) {
-                holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
-                setMargins(holder.cvRoot, 0, 15, 0, 0);
+            holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
+            setMargins(holder.cvRoot, 0, 15, 0, 0);
 //            } else if (position == (adapterList.size() - 1)) {
 //                setMargins(holder.cvRoot, 0, 15, 0, 75);
 //            } else {
@@ -204,8 +204,8 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             @Override
             public void onClick(View v) {
 //                if (position == 0) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.coruscate.work/doctors/#Features"));
-                    fragmentActivity.startActivity(browserIntent);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.coruscate.work/doctors/#Features"));
+                fragmentActivity.startActivity(browserIntent);
 //                }
             }
         });
@@ -226,8 +226,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                             bundle.putString(ArgumentKeys.BillingCycle, currentPlan.getBilling_cycle());
                             adapterListener.onEventTrigger(bundle);
                         } else {
+                            fragmentActivity.onBackPressed();
                             Toast.makeText(fragmentActivity, fragmentActivity.getString(R.string.str_plan_already_activate), Toast.LENGTH_SHORT).show();
                         }
+                    }
+                } else {
+                    if (Constants.activatedPlan == position) {
+                        fragmentActivity.onBackPressed();
                     }
                 }
             }
