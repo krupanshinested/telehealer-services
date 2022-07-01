@@ -75,6 +75,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     private LinearLayoutManager linearLayoutManager;
     ArrayList<Transaction> transactions = new ArrayList<>();
     int pastVisibleItems, visibleItemCount, totalItemCount;
+    private TextView nodata;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +106,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
 
         addCardButton = (LinearLayout) view.findViewById(R.id.btnAddCard);
+        nodata = (TextView)view.findViewById(R.id.tv_nodata);
         recyclerContainer = view.findViewById(R.id.recyclerContainer);
         recyclerContainer.setScrollable(false);
         recyclerContainer.setEmptyState(EmptyViewConstants.EMPTY_PAYMENTS);
@@ -161,27 +163,12 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                     visibleItemCount = linearLayoutManager.getChildCount();
                     totalItemCount = linearLayoutManager.getItemCount();
                     pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
-//                    if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-//                        page = page + 1;
-//                        invoiceApiViewModel.getInvoice(start, end, page);
-//                    }
                     if (visibleItemCount + pastVisibleItems == totalItemCount - 1) {
                         page = page + 1;
                         invoiceApiViewModel.getInvoice(start, end, page);
                     }
 
                 }
-
-                //
-//                if (linearLayoutManager.getItemCount() > 0 && linearLayoutManager.getItemCount() < transactions.size()) {
-//                    if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1) {
-//                        page = page + 1;
-//                        invoiceApiViewModel.getInvoice(start, end, page);
-//
-//                    } else {
-//                    }
-//                } else {
-//                }
             }
         });
 
@@ -232,7 +219,15 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                         TransactionResponse transactionResponse = (TransactionResponse) baseApiResponseModel;
                         transactions.addAll(transactionResponse.getResult());
 
-                        invoiceAdapter.update(transactions);
+                        if (transactions.size() == 0){
+                            nodata.setVisibility(View.VISIBLE);
+                            recyclerContainer.getRecyclerView().setVisibility(View.GONE);
+                        }else {
+                            nodata.setVisibility(View.GONE);
+                            recyclerContainer.getRecyclerView().setVisibility(View.VISIBLE);
+                            invoiceAdapter.update(transactions);
+                        }
+
                     } else {
                         loadEmptyView();
                     }

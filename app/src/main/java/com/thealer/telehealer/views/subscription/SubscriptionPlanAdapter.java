@@ -186,14 +186,14 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             holder.tvRpmDesc.setText(Html.fromHtml(rpmDesc));
             holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
 
-            if (position == 0) {
+//            if (position == 0) {
                 holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
                 setMargins(holder.cvRoot, 0, 15, 0, 0);
-            } else if (position == (adapterList.size() - 1)) {
-                setMargins(holder.cvRoot, 0, 15, 0, 75);
-            } else {
-                setMargins(holder.cvRoot, 0, 15, 0, 0);
-            }
+//            } else if (position == (adapterList.size() - 1)) {
+//                setMargins(holder.cvRoot, 0, 15, 0, 75);
+//            } else {
+//                setMargins(holder.cvRoot, 0, 15, 0, 0);
+//            }
             holder.btnStartWith.setBackgroundColor(ContextCompat.getColor(fragmentActivity, btnBGColor));
             holder.btnStartWith.setTextColor(ContextCompat.getColor(fragmentActivity, btnTextColor));
             holder.clRoot.setVisibility(View.VISIBLE);
@@ -203,10 +203,10 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         holder.tvAdditionalFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (position == 0) {
+//                if (position == 0) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.coruscate.work/doctors/#Features"));
                     fragmentActivity.startActivity(browserIntent);
-                }
+//                }
             }
         });
         holder.btnStartWith.setOnClickListener(new View.OnClickListener() {

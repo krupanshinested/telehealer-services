@@ -124,8 +124,25 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.thealer.telehealer.common.CustomRecyclerView
-        android:id="@+id/recyclerContainer"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <com.thealer.telehealer.common.CustomRecyclerView
+            android:id="@+id/recyclerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:text="No invoice found"
+            android:id="@+id/tv_nodata"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/_17sdp"
+            android:textColor="@color/app_gradient_start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
 </LinearLayout>
