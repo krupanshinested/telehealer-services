@@ -140,7 +140,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
                             planList = planInfoBean.getResults();
-                            getSubscriptionHistory();
+//                            getSubscriptionHistory();
                             prePareData();
 
                         }
