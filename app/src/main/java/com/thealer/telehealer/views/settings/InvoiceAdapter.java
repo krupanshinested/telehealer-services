@@ -52,7 +52,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.Viewhold
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             Date givenday = format.parse(""+transactions.get(position).getDate());
-            DateFormat sdf = new SimpleDateFormat("MMMM yy");
+            DateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
             holder.invdate.setText(""+sdf.format(givenday));
         } catch (ParseException e) {
             e.printStackTrace();

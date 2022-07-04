@@ -225,9 +225,8 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
                         }else {
                             nodata.setVisibility(View.GONE);
                             recyclerContainer.getRecyclerView().setVisibility(View.VISIBLE);
-                            invoiceAdapter.update(transactions);
                         }
-
+                        invoiceAdapter.update(transactions);
                     } else {
                         loadEmptyView();
                     }
@@ -274,7 +273,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             end = data.getStringExtra("END_DATE");
 
             page = 1;
-
+            transactions.clear();
             invoiceApiViewModel.getInvoice(start, end, page);
         } else if (resultCode == Activity.RESULT_CANCELED && requestCode == 123) {
             start = "";

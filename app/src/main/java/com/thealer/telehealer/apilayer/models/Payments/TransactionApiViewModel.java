@@ -45,7 +45,7 @@ public class TransactionApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getInvoice(true, page, 8,start,end)
+                    getAuthApiService().getInvoice(true, page, Constants.PAGINATION_SIZE,start,end)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<TransactionResponse>(Constants.SHOW_PROGRESS) {
                                 @Override
