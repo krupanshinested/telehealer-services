@@ -157,19 +157,19 @@ public class OrdersBaseFragment extends BaseFragment {
                     } else {
                         switch (currentOrder) {
                             case OrderConstant.ORDER_PRESCRIPTIONS:
-                                description = String.format(getString(R.string.create_prescription_failure), patientName);
+                                description = String.format(getString(R.string.create_prescription_failure), patientName,errorModel.getMessage());
                                 break;
                             case OrderConstant.ORDER_REFERRALS:
-                                description = String.format(getString(R.string.referral_failure), patientName);
+                                description = String.format(getString(R.string.referral_failure), patientName,errorModel.getMessage());
                                 break;
                             case OrderConstant.ORDER_LABS:
-                                description = String.format(getString(R.string.create_lab_failure), patientName);
+                                description = String.format(getString(R.string.create_lab_failure), patientName,errorModel.getMessage());
                                 break;
                             case OrderConstant.ORDER_RADIOLOGY:
-                                description = String.format(getString(R.string.create_radiology_failure), patientName);
+                                description = String.format(getString(R.string.create_radiology_failure), patientName,errorModel.getMessage());
                                 break;
                             case OrderConstant.ORDER_MISC:
-                                description = String.format(getString(R.string.miscellaneous_failure), patientName);
+                                description = String.format(getString(R.string.miscellaneous_failure), patientName,errorModel.getMessage());
                                 break;
                         }
                         if (isSendFax) {

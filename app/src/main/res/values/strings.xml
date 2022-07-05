@@ -759,16 +759,16 @@
     <string name="associations">Associations</string>
     <string name="bulk_pdf_success_message">Your request has been submitted. Please check back in few minutes.</string>
     <string name="referral_success">Your referral for %s has been posted successfully.</string>
-    <string name="referral_failure">Your referral for %s has not been posted successfully.</string>
+    <string name="referral_failure">Your referral for %s has not been posted successfully due to %s</string>
     <string name="miscellaneous_success">Your miscellaneous order for %s has been posted successfully.</string>
-    <string name="miscellaneous_failure">Your miscellaneous order for %s has not been posted successfully.</string>
+    <string name="miscellaneous_failure">Your miscellaneous order for %s has not been posted successfully due to %s</string>
     <string name="create_radiology_success">Your X-Ray order for %s has been posted successfully</string>
-    <string name="create_radiology_failure">Your X-Ray order for %s is not posted successfully, please try again,</string>
+    <string name="create_radiology_failure">Your X-Ray order for %s has not been posted successfully due to %s</string>
     <string name="create_lab_success">Your Lab order for %s is posted successfully.</string>
-    <string name="create_lab_failure">Your Lab order for %s is not posted successfully.</string>
+    <string name="create_lab_failure">Your Lab order for %s is not posted successfully due to %s</string>
     <string name="upload_document_failure">Your document upload has been failed please try again</string>
     <string name="create_prescription_success">Your prescription order for %s has been posted successfully.</string>
-    <string name="create_prescription_failure">Your prescription order for %s has not been posted successfully.</string>
+    <string name="create_prescription_failure">Your prescription order for %s has not been posted successfully due to %s</string>
     <string name="create_form_failure">Form submission failed. Please try again.</string>
 
     <string name="error_on_measure_vital">Error on mesure, please try again</string>
