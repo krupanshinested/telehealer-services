@@ -147,24 +147,25 @@ public class VitalsSendBaseFragment extends BaseFragment {
                         message = getString(R.string.vitals_has_been_posted);
                     }
 
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, captureSuccessMessage);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+//                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, captureSuccessMessage);
+//
+//                    if (UserType.isUserPatient()) {
+//                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(currentPostingMeasurementType));
+//                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, isAbnormal ? R.color.red : R.color.vital_good);
+//                        bundle.putSerializable(Constants.VITAL_DETAIL, detail);
+//                    }
+//
+//                    if (detail.size() == 0) {
+//                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, message);
+//                    }
+//                    LocalBroadcastManager
+//                            .getInstance(getActivity())
+//                            .sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver))
+//                                    .putExtras(bundle));
 
-                    if (UserType.isUserPatient()) {
-                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(currentPostingMeasurementType));
-                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, isAbnormal ? R.color.red : R.color.vital_good);
-                        bundle.putSerializable(Constants.VITAL_DETAIL, detail);
-                    }
-
-                    if (detail.size() == 0) {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, message);
-                    }
-                    LocalBroadcastManager
-                            .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver))
-                                    .putExtras(bundle));
-
+                    sendSuccessViewBroadCast(getActivity(), true, captureSuccessMessage, message);
                     Log.v("VitalsSendBaseFragment", "not present in call kit");
                 } else {
                     Log.v("VitalsSendBaseFragment", "present in call kit");
@@ -193,21 +194,23 @@ public class VitalsSendBaseFragment extends BaseFragment {
     }
 
     private void callFailureView(ErrorModel errorModel) {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
+//        Bundle bundle = new Bundle();
+//        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+//        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+//
+        String description = "";
         if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+            description = errorModel.getMessage();
         } else {
-            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+            description = getString(R.string.something_went_wrong_try_again);
         }
-        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
-
-        LocalBroadcastManager
-                .getInstance(getActivity())
-                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                        .putExtras(bundle));
+//        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, false);
+//
+//        LocalBroadcastManager
+//                .getInstance(getActivity())
+//                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+//                        .putExtras(bundle));
+        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), description);
     }
 
 
@@ -338,10 +341,13 @@ public class VitalsSendBaseFragment extends BaseFragment {
 
     private void showSuccessState() {
         if (!isPresentedInsideCallActivity()) {
-
-            VitalThresholdSuccessViewDialogFragment successViewDialogFragment = new VitalThresholdSuccessViewDialogFragment();
-            successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-            successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+//            VitalThresholdSuccessViewDialogFragment successViewDialogFragment = new VitalThresholdSuccessViewDialogFragment();
+//            successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+//            successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "Loading...");
+            showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
         }
     }
 
