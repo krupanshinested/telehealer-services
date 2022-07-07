@@ -274,7 +274,11 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                                 }
                             }
                             if (isHasNextRequest()) {
-                                updateVisit();
+//                                updateVisit();
+                                getVisitDetail();
+                                isSuccessViewShown = false;
+                                sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
+                                setMode(Constants.VIEW_MODE);
                             } else {
                                 if (visitDetailViewModel.isInstructionUpdated()) {
                                     visitDetailViewModel.setInstructionUpdated(false);
