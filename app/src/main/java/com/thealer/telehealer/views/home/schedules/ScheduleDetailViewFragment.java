@@ -347,11 +347,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                             public void onClick(DialogInterface dialog, int which) {
                                 cancelIsClicked = true;
                                 dialog.dismiss();
-                                String currentUserGuid=resultBean.getScheduled_by_user().getUser_guid();
-                                if(!UserType.isUserAssistant())
-                                    currentUserGuid="";
-
-                                schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), currentUserGuid, doctorGuid, true);
+                                schedulesApiViewModel.deleteSchedule(resultBean.getSchedule_id(), resultBean.getStart(), resultBean.getScheduled_by_user().getUser_guid(), doctorGuid, true);
                             }
                         },
                         new DialogInterface.OnClickListener() {
@@ -368,12 +364,12 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             case R.id.patient_call_iv:
 
                 ArrayList<String> callTypes = new ArrayList<>();
-                if (resultBean.getDoctor().getApp_details() != null) {
-                    if (!resultBean.getDoctor().getApp_details().isWebUser()) {
+//                if (resultBean.getDoctor().getApp_details() != null) {
+//                    if (!resultBean.getDoctor().getApp_details().isWebUser()) {
                         callTypes.add(getString(R.string.audio_call));
                         callTypes.add(getString(R.string.video_call));
-                    }
-                }
+//                    }
+//                }
                 callTypes.add(getString(R.string.one_way_call));
                 if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPatient().getPayment_account_info())) {
                     if (UserType.isUserDoctor()) {
