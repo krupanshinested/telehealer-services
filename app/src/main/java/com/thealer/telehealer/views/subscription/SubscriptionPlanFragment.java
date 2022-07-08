@@ -37,6 +37,7 @@ import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     public static boolean isResubscriptPlan = false;
     private boolean isHideBack = false;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
+    private ImageView addcard;
 
     public SubscriptionPlanFragment() {
         // Required empty public constructor
@@ -93,7 +95,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
                     paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 } else {
-                    Toast.makeText(context, ""+errorModel.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -158,8 +160,10 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         subscriptionPlanListCrv = (CustomRecyclerView) view.findViewById(R.id.subscription_plan_crv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(getString(R.string.lbl_subscriptions_plan));
+        toolbarTitle.setText(/*getString(R.string.lbl_subscriptions_plan)*/ "Plans");
         subscriptionPlanRv = subscriptionPlanListCrv.getRecyclerView();
+        addcard = (ImageView) view.findViewById(R.id.addcard);
+        addcard.setVisibility(View.VISIBLE);
 
         if (isHideBack)
             backIv.setVisibility(View.GONE);
@@ -168,6 +172,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         subscriptionPlanRv.setAdapter(subscriptionPlanAdapter);
         subscriptionViewModel.fetchSubscriptionPlanList();
         backIv.setOnClickListener(this);
+        addcard.setOnClickListener(this);
 
     }
 
@@ -177,6 +182,9 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         switch (v.getId()) {
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
+                break;
+            case R.id.addcard:
+                AppPaymentCardUtils.openCardNotAddedScreen(getActivity(), null);
                 break;
         }
     }

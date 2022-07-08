@@ -77,7 +77,7 @@ public class AppPaymentCardUtils {
     }
 
 
-    private static void openCardNotAddedScreen(Activity activity, @Nullable String doctorName) {
+    public static void openCardNotAddedScreen(Activity activity, @Nullable String doctorName) {
         activity.startActivityForResult(getCardNotAddedIntent(activity, doctorName), RequestID.REQ_CARD_INFO);
     }
 

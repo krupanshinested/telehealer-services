@@ -13,13 +13,8 @@ import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestMode
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
-import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,7 +29,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void createForm(String userGuid,CreateFormRequestModel createFormRequestModel, String doctorGuid, boolean isProgressVisibile) {
+    public void createForm(CreateFormRequestModel createFormRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -54,7 +49,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void assignSpecialist(String userGuid,boolean sync_create,AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
+    public void assignSpecialist(boolean sync_create,AssignSpecialistRequestModel assignSpecialistRequestModel, String doctorGuid, boolean isProgressVisibile) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -99,7 +94,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createPrescription(String user_guid,boolean sync_create,CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
+    public void createPrescription(boolean sync_create,CreatePrescriptionRequestModel createPrescriptionRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -135,7 +130,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createLabOrder(String userGuid,boolean sync_create,CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
+    public void createLabOrder(boolean sync_create,CreateTestApiRequestModel createTestApiRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -153,7 +148,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createRadiologyOrder(String userGuid,boolean sync_create, CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
+    public void createRadiologyOrder(boolean sync_create, CreateRadiologyRequestModel createRadiologyRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -171,7 +166,7 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void createMiscellaneousOrder(String userGuid,CreateMiscellaneousRequestModel createMiscellaneousRequestModel, String doctorGuid) {
+    public void createMiscellaneousOrder(CreateMiscellaneousRequestModel createMiscellaneousRequestModel, String doctorGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

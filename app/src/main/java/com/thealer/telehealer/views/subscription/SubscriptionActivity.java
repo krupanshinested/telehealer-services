@@ -41,6 +41,7 @@ public class SubscriptionActivity extends BaseActivity implements
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private TextView txtTitle;
     public boolean isfirsttym = false;
+    SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +95,12 @@ public class SubscriptionActivity extends BaseActivity implements
     }
 
     private void loadSubscriptionPlan() {
-        SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
         Bundle bundle = new Bundle();
         bundle.putBoolean(ArgumentKeys.IS_HIDE_BACK, true);
         subscriptionPlanFragment.setArguments(bundle);
-        showSubFragment(subscriptionPlanFragment);
+        if (!subscriptionPlanFragment.isVisible()) {
+            showSubFragment(subscriptionPlanFragment);
+        }
 
     }
 

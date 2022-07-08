@@ -236,7 +236,7 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
     }
 
     private void assignForms() {
-        ordersCreateApiViewModel.createForm(userGuid,new CreateFormRequestModel(selectedFormIds.get(0), userGuid, getVistOrderId()), doctorGuid, false);
+        ordersCreateApiViewModel.createForm(new CreateFormRequestModel(selectedFormIds.get(0), userGuid, getVistOrderId()), doctorGuid, false);
         selectedFormIds.remove(0);
     }
 
