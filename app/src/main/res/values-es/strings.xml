@@ -726,7 +726,7 @@
     <string name="upload_document_failure">Su carga de documentos ha fallado por favor intente de nuevo</string>
     <string name="create_prescription_success">Su pedido de receta para %s se ha publicado correctamente.</string>
     <string name="create_prescription_failure">Su pedido de receta para %s no se ha publicado correctamente debido a %s</string>
-    <string name="create_form_failure">El envío del formulario falló. Inténtalo de nuevo.</string>
+    <string name="create_form_failure">El envío del formulario falló debido a %s. Inténtalo de nuevo.</string>
     <string name="error_on_measure_vital">Error en mesure, por favor intente de nuevo</string>
     <string name="vital_empty_pateint">No se encontró ningún dispositivo de signos vitales emparejados./n/Para capturar mediciones vitales durante una videollamada en vivo, empareje uno o más dispositivos compatibles desde la página Vitals.</string>
     <string name="vital_empty_non_pateint">No se está realizando ninguna medición.</string>

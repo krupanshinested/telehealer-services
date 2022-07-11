@@ -140,8 +140,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
                             planList = planInfoBean.getResults();
-//                            getSubscriptionHistory();
-                            prePareData();
+                            getSubscriptionHistory();
 
                         }
                     } else {
@@ -317,6 +316,10 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
                     if (isMonthEnd(currentPlanInfo.getCancelled_at())) {
                         btnresubscribe.setVisibility(View.VISIBLE);
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().getStatus() == "subscription_pending") {
+                            btnresubscribe.setVisibility(View.GONE);
+                            subscriphistory.setText("Your Re-Subscribe request is pending from admin.");
+                        }
                         btncontsubscribe.setVisibility(View.GONE);
                     } else {
                         btnresubscribe.setVisibility(View.GONE);
@@ -444,11 +447,13 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onResponse(Call<BaseApiResponseModel> call, Response<BaseApiResponseModel> response) {
                 subscriphistory.setText(response.body().getMessage());
+                prePareData();
             }
 
             @Override
             public void onFailure(Call<BaseApiResponseModel> call, Throwable t) {
                 call.cancel();
+                prePareData();
             }
         });
     }

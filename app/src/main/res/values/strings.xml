@@ -769,7 +769,7 @@
     <string name="upload_document_failure">Your document upload has been failed please try again</string>
     <string name="create_prescription_success">Your prescription order for %s has been posted successfully.</string>
     <string name="create_prescription_failure">Your prescription order for %s has not been posted successfully due to %s</string>
-    <string name="create_form_failure">Form submission failed. Please try again.</string>
+    <string name="create_form_failure">Form submission failed due to %s. Please try again.</string>
 
     <string name="error_on_measure_vital">Error on mesure, please try again</string>
     <string name="vital_empty_pateint">No paired vitals device found.\nInorder to capture vital measurements during a live video call, please pair one or more supported devices from the Vitals page.</string>

@@ -724,7 +724,7 @@
     <string name="upload_document_failure">आपका दस्तावेज़ अपलोड विफल हो गया है कृपया पुनः प्रयास करें</string>
     <string name="create_prescription_success">%s लिए आपका पर्चे ऑर्डर सफलतापूर्वक पोस्ट किया गया है।</string>
     <string name="create_prescription_failure">%s के कारण आपका प्रिस्क्रिप्शन ऑर्डर %s कारणों से सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
-    <string name="create_form_failure">फॉर्म जमा करने में विफल रहा। कृपया पुन: प्रयास करें।</string>
+    <string name="create_form_failure">%s के कारण फ़ॉर्म सबमिशन विफल रहा। कृपया पुन: प्रयास करें।</string>
     <string name="error_on_measure_vital">मेस्योर पर त्रुटि, कृपया पुनः प्रयास करें</string>
     <string name="vital_empty_pateint">कोई युग्मित विटाल डिवाइस नहीं मिला। लाइव वीडियो कॉल के दौरान महत्वपूर्ण मापों को कैप्चर करने के लिए \n इन्वर्टर, कृपया विटल पेज से एक या अधिक समर्थित उपकरणों को पेयर करें।</string>
     <string name="vital_empty_non_pateint">कोई माप नहीं चल रहा है।</string>
