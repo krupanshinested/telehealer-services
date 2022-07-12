@@ -84,7 +84,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private CardView mainview;
     String reason = "";
-    private boolean iscontinue = false;
+    private boolean iscontinue = false, iscancel = false;
 
     public ActivePlanFragment() {
         // Required empty public constructor
@@ -140,23 +140,37 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
+
+                    if (iscancel) {
+                        Utils.showAlertDialog(getActivity(), getString(R.string.success), baseApiResponseModel.getMessage()/*getString(R.string.str_plan_is_subscribe_now)*/, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                whoAmIApiViewModel.assignWhoAmI();
+                                iscancel = false;
+                                onCloseActionInterface.onClose(false);
+                            }
+                        }, null);
+                        return;
+                    }
+
                     if (baseApiResponseModel instanceof PlanInfoBean) {
                         PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
                             planList = planInfoBean.getResults();
-                            if (iscontinue){
+                            if (iscontinue) {
                                 whoAmIApiViewModel.assignWhoAmI();
-                            }else {
+                            } else {
                                 getSubscriptionHistory();
                             }
 
 
                         }
                     } else {
-                        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        Utils.showAlertDialog(getActivity(), getString(R.string.success), baseApiResponseModel.getMessage()/*getString(R.string.str_plan_is_subscribe_now)*/, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                whoAmIApiViewModel.assignWhoAmI();
                                 if (iscontinue) {
                                     subscriptionViewModel.fetchSubscriptionPlanList();
                                 } else {
@@ -173,7 +187,6 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     getSubscriptionHistory();
                 }
             }
@@ -381,9 +394,6 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             Date datetoday = sdf.parse(sdf.format(today));
             Date lastday = sdf.parse(sdf.format(lastDayOfMonth));
 
-            Log.d("TAG", "isMonthEnd: " + sdf.format(today) + "   " + sdf.format(lastDayOfMonth));
-            Log.d("TAG", "isMonthEnd: " + datetoday.getTime() + "   " + lastday.getTime());
-
             if (datetoday.getTime() > lastday.getTime()) {
                 return true;
             } else {
@@ -547,10 +557,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 if (reason.isEmpty() || reason.equals("Select your reason")) {
                     Toast.makeText(getActivity(), "Please select reason for Unsubscribe", Toast.LENGTH_SHORT).show();
                 } else {
+                    iscancel = true;
                     subscriptionViewModel.unSubscriptionPlan(reason);
                     dialog.dismiss();
                     isFromSubscriptionPlan = false;
-                    onCloseActionInterface.onClose(false);
+//                    onCloseActionInterface.onClose(false);
                 }
             }
         });
