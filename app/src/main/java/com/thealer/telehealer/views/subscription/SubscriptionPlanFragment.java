@@ -28,6 +28,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -64,6 +66,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private boolean isHideBack = false;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private ImageView addcard;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
 
     public SubscriptionPlanFragment() {
         // Required empty public constructor
@@ -82,7 +85,9 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         subscriptionViewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserverInterface.attachObserver(subscriptionViewModel);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
         subscriptionViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
@@ -126,17 +131,26 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
                             subscriptionPlanAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                onCloseActionInterface.onClose(false);
-                            }
-                        }, null);
+                        whoAmIApiViewModel.assignWhoAmI();
                     }
                 }
             }
         });
 
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onCloseActionInterface.onClose(false);
+                        }
+                    }, null);
+                }
+            }
+        });
 
     }
 

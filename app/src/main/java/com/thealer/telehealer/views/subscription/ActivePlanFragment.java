@@ -39,6 +39,7 @@ import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -50,6 +51,7 @@ import com.thealer.telehealer.views.call.CallFeedBackActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -77,6 +79,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private TextView toolbarTitle, tvPlanName, tvTotalRpm, subscriphistory;
     private ImageView backIv;
     private SubscriptionViewModel subscriptionViewModel, subscriptionHistory;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
     private Button btnUnsubscribe, btnChange, btncontsubscribe, btnresubscribe;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private CardView mainview;
@@ -96,8 +99,10 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
         subscriptionViewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 //        subscriptionHistory = new ViewModelProvider(this).get(SubscriptionViewModel.class);
         attachObserverInterface.attachObserver(subscriptionViewModel);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
 //        attachObserverInterface.attachObserver(subscriptionHistory);
 
         subscriptionViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -140,7 +145,12 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
                             planList = planInfoBean.getResults();
-                            getSubscriptionHistory();
+                            if (iscontinue){
+                                whoAmIApiViewModel.assignWhoAmI();
+                            }else {
+                                getSubscriptionHistory();
+                            }
+
 
                         }
                     } else {
@@ -158,7 +168,18 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 }
             }
         });
-//
+
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    getSubscriptionHistory();
+                }
+            }
+        });
+
+        //
 //        subscriptionHistory.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
 //            @Override
 //            public void onChanged(ErrorModel errorModel) {
@@ -316,8 +337,9 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
                     if (isMonthEnd(currentPlanInfo.getCancelled_at())) {
                         btnresubscribe.setVisibility(View.VISIBLE);
-                        if (UserDetailPreferenceManager.getWhoAmIResponse().getStatus() == "subscription_pending") {
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().getStatus() == "SUBSCRIPTION_PENDING") {
                             btnresubscribe.setVisibility(View.GONE);
+                            subscriphistory.setVisibility(View.VISIBLE);
                             subscriphistory.setText("Your Re-Subscribe request is pending from admin.");
                         }
                         btncontsubscribe.setVisibility(View.GONE);
