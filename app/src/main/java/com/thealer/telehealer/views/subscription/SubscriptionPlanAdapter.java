@@ -233,6 +233,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                 } else {
                     if (Constants.activatedPlan == position) {
                         fragmentActivity.onBackPressed();
+                        fragmentActivity.onBackPressed();
                     }
                 }
             }
