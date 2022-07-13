@@ -13,6 +13,7 @@ public class ErrorModel {
     private int code;
     private boolean success;
     private String message;
+    private String errorCode;
     private String data;
     private String response;
 
@@ -54,6 +55,10 @@ public class ErrorModel {
 
     public String getMessage() {
         return message;
+    }
+
+    public String geterrorCode() {
+        return errorCode;
     }
 
     public boolean isSuccess() {

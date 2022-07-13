@@ -125,12 +125,12 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
             }
         });
 
-        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
-            @Override
-            public void onChanged(@Nullable ErrorModel errorModel) {
-                sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure),String.format(getString(R.string.create_form_failure), errorModel.getMessage()));
-            }
-        });
+//        ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+//            @Override
+//            public void onChanged(@Nullable ErrorModel errorModel) {
+//                sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure),String.format(getString(R.string.create_form_failure), errorModel.getMessage()));
+//            }
+//        });
     }
 
     @Nullable
