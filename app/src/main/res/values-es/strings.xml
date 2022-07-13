@@ -1527,7 +1527,7 @@
     <string name="str_start_with_current">Continuar con el Plan actual</string>
     <string name="str_start_with_better">Empezar con mejor</string>
     <string name="str_start_with_ideal">Empezar con Ideal</string>
-    <string name="str_plan_is_continue_till">Este plan continuará hasta fin de mes. Gracias por hacer negocios.</string>
+    <string name="str_plan_is_continue_till">Su suscripción continuará hasta fin de mes. Gracias por hacer negocios.</string>
     <string name="str_unsubscribe">Darse de baja</string>
     <string name="str_dontsubscribe">no quiero continuar</string>
     <string name="str_subscribe">Suscribir</string>
