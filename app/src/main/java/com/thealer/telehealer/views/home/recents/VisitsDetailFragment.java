@@ -342,8 +342,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    isSuccessViewShown = false;
-                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), getString(R.string.visit_update_failed));
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        isSuccessViewShown = false;
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), getString(R.string.visit_update_failed));
+                    }
                 }
             }
         });
@@ -381,7 +383,9 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showToast(errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        showToast(errorModel.getMessage());
+                    }
                 }
             }
         });

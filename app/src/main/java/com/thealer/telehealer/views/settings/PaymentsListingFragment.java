@@ -240,8 +240,11 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
         invoiceApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                if (errorModel != null)
-                    loadEmptyView();
+                if (errorModel != null) {
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        loadEmptyView();
+                    }
+                }
             }
         });
 

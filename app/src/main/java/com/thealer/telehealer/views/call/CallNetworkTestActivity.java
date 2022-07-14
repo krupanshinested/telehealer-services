@@ -131,14 +131,16 @@ public class CallNetworkTestActivity extends BaseActivity implements
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if(!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
-                        PaymentInfo paymentInfo = new PaymentInfo();
-                        paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
-                        paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
-                        paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
-                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(CallNetworkTestActivity.this, paymentInfo,"");
-                    }else {
-                        showResult(getString(R.string.networkTestFailed), errorModel.getMessage(), false);
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                            PaymentInfo paymentInfo = new PaymentInfo();
+                            paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                            paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                            paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(CallNetworkTestActivity.this, paymentInfo, "");
+                        } else {
+                            showResult(getString(R.string.networkTestFailed), errorModel.getMessage(), false);
+                        }
                     }
                 } else {
                     showResult(getString(R.string.networkTestFailed), getString(R.string.error_on_contacting_server), false);

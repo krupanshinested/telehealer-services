@@ -470,7 +470,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         break;
                     case 403:
 
-                        if (errorModel.geterrorCode() == "SUBSCRIPTION") {
+                        if (errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                             Intent intent = new Intent(getApplication().getString(R.string.success_broadcast_receiver));
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);

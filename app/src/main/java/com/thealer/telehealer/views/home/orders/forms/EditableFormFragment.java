@@ -103,7 +103,9 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showToast(errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        showToast(errorModel.getMessage());
+                    }
                 }
             }
         });

@@ -93,29 +93,31 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String title = getString(R.string.failure);
-                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
-                    sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
-                    PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
-                    paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
-                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
-                } else {
-                    Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
-                    if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                        sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+                        PaymentInfo paymentInfo = new PaymentInfo();
+                        paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                        paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                        paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                     } else {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
-                    }
+                        Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
 
-                    LocalBroadcastManager
-                            .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                    .putExtras(bundle));
+                        if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        } else {
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+                        }
+
+                        LocalBroadcastManager
+                                .getInstance(getActivity())
+                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                        .putExtras(bundle));
+                    }
                 }
             }
         });

@@ -140,7 +140,9 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendSuccessViewBroadCast(InviteContactUserActivity.this, false, getString(R.string.failure), errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        sendSuccessViewBroadCast(InviteContactUserActivity.this, false, getString(R.string.failure), errorModel.getMessage());
+                    }
                 }
             }
         });

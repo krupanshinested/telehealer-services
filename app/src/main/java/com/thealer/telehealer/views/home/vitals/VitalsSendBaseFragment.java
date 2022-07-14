@@ -178,15 +178,17 @@ public class VitalsSendBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
-                String title = getString(R.string.failure);
-                callFailureView(errorModel);
-                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
-                    sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
-                    PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
-                    paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
-                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
+                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    String title = getString(R.string.failure);
+                    callFailureView(errorModel);
+                    if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                        sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+                        PaymentInfo paymentInfo = new PaymentInfo();
+                        paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                        paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                        paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
+                    }
                 }
 
             }
