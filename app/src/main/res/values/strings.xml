@@ -330,6 +330,7 @@
     <string name="order_status">ORDER STATUS</string>
     <string name="prescription">Prescription</string>
     <string name="form">Forms</string>
+    <string name="subscription">Subscription</string>
     <string name="strength">STRENGTH</string>
     <string name="direction">DIRECTION</string>
     <string name="dispense">DISPENSE</string>
