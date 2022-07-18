@@ -132,13 +132,11 @@ public class PaymentContentActivity extends ContentActivity {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         if (isForOAuth) {
                             Utils.showAlertDialog(PaymentContentActivity.this, getString(R.string.app_name), errorModel.getMessage(), getString(R.string.ok), null, null, null);
                         } else {
                             openPayment();
                         }
-                    }
                 }
             }
         });
