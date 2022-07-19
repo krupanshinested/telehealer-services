@@ -1,5 +1,6 @@
 package com.thealer.telehealer.common;
 
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 
@@ -206,6 +207,7 @@ public class Constants {
     public static int activatedPlan=-1;
     public static boolean isFromSubscriptionPlan=false;
 
+    public static CommonUserApiResponseModel finalDoctor;
 
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";

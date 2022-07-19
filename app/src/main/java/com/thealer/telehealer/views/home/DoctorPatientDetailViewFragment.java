@@ -192,12 +192,17 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
-                Log.d("Data Model","Data Model first "+resultBean.getPermissions());
+                Log.d("Data Model", "Data Model first " + resultBean.getPermissions());
 
                 patientId = resultBean.getUser_id();
                 if (UserType.isUserAssistant()) {
+                    if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                        Constants.finalDoctor = resultBean;
+                    }
+
                     doctorModel = resultBean;
-                    if(doctorModel.getPermissions().size() > 0){
+
+                    if (doctorModel.getPermissions().size() > 0) {
                         Constants.isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
                         Constants.isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
                         Constants.isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
@@ -205,8 +210,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
                     }
 
-                    Log.d("Data Model","Data Model user api");
+                    Log.d("Data Model", "Data Model user api");
                     manageSAPermission();
+
                 }
                 if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
@@ -611,7 +617,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
 
     private void manageSAPermission() {
-        Log.d("Data Model","Data Model permission "+Constants.isCallEnable+" "+Constants.isScheduleEnable+" "+ Constants.isChatEnable);
+        Log.d("Data Model", "Data Model permission " + Constants.isCallEnable + " " + Constants.isScheduleEnable + " " + Constants.isChatEnable);
 
 
         if (UserType.isUserAssistant()) {
@@ -804,45 +810,45 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 //        if (!isUserDataFetched) {
 
 
-            GetUserDetails
-                    .getInstance(getActivity())
-                    .getDetails(guidSet)
-                    .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-                @Override
-                public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
-                    if (userDetailHashMap != null) {
+        GetUserDetails
+                .getInstance(getActivity())
+                .getDetails(guidSet)
+                .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
+                if (userDetailHashMap != null) {
 //                        isUserDataFetched = true;
 
-                        for (String guid : guidSet) {
-                            CommonUserApiResponseModel model = userDetailHashMap.get(guid);
-                            if (model != null) {
-                                switch (model.getRole()) {
-                                    case Constants.ROLE_DOCTOR:
+                    for (String guid : guidSet) {
+                        CommonUserApiResponseModel model = userDetailHashMap.get(guid);
+                        if (model != null) {
+                            switch (model.getRole()) {
+                                case Constants.ROLE_DOCTOR:
 //
 //
-                                        Log.d("Data Model","Data Model"+doctorModel.getPermissions() + UserType.isUserAssistant());
+                                    Log.d("Data Model", "Data Model" + doctorModel.getPermissions() + UserType.isUserAssistant());
 //                                        if(UserType.isUserAssistant()) {
 //                                            isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
 //                                            isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
 //                                            isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
 //                                            manageSAPermission();
 //                                        }
-                                        if (UserType.isUserPatient() && resultBean == null) {
-                                            doctorModel = model;
-                                            resultBean = doctorModel;
-                                        }
-                                        break;
-                                    case Constants.ROLE_PATIENT:
-                                    case Constants.ROLE_ASSISTANT:
-                                        resultBean = model;
-                                        break;
-                                }
+                                    if (UserType.isUserPatient() && resultBean == null) {
+                                        doctorModel = model;
+                                        resultBean = doctorModel;
+                                    }
+                                    break;
+                                case Constants.ROLE_PATIENT:
+                                case Constants.ROLE_ASSISTANT:
+                                    resultBean = model;
+                                    break;
                             }
                         }
-                        updateView(resultBean);
                     }
+                    updateView(resultBean);
                 }
-            });
+            }
+        });
 //        }
     }
 
@@ -1314,7 +1320,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
             bundle.putSerializable(Constants.DOCTOR_DETAIL, resultBean);
         } else {
-            bundle.putSerializable(Constants.DOCTOR_DETAIL, doctorModel);
+            bundle.putSerializable(Constants.DOCTOR_DETAIL, Constants.finalDoctor);
             bundle.putSerializable(Constants.USER_DETAIL, resultBean);
         }
 
