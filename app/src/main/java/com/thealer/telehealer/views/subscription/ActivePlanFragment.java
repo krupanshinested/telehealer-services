@@ -478,7 +478,27 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         call.enqueue(new Callback<BaseApiResponseModel>() {
             @Override
             public void onResponse(Call<BaseApiResponseModel> call, Response<BaseApiResponseModel> response) {
-                subscriphistory.setText(response.body().getMessage());
+                String plancode = "", planname = "";
+                for (int i = 0; i < planList.size(); i++) {
+                    PlanInfoBean.Result currentPlan = planList.get(i);
+                    if (currentPlan.isPurchased()) {
+
+                        if (!currentPlan.getnext_plan_id().isEmpty()) {
+                            plancode = currentPlan.getnext_plan_id();
+                        }
+
+                    }
+                }
+
+                for (PlanInfoBean.Result current : planList) {
+
+                    if (current.getPlan_id().equals(plancode)){
+                        planname = current.getName();
+                    }
+
+                }
+
+                subscriphistory.setText(response.body().getMessage().replace("next plan", planname));
                 prePareData();
             }
 

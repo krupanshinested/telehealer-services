@@ -68,6 +68,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     private ImageView addcard;
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private String message = "";
+    private int pos = -1;
 
     public SubscriptionPlanFragment() {
         // Required empty public constructor
@@ -93,7 +94,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String title = getString(R.string.failure);
-                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+//                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                         sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                         PaymentInfo paymentInfo = new PaymentInfo();
@@ -118,7 +119,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
                                 .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
                                         .putExtras(bundle));
                     }
-                }
+//                }
             }
         });
         subscriptionViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -211,8 +212,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     @Override
     public void onEventTrigger(Bundle bundle) {
         if (bundle != null) {
-            int pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
-            activatedPlan = pos;
+            pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
 
             if (isChangePlan) {
                 subscriptionViewModel.changeSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID));

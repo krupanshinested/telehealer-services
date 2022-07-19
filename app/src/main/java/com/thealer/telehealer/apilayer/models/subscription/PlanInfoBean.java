@@ -42,6 +42,7 @@ public class PlanInfoBean extends BaseApiResponseModel {
         private String created_at;
         private String updated_at;
         private String cancelled_at;
+        private String next_plan_id;
         private boolean isPurchased=false;
         private boolean canReshedule=false;
         private boolean isCancelled=false;
@@ -157,6 +158,14 @@ public class PlanInfoBean extends BaseApiResponseModel {
 
         public void setCreated_at(String created_at) {
             this.created_at = created_at;
+        }
+
+        public String getnext_plan_id() {
+            return next_plan_id;
+        }
+
+        public void setnext_plan_id(String next_plan_id) {
+            this.next_plan_id = next_plan_id;
         }
 
         public String getUpdated_at() {

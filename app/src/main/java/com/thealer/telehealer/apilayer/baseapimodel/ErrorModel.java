@@ -61,6 +61,10 @@ public class ErrorModel {
         return errorCode;
     }
 
+    public void seterrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
     public boolean isSuccess() {
         return success;
     }

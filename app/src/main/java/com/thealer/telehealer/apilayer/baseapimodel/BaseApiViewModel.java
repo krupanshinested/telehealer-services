@@ -470,20 +470,25 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                         break;
                     case 403:
 
-                        if (errorModel.geterrorCode().equals("SUBSCRIPTION")) {
-                            Intent intent = new Intent(getApplication().getString(R.string.success_broadcast_receiver));
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-                            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getApplication().getString(R.string.failure));
-                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                            intent.putExtras(bundle);
-                            LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
-                            break;
+                        if (errorModel != null) {
+                            if (errorModel.geterrorCode() == null) {
+                                errorModel.seterrorCode("403");
+                            }
+                            if (errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                                Intent intent = new Intent(getApplication().getString(R.string.success_broadcast_receiver));
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getApplication().getString(R.string.failure));
+                                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                                intent.putExtras(bundle);
+                                LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
+                                break;
+                            }
                         }
                         if (Constants.ErrorFlag == false) {
                             Constants.ErrorFlag = true;
                             try {
-                                new Handler().postDelayed(() -> Constants.ErrorFlag = false,1500);
+                                new Handler().postDelayed(() -> Constants.ErrorFlag = false, 1500);
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                             }
