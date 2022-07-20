@@ -485,6 +485,8 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
                         if (!currentPlan.getnext_plan_id().isEmpty()) {
                             plancode = currentPlan.getnext_plan_id();
+                        }else {
+                            planname = currentPlan.getName();
                         }
 
                     }

@@ -158,7 +158,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                 viewHolder.bottomView.setVisibility(View.GONE);
 
                 viewHolder.titleTv.setTextColor(activity.getColor(android.R.color.holo_orange_dark));
-
+                viewHolder.userDetailCl.setVisibility(View.VISIBLE);
                 switch (resultModel.getType()) {
                     case REQUEST_TYPE_APPOINTMENT:
                         isAddRequestStatus = true;
@@ -588,6 +588,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                         }
                                     }
                                 }
+                                break;
+                            case SUBSCRIPTION :
                                 break;
                             case NotificationConstants.EDUCATIONAL_VIDEO:
                                 if (resultModel.getEntity_id() != null) {
