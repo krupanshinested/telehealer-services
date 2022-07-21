@@ -171,7 +171,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+//                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage() + " " + errorModel.getData());
                         if (!isRequestWithEmail) {
                             Bundle bundle = new Bundle();
@@ -183,7 +183,7 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                         } else {
                             onActionCompleteInterface.onCompletionResult(null, false, null);
                         }
-                    }
+//                    }
                 }
             }
         });
