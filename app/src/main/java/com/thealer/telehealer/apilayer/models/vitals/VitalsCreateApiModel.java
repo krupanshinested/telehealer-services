@@ -21,7 +21,7 @@ public class VitalsCreateApiModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void createVital(String userGuid,CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid){
+    public void createVital(/*String userGuid,*/CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid){
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {

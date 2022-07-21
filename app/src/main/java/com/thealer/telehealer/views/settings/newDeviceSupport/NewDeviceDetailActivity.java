@@ -92,14 +92,17 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         newDeviceSetApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
-                successViewDialogFragment.setArguments(bundle);
-                successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
+                if (!errorModel.geterrorCode().isEmpty() && errorModel.geterrorCode().equals("SUBSCRIPTION")){
+                    SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                    bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                    bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
+                    successViewDialogFragment.setArguments(bundle);
+                    successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+                }
             }
         });
 

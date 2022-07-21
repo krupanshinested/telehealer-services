@@ -118,7 +118,9 @@ public class CustomExpandableListView extends ConstraintLayout {
                     public void onChanged(@Nullable ErrorModel errorModel) {
                         swipeLayout.setRefreshing(false);
                         if (errorModel != null) {
-                            showNetworkEmptyState(errorModel.getCode());
+                            if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                                showNetworkEmptyState(errorModel.getCode());
+                            }
                         }
                     }
                 });

@@ -187,6 +187,8 @@ public interface ApiInterface {
     String ORDER_ID = "order_id";
     String FILTER_ID_IN = "filter_id_in";
     String START_DATE = "start_date";
+    String START_DATENEW = "startDate";
+    String END_DATENEW = "endDate";
     String END_DATE = "end_date";
     String ASSIGNOR = "assignor";
     String DOWNLOAD_SUMMARY = "download_summary";
@@ -804,6 +806,9 @@ public interface ApiInterface {
     @GET("api/subscription-plans")
     Observable<PlanInfoBean> fetchSubscriptionList();
 
+    @GET("api/users/subscription-history-message")
+    Call<BaseApiResponseModel> fetchSubscriptionHistoryList();
+
     @POST("/api/users/purchase-plan")
     Observable<BaseApiResponseModel> purchasePlan(@Body() HashMap<String, String> req);
 
@@ -821,5 +826,8 @@ public interface ApiInterface {
 
     @POST("api/feedback")
     Call<SubmitResponse> submitFeedback(@Body() HashMap<String, Object> req);
+
+    @GET("/api/user-invoice/")
+    Observable<TransactionResponse> getInvoice(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(START_DATENEW) String startDate, @Query(END_DATENEW) String endDate);
 
 }

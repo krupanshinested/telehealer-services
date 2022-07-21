@@ -33,10 +33,13 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.manager.RetrofitManager;
+import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
@@ -44,9 +47,11 @@ import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.call.CallFeedBackActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -60,6 +65,10 @@ import static com.thealer.telehealer.common.Constants.USER_TYPE;
 import static com.thealer.telehealer.common.Constants.activatedPlan;
 import static com.thealer.telehealer.common.Constants.isFromSubscriptionPlan;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class ActivePlanFragment extends BaseFragment implements View.OnClickListener {
     private OnCloseActionInterface onCloseActionInterface;
@@ -67,14 +76,15 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
     private ShowSubFragmentInterface showSubFragmentInterface;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
-    private TextView toolbarTitle, tvPlanName, tvTotalRpm;
+    private TextView toolbarTitle, tvPlanName, tvTotalRpm, subscriphistory;
     private ImageView backIv;
-    private SubscriptionViewModel subscriptionViewModel;
+    private SubscriptionViewModel subscriptionViewModel, subscriptionHistory;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
     private Button btnUnsubscribe, btnChange, btncontsubscribe, btnresubscribe;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private CardView mainview;
     String reason = "";
-    private boolean iscontinue = false;
+    private boolean iscontinue = false, iscancel = false;
 
     public ActivePlanFragment() {
         // Required empty public constructor
@@ -89,7 +99,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
         subscriptionViewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+//        subscriptionHistory = new ViewModelProvider(this).get(SubscriptionViewModel.class);
         attachObserverInterface.attachObserver(subscriptionViewModel);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
+//        attachObserverInterface.attachObserver(subscriptionHistory);
 
         subscriptionViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
@@ -98,12 +112,12 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                     sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
                     PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+                    paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                    paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                    paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                     AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                 } else {
-                    Toast.makeText(context, ""+errorModel.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
                     bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -126,19 +140,37 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
+
+                    if (iscancel) {
+                        Utils.showAlertDialog(getActivity(), getString(R.string.success), baseApiResponseModel.getMessage()/*getString(R.string.str_plan_is_subscribe_now)*/, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                whoAmIApiViewModel.assignWhoAmI();
+                                iscancel = false;
+                                onCloseActionInterface.onClose(false);
+                            }
+                        }, null);
+                        return;
+                    }
+
                     if (baseApiResponseModel instanceof PlanInfoBean) {
                         PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
                         if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
 //                            if (planList == null || planList.isEmpty())
                             planList = planInfoBean.getResults();
+                            if (iscontinue) {
+                                whoAmIApiViewModel.assignWhoAmI();
+                            } else {
+                                getSubscriptionHistory();
+                            }
 
-                            prePareData();
 
                         }
                     } else {
-                        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        Utils.showAlertDialog(getActivity(), getString(R.string.success), baseApiResponseModel.getMessage()/*getString(R.string.str_plan_is_subscribe_now)*/, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                whoAmIApiViewModel.assignWhoAmI();
                                 if (iscontinue) {
                                     subscriptionViewModel.fetchSubscriptionPlanList();
                                 } else {
@@ -150,6 +182,76 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 }
             }
         });
+
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    getSubscriptionHistory();
+                }
+            }
+        });
+
+        //
+//        subscriptionHistory.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+//            @Override
+//            public void onChanged(ErrorModel errorModel) {
+//                String title = getString(R.string.failure);
+//                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+//                    sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+//                    PaymentInfo paymentInfo = new PaymentInfo();
+//                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
+//                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
+//                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
+//                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
+//                } else {
+//                    Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+//                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+//
+//                    if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
+//                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+//                    } else {
+//                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+//                    }
+//
+//                    LocalBroadcastManager
+//                            .getInstance(getActivity())
+//                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+//                                    .putExtras(bundle));
+//                }
+//            }
+//        });
+//
+//        subscriptionHistory.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+//            @Override
+//            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+//                if (baseApiResponseModel != null) {
+//                    if (baseApiResponseModel instanceof PlanInfoBean) {
+//                        PlanInfoBean planInfoBean = (PlanInfoBean) baseApiResponseModel;
+////                        if (planInfoBean != null && planInfoBean.getResults().size() > 0) {
+//////                            if (planList == null || planList.isEmpty())
+////                            planList = planInfoBean.getResults();
+////
+////                            prePareData();
+////
+////                        }
+//                    } else {
+//                        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (iscontinue) {
+//                                    subscriptionViewModel.fetchSubscriptionHistoryList(1);
+//                                } else {
+//                                    onCloseActionInterface.onClose(false);
+//                                }
+//                            }
+//                        }, null);
+//                    }
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -166,6 +268,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
+        subscriphistory = (TextView) view.findViewById(R.id.tv_subscriphistory);
         mainview = (CardView) view.findViewById(R.id.cv_root);
         tvPlanName = (TextView) view.findViewById(R.id.tv_plan_name);
         tvTotalRpm = (TextView) view.findViewById(R.id.tv_total_rpm);
@@ -179,6 +282,7 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         btnUnsubscribe.setOnClickListener(this);
         btnresubscribe.setOnClickListener(this);
         btncontsubscribe.setOnClickListener(this);
+        subscriphistory.setOnClickListener(this);
         btnChange.setOnClickListener(this);
 
         if (activatedPlan == -1 && isFromSubscriptionPlan) {
@@ -225,11 +329,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 //                    if (currentPlanInfo.isCanReshedule()) {
 //                        btnUnsubscribe.setText(getString(R.string.str_subscribe));
 //                    } else {
-                        if (!UserDetailPreferenceManager.getTrialExpired()){
-                            btnUnsubscribe.setText(getString(R.string.str_dontsubscribe));
-                        }else {
-                            btnUnsubscribe.setText(getString(R.string.cancel));
-                        }
+                    if (!UserDetailPreferenceManager.getTrialExpired()) {
+                        btnUnsubscribe.setText(getString(R.string.str_dontsubscribe));
+                    } else {
+                        btnUnsubscribe.setText(getString(R.string.cancel));
+                    }
 //                    }
                     if (currentPlanInfo.isCancelled() && currentPlanInfo.isPurchased()) {
                         btnUnsubscribe.setVisibility(View.GONE);
@@ -246,6 +350,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
                     if (isMonthEnd(currentPlanInfo.getCancelled_at())) {
                         btnresubscribe.setVisibility(View.VISIBLE);
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().getStatus() == "SUBSCRIPTION_PENDING") {
+                            btnresubscribe.setVisibility(View.GONE);
+                            subscriphistory.setVisibility(View.VISIBLE);
+                            subscriphistory.setText("Your Re-Subscribe request is pending from admin.");
+                        }
                         btncontsubscribe.setVisibility(View.GONE);
                     } else {
                         btnresubscribe.setVisibility(View.GONE);
@@ -284,9 +393,6 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
 
             Date datetoday = sdf.parse(sdf.format(today));
             Date lastday = sdf.parse(sdf.format(lastDayOfMonth));
-
-            Log.d("TAG", "isMonthEnd: " + sdf.format(today) + "   " + sdf.format(lastDayOfMonth));
-            Log.d("TAG", "isMonthEnd: " + datetoday.getTime() + "   " + lastday.getTime());
 
             if (datetoday.getTime() > lastday.getTime()) {
                 return true;
@@ -344,6 +450,10 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 changesubscriptionPlanFragment.setArguments(changebundle);
                 showSubFragmentInterface.onShowFragment(changesubscriptionPlanFragment);
                 break;
+            case R.id.tv_subscriphistory:
+//                Intent intent = new Intent(getActivity(), SubscriptionHistoryActivity.class);
+//                startActivity(intent);
+                break;
         }
     }
 
@@ -363,6 +473,44 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
         }
     }
 
+    private void getSubscriptionHistory() {
+        Call<BaseApiResponseModel> call = RetrofitManager.getInstance(getActivity()).getAuthApiService().fetchSubscriptionHistoryList();
+        call.enqueue(new Callback<BaseApiResponseModel>() {
+            @Override
+            public void onResponse(Call<BaseApiResponseModel> call, Response<BaseApiResponseModel> response) {
+                String plancode = "", planname = "";
+                for (int i = 0; i < planList.size(); i++) {
+                    PlanInfoBean.Result currentPlan = planList.get(i);
+                    if (currentPlan.isPurchased()) {
+
+                        if (!currentPlan.getnext_plan_id().isEmpty()) {
+                            plancode = currentPlan.getnext_plan_id();
+                        }else {
+                            planname = currentPlan.getName();
+                        }
+
+                    }
+                }
+
+                for (PlanInfoBean.Result current : planList) {
+
+                    if (current.getPlan_id().equals(plancode)){
+                        planname = current.getName();
+                    }
+
+                }
+
+                subscriphistory.setText(response.body().getMessage().replace("next plan", planname));
+                prePareData();
+            }
+
+            @Override
+            public void onFailure(Call<BaseApiResponseModel> call, Throwable t) {
+                call.cancel();
+                prePareData();
+            }
+        });
+    }
 
     //Allow physician to view list of support staff. Also physician can request to add them.
     private void selectReason(View v) {
@@ -431,10 +579,11 @@ public class ActivePlanFragment extends BaseFragment implements View.OnClickList
                 if (reason.isEmpty() || reason.equals("Select your reason")) {
                     Toast.makeText(getActivity(), "Please select reason for Unsubscribe", Toast.LENGTH_SHORT).show();
                 } else {
+                    iscancel = true;
                     subscriptionViewModel.unSubscriptionPlan(reason);
                     dialog.dismiss();
                     isFromSubscriptionPlan = false;
-                    onCloseActionInterface.onClose(false);
+//                    onCloseActionInterface.onClose(false);
                 }
             }
         });

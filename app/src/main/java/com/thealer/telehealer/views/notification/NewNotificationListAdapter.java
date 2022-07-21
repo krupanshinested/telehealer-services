@@ -67,6 +67,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     public static final String REQUEST_TYPE_CONNECTION = "connection";
     public static final String REQUEST_TYPE_APPOINTMENT = "appointment";
     private final String REQUEST_TYPE_MISSED_CALL = "missed_call";
+    private final String SUBSCRIPTION = "subscription";
     private final String REQUEST_TYPE_CALLS = "calls";
     private final String REQUEST_TYPE_ABNORMAL_VITAL = "vitals";
     private final String MESSAGES = "messages";
@@ -157,7 +158,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                 viewHolder.bottomView.setVisibility(View.GONE);
 
                 viewHolder.titleTv.setTextColor(activity.getColor(android.R.color.holo_orange_dark));
-
+                viewHolder.userDetailCl.setVisibility(View.VISIBLE);
                 switch (resultModel.getType()) {
                     case REQUEST_TYPE_APPOINTMENT:
                         isAddRequestStatus = true;
@@ -240,6 +241,13 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     case OrderConstant.ORDER_TYPE_FORM:
                         title = activity.getString(R.string.form).toUpperCase();
                         description = resultModel.getMessage();
+                        viewHolder.descriptionTv.setVisibility(View.VISIBLE);
+                        viewHolder.bottomView.setVisibility(View.VISIBLE);
+                        break;
+                    case SUBSCRIPTION:
+                        title = activity.getString(R.string.subscription).toUpperCase();
+                        description = resultModel.getMessage();
+                        viewHolder.userDetailCl.setVisibility(View.GONE);
                         viewHolder.descriptionTv.setVisibility(View.VISIBLE);
                         viewHolder.bottomView.setVisibility(View.VISIBLE);
                         break;
@@ -580,6 +588,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                         }
                                     }
                                 }
+                                break;
+                            case SUBSCRIPTION :
                                 break;
                             case NotificationConstants.EDUCATIONAL_VIDEO:
                                 if (resultModel.getEntity_id() != null) {

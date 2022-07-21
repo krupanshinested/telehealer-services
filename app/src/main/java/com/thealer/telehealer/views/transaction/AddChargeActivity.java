@@ -178,8 +178,10 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
         addChargeViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
+                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                 String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                 Utils.showAlertDialog(AddChargeActivity.this, getString(R.string.app_name), errorMessage, getString(R.string.ok), null, (dialog, which) -> dialog.dismiss(), null);
+                }
             }
         });
 

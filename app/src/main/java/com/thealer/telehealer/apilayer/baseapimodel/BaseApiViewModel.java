@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
@@ -156,7 +157,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
             if (appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_NONE ||
                     appPreference.getInt(Constants.QUICK_LOGIN_TYPE) == Constants.QUICK_LOGIN_TYPE_PASSWORD) {
                 isQuickLoginReceiverEnabled = false;
-                Log.e("Error Quick login","Error Quick login"+ appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
+                Log.e("Error Quick login", "Error Quick login" + appPreference.getInt(Constants.QUICK_LOGIN_TYPE));
                 goToSigninActivity();
             } else {
                 if (!Utils.isInternetEnabled(application)) {
@@ -175,7 +176,7 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                 }
             }
         } else {
-            Log.e("Error Quick login","Error Quick login error message"+ errorModel.getMessage());
+            Log.e("Error Quick login", "Error Quick login error message" + errorModel.getMessage());
 
             if (errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
                     errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token)))
@@ -456,10 +457,11 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                             if (Constants.ErrorFlag == false) {
                                 Constants.ErrorFlag = true;
                                 try {
-                                    new Handler().postDelayed(() -> Constants.ErrorFlag = false,1500);
+                                    new Handler().postDelayed(() -> Constants.ErrorFlag = false, 1500);
                                 } catch (Exception exception) {
                                     exception.printStackTrace();
-                                }                                handleUnAuth(errorModel);
+                                }
+                                handleUnAuth(errorModel);
                                 errorModelLiveData.setValue(errorModel);
                             }
                         }
@@ -467,10 +469,26 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
 
                         break;
                     case 403:
+
+                        if (errorModel != null) {
+                            if (errorModel.geterrorCode() == null) {
+                                errorModel.seterrorCode("403");
+                            }
+                            if (errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                                Intent intent = new Intent(getApplication().getString(R.string.success_broadcast_receiver));
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                                bundle.putString(Constants.SUCCESS_VIEW_TITLE, getApplication().getString(R.string.failure));
+                                bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                                intent.putExtras(bundle);
+                                LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
+                                break;
+                            }
+                        }
                         if (Constants.ErrorFlag == false) {
                             Constants.ErrorFlag = true;
                             try {
-                                new Handler().postDelayed(() -> Constants.ErrorFlag = false,1500);
+                                new Handler().postDelayed(() -> Constants.ErrorFlag = false, 1500);
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                             }

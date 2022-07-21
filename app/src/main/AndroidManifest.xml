@@ -36,6 +36,7 @@
     <application
         android:name=".TeleHealerApplication"
         android:allowBackup="false"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -43,10 +44,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:extractNativeLibs="true"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".views.subscription.SubscriptionActivity"></activity>
+        <activity
+            android:name=".views.settings.DateFilterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.subscription.SubscriptionHistoryActivity"
+            android:exported="false" />
+        <activity android:name=".views.subscription.SubscriptionActivity" />
         <activity android:name=".views.inviteUser.InvitedListActivity" />
         <activity android:name=".views.home.broadcastMessages.ChoosePatientActivity" />
         <activity
@@ -254,9 +260,9 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.SCREEN_ON"/>
-                <action android:name="android.intent.action.SCREEN_OFF"/>
-                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
         <receiver

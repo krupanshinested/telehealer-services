@@ -314,6 +314,7 @@
     <string name="order_status">ESTADO DE LA ORDEN</string>
     <string name="prescription">Prescripciones</string>
     <string name="form">Formas</string>
+    <string name="subscription">Subscription</string>
     <string name="strength">FUERZA</string>
     <string name="direction">DIRECCIÓN</string>
     <string name="dispense">DISPENSAR</string>
@@ -716,17 +717,17 @@
     <string name="help_content_monitoring_doctor">Realice un monitoreo remoto revisando los signos vitales, la dieta y los medicamentos capturados de su paciente. La lista muestra a todos los pacientes que han capturado sus signos vitales durante un período de monitoreo seleccionado. \n\nLas mediciones vitales capturadas por el paciente pueden variar de la presión arterial, peso, glucosa, temperatura, pulso y frecuencia cardíaca.</string>
     <string name="associations">Asociaciones</string>
     <string name="referral_success">Su referencia para %s ha sido publicada con éxito.</string>
-    <string name="referral_failure">Su referencia para %s no se ha publicado correctamente.</string>
+    <string name="referral_failure">Su referencia para %s no se ha publicado correctamente debido a %s</string>
     <string name="miscellaneous_success">Su orden miscelánea para %s ha sido publicada con éxito.</string>
-    <string name="miscellaneous_failure">Su orden miscelánea para %s no se ha publicado correctamente.</string>
+    <string name="miscellaneous_failure">Su orden miscelánea para %s no se ha publicado correctamente debido a %s</string>
     <string name="create_radiology_success">Su pedido de rayos X para %s se ha publicado correctamente.</string>
-    <string name="create_radiology_failure">Su pedido de rayos X para %s no se ha publicado correctamente. Inténtelo de nuevo.</string>
+    <string name="create_radiology_failure">Su pedido de rayos X para %s no se ha publicado correctamente debido a %s</string>
     <string name="create_lab_success">Su pedido de laboratorio para %s se publica correctamente.</string>
-    <string name="create_lab_failure">Su pedido de laboratorio para %s no se ha publicado correctamente.</string>
+    <string name="create_lab_failure">Su pedido de laboratorio para %s no se ha publicado correctamente debido a %s</string>
     <string name="upload_document_failure">Su carga de documentos ha fallado por favor intente de nuevo</string>
     <string name="create_prescription_success">Su pedido de receta para %s se ha publicado correctamente.</string>
-    <string name="create_prescription_failure">Su pedido de receta para %s no se ha publicado correctamente.</string>
-    <string name="create_form_failure">El envío del formulario falló. Inténtalo de nuevo.</string>
+    <string name="create_prescription_failure">Su pedido de receta para %s no se ha publicado correctamente debido a %s</string>
+    <string name="create_form_failure">El envío del formulario falló debido a %s. Inténtalo de nuevo.</string>
     <string name="error_on_measure_vital">Error en mesure, por favor intente de nuevo</string>
     <string name="vital_empty_pateint">No se encontró ningún dispositivo de signos vitales emparejados./n/Para capturar mediciones vitales durante una videollamada en vivo, empareje uno o más dispositivos compatibles desde la página Vitals.</string>
     <string name="vital_empty_non_pateint">No se está realizando ninguna medición.</string>
@@ -1527,7 +1528,7 @@
     <string name="str_start_with_current">Continuar con el Plan actual</string>
     <string name="str_start_with_better">Empezar con mejor</string>
     <string name="str_start_with_ideal">Empezar con Ideal</string>
-    <string name="str_plan_is_continue_till">Este plan continuará hasta fin de mes. Gracias por hacer negocios.</string>
+    <string name="str_plan_is_continue_till">Su suscripción continuará hasta fin de mes. Gracias por hacer negocios.</string>
     <string name="str_unsubscribe">Darse de baja</string>
     <string name="str_dontsubscribe">no quiero continuar</string>
     <string name="str_subscribe">Suscribir</string>
@@ -1588,4 +1589,5 @@
     <string name="str_select_your_physician">Select your physician</string>
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
+    <string name="subscription_history">Subscription history</string>
 </resources>

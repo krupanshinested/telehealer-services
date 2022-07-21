@@ -297,11 +297,13 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     @Override
                     public void onChanged(@Nullable ErrorModel errorModel) {
                         Log.d("ErrorModel", "whoAmIApiViewModel");
-                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
-                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                        if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                            Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                            intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                            intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                            intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                        }
                     }
                 });
 
@@ -310,19 +312,21 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                Utils.showAlertDialog(getContext(), getString(R.string.error),
-                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
-                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    Utils.showAlertDialog(getContext(), getString(R.string.error),
+                            errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                            null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                }
             }
         });
     }
@@ -1086,6 +1090,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 } else {
                     actionBtn.setText(getString(R.string.add_connection_pending));
                     actionBtn.setEnabled(false);
+                    actionBtn.setVisibility(View.GONE);
                 }
                 break;
             default:
@@ -1109,7 +1114,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             if (resultBean.getRole().equals(Constants.ROLE_DOCTOR) && !resultBean.getConnection_requests()) {
 
             } else {
-                actionBtn.setVisibility(View.VISIBLE);
+                actionBtn.setVisibility(View.GONE);
             }
 
             userDetailBnv.setVisibility(View.GONE);

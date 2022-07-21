@@ -28,6 +28,8 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 import com.thealer.telehealer.apilayer.models.subscription.SubscriptionViewModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -37,6 +39,7 @@ import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
+import com.thealer.telehealer.views.home.HomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +63,12 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     public static boolean isContinuePlan = false;
     public static boolean isCurrentPlan = true;
     public static boolean isResubscriptPlan = false;
-    private boolean isHideBack = false;
+    public static boolean isHideBack = false;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
+    private ImageView addcard;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
+    private String message = "";
+    private int pos = -1;
 
     public SubscriptionPlanFragment() {
         // Required empty public constructor
@@ -80,35 +87,39 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
         subscriptionViewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
         attachObserverInterface.attachObserver(subscriptionViewModel);
+        attachObserverInterface.attachObserver(whoAmIApiViewModel);
         subscriptionViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
                 String title = getString(R.string.failure);
-                if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
-                    sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
-                    PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
-                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
-                } else {
-                    Toast.makeText(context, ""+errorModel.getMessage(), Toast.LENGTH_SHORT).show();
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
-                    if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+//                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                        sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+                        PaymentInfo paymentInfo = new PaymentInfo();
+                        paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                        paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                        paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
                     } else {
-                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
-                    }
+                        Toast.makeText(context, "" + errorModel.getMessage(), Toast.LENGTH_SHORT).show();
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
 
-                    LocalBroadcastManager
-                            .getInstance(getActivity())
-                            .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-                                    .putExtras(bundle));
-                }
+                        if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        } else {
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
+                        }
+
+                        LocalBroadcastManager
+                                .getInstance(getActivity())
+                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                        .putExtras(bundle));
+                    }
+//                }
             }
         });
         subscriptionViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
@@ -124,17 +135,28 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
                             subscriptionPlanAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Utils.showAlertDialog(getActivity(), getString(R.string.success), getString(R.string.str_plan_is_subscribe_now), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                onCloseActionInterface.onClose(false);
-                            }
-                        }, null);
+                        message = baseApiResponseModel.getMessage();
+                        whoAmIApiViewModel.assignWhoAmI();
+
                     }
                 }
             }
         });
 
+        whoAmIApiViewModel.getBaseApiResponseModelMutableLiveData().observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    Utils.showAlertDialog(getActivity(), getString(R.string.success), message/*getString(R.string.str_plan_is_subscribe_now)*/, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onCloseActionInterface.onClose(false);
+                        }
+                    }, null);
+                }
+            }
+        });
 
     }
 
@@ -158,8 +180,10 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         backIv = (ImageView) view.findViewById(R.id.back_iv);
         subscriptionPlanListCrv = (CustomRecyclerView) view.findViewById(R.id.subscription_plan_crv);
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(getString(R.string.lbl_subscriptions_plan));
+        toolbarTitle.setText(/*getString(R.string.lbl_subscriptions_plan)*/ "Plans");
         subscriptionPlanRv = subscriptionPlanListCrv.getRecyclerView();
+        addcard = (ImageView) view.findViewById(R.id.addcard);
+        addcard.setVisibility(View.VISIBLE);
 
         if (isHideBack)
             backIv.setVisibility(View.GONE);
@@ -168,6 +192,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
         subscriptionPlanRv.setAdapter(subscriptionPlanAdapter);
         subscriptionViewModel.fetchSubscriptionPlanList();
         backIv.setOnClickListener(this);
+        addcard.setOnClickListener(this);
 
     }
 
@@ -178,14 +203,16 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
             case R.id.back_iv:
                 onCloseActionInterface.onClose(false);
                 break;
+            case R.id.addcard:
+                AppPaymentCardUtils.openCardNotAddedScreen(getActivity(), null);
+                break;
         }
     }
 
     @Override
     public void onEventTrigger(Bundle bundle) {
         if (bundle != null) {
-            int pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
-            activatedPlan = pos;
+            pos = bundle.getInt(ArgumentKeys.ITEM_CLICK_PARENT_POS);
 
             if (isChangePlan) {
                 subscriptionViewModel.changeSubscriptionPlan(bundle.getString(ArgumentKeys.PlanID));
