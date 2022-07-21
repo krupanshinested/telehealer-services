@@ -122,4 +122,12 @@ public class SubscriptionActivity extends BaseActivity implements
         onBackPressed();
         whoAmIApiViewModel.assignWhoAmI();
     }
+
+    @Override
+    public void onBackPressed() {
+        if (SubscriptionPlanFragment.isHideBack){
+        }else {
+            super.onBackPressed();
+        }
+    }
 }

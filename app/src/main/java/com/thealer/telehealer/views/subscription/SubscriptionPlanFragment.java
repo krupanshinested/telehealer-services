@@ -63,7 +63,7 @@ public class SubscriptionPlanFragment extends BaseFragment implements View.OnCli
     public static boolean isContinuePlan = false;
     public static boolean isCurrentPlan = true;
     public static boolean isResubscriptPlan = false;
-    private boolean isHideBack = false;
+    public static boolean isHideBack = false;
     private List<PlanInfoBean.Result> planList = new ArrayList<>();
     private ImageView addcard;
     private WhoAmIApiViewModel whoAmIApiViewModel;
