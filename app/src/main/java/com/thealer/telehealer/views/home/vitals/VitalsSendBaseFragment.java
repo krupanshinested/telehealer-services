@@ -84,11 +84,11 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     Log.v("VitalsSendBaseFragment", "posting next value");
                 } else if (nextPostRequest != null) {
                     previousResponse = (VitalsCreateApiResponseModel) baseApiResponseModel;
-                    String currentUserGuid="";
-                    if(UserType.isUserAssistant()){
-                        currentUserGuid=nextPostRequest.getUser_guid()!=null?nextPostRequest.getUser_guid():"";
-                    }
-                    vitalsApiViewModel.createVital(currentUserGuid,nextPostRequest, doctor_guid);
+//                    String currentUserGuid="";
+//                    if(UserType.isUserAssistant()){
+//                        currentUserGuid=nextPostRequest.getUser_guid()!=null?nextPostRequest.getUser_guid():"";
+//                    }
+                    vitalsApiViewModel.createVital(/*currentUserGuid,*/nextPostRequest, doctor_guid);
                     nextPostRequest = null;
                     Log.v("VitalsSendBaseFragment", "posting next request");
                 } else if (!isPresentedInsideCallActivity()) {
@@ -147,25 +147,25 @@ public class VitalsSendBaseFragment extends BaseFragment {
                         message = getString(R.string.vitals_has_been_posted);
                     }
 
-//                    Bundle bundle = new Bundle();
-//                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
-//                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, captureSuccessMessage);
-//
-//                    if (UserType.isUserPatient()) {
-//                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(currentPostingMeasurementType));
-//                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, isAbnormal ? R.color.red : R.color.vital_good);
-//                        bundle.putSerializable(Constants.VITAL_DETAIL, detail);
-//                    }
-//
-//                    if (detail.size() == 0) {
-//                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, message);
-//                    }
-//                    LocalBroadcastManager
-//                            .getInstance(getActivity())
-//                            .sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver))
-//                                    .putExtras(bundle));
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                    bundle.putString(Constants.SUCCESS_VIEW_TITLE, captureSuccessMessage);
 
-                    sendSuccessViewBroadCast(getActivity(), true, captureSuccessMessage, message);
+                    if (UserType.isUserPatient()) {
+                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, SupportedMeasurementType.getDrawable(currentPostingMeasurementType));
+                        bundle.putInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, isAbnormal ? R.color.red : R.color.vital_good);
+                        bundle.putSerializable(Constants.VITAL_DETAIL, detail);
+                    }
+
+                    if (detail.size() == 0) {
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, message);
+                    }
+                    LocalBroadcastManager
+                            .getInstance(getActivity())
+                            .sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver))
+                                    .putExtras(bundle));
+
+//                    sendSuccessViewBroadCast(getActivity(), true, captureSuccessMessage, message);
                     Log.v("VitalsSendBaseFragment", "not present in call kit");
                 } else {
                     Log.v("VitalsSendBaseFragment", "present in call kit");
@@ -178,7 +178,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
-                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+//                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     String title = getString(R.string.failure);
                     callFailureView(errorModel);
                     if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
@@ -188,7 +188,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
                         paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
                         paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
-                    }
+//                    }
                 }
 
             }
@@ -196,23 +196,23 @@ public class VitalsSendBaseFragment extends BaseFragment {
     }
 
     private void callFailureView(ErrorModel errorModel) {
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
-//        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
 //
-        String description = "";
+//        String description = "";
         if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
-            description = errorModel.getMessage();
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
         } else {
-            description = getString(R.string.something_went_wrong_try_again);
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.something_went_wrong_try_again));
         }
-//        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, false);
-//
-//        LocalBroadcastManager
-//                .getInstance(getActivity())
-//                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
-//                        .putExtras(bundle));
-        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), description);
+        bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+
+        LocalBroadcastManager
+                .getInstance(getActivity())
+                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                        .putExtras(bundle));
+//        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), description);
     }
 
 
@@ -283,13 +283,13 @@ public class VitalsSendBaseFragment extends BaseFragment {
         }
 
         String doctorGuid = null;
-        String currentUserGuid="";
+//        String currentUserGuid="";
         if (UserType.isUserAssistant()) {
             doctorGuid = getArguments().getString(Constants.DOCTOR_ID);
-            currentUserGuid=vitalApiRequestModel.getUser_guid()!=null?vitalApiRequestModel.getUser_guid():"";
+//            currentUserGuid=vitalApiRequestModel.getUser_guid()!=null?vitalApiRequestModel.getUser_guid():"";
         }
 
-        vitalsApiViewModel.createVital(currentUserGuid,vitalApiRequestModel, doctorGuid);
+        vitalsApiViewModel.createVital(/*currentUserGuid,*/vitalApiRequestModel, doctorGuid);
     }
 
     public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1,
@@ -309,20 +309,20 @@ public class VitalsSendBaseFragment extends BaseFragment {
             }
         }
 
-        String currentUserGuid="";
+//        String currentUserGuid="";
         if (vitalApiRequestModel_1 != null) {
-            if(UserType.isUserAssistant())
-                currentUserGuid=vitalApiRequestModel_1.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
+//            if(UserType.isUserAssistant())
+//                currentUserGuid=vitalApiRequestModel_1.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
 
-            vitalsApiViewModel.createVital(currentUserGuid,vitalApiRequestModel_1, doctor_guid);
+            vitalsApiViewModel.createVital(/*currentUserGuid,*/vitalApiRequestModel_1, doctor_guid);
             nextPostRequest = vitalApiRequestModel_2;
 
             currentPostingMeasurementType = vitalApiRequestModel_1.getType();
         } else {
-            if(UserType.isUserAssistant())
-                currentUserGuid=vitalApiRequestModel_2.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
+//            if(UserType.isUserAssistant())
+//                currentUserGuid=vitalApiRequestModel_2.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
 
-            vitalsApiViewModel.createVital(currentUserGuid,vitalApiRequestModel_2, doctor_guid);
+            vitalsApiViewModel.createVital(/*currentUserGuid,*/vitalApiRequestModel_2, doctor_guid);
             currentPostingMeasurementType = vitalApiRequestModel_2.getType();
         }
 
@@ -343,13 +343,14 @@ public class VitalsSendBaseFragment extends BaseFragment {
 
     private void showSuccessState() {
         if (!isPresentedInsideCallActivity()) {
-//            VitalThresholdSuccessViewDialogFragment successViewDialogFragment = new VitalThresholdSuccessViewDialogFragment();
-//            successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
-//            successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
-            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "Loading...");
-            showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
+
+            VitalThresholdSuccessViewDialogFragment successViewDialogFragment = new VitalThresholdSuccessViewDialogFragment();
+            successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
+            successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+//            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "Loading...");
+//            showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
         }
     }
 
