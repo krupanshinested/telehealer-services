@@ -124,7 +124,7 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Utils.showAlertDialog(getActivity(),"Failed",errorModel.getMessage(),"Ok",null,null,null);
                 notificationListAdapter.setbuttonON(true);
-                notificationListAdapter.notifyDataSetChanged();
+//                notificationListAdapter.notifyDataSetChanged();
             }
         });
 
