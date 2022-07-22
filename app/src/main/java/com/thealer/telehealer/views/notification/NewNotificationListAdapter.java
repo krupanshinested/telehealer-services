@@ -81,7 +81,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     public static final String ACCEPTED = "ACCEPTED";
     public static final String REJECTED = "REJECTED";
     private final String CANCELED = "CANCELED";
-
+    private CustomButton acceptBtn;
+    private Button rejectBtn;
 
     private List<NotificationListModel> modelList;
     private FragmentActivity activity;
@@ -325,8 +326,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                             viewHolder.bottomView.setVisibility(View.VISIBLE);
                             viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
                             viewHolder.askForCardBtn.setText(R.string.lbl_add_card);
-                            viewHolder.acceptBtn.setVisibility(View.GONE);
-                            viewHolder.rejectBtn.setVisibility(View.GONE);
+                            acceptBtn.setVisibility(View.GONE);
+                            rejectBtn.setVisibility(View.GONE);
                             viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
                             viewHolder.actionCl.setVisibility(View.VISIBLE);
                         }
@@ -420,7 +421,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
 
 
                 if (description != null && !description.isEmpty()) {
-                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag,description)));
+                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag, description)));
                 } else {
                     viewHolder.descriptionTv.setVisibility(View.GONE);
                 }
@@ -589,7 +590,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                     }
                                 }
                                 break;
-                            case SUBSCRIPTION :
+                            case SUBSCRIPTION:
                                 break;
                             case NotificationConstants.EDUCATIONAL_VIDEO:
                                 if (resultModel.getEntity_id() != null) {
@@ -641,10 +642,10 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     }
                 });
 
-                viewHolder.rejectBtn.setOnClickListener(new View.OnClickListener() {
+                rejectBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        viewHolder.rejectBtn.setEnabled(false);
+                        rejectBtn.setEnabled(false);
                         String startDate = null, endDate = null;
                         switch (resultModel.getType()) {
                             case REQUEST_TYPE_APPOINTMENT:
@@ -664,10 +665,10 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     }
                 });
 
-                viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
+                acceptBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        viewHolder.acceptBtn.setEnabled(false);
+                        acceptBtn.setEnabled(false);
                         Utils.vibrate(activity);
                         String startDate = null, endDate = null;
                         switch (resultModel.getType()) {
@@ -827,6 +828,11 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         notifyDataSetChanged();
     }
 
+    public void setbuttonON(boolean b) {
+        acceptBtn.setEnabled(b);
+        rejectBtn.setEnabled(b);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView headerTv;
         private CardView notificationCv;
@@ -852,8 +858,6 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private TextView slotTime3Tv;
         private TextView slotDate3Tv;
         private ConstraintLayout actionCl;
-        private CustomButton acceptBtn;
-        private Button rejectBtn;
         private Button askForCardBtn;
 
         public ViewHolder(@NonNull View itemView) {
