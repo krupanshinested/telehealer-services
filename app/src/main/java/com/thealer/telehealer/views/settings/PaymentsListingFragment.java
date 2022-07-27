@@ -264,7 +264,7 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
     public void doCurrentTransaction() {
 //        startActivity(new Intent(getActivity(), PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
 //        onActionCompleteInterface.onCompletionResult(RequestID.CARD_INFORMATION_VIEW, true, null);
-        startActivityForResult(new Intent(getActivity(), DateFilterActivity.class), 123);
+        startActivityForResult(new Intent(getActivity(), DateFilterActivity.class).putExtra("START_DATE", start).putExtra("END_DATE",end), 123);
     }
 
     @Override
