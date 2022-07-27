@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,8 +82,6 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     public static final String ACCEPTED = "ACCEPTED";
     public static final String REJECTED = "REJECTED";
     private final String CANCELED = "CANCELED";
-    private CustomButton acceptBtn;
-    private Button rejectBtn;
 
     private List<NotificationListModel> modelList;
     private FragmentActivity activity;
@@ -127,7 +126,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             case TYPE_DATA:
                 CommonUserApiResponseModel doctorModel = null, patientModel = null, MaModel = null;
                 NotificationApiResponseModel.ResultBean.RequestsBean resultModel = modelList.get(i).getDataBean();
-
+                Log.d("TAG", "onBindViewHolder: " + resultModel.getRequest_id());
                 switch (resultModel.getRequestee().getRole()) {
                     case Constants.ROLE_DOCTOR:
                         doctorModel = resultModel.getRequestee();
@@ -326,8 +325,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                             viewHolder.bottomView.setVisibility(View.VISIBLE);
                             viewHolder.titleTv.setTextColor(activity.getColor(R.color.app_gradient_start));
                             viewHolder.askForCardBtn.setText(R.string.lbl_add_card);
-                            acceptBtn.setVisibility(View.GONE);
-                            rejectBtn.setVisibility(View.GONE);
+                            viewHolder.acceptBtn.setVisibility(View.GONE);
+                            viewHolder.rejectBtn.setVisibility(View.GONE);
                             viewHolder.askForCardBtn.setVisibility(View.VISIBLE);
                             viewHolder.actionCl.setVisibility(View.VISIBLE);
                         }
@@ -642,10 +641,10 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                     }
                 });
 
-                rejectBtn.setOnClickListener(new View.OnClickListener() {
+                viewHolder.rejectBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        rejectBtn.setEnabled(false);
+                        viewHolder.rejectBtn.setEnabled(false);
                         String startDate = null, endDate = null;
                         switch (resultModel.getType()) {
                             case REQUEST_TYPE_APPOINTMENT:
@@ -661,14 +660,14 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 doctorGuid = resultModel.getDoctorModel().getUser_guid();
                             }
                         }
-                        updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                        updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),viewHolder.rejectBtn);
                     }
                 });
 
-                acceptBtn.setOnClickListener(new View.OnClickListener() {
+                viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        acceptBtn.setEnabled(false);
+                        viewHolder.acceptBtn.setEnabled(false);
                         Utils.vibrate(activity);
                         String startDate = null, endDate = null;
                         switch (resultModel.getType()) {
@@ -685,7 +684,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 doctorGuid = resultModel.getDoctorModel().getUser_guid();
                             }
                         }
-                        updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                        updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),viewHolder.acceptBtn);
                     }
                 });
 
@@ -785,8 +784,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     }
 
     private void updateRequest(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String status, @Nullable String startDate, @Nullable String endDate,
-                               @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA) {
-        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress, isRequestorMA);
+                               @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA,Button acceptreject) {
+        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress, isRequestorMA,acceptreject);
     }
 
     @Override
@@ -829,8 +828,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     }
 
     public void setbuttonON(boolean b) {
-        acceptBtn.setEnabled(b);
-        rejectBtn.setEnabled(b);
+//        ViewHolder.acceptBtn.setEnabled(b);
+//        ViewHolder.rejectBtn.setEnabled(b);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -859,6 +858,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private TextView slotDate3Tv;
         private ConstraintLayout actionCl;
         private Button askForCardBtn;
+        private CustomButton acceptBtn;
+        private Button rejectBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
