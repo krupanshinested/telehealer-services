@@ -168,7 +168,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         if (userDetail.getPermissions() != null && userDetail.getPermissions().size() > 0) {
             permissionList = userDetail.getPermissions();
             userPermissionAdapter.setAdapterData(permissionList);
-            clPermission.setVisibility(View.GONE);
+            clPermission.setVisibility(View.VISIBLE);
         } else {
             clPermission.setVisibility(View.GONE);
         }
@@ -345,7 +345,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                         doctorDetailView.setVisibility(View.GONE);
                         patientDetailView.setVisibility(View.VISIBLE);
                         if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
-                            clPermission.setVisibility(View.GONE); // Physician Can Assign permission to Patient as well as assistant
+                            clPermission.setVisibility(View.VISIBLE); // Physician Can Assign permission to Patient as well as assistant
                             setUpPermissionUI();
                         } else {
                             clPermission.setVisibility(View.GONE);
