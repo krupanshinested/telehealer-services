@@ -111,9 +111,9 @@ public class CustomRecyclerView extends ConstraintLayout {
                     public void onChanged(@Nullable ErrorModel errorModel) {
                         swipeLayout.setRefreshing(false);
                         if (errorModel != null) {
-                            if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+//                            if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                                 showNetworkEmptyState(errorModel.getCode());
-                            }
+//                            }
                         }
                     }
                 });
