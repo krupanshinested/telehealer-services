@@ -84,7 +84,7 @@ public class DateFilterActivity extends BaseActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnSubmit: {
-                if (dateFilter.getSelectedToDate() != null) {
+                if (dateFilter.getSelectedFromDate() != null && dateFilter.getSelectedToDate() != null ) {
                     if (dateFilter.getSelectedFromDate().getTimeInMillis() > dateFilter.getSelectedToDate().getTimeInMillis()) {
                         Utils.showAlertDialog(this, getString(R.string.app_name), getString(R.string.msg_please_select_valid_date_range_for_any, getString(R.string.filter)), getString(R.string.ok), null, null, null);
                         return;
