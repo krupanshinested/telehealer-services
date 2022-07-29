@@ -20,7 +20,9 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.transaction.DateRangeView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class DateFilterActivity extends BaseActivity implements View.OnClickListener {
 
@@ -56,20 +58,38 @@ public class DateFilterActivity extends BaseActivity implements View.OnClickList
             }
         });
 
+        String startdate = getIntent().getStringExtra("START_DATE");
+        String enddate = getIntent().getStringExtra("END_DATE");
+        try {
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Utils.UTCFormat, Locale.getDefault());
+            if (!startdate.isEmpty()){
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(simpleDateFormat.parse(startdate));
+                dateFilter.setSelectedFromDate(cal)  ;
+            }
+
+
+            if (!enddate.isEmpty()){
+                Calendar calend = Calendar.getInstance();
+                calend.setTime(simpleDateFormat.parse(enddate));
+                dateFilter.setSelectedToDate(calend);
+            }
+        }catch (Exception e){
+            Log.d("TAG", "initview: "+e.getMessage());
+        }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnSubmit: {
-                if (dateFilter.getSelectedToDate() != null) {
+                if (dateFilter.getSelectedFromDate() != null && dateFilter.getSelectedToDate() != null ) {
                     if (dateFilter.getSelectedFromDate().getTimeInMillis() > dateFilter.getSelectedToDate().getTimeInMillis()) {
                         Utils.showAlertDialog(this, getString(R.string.app_name), getString(R.string.msg_please_select_valid_date_range_for_any, getString(R.string.filter)), getString(R.string.ok), null, null, null);
                         return;
                     }
                 }
-
-                Log.d("TAG", "onClick: "+dateFilter.getSelectedFromDate().toString());
 
                 String start = "" ,end = "";
 
@@ -86,6 +106,16 @@ public class DateFilterActivity extends BaseActivity implements View.OnClickList
                     calenderTO.set(Calendar.MINUTE,59);
                     calenderTO.set(Calendar.SECOND,59);
                     end = Utils.getDateFromCalendar(calenderTO);
+                }
+
+                if (start.isEmpty()){
+                    showToast("Please choose start date");
+                    break;
+                }
+
+                if (end.isEmpty()){
+                    showToast("Please choose end date");
+                    break;
                 }
 
                 setResult(RESULT_OK, new Intent().putExtra("START_DATE", start).putExtra("END_DATE",end));

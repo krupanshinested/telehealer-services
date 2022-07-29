@@ -482,7 +482,10 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
                                 bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
                                 intent.putExtras(bundle);
                                 LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
-                                break;
+
+                                if (LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent)){
+                                    break;
+                                }
                             }
                         }
                         if (Constants.ErrorFlag == false) {

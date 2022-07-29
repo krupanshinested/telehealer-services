@@ -20,10 +20,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
+        android:alpha="0.5"
         android:id="@+id/permission_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
+        android:clickable="false"
+        android:checked="true"
+        android:enabled="false"
+        android:thumbTint="@color/bt_theme_orange"
+        android:trackTint="@color/bt_theme_orange"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

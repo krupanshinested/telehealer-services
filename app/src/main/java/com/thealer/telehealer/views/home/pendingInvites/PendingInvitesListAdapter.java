@@ -134,7 +134,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null);
                         }
                     });
 
@@ -147,7 +147,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.REJECTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null);
                         }
                     });
 

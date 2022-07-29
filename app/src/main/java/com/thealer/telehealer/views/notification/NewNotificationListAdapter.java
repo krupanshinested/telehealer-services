@@ -3,6 +3,7 @@ package com.thealer.telehealer.views.notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,6 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     public static final String REJECTED = "REJECTED";
     private final String CANCELED = "CANCELED";
 
-
     private List<NotificationListModel> modelList;
     private FragmentActivity activity;
     private List<NotificationApiResponseModel.ResultBean.RequestsBean> notificationList;
@@ -126,7 +126,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
             case TYPE_DATA:
                 CommonUserApiResponseModel doctorModel = null, patientModel = null, MaModel = null;
                 NotificationApiResponseModel.ResultBean.RequestsBean resultModel = modelList.get(i).getDataBean();
-
+                Log.d("TAG", "onBindViewHolder: " + resultModel.getRequest_id());
                 switch (resultModel.getRequestee().getRole()) {
                     case Constants.ROLE_DOCTOR:
                         doctorModel = resultModel.getRequestee();
@@ -420,7 +420,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
 
 
                 if (description != null && !description.isEmpty()) {
-                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag,description)));
+                    viewHolder.descriptionTv.setText(Utils.fromHtml(activity.getString(R.string.str_with_htmltag, description)));
                 } else {
                     viewHolder.descriptionTv.setVisibility(View.GONE);
                 }
@@ -589,7 +589,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                     }
                                 }
                                 break;
-                            case SUBSCRIPTION :
+                            case SUBSCRIPTION:
                                 break;
                             case NotificationConstants.EDUCATIONAL_VIDEO:
                                 if (resultModel.getEntity_id() != null) {
@@ -660,7 +660,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 doctorGuid = resultModel.getDoctorModel().getUser_guid();
                             }
                         }
-                        updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                        updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),viewHolder.rejectBtn);
                     }
                 });
 
@@ -684,7 +684,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 doctorGuid = resultModel.getDoctorModel().getUser_guid();
                             }
                         }
-                        updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                        updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),viewHolder.acceptBtn);
                     }
                 });
 
@@ -784,8 +784,8 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     }
 
     private void updateRequest(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String status, @Nullable String startDate, @Nullable String endDate,
-                               @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA) {
-        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress, isRequestorMA);
+                               @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA,Button acceptreject) {
+        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress, isRequestorMA,acceptreject);
     }
 
     @Override
@@ -827,6 +827,11 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         notifyDataSetChanged();
     }
 
+    public void setbuttonON(boolean b) {
+//        ViewHolder.acceptBtn.setEnabled(b);
+//        ViewHolder.rejectBtn.setEnabled(b);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView headerTv;
         private CardView notificationCv;
@@ -852,9 +857,9 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
         private TextView slotTime3Tv;
         private TextView slotDate3Tv;
         private ConstraintLayout actionCl;
+        private Button askForCardBtn;
         private CustomButton acceptBtn;
         private Button rejectBtn;
-        private Button askForCardBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
