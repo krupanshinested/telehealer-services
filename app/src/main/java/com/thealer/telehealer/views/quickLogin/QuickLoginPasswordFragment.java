@@ -70,15 +70,17 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if(passCount<2){
-                        passCount++;
-                        String attemptRemains=(3-passCount)+"";
-                        showErrorDialog(getString(R.string.wrong_password,attemptRemains));
-                        passwordEt.setText("");
-                    }else {
-                        passCount=0;
-                        sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
-                        getActivity().finish();
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        if (passCount < 2) {
+                            passCount++;
+                            String attemptRemains = (3 - passCount) + "";
+                            showErrorDialog(getString(R.string.wrong_password, attemptRemains));
+                            passwordEt.setText("");
+                        } else {
+                            passCount = 0;
+                            sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
+                            getActivity().finish();
+                        }
                     }
                 }
             }

@@ -152,6 +152,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
             case APNSPayload.endCall:
                 CallChannel.shared.didReceiveMessage(data);
                 break;
+            case APNSPayload.subscription:
             case APNSPayload.connection:
             case APNSPayload.schedule:
                 intent = new Intent(this, NotificationActivity.class);

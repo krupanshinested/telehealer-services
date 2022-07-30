@@ -26,6 +26,7 @@ public class APNSPayload implements Serializable {
     public static final String waitingInRoom = "waitingInRoom";
     public static final String message = "message";
     public static final String connection = "connection";
+    public static final String subscription = "subscription";
     public static final String callProposerBanner = "callProposerBanner";
     public static final String callHistory = "callHistory";
     public static final String openApp = "openApp";    // use this to just notify to other user of some activity, no specific action is done on open of app

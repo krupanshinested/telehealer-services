@@ -11,12 +11,15 @@ import com.thealer.telehealer.apilayer.models.transaction.req.TransactionListReq
 import com.thealer.telehealer.apilayer.models.transaction.resp.RefundItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionListResp;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.thealer.telehealer.common.Utils.UtcTimezone;
 
@@ -28,7 +31,6 @@ public class TransactionListViewModel extends BaseApiViewModel {
     private int page = 1;
     private int totalCount;
     private boolean isApiRequested;
-
     public TransactionListViewModel(@NonNull Application application) {
         super(application);
     }
@@ -72,6 +74,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
             isApiRequested = true;
             fetchToken(status -> {
                 if (status) {
+
                     getAuthApiService().transactionPaginate(true, page, 5, filterReq)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<TransactionListResp>(getProgress(isShowProgress)) {
@@ -102,7 +105,7 @@ public class TransactionListViewModel extends BaseApiViewModel {
         }
     }
 
-    public void processPayment(int id, int paymentMode) {
+    public void processPayment(String doctorGuid,int id, int paymentMode) {
         setApiRequested(false);
         HashMap<String, Object> req = new HashMap<>();
         req.put("payment_mode", paymentMode);

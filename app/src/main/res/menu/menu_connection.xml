@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_add_support_staff"
+        android:title="@string/add_support_staff"
+        app:actionLayout="@layout/view_home_add_staff"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_overflow"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="@string/More"
+        app:showAsAction="always" />
+</menu>

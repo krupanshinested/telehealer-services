@@ -33,6 +33,7 @@ import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
@@ -143,39 +144,41 @@ public class OrdersBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    boolean status = false;
-                    String title = getString(R.string.failure);
-                    String description = getString(R.string.order_posting_failed);
-                    if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
-                        sendSuccessViewBroadCast(getActivity(), false, title, description);
-                        PaymentInfo paymentInfo = new PaymentInfo();
-                        paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                        paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                        paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
-                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
-                    } else {
-                        switch (currentOrder) {
-                            case OrderConstant.ORDER_PRESCRIPTIONS:
-                                description = String.format(getString(R.string.create_prescription_failure), patientName);
-                                break;
-                            case OrderConstant.ORDER_REFERRALS:
-                                description = String.format(getString(R.string.referral_failure), patientName);
-                                break;
-                            case OrderConstant.ORDER_LABS:
-                                description = String.format(getString(R.string.create_lab_failure), patientName);
-                                break;
-                            case OrderConstant.ORDER_RADIOLOGY:
-                                description = String.format(getString(R.string.create_radiology_failure), patientName);
-                                break;
-                            case OrderConstant.ORDER_MISC:
-                                description = String.format(getString(R.string.miscellaneous_failure), patientName);
-                                break;
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        boolean status = false;
+                        String title = getString(R.string.failure);
+                        String description = getString(R.string.order_posting_failed);
+                        if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                            sendSuccessViewBroadCast(getActivity(), false, title, description);
+                            PaymentInfo paymentInfo = new PaymentInfo();
+                            paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                            paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                            paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
+                        } else {
+                            switch (currentOrder) {
+                                case OrderConstant.ORDER_PRESCRIPTIONS:
+                                    description = String.format(getString(R.string.create_prescription_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_REFERRALS:
+                                    description = String.format(getString(R.string.referral_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_LABS:
+                                    description = String.format(getString(R.string.create_lab_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_RADIOLOGY:
+                                    description = String.format(getString(R.string.create_radiology_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_MISC:
+                                    description = String.format(getString(R.string.miscellaneous_failure), patientName, errorModel.getMessage());
+                                    break;
+                            }
+                            if (isSendFax) {
+                                isSendFax = false;
+                                description = errorModel.getMessage();
+                            }
+                            sendSuccessViewBroadCast(getActivity(), status, title, description);
                         }
-                        if (isSendFax) {
-                            isSendFax = false;
-                            description = errorModel.getMessage();
-                        }
-                        sendSuccessViewBroadCast(getActivity(), status, title, description);
                     }
                 }
 

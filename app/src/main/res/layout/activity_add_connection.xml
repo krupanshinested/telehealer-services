@@ -32,18 +32,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/search_ll"
+            <com.thealer.telehealer.views.common.SearchCellView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/app_background_gradient"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appbar">
-
-                <include layout="@layout/layout_search_view" />
-
-            </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/appbar"
+                android:id="@+id/search_view"
+                />
 
             <com.thealer.telehealer.common.CustomRecyclerView
                 android:id="@+id/connection_list_crv"
@@ -53,7 +50,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_ll" />
+                app:layout_constraintTop_toBottomOf="@+id/search_view" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

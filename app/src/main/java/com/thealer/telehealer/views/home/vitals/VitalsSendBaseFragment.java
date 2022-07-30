@@ -26,6 +26,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalsConstant;
@@ -83,7 +84,11 @@ public class VitalsSendBaseFragment extends BaseFragment {
                     Log.v("VitalsSendBaseFragment", "posting next value");
                 } else if (nextPostRequest != null) {
                     previousResponse = (VitalsCreateApiResponseModel) baseApiResponseModel;
-                    vitalsApiViewModel.createVital(nextPostRequest, doctor_guid);
+//                    String currentUserGuid="";
+//                    if(UserType.isUserAssistant()){
+//                        currentUserGuid=nextPostRequest.getUser_guid()!=null?nextPostRequest.getUser_guid():"";
+//                    }
+                    vitalsApiViewModel.createVital(/*currentUserGuid,*/nextPostRequest, doctor_guid);
                     nextPostRequest = null;
                     Log.v("VitalsSendBaseFragment", "posting next request");
                 } else if (!isPresentedInsideCallActivity()) {
@@ -160,6 +165,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
                             .sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver))
                                     .putExtras(bundle));
 
+//                    sendSuccessViewBroadCast(getActivity(), true, captureSuccessMessage, message);
                     Log.v("VitalsSendBaseFragment", "not present in call kit");
                 } else {
                     Log.v("VitalsSendBaseFragment", "present in call kit");
@@ -172,15 +178,17 @@ public class VitalsSendBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
-                String title = getString(R.string.failure);
-                callFailureView(errorModel);
-                if (!errorModel.isCCCaptured() || !errorModel.isDefaultCardValid()) {
-                    sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
-                    PaymentInfo paymentInfo = new PaymentInfo();
-                    paymentInfo.setCCCaptured(errorModel.isCCCaptured());
-                    paymentInfo.setSavedCardsCount(errorModel.getSavedCardsCount());
-                    paymentInfo.setDefaultCardValid(errorModel.isDefaultCardValid());
-                    AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
+//                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    String title = getString(R.string.failure);
+                    callFailureView(errorModel);
+                    if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                        sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+                        PaymentInfo paymentInfo = new PaymentInfo();
+                        paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+                        paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+                        paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
+//                    }
                 }
 
             }
@@ -191,7 +199,8 @@ public class VitalsSendBaseFragment extends BaseFragment {
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-
+//
+//        String description = "";
         if (errorModel != null && !TextUtils.isEmpty(errorModel.getMessage())) {
             bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
         } else {
@@ -203,6 +212,7 @@ public class VitalsSendBaseFragment extends BaseFragment {
                 .getInstance(getActivity())
                 .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
                         .putExtras(bundle));
+//        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), description);
     }
 
 
@@ -273,11 +283,13 @@ public class VitalsSendBaseFragment extends BaseFragment {
         }
 
         String doctorGuid = null;
+//        String currentUserGuid="";
         if (UserType.isUserAssistant()) {
             doctorGuid = getArguments().getString(Constants.DOCTOR_ID);
+//            currentUserGuid=vitalApiRequestModel.getUser_guid()!=null?vitalApiRequestModel.getUser_guid():"";
         }
 
-        vitalsApiViewModel.createVital(vitalApiRequestModel, doctorGuid);
+        vitalsApiViewModel.createVital(/*currentUserGuid,*/vitalApiRequestModel, doctorGuid);
     }
 
     public void sendVitals(CreateVitalApiRequestModel vitalApiRequestModel_1,
@@ -297,13 +309,20 @@ public class VitalsSendBaseFragment extends BaseFragment {
             }
         }
 
+//        String currentUserGuid="";
         if (vitalApiRequestModel_1 != null) {
-            vitalsApiViewModel.createVital(vitalApiRequestModel_1, doctor_guid);
+//            if(UserType.isUserAssistant())
+//                currentUserGuid=vitalApiRequestModel_1.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
+
+            vitalsApiViewModel.createVital(/*currentUserGuid,*/vitalApiRequestModel_1, doctor_guid);
             nextPostRequest = vitalApiRequestModel_2;
 
             currentPostingMeasurementType = vitalApiRequestModel_1.getType();
         } else {
-            vitalsApiViewModel.createVital(vitalApiRequestModel_2, doctor_guid);
+//            if(UserType.isUserAssistant())
+//                currentUserGuid=vitalApiRequestModel_2.getUser_guid()!=null?vitalApiRequestModel_1.getUser_guid():"";
+
+            vitalsApiViewModel.createVital(/*currentUserGuid,*/vitalApiRequestModel_2, doctor_guid);
             currentPostingMeasurementType = vitalApiRequestModel_2.getType();
         }
 
@@ -328,6 +347,10 @@ public class VitalsSendBaseFragment extends BaseFragment {
             VitalThresholdSuccessViewDialogFragment successViewDialogFragment = new VitalThresholdSuccessViewDialogFragment();
             successViewDialogFragment.setTargetFragment(this, RequestID.REQ_SHOW_SUCCESS_VIEW);
             successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+//            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "Loading...");
+//            showSuccessView(this, RequestID.REQ_SHOW_SUCCESS_VIEW, bundle);
         }
     }
 

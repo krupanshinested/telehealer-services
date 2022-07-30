@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.notification;
 
 import android.app.Application;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,7 +68,7 @@ public class NotificationApiViewModel extends BaseApiViewModel {
     }
 
     public void updateNotification(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String requestStatus, @Nullable String startDate, @Nullable String endDate,
-                                   @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA) {
+                                   @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA, Button acceptreject) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -87,6 +88,9 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    if (acceptreject != null) {
+                                        acceptreject.setEnabled(true);
+                                    }
                                     switch (type) {
                                         case NewNotificationListAdapter.REQUEST_TYPE_APPOINTMENT:
                                             if (isAccept) {
@@ -111,6 +115,14 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                             break;
                                     }
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    super.onError(e);
+                                    if (acceptreject != null) {
+                                        acceptreject.setEnabled(true);
+                                    }
                                 }
                             });
                 }

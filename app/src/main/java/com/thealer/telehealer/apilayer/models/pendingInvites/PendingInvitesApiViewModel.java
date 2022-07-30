@@ -66,4 +66,23 @@ public class PendingInvitesApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public  void getNonRegisteredUserInvitesByROLE(int page,String role,boolean isShowProgress){
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getNonRegisteredUserInvitesByROLE(true,page,Constants.PAGINATION_SIZE,role)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)){
+
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }

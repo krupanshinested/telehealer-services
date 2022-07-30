@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?><!--<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    android:layout_margin="@dimen/_5sdp"-->
+<!--    app:cardCornerRadius="@dimen/_8sdp"-->
+<!--    app:cardElevation="@dimen/_2sdp"-->
+<!--    android:layout_height="wrap_content">-->
+
+<!--    <LinearLayout-->
+<!--        android:background="@drawable/round_corner"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:orientation="vertical"-->
+<!--        android:layout_height="@dimen/_70sdp">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_marginStart="@dimen/_8sdp"-->
+<!--            android:layout_marginTop="@dimen/_5sdp"-->
+<!--            android:layout_marginEnd="@dimen/_8sdp"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_weight="0.8"-->
+<!--            android:layout_height="0dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_weight="1.5"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent">-->
+
+<!--                <TextView-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:text="Invoice num : "-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:textColor="@color/colorBlack"-->
+<!--                    android:textSize="@dimen/_12sdp"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="match_parent" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_invnumber"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:text="asgdasdasgdfas"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:textColor="@color/colorBlack"-->
+<!--                    android:textSize="@dimen/_13sdp"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent" />-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_weight="0.5"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_invdate"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:text="June 2022"-->
+<!--                    android:gravity="center_vertical|end"-->
+<!--                    android:textColor="@color/colorBlack"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textSize="@dimen/_13sdp"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent" />-->
+
+<!--            </LinearLayout>-->
+
+<!--        </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_marginStart="@dimen/_8sdp"-->
+<!--            android:layout_marginBottom="@dimen/_5sdp"-->
+<!--            android:layout_marginEnd="@dimen/_8sdp"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_weight="1.2"-->
+<!--            android:layout_height="0dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_weight="0.6">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1">-->
+
+<!--                    <TextView-->
+<!--                        android:text="Status : "-->
+<!--                        android:textColor="@color/colorBlack"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:textSize="@dimen/_12sdp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_invstatus"-->
+<!--                        android:text="Success"-->
+<!--                        android:textColor="@color/colorBlack"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:textSize="@dimen/_13sdp" />-->
+
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1">-->
+
+<!--                    <TextView-->
+<!--                        android:text="Amount : "-->
+<!--                        android:textColor="@color/colorBlack"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:textSize="@dimen/_12sdp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_invamount"-->
+<!--                        android:text="$40"-->
+<!--                        android:textColor="@color/colorBlack"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:textSize="@dimen/_13sdp" />-->
+
+<!--                </LinearLayout>-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1.3">-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/btn_invdownload"-->
+<!--                    android:background="@drawable/rounded_corner"-->
+<!--                    android:backgroundTint="@color/app_gradient_start"-->
+<!--                    android:layout_margin="@dimen/_5sdp"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:text="Download"-->
+<!--                    android:layout_height="match_parent"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--        </LinearLayout>-->
+
+<!--    </LinearLayout>-->
+
+<!--</androidx.cardview.widget.CardView>-->
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_8sdp"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_marginEnd="@dimen/_8sdp"
+    app:cardCornerRadius="@dimen/_8sdp"
+    app:cardElevation="@dimen/_4sdp"
+    app:cardUseCompatPadding="true">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp">
+
+            <TableRow style="@style/TransactionListRow">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="Date" />
+
+                <TextView
+                    android:id="@+id/tv_invdate"
+                    style="@style/TransactionRowValue" />
+            </TableRow>
+
+            <TableRow
+                style="@style/TransactionListRow"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_service_date" />
+
+                <TextView
+                    android:id="@+id/tvDateOfService"
+                    style="@style/TransactionRowValue"
+                    android:text="20 Jan 2021" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/patientRow"
+                style="@style/TransactionListRow"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_patient" />
+
+                <TextView
+                    android:id="@+id/tvPatient"
+                    style="@style/TransactionRowValue"
+                    android:text="Bella Tallyer" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/doctorRow"
+                style="@style/TransactionListRow"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_provider" />
+
+                <TextView
+                    android:id="@+id/tvDoctor"
+                    style="@style/TransactionRowValue"
+                    android:text="Bella Tallyer" />
+            </TableRow>
+
+            <TableRow style="@style/TransactionListRow">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="Invoice num" />
+
+                <TextView
+                    android:id="@+id/tv_invnumber"
+                    style="@style/TransactionRowValue"
+                    android:ellipsize="end"
+                    android:maxWidth="100dp"
+                    android:maxLines="1"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow style="@style/TransactionListRow">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="Amount" />
+
+                <TextView
+                    android:id="@+id/tv_invamount"
+                    style="@style/TransactionRowValue" />
+            </TableRow>
+
+            <TableRow style="@style/TransactionListRow">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_status" />
+
+                <TextView
+                    android:id="@+id/tv_invstatus"
+                    style="@style/TransactionRowValue" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowFailureReason"
+                style="@style/TransactionListRow"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_failure_reason" />
+
+                <TextView
+                    android:id="@+id/tvFailureReason"
+                    style="@style/TransactionRowValue"
+                    android:text="Success" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/refundRow"
+                style="@style/TransactionListRow"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TransactionRowLbl"
+                    android:text="@string/lbl_total_refund" />
+
+                <TextView
+                    android:id="@+id/tvTotalRefund"
+                    style="@style/TransactionRowValue"
+                    android:text="Success" />
+            </TableRow>
+
+
+            <TableRow
+                android:id="@+id/actionRow"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnRefund"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/btn_theme_orange"
+                    android:text="@string/lbl_refund"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bt_white"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnReciept"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/btn_theme_blue"
+                    android:text="@string/lbl_receipt"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bt_white"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+
+                <Button
+                    android:id="@+id/btn_invdownload"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_theme_blue"
+                    android:text="Download"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bt_white"
+                    android:visibility="visible"
+                    tools:visibility="visible" />
+            </TableRow>
+
+
+        </TableLayout>
+    </FrameLayout>
+</androidx.cardview.widget.CardView>

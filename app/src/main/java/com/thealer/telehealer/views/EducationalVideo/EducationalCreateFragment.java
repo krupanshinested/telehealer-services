@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalFetchModel;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideo;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
@@ -34,6 +35,8 @@ import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -45,11 +48,12 @@ import static com.thealer.telehealer.TeleHealerApplication.application;
 public class EducationalCreateFragment extends BaseFragment {
 
     private Button record_bt;
-    private EditText title_et,description_et;
+    private EditText title_et, description_et;
     private AppBarLayout appbarLayout;
     private Toolbar toolbar;
     private ImageView backIv;
-    private TextView toolbarTitle,next_tv;
+    private TextView toolbarTitle, next_tv;
+    private String doctorGuid;
 
     @Nullable
     private EducationalVideo educationalVideo;
@@ -70,11 +74,11 @@ public class EducationalCreateFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_educational_create, container, false);
 
         if (getActivity() instanceof AttachObserverInterface) {
-            ((AttachObserverInterface)getActivity()).attachObserver(educationalVideoViewModel);
+            ((AttachObserverInterface) getActivity()).attachObserver(educationalVideoViewModel);
         }
 
         if (getArguments() != null) {
-            Object educationalVideoObject =  getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO);
+            Object educationalVideoObject = getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO);
             if (educationalVideoObject != null) {
                 if (educationalVideoObject instanceof EducationalVideo) {
                     educationalVideo = (EducationalVideo) educationalVideoObject;
@@ -82,6 +86,7 @@ public class EducationalCreateFragment extends BaseFragment {
                     educationalVideo = ((EducationalVideoOrder) educationalVideoObject).getVideo();
                 }
             }
+            doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
         }
 
         initView(view);
@@ -120,14 +125,14 @@ public class EducationalCreateFragment extends BaseFragment {
                 if (baseApiResponseModel instanceof EducationalFetchModel) {
                     EducationalFetchModel model = (EducationalFetchModel) baseApiResponseModel;
                     CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
-                            UserDetailPreferenceManager.getUser_guid(),null,null,null,model.getVideoId()+"", OpenTokConstants.education,true,model.getVideoId()+"");
+                            UserDetailPreferenceManager.getUser_guid(), null, null, null, model.getVideoId() + "", OpenTokConstants.education, true, model.getVideoId() + "");
                     callRequest.setEducationTitle(title_et.getText().toString());
                     callRequest.setEducationDescription(description_et.getText().toString());
                     model.recording_enabled = true;
                     model.transcription_enabled = true;
                     callRequest.update(model);
 
-                    OpenTok tokBox =new OpenTok(callRequest);
+                    OpenTok tokBox = new OpenTok(callRequest);
                     tokBox.connectToSession();
                     CallManager.shared.addCall(tokBox);
 
@@ -138,19 +143,19 @@ public class EducationalCreateFragment extends BaseFragment {
                 } else {
 
                     if (getArguments() != null) {
-                        Object educationalVideoObject =  getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO);
+                        Object educationalVideoObject = getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO);
 
                         if (educationalVideoObject != null) {
                             if (educationalVideoObject instanceof EducationalVideo) {
                                 EducationalVideo educationalVideo = (EducationalVideo) educationalVideoObject;
                                 educationalVideo.setDescription(description_et.getText().toString());
                                 educationalVideo.setTitle(title_et.getText().toString());
-                                getArguments().putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO,educationalVideo);
+                                getArguments().putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO, educationalVideo);
                             } else if (educationalVideoObject instanceof EducationalVideoOrder) {
                                 EducationalVideoOrder educationalVideo = ((EducationalVideoOrder) educationalVideoObject);
                                 educationalVideo.getVideo().setTitle(title_et.getText().toString());
                                 educationalVideo.getVideo().setDescription(description_et.getText().toString());
-                                getArguments().putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO,educationalVideo);
+                                getArguments().putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO, educationalVideo);
                             }
                         }
 
@@ -161,6 +166,16 @@ public class EducationalCreateFragment extends BaseFragment {
                 }
             }
         });
+
+        educationalVideoViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+
+                Utils.showAlertDialog(getActivity(), "Failed", errorModel.getMessage(), "ok", null, null, null);
+
+            }
+        });
+
     }
 
     private void initListeners() {
@@ -203,9 +218,9 @@ public class EducationalCreateFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 if (educationalVideo != null) {
-                    educationalVideoViewModel.updateEducationalVideo(title_et.getText().toString(),description_et.getText().toString(),educationalVideo.getVideo_id());
+                    educationalVideoViewModel.updateEducationalVideo(doctorGuid, title_et.getText().toString(), description_et.getText().toString(), educationalVideo.getVideo_id());
                 } else {
-                   educationalVideoViewModel.postEducationalVideo(new EducationalVideoRequest(title_et.getText().toString(),description_et.getText().toString()));
+                    educationalVideoViewModel.postEducationalVideo(doctorGuid, new EducationalVideoRequest(title_et.getText().toString(), description_et.getText().toString()));
                 }
             }
         });

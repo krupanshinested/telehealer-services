@@ -84,7 +84,9 @@ public class InviteUserBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendFailureMessage(errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        sendFailureMessage(errorModel.getMessage());
+                    }
                 }
             }
         });

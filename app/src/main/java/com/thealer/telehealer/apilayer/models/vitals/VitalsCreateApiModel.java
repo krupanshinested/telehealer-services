@@ -6,9 +6,14 @@ import android.util.Log;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VitalsCreateApiModel extends BaseApiViewModel {
 
@@ -16,7 +21,7 @@ public class VitalsCreateApiModel extends BaseApiViewModel {
         super(application);
     }
 
-    public void createVital(CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid){
+    public void createVital(/*String userGuid,*/CreateVitalApiRequestModel createVitalApiRequestModel, String doctorGuid){
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
