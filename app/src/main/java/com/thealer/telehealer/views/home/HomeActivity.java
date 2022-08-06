@@ -128,12 +128,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isPropserShown = false;
     private boolean isSigningOutInProcess = false;
     private static boolean onAuthenticated = false;
+    private static boolean creditcardstatus = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private SignoutApiViewModel signoutApiViewModel;
     private FeedbackApiViewModel feedbackApiViewModel;
+    public boolean cardScreen = true;
 
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
@@ -144,6 +146,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     };
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private AddConnectionApiViewModel addConnectionApiViewModel;
+    private WhoAmIApiResponseModel whoAmIApiResponseModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -214,9 +217,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                    whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()){
+                        showDoctorPatientList();
+                        creditcardstatus = whoAmIApiResponseModel.getPayment_account_info().isCCCaptured();
+                    }
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
+                     if (cardScreen) {
+                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                     }
+                    }
                 }
             }
         });
@@ -248,6 +258,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         });
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cardScreen = false;
     }
 
     private void checkNotification() {
@@ -583,6 +599,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+        if (whoAmIApiResponseModel != null){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("CC_Capture", whoAmIApiResponseModel.getPayment_account_info().isCCCaptured());
+            doctorPatientListingFragment.setArguments(bundle);
+        }
         setFragment(doctorPatientListingFragment);
 
         /*TransactionListFragment transactionListFragment = new TransactionListFragment();
@@ -947,6 +968,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         application.addShortCuts();
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
+            whoAmIApiViewModel.assignWhoAmI();
             showHelpScreen();
         }
     }
