@@ -1090,7 +1090,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 } else {
                     actionBtn.setText(getString(R.string.add_connection_pending));
                     actionBtn.setEnabled(false);
-                    actionBtn.setVisibility(View.GONE);
+//                    actionBtn.setVisibility(View.GONE);
                 }
                 break;
             default:
@@ -1114,7 +1114,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             if (resultBean.getRole().equals(Constants.ROLE_DOCTOR) && !resultBean.getConnection_requests()) {
 
             } else {
-                actionBtn.setVisibility(View.GONE);
+                actionBtn.setVisibility(View.VISIBLE);
             }
 
             userDetailBnv.setVisibility(View.GONE);

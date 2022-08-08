@@ -50,7 +50,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
     public void onBindViewHolder(@NonNull OnUserPermissionViewHolder holder, int position) {
         PermissionBean currentPermission = adapterList.get(position);
         if (currentPermission != null) {
-//            holder.permissionSwitch.setChecked(currentPermission.getValue());
+            holder.permissionSwitch.setChecked(currentPermission.getValue());
             PermissionDetails rootPermissionInfo = currentPermission.getPermission();
             holder.title.setText(rootPermissionInfo.getName());
             if (currentPermission.getValue() && currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
@@ -63,23 +63,23 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
             holder.permissionSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    if (!currentPermission.getValue()) {
-//                        Utils.showAlertDialog(activity, activity.getString(R.string.notes), activity.getString(R.string.hippa_msg), activity.getString(R.string.ok), null, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Bundle bundle = new Bundle();
-//                                bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
-//                                bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);
-//                                onAdapterListener.onEventTrigger(bundle);
-//                                dialog.dismiss();
-//                            }
-//                        }, null);
-//                    }else{
-//                        Bundle bundle = new Bundle();
-//                        bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
-//                        bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);
-//                        onAdapterListener.onEventTrigger(bundle);
-//                    }
+                    if (!currentPermission.getValue()) {
+                        Utils.showAlertDialog(activity, activity.getString(R.string.notes), activity.getString(R.string.hippa_msg), activity.getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
+                                bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);
+                                onAdapterListener.onEventTrigger(bundle);
+                                dialog.dismiss();
+                            }
+                        }, null);
+                    }else{
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
+                        bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);
+                        onAdapterListener.onEventTrigger(bundle);
+                    }
                 }
             });
         }
