@@ -232,6 +232,7 @@ public class ArgumentKeys {
 
     public static final String TO_USER_GUID = "TO_USER_GUID";
 
+    public static final String CALL_REQUEST = "call_request";
 
     public static final String TRANSACTION = "TRANSACTION";
     public static String NOTIFICATION_ID = "notification-id";
@@ -288,9 +289,16 @@ public class ArgumentKeys {
     public static final String IS_FROM_PARENT = "IS_FROM_PARENT";
     public static final String IS_INVITED_VISIBLE = "IS_INVITED_VISIBLE";
 
+    public static final String Reason="reason";
     public static final String PlanID="plan_id";
     public static final String BillingCycle="billing_cycle";
+    public static String IS_CONTINUE_PLAN="IS_CONTINUE_PLAN";
+    public static String IS_RESUBSCRIBE_PLAN="IS_RESUBSCRIBE_PLAN";
     public static String IS_CHANGE_PLAN="IS_CHANGE_PLAN";
     public static String IS_HIDE_BACK="IS_HIDE_BACK";
+    public static final String DEVICE_TITLE = "title";
+    public static final String HEALTH_CARE_ID = "health_care_id";
+    public static final String DEVICE_FLAG = "device_flag";
+    public static final String DEVICE_DETAILS = "device_details";
     public static String isPermissionAllowed="IS_Permission_Allowed";
 }

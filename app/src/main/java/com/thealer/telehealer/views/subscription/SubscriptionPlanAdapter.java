@@ -39,10 +39,11 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     private FragmentActivity fragmentActivity;
     private List<PlanInfoBean.Result> adapterList = new ArrayList<>();
     private OnAdapterListener adapterListener;
+    private int isCancelPos = -1;
 
-    public SubscriptionPlanAdapter(FragmentActivity fragmentActivity,OnAdapterListener adapterListener) {
+    public SubscriptionPlanAdapter(FragmentActivity fragmentActivity, OnAdapterListener adapterListener) {
         this.fragmentActivity = fragmentActivity;
-        this.adapterListener=adapterListener;
+        this.adapterListener = adapterListener;
     }
 
     @NonNull
@@ -55,13 +56,13 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
     @Override
     public void onBindViewHolder(@NonNull OnSubscriptionViewHolder holder, int position) {
         PlanInfoBean.Result currentPlan = adapterList.get(position);
-        if(currentPlan.getIs_active()) {
+        if (currentPlan.getIs_active()) {
 
-            if(currentPlan.isPurchased())
-                Constants.activatedPlan=position;
+            if (currentPlan.isPurchased())
+                Constants.activatedPlan = position;
 
             int llContainerBGColor, tvTxtColor, tvHighlightColor, tvFeatureColor, tvDescColor, btnTextColor, btnBGColor;
-            String btnStr=fragmentActivity.getString(R.string.str_start_with_ideal);
+            String btnStr = fragmentActivity.getString(R.string.str_start_with_ideal);
             switch ((position) % 4) {
                 case 0:
                     llContainerBGColor = R.color.bt_white;
@@ -71,7 +72,12 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     tvDescColor = R.color.colorBlack_85;
                     btnTextColor = R.color.colorWhite;
                     btnBGColor = R.color.bt_theme_blue;
-                    btnStr=fragmentActivity.getString(R.string.str_start_with_limited);
+                    if (isCancelPos == (position) % 4) {
+                        btnStr = fragmentActivity.getString(R.string.str_start_with_current);
+                    } else {
+                        btnStr = fragmentActivity.getString(R.string.str_start_with_limited);
+                    }
+
                     break;
                 case 1:
                     llContainerBGColor = R.color.bt_theme_orange;
@@ -81,7 +87,15 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     tvDescColor = R.color.colorWhite_85;
                     btnTextColor = R.color.bt_theme_orange;
                     btnBGColor = R.color.colorWhite;
-                    btnStr=fragmentActivity.getString(R.string.str_start_with_basic);
+                    if (isCancelPos == (position) % 4) {
+                        if (SubscriptionPlanFragment.isContinuePlan) {
+                            btnStr = fragmentActivity.getString(R.string.str_start_with_current);
+                        } else {
+                            btnStr = fragmentActivity.getString(R.string.str_start_with_basic);
+                        }
+                    } else {
+                        btnStr = fragmentActivity.getString(R.string.str_start_with_basic);
+                    }
                     break;
                 case 2:
                     llContainerBGColor = R.color.bt_theme_blue;
@@ -91,7 +105,15 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     tvDescColor = R.color.colorWhite_85;
                     btnTextColor = R.color.bt_theme_blue;
                     btnBGColor = R.color.colorWhite;
-                    btnStr=fragmentActivity.getString(R.string.str_start_with_better);
+                    if (isCancelPos == (position) % 4) {
+                        if (SubscriptionPlanFragment.isContinuePlan) {
+                            btnStr = fragmentActivity.getString(R.string.str_start_with_current);
+                        } else {
+                            btnStr = fragmentActivity.getString(R.string.str_start_with_better);
+                        }
+                    } else {
+                        btnStr = fragmentActivity.getString(R.string.str_start_with_better);
+                    }
                     break;
                 case 3:
                 default:
@@ -102,15 +124,47 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
                     tvDescColor = R.color.colorWhite_85;
                     btnTextColor = R.color.bt_theme_green;
                     btnBGColor = R.color.colorWhite;
-                    btnStr=fragmentActivity.getString(R.string.str_start_with_ideal);
+
+                    if (isCancelPos == (position) % 4) {
+                        if (SubscriptionPlanFragment.isContinuePlan) {
+                            btnStr = fragmentActivity.getString(R.string.str_start_with_current);
+                        } else {
+                            btnStr = fragmentActivity.getString(R.string.str_start_with_ideal);
+                        }
+                    } else {
+                        btnStr = fragmentActivity.getString(R.string.str_start_with_ideal);
+                    }
                     break;
             }
-        if (currentPlan.isPurchased() || currentPlan.isCanReshedule()) {
-            holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_50)));
-        } else {
-            holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
-        }
-        holder.btnStartWith.setText(btnStr);
+            if (!SubscriptionPlanFragment.isChangePlan) {
+                if (!SubscriptionPlanFragment.isContinuePlan) {
+                    if (!SubscriptionPlanFragment.isResubscriptPlan) {
+                        if (currentPlan.isPurchased() || currentPlan.isCanReshedule()) {
+                            holder.llContainer.setForeground(new ColorDrawable(ContextCompat.getColor(fragmentActivity, R.color.colorWhite_50)));
+                        } else {
+                            holder.llContainer.setForeground(new ColorDrawable(Color.TRANSPARENT));
+                        }
+                    }
+                }
+            }
+
+            String[] name = currentPlan.getName().split("Practice");
+
+            if (SubscriptionPlanFragment.isChangePlan) {
+                if (SubscriptionPlanFragment.isResubscriptPlan) {
+                    btnStr = name[0].isEmpty() ? getTest(position) : "Start with " + name[0];
+                } else {
+                    if (currentPlan.isPurchased() || currentPlan.isCancelled()) {
+                        btnStr = "Continue with current plan";
+                    } else {
+                        btnStr = name[0].isEmpty() ? getTest(position) : "Start with " + name[0];
+                    }
+                }
+            } else {
+                btnStr = name[0].isEmpty() ? getTest(position) : "Start with " + name[0];
+            }
+
+            holder.btnStartWith.setText(btnStr);
 
             holder.llContainer.setBackgroundTintList(ContextCompat.getColorStateList(fragmentActivity, llContainerBGColor));
 
@@ -132,39 +186,55 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             holder.tvRpmDesc.setText(Html.fromHtml(rpmDesc));
             holder.tvRpmDesc.setTextColor(ContextCompat.getColor(fragmentActivity, tvTxtColor));
 
-            if (position == 0) {
-                holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
-                setMargins(holder.cvRoot, 0, 15, 0, 0);
-            } else if (position == (adapterList.size() - 1)) {
-                setMargins(holder.cvRoot, 0, 15, 0, 75);
-            } else {
-                setMargins(holder.cvRoot, 0, 15, 0, 0);
-            }
+//            if (position == 0) {
+            holder.tvAdditionalFeature.setCompoundDrawables(null, null, null, null);
+            setMargins(holder.cvRoot, 0, 15, 0, 0);
+//            } else if (position == (adapterList.size() - 1)) {
+//                setMargins(holder.cvRoot, 0, 15, 0, 75);
+//            } else {
+//                setMargins(holder.cvRoot, 0, 15, 0, 0);
+//            }
             holder.btnStartWith.setBackgroundColor(ContextCompat.getColor(fragmentActivity, btnBGColor));
             holder.btnStartWith.setTextColor(ContextCompat.getColor(fragmentActivity, btnTextColor));
             holder.clRoot.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             holder.clRoot.setVisibility(View.GONE);
         }
         holder.tvAdditionalFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position==0){
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.coruscate.work/doctors/#Features"));
-                    fragmentActivity.startActivity(browserIntent);
-                }
+//                if (position == 0) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.coruscate.work/doctors/#Features"));
+                fragmentActivity.startActivity(browserIntent);
+//                }
             }
         });
         holder.btnStartWith.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Constants.activatedPlan != position) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(ArgumentKeys.PlanID, currentPlan.getPlan_id());
-                    bundle.putString(ArgumentKeys.BillingCycle, currentPlan.getBilling_cycle());
-                    adapterListener.onEventTrigger(bundle);
-                }else{
-                    Toast.makeText(fragmentActivity, fragmentActivity.getString(R.string.str_plan_already_activate), Toast.LENGTH_SHORT).show();
+                if (!currentPlan.isPurchased()) {
+                    if (SubscriptionPlanFragment.isContinuePlan || SubscriptionPlanFragment.isResubscriptPlan) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ArgumentKeys.PlanID, currentPlan.getPlan_id());
+                        bundle.putString(ArgumentKeys.BillingCycle, currentPlan.getBilling_cycle());
+                        adapterListener.onEventTrigger(bundle);
+                    } else {
+                        if (Constants.activatedPlan != position) {
+
+                            Bundle bundle = new Bundle();
+                            bundle.putString(ArgumentKeys.PlanID, currentPlan.getPlan_id());
+                            bundle.putString(ArgumentKeys.BillingCycle, currentPlan.getBilling_cycle());
+                            adapterListener.onEventTrigger(bundle);
+                        } else {
+                            fragmentActivity.onBackPressed();
+                            Toast.makeText(fragmentActivity, fragmentActivity.getString(R.string.str_plan_already_activate), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    if (Constants.activatedPlan == position) {
+                        fragmentActivity.onBackPressed();
+                        fragmentActivity.onBackPressed();
+                    }
                 }
             }
         });
@@ -175,8 +245,30 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         return adapterList.size();
     }
 
+    public String getTest(int position) {
+        switch (position % 4) {
+            case 0:
+                return "Start with Limited";
+            case 1:
+                return "Start with Basic";
+            case 2:
+                return "Start with Better";
+            default:
+                return "Start with Ideal";
+        }
+    }
+
     public void setAdapterData(List<PlanInfoBean.Result> adapterList) {
         this.adapterList = adapterList;
+
+        if (SubscriptionPlanFragment.isContinuePlan) {
+            for (int i = 0; i < adapterList.size(); i++) {
+                if (adapterList.get(i).isCancelled()) {
+                    isCancelPos = i;
+                }
+            }
+        }
+
     }
 
     public class OnSubscriptionViewHolder extends RecyclerView.ViewHolder {
@@ -201,16 +293,16 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
         }
     }
 
-    private void setMargins (View view, int left, int top, int right, int bottom) {
+    private void setMargins(View view, int left, int top, int right, int bottom) {
         if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
 
             final float scale = fragmentActivity.getResources().getDisplayMetrics().density;
             // convert the DP into pixel
-            int l =  (int)(left * scale + 0.5f);
-            int r =  (int)(right * scale + 0.5f);
-            int t =  (int)(top * scale + 0.5f);
-            int b =  (int)(bottom * scale + 0.5f);
+            int l = (int) (left * scale + 0.5f);
+            int r = (int) (right * scale + 0.5f);
+            int t = (int) (top * scale + 0.5f);
+            int b = (int) (bottom * scale + 0.5f);
 
             p.setMargins(l, t, r, b);
             view.requestLayout();

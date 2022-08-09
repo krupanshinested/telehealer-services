@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="16dp"
@@ -13,18 +13,18 @@
 
         <LinearLayout
             android:id="@+id/patient_detail_view"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="@dimen/max_width">
+            android:paddingEnd="16dp">
+<!--            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintWidth_max="@dimen/max_width">-->
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/medical_history_btn"
@@ -185,17 +185,18 @@
 
         <LinearLayout
             android:id="@+id/doctor_detail_view"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="@dimen/max_width">
+            android:layout_below="@id/patient_detail_view"
+            android:paddingEnd="16dp">
+<!--            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintWidth_max="@dimen/max_width">-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/doctor_detail_cl"
@@ -281,7 +282,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/registration_number_label"
@@ -401,7 +402,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_default"
                 android:elevation="10dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:cardCornerRadius="6dp"
                 app:cardUseCompatPadding="true">
 
@@ -428,14 +429,14 @@
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_vital_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/cl_history"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_below="@id/doctor_detail_view"
             android:layout_marginBottom="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp">
@@ -473,7 +474,7 @@
                 android:gravity="center|left"
                 android:textColor="@color/app_gradient_start"
                 android:text="@string/edit"
-                android:textSize="@dimen/title_size"
+                android:textSize="@dimen/text_sub_title_size"
                 app:layout_constraintTop_toBottomOf="@+id/tv_vital"
                 app:layout_constraintEnd_toEndOf="parent"/>
             <androidx.recyclerview.widget.RecyclerView
@@ -487,14 +488,14 @@
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/cl_permission"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_below="@id/cl_vital_history"
             android:layout_marginBottom="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp">
@@ -506,7 +507,7 @@
                 android:layout_margin="@dimen/margin_default"
                 android:gravity="center|left"
                 android:textColor="@color/app_gradient_start"
-                android:text="@string/visit_questionary"
+                android:text="@string/history"
                 android:textAllCaps="true"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -522,17 +523,16 @@
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_permission"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/disconnect_tv"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_below="@id/cl_history">
             <TextView
                 android:id="@+id/permission_text"
                 android:layout_width="match_parent"
@@ -563,16 +563,13 @@
 
         <TextView
             android:id="@+id/disconnect_tv"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/disconnect"
             android:textAllCaps="true"
             android:textColor="@android:color/holo_red_dark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_max="@dimen/max_width" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_below="@id/cl_permission" />
+    </RelativeLayout>
 
 </androidx.core.widget.NestedScrollView>

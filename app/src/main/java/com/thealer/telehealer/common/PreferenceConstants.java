@@ -7,6 +7,9 @@ public class PreferenceConstants {
 
     public static final String USER_GUID = "user_guid";
     public static final String VERSION = "version";
+    public static final String TRIALEXPIRED = "isTrialExpired";
+    public static final String PLANACTIVE = "isPlanActive";
+    public static final String CANCELLEDPLAN = "isCancelledPlan";
     public static final String USER_ACTIVATED = "user_activated";
     public static final String USER_FIRST_NAME = "user_first_name";
     public static final String USER_LAST_NAME = "user_last_name";

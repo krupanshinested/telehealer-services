@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,6 +37,9 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.feedback.FeedbackApiViewModel;
+import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
+import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
@@ -79,7 +83,6 @@ import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
 import com.thealer.telehealer.views.inviteUser.SendInvitationFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -125,11 +128,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isPropserShown = false;
     private boolean isSigningOutInProcess = false;
     private static boolean onAuthenticated = false;
+    private static boolean creditcardstatus = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private SignoutApiViewModel signoutApiViewModel;
+    private FeedbackApiViewModel feedbackApiViewModel;
+    public boolean cardScreen = true;
 
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
@@ -140,6 +146,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     };
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private AddConnectionApiViewModel addConnectionApiViewModel;
+    private WhoAmIApiResponseModel whoAmIApiResponseModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,11 +202,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
-                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                    LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                    }
                 }
             }
         });
@@ -208,9 +217,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                    whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()){
+                        showDoctorPatientList();
+                        creditcardstatus = whoAmIApiResponseModel.getPayment_account_info().isCCCaptured();
+                    }
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
+                     if (cardScreen) {
+                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                     }
+                    }
                 }
             }
         });
@@ -233,13 +249,21 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showToast(errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        showToast(errorModel.getMessage());
+                    }
                 }
                 isSigningOutInProcess = false;
             }
         });
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cardScreen = false;
     }
 
     private void checkNotification() {
@@ -384,9 +408,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 case R.id.menu_schedules:
                     showSchedulesFragment(scheduleTypeCalendar);
                     break;
-                case R.id.menu_invite:
-                    showSendInvitation();
-                    break;
+//                case R.id.menu_invite:
+//                    showSendInvitation();
+//                    break;
             }
         }
 
@@ -575,6 +599,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+        if (whoAmIApiResponseModel != null){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("CC_Capture", whoAmIApiResponseModel.getPayment_account_info().isCCCaptured());
+            doctorPatientListingFragment.setArguments(bundle);
+        }
         setFragment(doctorPatientListingFragment);
 
         /*TransactionListFragment transactionListFragment = new TransactionListFragment();
@@ -750,10 +779,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_monitoring:
                 showMonitoringView(null);
                 break;
-            case R.id.menu_invite:
-                selecteMenuItem = R.id.menu_invite;
-                showSendInvitation();
-                break;
+//            case R.id.menu_invite:
+//                selecteMenuItem = R.id.menu_invite;
+//                showSendInvitation();
+//                break;
         }
         toggleDrawer();
         return true;
@@ -934,11 +963,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     @Override
     protected void onResume() {
         super.onResume();
+        Constants.ErrorFlag = false;
         checkNotification();
         application.addShortCuts();
-
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
+            whoAmIApiViewModel.assignWhoAmI();
             showHelpScreen();
         }
     }

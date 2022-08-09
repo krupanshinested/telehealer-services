@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.views.common.OnItemClickListener;
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
+import com.thealer.telehealer.views.settings.RemotePatientMonitoringFragment;
 
 import java.util.List;
 
@@ -32,7 +34,7 @@ import static com.thealer.telehealer.views.settings.RemotePatientMonitoringFragm
  * Created Date: 28,June,2021
  **/
 public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private FragmentActivity activity;
+    private RemotePatientMonitoringFragment activity;
     private List<VitalThresholdModel.Range> thresholdLimitList;
     private boolean isEditable = false;
     private String vitalType = "";
@@ -40,7 +42,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private OnItemClickListener onItemClickListener;
     int parentPos;
 
-    public ThresholdLimitAdapter(FragmentActivity activity, List<VitalThresholdModel.Range> thresholdLimitList, int parentPos, boolean isEditable, String vitalType, OnListItemSelectInterface onListItemSelectInterface, OnItemClickListener onItemClickListener) {
+    public ThresholdLimitAdapter(RemotePatientMonitoringFragment activity, List<VitalThresholdModel.Range> thresholdLimitList, int parentPos, boolean isEditable, String vitalType, OnListItemSelectInterface onListItemSelectInterface, OnItemClickListener onItemClickListener) {
         this.activity = activity;
         this.thresholdLimitList = thresholdLimitList;
         this.isEditable = isEditable;
@@ -53,7 +55,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.adapter_threshold_raw_item, parent, false);
+        View view = LayoutInflater.from(activity.getActivity()).inflate(R.layout.adapter_threshold_raw_item, parent, false);
         return new ItemHolder(view);
     }
 
@@ -211,6 +213,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         }
                     }
                     handlePosition(vitalErrorThreshold);
+
                 }
             }
         });
@@ -325,9 +328,27 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
             }
         });
+        itemHolder.mainLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                itemHolder.etLower.clearFocus();
+                itemHolder.etLowerLeft.clearFocus();
+                itemHolder.etLowerRight.clearFocus();
+                itemHolder.etUpper.clearFocus();
+                itemHolder.etMessage.clearFocus();
+                itemHolder.etUpperRight.clearFocus();
+                itemHolder.etUpperLeft.clearFocus();
+
+                Utils.hideKeyboard(activity.getActivity());
+
+                return false;
+            }
+        });
     }
 
     private void handlePosition(VitalErrorThreshold vitalErrorThreshold) {
+        Utils.hideKeyboard(activity.getActivity());
         if (errorPos.size() == 0 && (vitalErrorThreshold.errorEtUpper || vitalErrorThreshold.errorEtUpperRight && vitalErrorThreshold.errorEtUpperLeft && vitalErrorThreshold.errorEtUpper) ) {
             errorPos.add(vitalErrorThreshold);
         } else {
@@ -346,10 +367,11 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
             }
         }
+
     }
 
     private void displayToast(String msg) {
-        Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity.getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
     private String getUnit(String vitalType) {
@@ -393,6 +415,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private EditText etLower, etUpper, etMessage, etLowerLeft, etLowerRight, etUpperLeft, etUpperRight;
         private TextView tvRemove, tvAdd;
         private Switch switchAbnormal;
+        private ConstraintLayout mainLayout;
 
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
@@ -402,6 +425,7 @@ public class ThresholdLimitAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             msg = (TextView) itemView.findViewById(R.id.msg);
             clFix = (ConstraintLayout) itemView.findViewById(R.id.cl_fix);
             clEditable = (ConstraintLayout) itemView.findViewById(R.id.cl_editable);
+            mainLayout = (ConstraintLayout) itemView.findViewById(R.id.mainLayout);
 
             etLower = (EditText) itemView.findViewById(R.id.et_lower);
             etUpper = (EditText) itemView.findViewById(R.id.et_upper);

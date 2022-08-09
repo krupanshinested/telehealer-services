@@ -390,6 +390,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             doctorName = doctorModel.getDoctorDisplayName();
         }
 
+        if (doctorGuid == null||doctorGuid.isEmpty()){
+            doctorGuid = UserDetailPreferenceManager.getUser_guid();
+        }
+
         CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
                 userGuid, userModel, doctorGuid, doctorName, null, callType,true,null);
         Intent intent = new Intent(this, CallPlacingActivity.class);

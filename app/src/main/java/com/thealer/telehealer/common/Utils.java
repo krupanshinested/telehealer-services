@@ -53,6 +53,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
@@ -702,6 +703,20 @@ public class Utils {
         return dialog;
     }
 
+    public static Dialog showAlertDialogWithFinish(Context context, String message,
+                                                   @Nullable String positiveTitle,
+                                                   @Nullable DialogInterface.OnClickListener positiveListener) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context, R.style.custom_alert_dialog_style);
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+        if (positiveTitle != null) {
+            alertDialog.setPositiveButton(positiveTitle, positiveListener);
+        }
+        AlertDialog dialog = alertDialog.create();
+        dialog.show();
+        return dialog;
+    }
+
     public static Dialog showAlertDialogWithClose(Context context, String title, String message,
                                                   @Nullable String leftTitle,
                                                   @Nullable String rightTitle,
@@ -778,6 +793,25 @@ public class Utils {
         } else {
             editText.setTag(editText.getKeyListener());
             editText.setKeyListener(null);
+        }
+    }
+
+    public static void displayAlertMessage(Context context) {
+        try {
+            showAlertDialog(context, context.getString(R.string.app_name), context.getString(R.string.enter_device_id),
+                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1911,13 +1945,16 @@ public class Utils {
             mailto = "mailto:" + context.getString(R.string.mail_to) +
                     "?cc=" +
                     "&subject=" +
-                    "&body=" + Uri.encode(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
-        } catch (PackageManager.NameNotFoundException e) {
+                    "&body=" + Html.fromHtml(String.format("%s <br/><br />State your Issue : <br/><br /><br /><br />Phone Number : %s <br/><br /><br/><br />App Name : %s<br />App Version : " + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "<br />Device Type : " + Build.MODEL + "<br />OS Details : " + Build.VERSION.RELEASE + "<br />Region : " + Locale.getDefault().getLanguage() + ", " + TimeZone.getDefault().getID() + "<br /><br />Cheers! ", noteMessage, phoneNumber, appName));
+            intent.setData(Uri.parse(mailto));
+            context.startActivity(intent);
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        intent.setData(Uri.parse(mailto));
+            Toast.makeText(context, "No app to send email. Please install at least one",
+                    Toast.LENGTH_SHORT).show();
 
-        context.startActivity(intent);
+        }
+
 
     }
 

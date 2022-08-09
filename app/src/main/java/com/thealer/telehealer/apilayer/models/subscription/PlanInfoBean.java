@@ -41,6 +41,8 @@ public class PlanInfoBean extends BaseApiResponseModel {
         private String rpm_count;
         private String created_at;
         private String updated_at;
+        private String cancelled_at;
+        private String next_plan_id;
         private boolean isPurchased=false;
         private boolean canReshedule=false;
         private boolean isCancelled=false;
@@ -158,12 +160,28 @@ public class PlanInfoBean extends BaseApiResponseModel {
             this.created_at = created_at;
         }
 
+        public String getnext_plan_id() {
+            return next_plan_id;
+        }
+
+        public void setnext_plan_id(String next_plan_id) {
+            this.next_plan_id = next_plan_id;
+        }
+
         public String getUpdated_at() {
             return updated_at;
         }
 
         public void setUpdated_at(String updated_at) {
             this.updated_at = updated_at;
+        }
+
+        public String getCancelled_at() {
+            return cancelled_at;
+        }
+
+        public void setCancelled_at(String cancelled_at) {
+            this.cancelled_at = cancelled_at;
         }
     }
 }

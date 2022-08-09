@@ -1,6 +1,9 @@
 package com.thealer.telehealer.common;
 
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
+import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
+
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfo;
 import com.thealer.telehealer.apilayer.models.subscription.PlanInfoBean;
 
@@ -28,6 +31,8 @@ public class Constants {
     public static boolean isVitalsViewEnable = true;
     public static boolean isInviteEnable = true;
 
+    public static boolean ErrorCodeFlag = false;
+
     public static final String HEADER_AUTH_TOKEN = "X-Access-Token";
 
     public static final String BUILD_PATIENT = "patient";
@@ -39,6 +44,8 @@ public class Constants {
     public static final int SHOW_NOTHING = 0;
     public static final int SHOW_PROGRESS = 1;
     public static final int SHOW_SCREEN = 2;
+    public static NewDeviceSupportActivity NEW_DEVICE_SUPPORT_ACTIVITY;
+    public static MyDeviceListActivity myDeviceListActivity;
 
     public static final int PAGINATION_SIZE = 20;
 
@@ -199,7 +206,7 @@ public class Constants {
     public static boolean isRedirectProfileSetting=false;
     public  static  boolean DisplayQuickLogin = false;
     public static final long IdealTime=30*60*1000;
-    public static long ExpireTime=24*60*1000;
+    public static long ExpireTime=24*60*60*1000;
     public static boolean isFromBackground=true;
     public static final int TotalCount=3;
     public static String ChildHood_Asthma="Childhood Asthma Control Test";
@@ -208,6 +215,7 @@ public class Constants {
     public static boolean isFromSubscriptionPlan=false;
 
     public static CommonUserApiResponseModel finalDoctor;
+    public static boolean ErrorFlag = false;
 
     public interface MasterCodes {
         String TYPE_OF_CHARGE = "TYPE_OF_CHARGE";

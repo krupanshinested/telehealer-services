@@ -39,6 +39,7 @@ import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionRequestModel;
 import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiViewModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
@@ -133,7 +134,11 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
-
+                try {
+                    Log.e("neem", "onChanged: " + baseApiResponseModel);
+                }catch (Exception e){
+                    Log.e("neem", "Success: ");
+                }
             }
         });
 
@@ -255,7 +260,6 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                         clPermission.setVisibility(View.GONE);
                         clVitalHistory.setVisibility(View.GONE);
                         clHistory.setVisibility(View.GONE);
-
 
                         if (userDetail.getUser_detail() != null &&
                                 userDetail.getUser_detail().getData() != null) {
@@ -462,7 +466,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             tvVitalEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showRemotePatientMonitoring();
+                    showRemotePatientMonitoring(userDetail.getUser_guid());
                 }
             });
 
@@ -507,10 +511,10 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             }
         }
     }
-    private void showRemotePatientMonitoring() {
+    private void showRemotePatientMonitoring(String user_guid) {
         RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(ArgumentKeys.USER_GUID,userDetail.getUser_guid());
+        bundle.putString(ArgumentKeys.USER_GUID, user_guid);
         remotePatientMonitoringFragment.setArguments(bundle);
         showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
     }
@@ -527,8 +531,10 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             if (userDetail.getVitals() != null && userDetail.getVitals().size() > 0) {
                 vitalHistoryAdapter.setDataAdapter(userDetail.getVitals());
                 clVitalHistory.setVisibility(View.VISIBLE);
+                rvVitalHistory.setVisibility(View.VISIBLE);
             } else {
                 clVitalHistory.setVisibility(View.GONE);
+                rvVitalHistory.setVisibility(View.GONE);
             }
 
             if(userDetail.getHistory() !=null && userDetail.getHistory().size()>0){
@@ -539,6 +545,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             }
 
         }else {
+            rvVitalHistory.setVisibility(View.VISIBLE);
             clVitalHistory.setVisibility(View.GONE);
             clHistory.setVisibility(View.GONE);
         }

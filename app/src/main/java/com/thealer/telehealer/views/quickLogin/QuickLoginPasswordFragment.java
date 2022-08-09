@@ -70,15 +70,17 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if(passCount<2){
-                        passCount++;
-                        String attemptRemains=(3-passCount)+"";
-                        showErrorDialog(getString(R.string.wrong_password,attemptRemains));
-                        passwordEt.setText("");
-                    }else {
-                        passCount=0;
-                        sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
-                        getActivity().finish();
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        if (passCount < 2) {
+                            passCount++;
+                            String attemptRemains = (3 - passCount) + "";
+                            showErrorDialog(getString(R.string.wrong_password, attemptRemains));
+                            passwordEt.setText("");
+                        } else {
+                            passCount = 0;
+                            sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
+                            getActivity().finish();
+                        }
                     }
                 }
             }
@@ -161,10 +163,12 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.close_iv:
+                Constants.ErrorFlag = false;
                 getActivity().finish();
                 break;
             case R.id.validate_btn:
                 if (!passwordEt.getText().toString().isEmpty()) {
+                    Constants.ErrorFlag = false;
                     signinApiViewModel.loginUser(UserDetailPreferenceManager.getEmail(), passwordEt.getText().toString());
                 } else {
                     passwordTil.setError(getString(R.string.password_empty_error));

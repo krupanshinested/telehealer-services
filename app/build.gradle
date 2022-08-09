@@ -13,11 +13,11 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 44
-        versionName "2.9.14"
+        versionCode 49
+        versionName "2.9.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
-//        buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
+//       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
+        buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
     }
     buildTypes {
         release {
@@ -45,8 +45,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 30
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 44
-            versionName "2.9.14"
+            versionCode 49
+            versionName "2.9.20"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
@@ -183,7 +183,6 @@ dependencies {
     implementation('com.google.firebase:firebase-perf:19.0.8') {
         exclude group: 'com.google.protobuf'
     }
-
     //pubnub
     implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.29.2'
 
@@ -197,7 +196,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.9.3'
 
     //Open Tok
-    implementation 'com.opentok.android:opentok-android-sdk:2.17.1'
+    implementation 'com.opentok.android:opentok-android-sdk:2.19.0'
 
     //Ripple effect
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
@@ -252,4 +251,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.9'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+
 }

@@ -26,6 +26,7 @@ import com.thealer.telehealer.apilayer.models.orders.lab.IcdCodeApiViewModel;
 import com.thealer.telehealer.apilayer.models.orders.lab.OrdersLabApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.PdfViewerFragment;
@@ -39,7 +40,9 @@ import com.thealer.telehealer.views.home.orders.SendFaxByNumberFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import config.AppConfig;
 
@@ -69,6 +72,7 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     private OrdersCustomView faxNumberOcv;
     private String doctorGuid, userGuid;
     private HashMap<String, CommonUserApiResponseModel> userDetailMap;
+    private CommonUserApiResponseModel patientDetail,doctorDetail;
 
     @Override
     public void onAttach(Context context) {
@@ -200,6 +204,7 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     }
 
     private void setUserDetails() {
+
         if (!userDetailMap.isEmpty()) {
             labsResponseBean.setUserDetailMap(userDetailMap);
         }
@@ -210,8 +215,38 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
     public void onDetailReceived(@Nullable OrdersIdListApiResponseModel idListApiResponseModel) {
         if (idListApiResponseModel != null && idListApiResponseModel.getLabs() != null && !idListApiResponseModel.getLabs().isEmpty()) {
             labsResponseBean = idListApiResponseModel.getLabs().get(0);
-            setUserDetails();
-            setData(labsResponseBean);
+            if(labsResponseBean!=null) {
+                Set<String> guids = new HashSet<>();
+                try {
+                    if (labsResponseBean.getDoctor().getUser_guid() != null) {
+                        doctorGuid=labsResponseBean.getDoctor().getUser_guid();
+                        guids.add(doctorGuid);
+                    }if (labsResponseBean.getPatient().getUser_guid() != null) {
+                        userGuid=labsResponseBean.getPatient().getUser_guid();
+                        guids.add(userGuid);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                GetUserDetails
+                        .getInstance(getActivity())
+                        .getDetails(guids)
+                        .getHashMapMutableLiveData().observe(this,
+                        new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+                            @Override
+                            public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> stringCommonUserApiResponseModelHashMap) {
+                                if (stringCommonUserApiResponseModelHashMap != null) {
+                                     doctorDetail = stringCommonUserApiResponseModelHashMap.get(doctorGuid);
+                                     patientDetail = stringCommonUserApiResponseModelHashMap.get(userGuid);
+                                    userDetailMap.put(doctorGuid,doctorDetail);
+                                    userDetailMap.put(userGuid,patientDetail);
+                                    setUserDetails();
+                                    setData(labsResponseBean);
+                                }
+                            }
+                        });
+
+            }
         }
     }
 
@@ -226,6 +261,7 @@ public class LabsDetailViewFragment extends OrdersBaseFragment implements View.O
                 doctorOcv.setSubtitleTv(labsResponseBean.getUserDetailMap().get(labsResponseBean.getDoctor().getUser_guid()).getDoctorSpecialist());
             }catch (Exception e){
                 e.printStackTrace();
+
             }
         }
 

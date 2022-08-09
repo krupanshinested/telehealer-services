@@ -105,6 +105,7 @@ public class QuickLoginPinFragment extends BaseFragment {
                     if (isRefreshToken) {
                         getActivity().startActivity(new Intent(getActivity(), SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     }
+                    Constants.ErrorFlag = false;
                     getActivity().finish();
                 }
             }

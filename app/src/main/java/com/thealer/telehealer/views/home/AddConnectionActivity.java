@@ -146,11 +146,13 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                    LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
+                    }
                 }
             }
         });
@@ -377,7 +379,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             });
         } else if (UserType.isUserDoctor()) {
             getMenuInflater().inflate(R.menu.menu_connection, menu);
-            MenuItem filterItem = menu.findItem(R.id.menu_add_support_staff);
+//            MenuItem filterItem = menu.findItem(R.id.menu_add_support_staff);
             MenuItem inviteMenuItem = menu.findItem(R.id.menu_overflow);
 
             inviteMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -390,16 +392,16 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 }
             });
 
-            View view = filterItem.getActionView();
-            LinearLayout llStaff = view.findViewById(R.id.btnAddPatient);
-            llStaff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle inviteBundle=new Bundle();
-                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
-                    Utils.showInviteAlert(AddConnectionActivity.this, inviteBundle);
-                }
-            });
+//            View view = filterItem.getActionView();
+//            LinearLayout llStaff = view.findViewById(R.id.btnAddPatient);
+//            llStaff.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Bundle inviteBundle=new Bundle();
+//                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
+//                    Utils.showInviteAlert(AddConnectionActivity.this, inviteBundle);
+//                }
+//            });
         }
         return true;
     }

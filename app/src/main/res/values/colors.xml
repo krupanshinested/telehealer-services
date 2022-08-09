@@ -52,4 +52,5 @@
     <color name="bt_theme_blue">#3B9EFF</color>
     <color name="bt_theme_white">#FFFFFF</color>
 
+    <color name="device_description_color">#9B9B9B</color>
 </resources>

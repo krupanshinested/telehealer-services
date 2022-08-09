@@ -24,6 +24,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.settings.Interface.SettingClickListener;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
@@ -45,7 +46,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
 
     private ProfileCellView profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
-            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription;
+            feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription, newDeviceSetup;
 
     private View signOut;
 
@@ -116,9 +117,9 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
         educational_video = baseView.findViewById(R.id.educational_video);
-        versionTv
-                = (TextView) baseView.findViewById(R.id.version_tv);
+        versionTv = (TextView) baseView.findViewById(R.id.version_tv);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
+        newDeviceSetup = (ProfileCellView) baseView.findViewById(R.id.new_device_setup);
 
         lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
 
@@ -135,7 +136,10 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
+        if (UserType.isUserPatient())
+            newDeviceSetup.setVisibility(View.VISIBLE);
+        else
+            newDeviceSetup.setVisibility(View.GONE);
         profileUpdate = new ViewModelProvider(getActivity()).get(ProfileUpdate.class);
 
         onViewChangeInterface.attachObserver(profileUpdate);
@@ -170,6 +174,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         subscription.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
+        newDeviceSetup.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());

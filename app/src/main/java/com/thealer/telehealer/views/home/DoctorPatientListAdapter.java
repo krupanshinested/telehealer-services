@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -92,13 +94,22 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
+                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
                     if (doctorModel != null) {
-                        viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
+                        if (bundle.getBoolean("CC_Capture")){
+                            viewHolder.userListIv.getAddChargeBtn().setVisibility(View.VISIBLE);
+                        }else {
+                            viewHolder.userListIv.getAddChargeBtn().setVisibility(View.GONE);
+                        }
                         ManageSAPermission(viewHolder,userModel);
                     }
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+//                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+//                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+//                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+//                            );
                             if(UserType.isUserAssistant() &&
                             doctorModel.getPermissions()!= null && doctorModel.getPermissions().size()>0){
                                 boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHARGES_CODE);
@@ -268,11 +279,20 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     public class AssociationAdapterListModel {
         private int type;
         private String title;
+        private boolean selectedFlag;
         private CommonUserApiResponseModel commonUserApiResponseModel;
 
         public AssociationAdapterListModel(int type, String title) {
             this.type = type;
             this.title = title;
+        }
+
+        public boolean isSelectedFlag() {
+            return selectedFlag;
+        }
+
+        public void setSelectedFlag(boolean selectedFlag) {
+            this.selectedFlag = selectedFlag;
         }
 
         public AssociationAdapterListModel(int type, CommonUserApiResponseModel commonUserApiResponseModel) {

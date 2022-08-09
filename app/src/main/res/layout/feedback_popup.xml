@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#08000000"
+    android:orientation="vertical"
+    android:padding="@dimen/_5sdp">
+
+    <RelativeLayout
+        android:id="@+id/layout_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/popup_corner"
+        android:paddingStart="@dimen/_15sdp"
+        android:paddingTop="@dimen/_15sdp"
+        android:paddingEnd="@dimen/_15sdp"
+        android:paddingBottom="@dimen/_15sdp">
+
+        <LinearLayout
+            android:id="@+id/ll_questionone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_questionone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/sub_title_size" />
+
+            <RadioGroup
+                android:id="@+id/rb_questionone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/yes"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:buttonTint="@color/app_gradient_start"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/sub_title_size"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:id="@+id/no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/app_gradient_start"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/sub_title_size"
+                    android:checked="false" />
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_questionption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_questionone"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/lv_question"
+                android:scrollbars="none"
+                android:overScrollMode="never"
+                android:layout_width="match_parent"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:focusedByDefault="false"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/commentbox"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/roundborder"
+                android:gravity="start"
+                android:hint="Share your experience and help us to improve call performance."
+                android:padding="@dimen/_4sdp"
+                android:textSize="@dimen/sub_title_size"
+                android:textColor="@color/colorBlack"
+                android:inputType="textMultiLine"
+                android:singleLine="false"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:textColorHint="@color/colorGrey" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_questionption"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:background="@drawable/submit_btn_background"
+            android:backgroundTint="@color/app_gradient_start"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:paddingHorizontal="@dimen/_20sdp"
+            android:paddingVertical="@dimen/_10sdp"
+            android:text="@string/submit"
+            android:textColor="@color/bt_white"
+            tools:text="@string/submit" />
+    </RelativeLayout>
+</RelativeLayout>

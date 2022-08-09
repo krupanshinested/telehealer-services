@@ -36,16 +36,18 @@ import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 public class SubscriptionActivity extends BaseActivity implements
         ShowSubFragmentInterface,
         OnCloseActionInterface,
-        AttachObserverInterface{
+        AttachObserverInterface {
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private TextView txtTitle;
+    public boolean isfirsttym = false;
+    SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscription);
-        txtTitle=findViewById(R.id.txt_title);
+        txtTitle = findViewById(R.id.txt_title);
         initObserver();
 
 
@@ -66,15 +68,21 @@ public class SubscriptionActivity extends BaseActivity implements
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())){
-                        if(whoAmIApiResponseModel.isFirst_time_subscription_purchased()){
-                            if(whoAmIApiResponseModel.getPayment_account_info() != null && whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()){
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
+                        if (whoAmIApiResponseModel.isFirst_time_subscription_purchased()) {
+                            if (whoAmIApiResponseModel.getPayment_account_info() != null && whoAmIApiResponseModel.getPayment_account_info().isDefaultCardValid()) {
                                 startActivity(new Intent(SubscriptionActivity.this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                                 finish();
-                            }else {
-                                startActivity(new Intent(SubscriptionActivity.this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true).putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false));
+                            } else {
+                                if (isfirsttym) {
+                                    startActivity(new Intent(SubscriptionActivity.this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true).putExtra(ArgumentKeys.IS_CLOSE_NEEDED, true).putExtra(ArgumentKeys.IS_CLOSE_NEEDED, false));
+                                    isfirsttym = false;
+                                }else {
+                                    startActivity(new Intent(SubscriptionActivity.this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                                }
                             }
-                        }else {
+                        } else {
+                            isfirsttym = true;
                             loadSubscriptionPlan();
                         }
                     }
@@ -87,11 +95,12 @@ public class SubscriptionActivity extends BaseActivity implements
     }
 
     private void loadSubscriptionPlan() {
-        SubscriptionPlanFragment subscriptionPlanFragment = new SubscriptionPlanFragment();
         Bundle bundle = new Bundle();
-        bundle.putBoolean(ArgumentKeys.IS_HIDE_BACK,true);
+        bundle.putBoolean(ArgumentKeys.IS_HIDE_BACK, true);
         subscriptionPlanFragment.setArguments(bundle);
-        showSubFragment(subscriptionPlanFragment);
+        if (!subscriptionPlanFragment.isVisible()) {
+            showSubFragment(subscriptionPlanFragment);
+        }
 
     }
 
@@ -112,5 +121,13 @@ public class SubscriptionActivity extends BaseActivity implements
     public void onClose(boolean isRefreshRequired) {
         onBackPressed();
         whoAmIApiViewModel.assignWhoAmI();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (SubscriptionPlanFragment.isHideBack){
+        }else {
+            super.onBackPressed();
+        }
     }
 }

@@ -209,7 +209,7 @@ public class OpenTok implements Session.SessionListener,
                 }
 
                 CallRequest callRequest = new CallRequest(apnsPayload.getUuid(),
-                        apnsPayload.getFrom(), null, apnsPayload.getDoctor_guid(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
+                        apnsPayload.getTo(), null, apnsPayload.getFrom(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
                 callRequest.update(callSettings);
 
                 boolean isInWaitingRoom = WaitingRoomActivity.isActive;
@@ -1079,7 +1079,7 @@ public class OpenTok implements Session.SessionListener,
         });
 
         screenCapturerTimer = runnable;
-        handler.postDelayed(runnable, 30000);
+        handler.postDelayed(runnable, 40000);
     }
 
     private void captureScreenshot() {
@@ -1458,7 +1458,7 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void addTimerForIncomingOrOutgoing() {
-        final int interval = 30000; // 30 Second
+        final int interval = 40000; // 40 Second
         Handler handler = new Handler();
         TimerRunnable runnable = new TimerRunnable(new TimerInterface() {
             @Override
@@ -1686,7 +1686,7 @@ public class OpenTok implements Session.SessionListener,
 
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-        Log.d("TokBox", "onError subscriber " + opentokError.getMessage());
+        Log.d("TokBox", "onError subscriber " + opentokError.getMessage()+"   "+opentokError.getMessage());
 
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "fail");

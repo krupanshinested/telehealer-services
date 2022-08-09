@@ -209,8 +209,9 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    String msg = errorModel.getMessage()!= null ? errorModel.getMessage() : String.format(getString(R.string.appointment_request_failure), requestee_name);
-                    sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure), msg);
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure), String.format(getString(R.string.appointment_request_failure), requestee_name));
+                    }
                 }
             }
         });

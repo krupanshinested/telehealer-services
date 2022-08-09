@@ -75,6 +75,7 @@ import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
 import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantListFragment;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
+import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -90,6 +91,7 @@ import com.thealer.telehealer.views.transaction.TransactionListFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.common.Constants.activatedPlan;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -165,7 +167,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showToast(errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        showToast(errorModel.getMessage());
+                    }
                 }
                 isSigningOutInProcess = false;
             }
@@ -359,11 +363,15 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 startActivity(new Intent(this, PaymentContentActivity.class).putExtra(ArgumentKeys.IS_HEAD_LESS, true));
                 break;
             case R.id.subscription:
+                activatedPlan = -1;
                 ActivePlanFragment activePlanFragment = new ActivePlanFragment();
                 showSubFragment(activePlanFragment);
                 break;
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();
+                break;
+            case R.id.new_device_setup:
+                startActivity(new Intent(this, MyDeviceListActivity.class));
                 break;
             case R.id.patient_payments: {
                 bundle = new Bundle();

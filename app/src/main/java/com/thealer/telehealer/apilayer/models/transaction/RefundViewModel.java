@@ -22,11 +22,7 @@ public class RefundViewModel extends BaseApiViewModel {
     public void processRefund(String doctorGuid,int id, RefundReq req) {
         fetchToken(status -> {
             if (status) {
-                Map<String, String> headers = new HashMap<>();
-                if(UserType.isUserAssistant()) {
-                    headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MANAGE_REFUND_CODE);
-                }
-                getAuthApiService().processRefund(headers,id, req,doctorGuid)
+                getAuthApiService().processRefund(id, req)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                             @Override

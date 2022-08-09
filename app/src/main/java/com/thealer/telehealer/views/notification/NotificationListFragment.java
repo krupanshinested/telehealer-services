@@ -122,7 +122,9 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
         notificationApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                notificationListAdapter.notifyDataSetChanged();
+                Utils.showAlertDialog(getActivity(),"Failed",errorModel.getMessage(),"Ok",null,null,null);
+                notificationListAdapter.setbuttonON(true);
+//                notificationListAdapter.notifyDataSetChanged();
             }
         });
 

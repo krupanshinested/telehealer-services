@@ -18,6 +18,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.Constants;
+
 import com.thealer.telehealer.views.common.OnListItemSelectInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 
@@ -68,9 +69,12 @@ public class FormsListAdapter extends RecyclerView.Adapter<FormsListAdapter.View
 
 
 
+//        String itemName=formsApiResponseModelArrayList.get(i).getName();
+//        viewHolder.listCb.setText(Utils.fromHtml(context.getString(R.string.str_with_htmltag,itemName)));
+
         String itemName=formsApiResponseModelArrayList.get(i).getName();
         if(!itemName.trim().equals(Constants.ChildHood_Asthma)){
-            itemName=itemName+" "+context.getString(R.string.bhi_italic);
+            itemName=itemName/*+" "+context.getString(R.string.bhi_italic)*/;
         }
         viewHolder.listCb.setText(Utils.fromHtml(context.getString(R.string.str_with_htmltag,itemName)));
 
