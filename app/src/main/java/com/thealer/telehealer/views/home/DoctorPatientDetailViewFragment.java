@@ -333,11 +333,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     public void onChanged(@Nullable ErrorModel errorModel) {
                         Log.d("ErrorModel", "whoAmIApiViewModel");
 //                        if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
-                            Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                            intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
-                            intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                            intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 //                        }
                     }
                 });
@@ -1001,7 +1001,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
 
             if (doctorModel != null) {
-                doctorGuid = doctorModel.getUser_guid();
+                if (doctorModel.getRole().equals(Constants.ROLE_DOCTOR)) {
+                    doctorGuid = doctorModel.getUser_guid();
+                }
             }
 
             fragmentList = new ArrayList<>();
@@ -1114,12 +1116,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             break;
                         case paymentHistoryTab:
                             TransactionListFragment transactionListFragment = new TransactionListFragment();
+                            Log.d("TAG", "updateView: " + doctorGuid);
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
                             bundle.putInt(ArgumentKeys.DOCTOR_ID, doctorId);
                             bundle.putInt(ArgumentKeys.PATIENT_ID, patientId);
                             bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE, true);
                             bundle.putString(ArgumentKeys.USER_GUID, userGuid);
+                            bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                             transactionListFragment.setArguments(bundle);
                             addFragment(getString(R.string.lbl_payment_history), transactionListFragment);
                             break;

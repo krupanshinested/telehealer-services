@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +97,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
                     viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
                     if (doctorModel != null) {
-                        if (bundle.getBoolean("CC_Capture")){
+                        if (doctorModel.getPayment_account_info().isCCCaptured()){
                             viewHolder.userListIv.getAddChargeBtn().setVisibility(View.VISIBLE);
                         }else {
                             viewHolder.userListIv.getAddChargeBtn().setVisibility(View.GONE);
