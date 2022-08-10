@@ -5,7 +5,6 @@
         android:id="@+id/menu_add_support_staff"
         android:title="@string/add_support_staff"
         app:actionLayout="@layout/view_home_add_staff"
-        android:visible="false"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_overflow"

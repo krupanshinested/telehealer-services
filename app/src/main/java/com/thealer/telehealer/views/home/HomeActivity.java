@@ -605,9 +605,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             doctorPatientListingFragment.setArguments(bundle);
         }
         setFragment(doctorPatientListingFragment);
-
-        /*TransactionListFragment transactionListFragment = new TransactionListFragment();
-        setFragment(transactionListFragment);*/
     }
 
     private void setDoctorPatientTitle() {
@@ -779,10 +776,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_monitoring:
                 showMonitoringView(null);
                 break;
-//            case R.id.menu_invite:
-//                selecteMenuItem = R.id.menu_invite;
-//                showSendInvitation();
-//                break;
+            case R.id.menu_invite:
+                selecteMenuItem = R.id.menu_invite;
+                showSendInvitation();
+                break;
         }
         toggleDrawer();
         return true;

@@ -23,12 +23,7 @@
         android:id="@+id/permission_sub_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:alpha="0.5"
-        android:checked="true"
-        android:enabled="false"
-        android:thumbTint="@color/bt_theme_orange"
-        android:trackTint="@color/bt_theme_orange"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

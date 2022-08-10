@@ -56,13 +56,13 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.permissions=permissions;
     }
 
-    public List<PermissionBean> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(List<PermissionBean> permissions) {
-        this.permissions = permissions;
-    }
+//    public List<PermissionBean> getPermissions() {
+//        return permissions;
+//    }
+//
+//    public void setPermissions(List<PermissionBean> permissions) {
+//        this.permissions = permissions;
+//    }
 
     public List<VitalBean> getVitals() {
         return vitals;
