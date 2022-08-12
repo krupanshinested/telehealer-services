@@ -30,6 +30,10 @@ public class Constants {
     public static boolean isVitalsAddEnable = true;
     public static boolean isVitalsViewEnable = true;
     public static boolean isInviteEnable = true;
+    public static boolean isBillingAndChargeEnable = true;
+    public static boolean isChargesEnable = true;
+    public static boolean isRefundEnable = true;
+    public static boolean isPaymentProcessEnable = true;
 
     public static boolean ErrorCodeFlag = false;
 

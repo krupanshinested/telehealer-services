@@ -208,6 +208,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         Constants.isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
                         Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
                         Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+                        Constants.isBillingAndChargeEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.BILLING_AND_CHARGES_CODE);
+                        if (Constants.isBillingAndChargeEnable) {
+                            Constants.isChargesEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHARGES_CODE);
+                            Constants.isRefundEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MANAGE_REFUND_CODE);
+                            Constants.isPaymentProcessEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.PAYMENT_PROCESSING_CODE);
+                        }
                     }
 
                     Log.d("Data Model", "Data Model user api");
@@ -600,8 +606,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 userGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_guid();
-                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null)
+                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null) {
                     doctorGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_guid();
+                    doctorId = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_id();
+                }
             } else {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
@@ -1003,6 +1011,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             if (doctorModel != null) {
                 if (doctorModel.getRole().equals(Constants.ROLE_DOCTOR)) {
                     doctorGuid = doctorModel.getUser_guid();
+                    doctorId = doctorModel.getUser_id();
                 }
             }
 
@@ -1116,7 +1125,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             break;
                         case paymentHistoryTab:
                             TransactionListFragment transactionListFragment = new TransactionListFragment();
-                            Log.d("TAG", "updateView: " + doctorGuid);
                             bundle = new Bundle();
                             bundle.putBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, true);
                             bundle.putInt(ArgumentKeys.DOCTOR_ID, doctorId);
