@@ -25,6 +25,7 @@ import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -152,10 +153,17 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void visitAddChargeActivity(CommonUserApiResponseModel userModel) {
-        fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
-                .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
-                .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
-        );
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                    .putExtra(ArgumentKeys.DOCTOR_GUID,doctorModel.getUser_guid())
+                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+            );
+        }else {
+            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class).putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+            );
+        }
     }
 
     private void proceed(CommonUserApiResponseModel resultBean) {

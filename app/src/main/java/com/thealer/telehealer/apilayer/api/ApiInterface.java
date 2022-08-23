@@ -789,10 +789,10 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> askToAddCard(@Body() HashMap<String, String> req);
 
     @POST("/api/charge/add-charge")
-    Observable<AddChargeResp> addCharge(@Body() AddChargeReq req);
+    Observable<AddChargeResp> addCharge(@HeaderMap Map<String,String> headers,@Body() AddChargeReq req);
 
     @PUT("/api/charge/update-charge-v2")
-    Observable<AddChargeResp> updateCharge(@Query("id") int id, @Body() AddChargeReq req);
+    Observable<AddChargeResp> updateCharge(@HeaderMap Map<String,String> headers,@Query("id") int id,@Query(DOCTOR_GUID) String doctorGuid, @Body() AddChargeReq req);
 
     @POST("/api/charge/paginate")
     Observable<TransactionListResp> transactionPaginate(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Body() TransactionListReq req);

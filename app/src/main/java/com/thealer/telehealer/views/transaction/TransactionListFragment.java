@@ -45,6 +45,7 @@ import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -495,14 +496,26 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onAddChargeClick(int position) {
-                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
-                        .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(ArgumentKeys.DOCTOR_GUID,doctorGuid)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }else {
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }
             }
 
             @Override
             public void onUpdateChargeClick(int position) {
-                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
-                        .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(ArgumentKeys.DOCTOR_GUID,doctorGuid)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }else {
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }
             }
 
             @Override

@@ -137,14 +137,17 @@ public class AddChargeViewModel extends BaseApiViewModel {
         return reasonOptions;
     }
 
-    public void addCharge(AddChargeReq req, boolean isUpdate) {
+    public void addCharge(String doctorGuid,AddChargeReq req, boolean isUpdate) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.CHARGES_CODE);
+                    }
                     if (isUpdate) {
-                        getAuthApiService().updateCharge(chargeId, req).compose(applySchedulers())
+                        getAuthApiService().updateCharge(headers,chargeId,doctorGuid, req).compose(applySchedulers())
                                 .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                     @Override
                                     public void onSuccess(AddChargeResp baseApiResponseModel) {
@@ -152,7 +155,7 @@ public class AddChargeViewModel extends BaseApiViewModel {
                                     }
                                 });
                     } else {
-                        getAuthApiService().addCharge(req).compose(applySchedulers())
+                        getAuthApiService().addCharge(headers,req).compose(applySchedulers())
                                 .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                     @Override
                                     public void onSuccess(AddChargeResp baseApiResponseModel) {
