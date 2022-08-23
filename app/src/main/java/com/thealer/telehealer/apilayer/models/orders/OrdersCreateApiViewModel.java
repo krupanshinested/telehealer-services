@@ -13,8 +13,13 @@ import com.thealer.telehealer.apilayer.models.orders.pharmacy.SendFaxRequestMode
 import com.thealer.telehealer.apilayer.models.orders.prescription.CreatePrescriptionRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.radiology.CreateRadiologyRequestModel;
 import com.thealer.telehealer.apilayer.models.orders.specialist.AssignSpecialistRequestModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,8 +39,11 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-
-                    getAuthApiService().createForms(createFormRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.FORMS_CODE);
+                    }
+                    getAuthApiService().createForms(headers,createFormRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -54,7 +62,11 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().assignSpecialist(sync_create,assignSpecialistRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.REFERRALS_CODE);
+                    }
+                    getAuthApiService().assignSpecialist(headers,sync_create,assignSpecialistRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isProgressVisibile)) {
                                 @Override
@@ -99,7 +111,11 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createPrescription(sync_create,createPrescriptionRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.PRESCRIPTION_CODE);
+                    }
+                    getAuthApiService().createPrescription(headers,sync_create,createPrescriptionRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -135,7 +151,11 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createLabOrder(sync_create,createTestApiRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.LABS_CODE);
+                    }
+                    getAuthApiService().createLabOrder(headers,sync_create,createTestApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -153,7 +173,12 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createRadiology(sync_create,createRadiologyRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.RADIOLOGY_CODE);
+                    }
+
+                    getAuthApiService().createRadiology(headers,sync_create,createRadiologyRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -171,7 +196,11 @@ public class OrdersCreateApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createMiscellaneous(createMiscellaneousRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.MEDICAL_DOCUMENTS_CODE);
+                    }
+                    getAuthApiService().createMiscellaneous(headers,createMiscellaneousRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
