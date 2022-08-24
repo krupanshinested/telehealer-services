@@ -206,7 +206,6 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         clinicAddressTv = (TextView) view.findViewById(R.id.clinic_address_tv);
         phoneCv = (CardView) view.findViewById(R.id.phone_cv);
         designationCv = (CardView) view.findViewById(R.id.designation_cv);
-        designationEdit = (TextView) view.findViewById(R.id.designation_edit_tv);
         designationTv = (TextView) view.findViewById(R.id.designation_tv);
         userPhoneTv = (TextView) view.findViewById(R.id.user_phone_tv);
         rvRootPermission = (RecyclerView) view.findViewById(R.id.rv_root_permission);

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 <!--            app:layout_constraintBottom_toTopOf="@+id/cl_vital_history"-->
@@ -212,22 +212,13 @@
                             android:layout_width="0dp"
                             android:layout_weight="0.9"
                             android:layout_height="wrap_content"
-                            android:background="@color/colorGrey_light"
                             android:layout_margin="@dimen/margin_default"
                             android:textColor="@color/colorBlack"
-                            tools:text="@string/dummy_text" />
-
-                        <TextView
-                            android:background="@color/card_background_grey"
-                            android:id="@+id/designation_edit_tv"
-                            style="@style/text_sub_title_bold"
-                            android:layout_width="0dp"
-                            android:layout_weight="0.1"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_default"
-                            android:gravity="center"
-                            android:textColor="@color/app_gradient_start"
-                            tools:text="@string/edit" />
+                            tools:text="@string/dummy_text"
+                            android:drawableEnd="@drawable/ic_edit_white_24dp"
+                            android:drawableTint="@color/app_gradient_start"
+                            android:gravity="center|left"
+                            />
 
                     </LinearLayout>
 
