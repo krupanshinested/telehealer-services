@@ -1570,6 +1570,7 @@
     <string name="confirm">Confirm</string>
     <string name="lbl_type_your_reason_here">Type your reason here</string>
     <string name="str_select_designation_for">Select designation for %s</string>
+    <string name="designation">Designation</string>
     <string name="user_permission">Permissions</string>
     <string name="lbl_plan_name">Plan Name</string>
     <string name="lbl_monitored_patients_for_month">Monitored Patients for Month \n (RPM / BHI/ CCM)</string>

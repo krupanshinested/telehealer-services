@@ -121,6 +121,9 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private List<PermissionBean> permissionList = new ArrayList<>();
     private AboutHistoryAdapter historyAdapter;
     private AboutHistoryAdapter vitalHistoryAdapter;
+    private CardView designationCv;
+    private TextView designationEdit;
+    private TextView designationTv;
 
     @Override
     public void onAttach(Context context) {
@@ -202,6 +205,9 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         clinicCv = (CardView) view.findViewById(R.id.clinic_cv);
         clinicAddressTv = (TextView) view.findViewById(R.id.clinic_address_tv);
         phoneCv = (CardView) view.findViewById(R.id.phone_cv);
+        designationCv = (CardView) view.findViewById(R.id.designation_cv);
+        designationEdit = (TextView) view.findViewById(R.id.designation_edit_tv);
+        designationTv = (TextView) view.findViewById(R.id.designation_tv);
         userPhoneTv = (TextView) view.findViewById(R.id.user_phone_tv);
         rvRootPermission = (RecyclerView) view.findViewById(R.id.rv_root_permission);
         clPermission = (ConstraintLayout) view.findViewById(R.id.cl_permission);
@@ -347,9 +353,11 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                         patientDetailView.setVisibility(View.VISIBLE);
                         if (userDetail.getRole().equals(Constants.ROLE_ASSISTANT)) {
                             clPermission.setVisibility(View.VISIBLE); // Physician Can Assign permission to Patient as well as assistant
+                            designationCv.setVisibility(View.VISIBLE);
                             setUpPermissionUI();
                         } else {
                             clPermission.setVisibility(View.GONE);
+                            designationCv.setVisibility(View.GONE);
                         }
                         if (view_type.equals(Constants.VIEW_CONNECTION)) {
                             medicalHistoryBtn.setVisibility(View.GONE);
@@ -358,6 +366,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                         }
 
                         patientEmailTv.setText(userDetail.getEmail());
+                        designationTv.setText(userDetail.getUser_detail().getData().getTitle());
 
                         List<String> insuranceImageList = new ArrayList<>();
                         List<String> insuranceLabelList = new ArrayList<>();
