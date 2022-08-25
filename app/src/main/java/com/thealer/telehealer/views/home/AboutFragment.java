@@ -623,7 +623,15 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
 
             if (userDetail.getVitals() != null && userDetail.getVitals().size() > 0) {
                 vitalHistoryAdapter.setDataAdapter(userDetail.getVitals());
-                clVitalHistory.setVisibility(View.VISIBLE);
+                if (UserType.isUserAssistant()){
+                 if (Constants.isVitalsViewEnable){
+                     clVitalHistory.setVisibility(View.VISIBLE);
+                 }else {
+                     clVitalHistory.setVisibility(View.GONE);
+                 }
+                }else {
+                    clVitalHistory.setVisibility(View.VISIBLE);
+                }
                 rvVitalHistory.setVisibility(View.VISIBLE);
             } else {
                 clVitalHistory.setVisibility(View.GONE);
