@@ -325,6 +325,9 @@ public interface ApiInterface {
     @POST("api/requests-v2")
     Observable<BaseApiResponseModel> addConnection(@HeaderMap Map<String,String> headers,@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 
+    @PUT("api/designation/{id}")
+    Observable<BaseApiResponseModel> updateDesignation(@Path(ID) String userGuid,@Body AddConnectionRequestModel addConnectionRequestModel);
+
     @POST("api/requests")
     Observable<BaseApiResponseModel> addPatientDocConnection(@Body AddConnectionRequestModel addConnectionRequestModel, @Query(DOCTOR_GUID) String doctorGuid);
 

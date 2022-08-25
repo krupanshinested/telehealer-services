@@ -167,6 +167,7 @@ public class ArgumentKeys {
     public static final String PAYMENT_PROCESSING_CODE ="PAYMENT_PROCESSING";
     public static final String SCHEDULING_CODE ="SCHEDULING";
     public static final String INVITE_OTHERS_CODE ="INVITE_OTHERS";
+    public static final String ADD_CREDIT_CARD ="ADD_CREDIT_CARD";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;

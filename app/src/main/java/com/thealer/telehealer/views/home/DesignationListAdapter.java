@@ -23,12 +23,14 @@ import java.util.List;
 public class DesignationListAdapter extends RecyclerView.Adapter<DesignationListAdapter.OnDesignationViewHolder> {
     private FragmentActivity fragmentActivity;
     List<String> adapterList;
-    int currentSelected = 0;
+    int currentSelected = -1;
     private OnItemEndListener itemEndListener;
-    public DesignationListAdapter(FragmentActivity fragmentActivity, List<String> adapterList,OnItemEndListener itemEndListener) {
+    String designation;
+
+    public DesignationListAdapter(FragmentActivity fragmentActivity, List<String> adapterList, OnItemEndListener itemEndListener) {
         this.fragmentActivity = fragmentActivity;
         this.adapterList = adapterList;
-        this.itemEndListener=itemEndListener;
+        this.itemEndListener = itemEndListener;
     }
 
     @NonNull
@@ -40,10 +42,21 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
 
     @Override
     public void onBindViewHolder(@NonNull OnDesignationViewHolder holder, int position) {
-        if(position==adapterList.size()-1){
+        if (position == adapterList.size() - 1) {
             itemEndListener.itemEnd(position);
         }
         String designation = adapterList.get(position);
+        if (!designation.isEmpty()) {
+            if (currentSelected == -1) {
+                if (this.designation.equals(designation)) {
+                    currentSelected = position;
+                } else {
+                    currentSelected = -1;
+                }
+            }
+        } else {
+            currentSelected = 0;
+        }
         if (position == currentSelected)
             holder.rbDesignation.setChecked(true);
         else
@@ -75,6 +88,12 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
 
     public String getSpecialistInfo() {
         return adapterList.get(currentSelected);
+    }
+
+    public void setdesignation(String designation) {
+
+        this.designation = designation;
+
     }
 
     public class OnDesignationViewHolder extends RecyclerView.ViewHolder {

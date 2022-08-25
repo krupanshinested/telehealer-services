@@ -52,11 +52,19 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
         if (currentPermission != null) {
             holder.permissionSwitch.setChecked(currentPermission.getValue());
             PermissionDetails rootPermissionInfo = currentPermission.getPermission();
+            if (rootPermissionInfo.getCode().equals(ArgumentKeys.ADD_CREDIT_CARD)) {
+                holder.permissionSwitch.setChecked(false);
+                holder.title.setAlpha(0.5F);
+                holder.permissionSwitch.setAlpha(0.8F);
+                holder.permissionSwitch.setEnabled(false);
+            }
             holder.title.setText(rootPermissionInfo.getName());
             if (currentPermission.getValue() && currentPermission.getChildren() != null && currentPermission.getChildren().size() > 0) {
-                holder.rvSubSwitch.setVisibility(View.VISIBLE);
-                UserSubPermissionAdapter userSubPermissionAdapter = new UserSubPermissionAdapter(activity, position, currentPermission.getChildren(), this);
-                holder.rvSubSwitch.setAdapter(userSubPermissionAdapter);
+                if (!rootPermissionInfo.getCode().equals(ArgumentKeys.BILLING_AND_CHARGES_CODE)) {
+                    holder.rvSubSwitch.setVisibility(View.VISIBLE);
+                    UserSubPermissionAdapter userSubPermissionAdapter = new UserSubPermissionAdapter(activity, position, currentPermission.getChildren(), this);
+                    holder.rvSubSwitch.setAdapter(userSubPermissionAdapter);
+                }
             } else {
                 holder.rvSubSwitch.setVisibility(View.GONE);
             }
@@ -74,7 +82,7 @@ public class UserPermissionAdapter extends RecyclerView.Adapter<UserPermissionAd
                                 dialog.dismiss();
                             }
                         }, null);
-                    }else{
+                    } else {
                         Bundle bundle = new Bundle();
                         bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, position);
                         bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, true);

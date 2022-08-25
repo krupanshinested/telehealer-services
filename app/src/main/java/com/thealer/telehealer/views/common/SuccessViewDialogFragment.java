@@ -150,13 +150,16 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     }
 
     protected void dismissScreen() {
-        successViewInterface.onSuccessViewCompletion(status);
+
         getDialog().dismiss();
-        if (getTargetFragment() != null) {
-            if (status)
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
-            else
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
+        if (getArguments().get("Designation") == null) {
+            successViewInterface.onSuccessViewCompletion(status);
+            if (getTargetFragment() != null) {
+                if (status)
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+                else
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
+            }
         }
     }
 

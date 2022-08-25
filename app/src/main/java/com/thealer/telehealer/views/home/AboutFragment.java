@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,12 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -33,6 +37,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.OnAdapterListener;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
+import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListApiViewModel;
+import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
@@ -42,13 +50,17 @@ import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiVi
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.OnItemEndListener;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
+import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
 import com.thealer.telehealer.views.common.imagePreview.ImagePreviewViewModel;
 import com.thealer.telehealer.views.home.userPermission.UserPermissionAdapter;
@@ -93,9 +105,9 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private ImageView[] indicators;
     private TextView insuranceCashTv;
     private LinearLayout insuranceImageLl;
-    private ConstraintLayout clVitalHistory,clHistory;
-    private RecyclerView rvVitalHistory,rvHistory;
-    private TextView tvRpmStatus,tvVitalEdit;
+    private ConstraintLayout clVitalHistory, clHistory;
+    private RecyclerView rvVitalHistory, rvHistory;
+    private TextView tvRpmStatus, tvVitalEdit;
     private int userType;
     private String view_type, doctorGuid = null;
     private CommonUserApiResponseModel userDetail, doctorDetail;
@@ -122,8 +134,13 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private AboutHistoryAdapter historyAdapter;
     private AboutHistoryAdapter vitalHistoryAdapter;
     private CardView designationCv;
-    private TextView designationEdit;
     private TextView designationTv;
+    private ConnectionListApiViewModel connectionListApiViewModel;
+    private AddConnectionApiViewModel addConnectionApiViewModel;
+    private DesignationResponseModel designationResponseModel;
+    private List<String> designationList = new ArrayList<>();
+    private int selectedId;
+    private String finaldesignation;
 
     @Override
     public void onAttach(Context context) {
@@ -134,12 +151,54 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
 
         userPermissionApiViewModel = new ViewModelProvider(this).get(UserPermissionApiViewModel.class);
         attachObserverInterface.attachObserver(userPermissionApiViewModel);
+        connectionListApiViewModel = new ViewModelProvider(this).get(ConnectionListApiViewModel.class);
+        attachObserverInterface.attachObserver(connectionListApiViewModel);
+        addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
+        attachObserverInterface.attachObserver(addConnectionApiViewModel);
+
+        addConnectionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, baseApiResponseModel.isSuccess());
+
+                    if (baseApiResponseModel.isSuccess()) {
+                        designationTv.setText(finaldesignation);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, baseApiResponseModel.getMessage());
+
+                    } else {
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, baseApiResponseModel.getMessage());
+                    }
+
+                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                }
+            }
+        });
+
+        addConnectionApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(@Nullable ErrorModel errorModel) {
+                if (errorModel != null) {
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                    }
+                }
+            }
+        });
+
         userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 try {
                     Log.e("neem", "onChanged: " + baseApiResponseModel);
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.e("neem", "Success: ");
                 }
             }
@@ -163,6 +222,21 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 }
             }
         });
+
+        connectionListApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel instanceof DesignationResponseModel) {
+                        designationResponseModel = (DesignationResponseModel) baseApiResponseModel;
+                        if (designationResponseModel.isSuccess() && designationResponseModel.getResult() != null) {
+                            designationList = designationResponseModel.getResult();
+                        }
+                    }
+                }
+            }
+        });
+
     }
 
     private void setUpPermissionUI() {
@@ -248,13 +322,13 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 disconnectTv.setVisibility(View.VISIBLE);
             }
 
-                rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
-                historyAdapter = new AboutHistoryAdapter(getActivity());
-                rvHistory.setAdapter(historyAdapter);
+            rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+            historyAdapter = new AboutHistoryAdapter(getActivity());
+            rvHistory.setAdapter(historyAdapter);
 
-                rvVitalHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
-                vitalHistoryAdapter = new AboutHistoryAdapter(getActivity());
-                rvVitalHistory.setAdapter(vitalHistoryAdapter);
+            rvVitalHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+            vitalHistoryAdapter = new AboutHistoryAdapter(getActivity());
+            rvVitalHistory.setAdapter(vitalHistoryAdapter);
 
             if (userDetail != null) {
                 switch (userDetail.getRole()) {
@@ -365,7 +439,16 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                         }
 
                         patientEmailTv.setText(userDetail.getEmail());
-                        designationTv.setText(userDetail.getUser_detail().getData().getTitle());
+                        connectionListApiViewModel.getDesignationList();
+                        if (userDetail.getUser_detail().getData().getTitle() != null) {
+                            designationTv.setText(userDetail.getDesignation());
+                            designationTv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    selectDesignation(view, userDetail);
+                                }
+                            });
+                        }
 
                         List<String> insuranceImageList = new ArrayList<>();
                         List<String> insuranceLabelList = new ArrayList<>();
@@ -519,6 +602,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             }
         }
     }
+
     private void showRemotePatientMonitoring(String user_guid) {
         RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
         Bundle bundle = new Bundle();
@@ -526,13 +610,14 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         remotePatientMonitoringFragment.setArguments(bundle);
         showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
     }
+
     private void manageVitalHistory() {
-        if(userDetail.getRole().equals(Constants.ROLE_PATIENT)) {
-            if(userDetail.getIs_rpm_enabled()){
-                tvRpmStatus.setText(getString(R.string.str_rpm_status,getString(R.string.str_enable)));
+        if (userDetail.getRole().equals(Constants.ROLE_PATIENT)) {
+            if (userDetail.getIs_rpm_enabled()) {
+                tvRpmStatus.setText(getString(R.string.str_rpm_status, getString(R.string.str_enable)));
                 tvVitalEdit.setVisibility(View.VISIBLE);
-            }else{
-                tvRpmStatus.setText(getString(R.string.str_rpm_status,getString(R.string.str_disable)));
+            } else {
+                tvRpmStatus.setText(getString(R.string.str_rpm_status, getString(R.string.str_disable)));
                 tvVitalEdit.setVisibility(View.GONE);
             }
 
@@ -545,20 +630,101 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 rvVitalHistory.setVisibility(View.GONE);
             }
 
-            if(userDetail.getHistory() !=null && userDetail.getHistory().size()>0){
+            if (userDetail.getHistory() != null && userDetail.getHistory().size() > 0) {
                 historyAdapter.setDataAdapter(userDetail.getHistory());
                 clHistory.setVisibility(View.VISIBLE);
             } else {
                 clHistory.setVisibility(View.GONE);
             }
 
-        }else {
+        } else {
             rvVitalHistory.setVisibility(View.VISIBLE);
             clVitalHistory.setVisibility(View.GONE);
             clHistory.setVisibility(View.GONE);
         }
     }
 
+    private void selectDesignation(View v, CommonUserApiResponseModel apiResponseModelList) {
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View layoutInflateView = layoutInflater.inflate
+                (R.layout.designation_alert, (ViewGroup) v.findViewById(R.id.cl_root));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setView(layoutInflateView);
+        alertDialog.setCancelable(false);
+        AlertDialog dialog = alertDialog.create();
+        TextView headerTitle = layoutInflateView.findViewById(R.id.header_title);
+        RecyclerView rvDesignation = layoutInflateView.findViewById(R.id.rv_designation);
+        rvDesignation.setLayoutManager(new LinearLayoutManager(getActivity()));
+        Button btnYes = layoutInflateView.findViewById(R.id.btn_yes);
+        TextView noRecordFound = layoutInflateView.findViewById(R.id.no_record_found);
+        Button btnCancel = layoutInflateView.findViewById(R.id.btn_cancel);
+        View viewDevider = layoutInflateView.findViewById(R.id.view_devider);
+
+
+        headerTitle.setText(String.format(getActivity().getString(R.string.str_select_designation_for), apiResponseModelList.getUserDisplay_name()));
+
+        if (designationList.size() == 0) {
+            rvDesignation.setVisibility(View.GONE);
+            noRecordFound.setVisibility(View.VISIBLE);
+            btnYes.setVisibility(View.GONE);
+            viewDevider.setVisibility(View.GONE);
+        } else {
+            rvDesignation.setVisibility(View.VISIBLE);
+            noRecordFound.setVisibility(View.GONE);
+            btnYes.setVisibility(View.VISIBLE);
+            viewDevider.setVisibility(View.VISIBLE);
+        }
+        DesignationListAdapter designationListAdapter = new DesignationListAdapter(getActivity(), designationList, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+
+            }
+        });
+        rvDesignation.setAdapter(designationListAdapter);
+
+        designationListAdapter.setdesignation(apiResponseModelList.getDesignation());
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (designationListAdapter != null) {
+                    Utils.vibrate(getActivity());
+                    String designation = designationListAdapter.getSpecialistInfo();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.getUser_id());
+
+                    if (designation != null)
+                        bundle.putString(Constants.DESIGNATION, designation);
+
+                    bundle.putString(ArgumentKeys.USER_GUID, apiResponseModelList.getUser_guid());
+                    bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
+                    bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                    bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
+
+                    onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
+
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    }
+                });
+                dialog.dismiss();
+
+            }
+        });
+
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
 
     @Nullable
     private String getPhoneNumber() {
@@ -650,7 +816,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         if (isFromParent) {
             Boolean isChecked = permissionList.get(parentPos).getValue();
             permissionList.get(parentPos).setValue(!isChecked);
-            callUpdatePermissionAPI(permissionList.get(parentPos).getId(),!isChecked);
+            callUpdatePermissionAPI(permissionList.get(parentPos).getId(), !isChecked);
             if (!isChecked) {
                 List<PermissionBean> subPermissionList = permissionList.get(parentPos).getChildren();
                 for (int i = 0; i < subPermissionList.size(); i++) {
@@ -661,7 +827,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             int childPos = bundle.getInt(ArgumentKeys.ITEM_CLICK_CHILD_POS);
             Boolean isChecked = permissionList.get(parentPos).getChildren().get(childPos).getValue();
             permissionList.get(parentPos).getChildren().get(childPos).setValue(!isChecked);
-            callUpdatePermissionAPI(permissionList.get(parentPos).getChildren().get(childPos).getId(),!isChecked);
+            callUpdatePermissionAPI(permissionList.get(parentPos).getChildren().get(childPos).getId(), !isChecked);
             if (isChecked) {
                 List<PermissionBean> subPermissionList = permissionList.get(parentPos).getChildren();
                 boolean isAnyOneEnable = false;
@@ -673,7 +839,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 }
                 if (!isAnyOneEnable) {
                     permissionList.get(parentPos).setValue(false);
-                    callUpdatePermissionAPI(permissionList.get(parentPos).getId(),false);
+                    callUpdatePermissionAPI(permissionList.get(parentPos).getId(), false);
                 }
             }
         }
@@ -688,10 +854,40 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
 
     //TODO - Update User permission Status
     private void callUpdatePermissionAPI(int permissionId, boolean isEnable) {
-        PermissionRequestModel permissionRequestModel=new PermissionRequestModel();
+        PermissionRequestModel permissionRequestModel = new PermissionRequestModel();
         permissionRequestModel.setGuid(userDetail.getUser_guid());
         permissionRequestModel.setId(permissionId);
         permissionRequestModel.setValue(isEnable);
         userPermissionApiViewModel.updateUserPermission(permissionRequestModel);
+    }
+
+    public void onCompletionResult(String string, Boolean success, Bundle bundle) {
+        if (success) {
+            selectedId = bundle.getInt(Constants.ADD_CONNECTION_ID);
+            finaldesignation = bundle.getString(Constants.DESIGNATION);
+            CommonUserApiResponseModel userModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
+            String userGuid = null;
+
+            if (userModel != null) {
+                userGuid = userModel.getUser_guid();
+            }
+
+            bundle = new Bundle();
+            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.please_wait));
+            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.add_connection_requesting));
+            bundle.putString("Designation","true");
+
+            SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+            successViewDialogFragment.setArguments(bundle);
+
+            successViewDialogFragment.show(getParentFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+
+            String currentUserGuid=userGuid;
+            if(!UserType.isUserAssistant())
+                currentUserGuid="";
+
+            addConnectionApiViewModel.updateDesignation(currentUserGuid,userGuid, null, String.valueOf(selectedId), finaldesignation);
+
+        }
     }
 }

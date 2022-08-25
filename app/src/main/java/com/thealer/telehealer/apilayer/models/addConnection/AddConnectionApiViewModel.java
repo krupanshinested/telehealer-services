@@ -55,6 +55,29 @@ public class AddConnectionApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void updateDesignation(String userGuid,String toGuid, String doctorGuid, String userId,String designation) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+
+                    AddConnectionRequestModel addConnectionRequestModel = new AddConnectionRequestModel();
+                    addConnectionRequestModel.setDesignation(designation);
+
+                    getAuthApiService().updateDesignation(userId,addConnectionRequestModel)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
     public void addPatientDocConnection(String toGuid, String doctorGuid, String userId) {
         fetchToken(new BaseViewInterface() {
             @Override
