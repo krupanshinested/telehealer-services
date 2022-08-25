@@ -383,6 +383,18 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         attachView();
     }
 
+    public Fragment getVisibleFragment(){
+        FragmentManager fragmentManager = HomeActivity.this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if(fragments != null){
+            for(Fragment fragment : fragments){
+                if(fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
+    }
+
     private void showMedicalHistory() {
         Bundle bundle = new Bundle();
         bundle.putInt(ArgumentKeys.VIEW_TYPE, ArgumentKeys.HISTORY_UPDATE);
@@ -965,7 +977,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         application.addShortCuts();
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
-            whoAmIApiViewModel.assignWhoAmI();
+            if (getVisibleFragment() instanceof DoctorPatientListingFragment){
+                whoAmIApiViewModel.assignWhoAmI();
+            }
             showHelpScreen();
         }
     }

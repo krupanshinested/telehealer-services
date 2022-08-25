@@ -11,6 +11,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -81,6 +82,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         initView(view);
         return view;
     }
+
     protected void initView(View view) {
         loaderIv = (ImageView) view.findViewById(R.id.loader_iv);
         titleTv = (TextView) view.findViewById(R.id.title_tv);
@@ -111,14 +113,14 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
         if (bundle != null) {
             title = bundle.getString(Constants.SUCCESS_VIEW_TITLE);
             message = bundle.getString(Constants.SUCCESS_VIEW_DESCRIPTION);
-            int drawableId = bundle.getInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE,0);
+            int drawableId = bundle.getInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE, 0);
             if (drawableId != 0) {
                 successReplaceDrawableId = drawableId;
             } else {
                 successReplaceDrawableId = null;
             }
 
-            int colorId = bundle.getInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT,0);
+            int colorId = bundle.getInt(Constants.SUCCESS_VIEW_SUCCESS_IMAGE_TINT, 0);
             if (drawableId != 0) {
                 successReplaceTintColor = colorId;
             } else {
@@ -133,9 +135,9 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
                 messageTv.setText(message);
             }
 
-            needToShowDoneButtonOnResultFetched = !bundle.getBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON,false);
+            needToShowDoneButtonOnResultFetched = !bundle.getBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
 
-            if (bundle.getBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS,false)) {
+            if (bundle.getBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, false)) {
                 auto_dismiss = true;
                 if (isAnimationEnd) {
                     dismissScreen();
@@ -152,7 +154,17 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     protected void dismissScreen() {
 
         getDialog().dismiss();
-        if (getArguments().get("Designation") == null) {
+        if (getArguments() != null) {
+            if (getArguments().get("Designation") == null) {
+                successViewInterface.onSuccessViewCompletion(status);
+                if (getTargetFragment() != null) {
+                    if (status)
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
+                    else
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
+                }
+            }
+        }else {
             successViewInterface.onSuccessViewCompletion(status);
             if (getTargetFragment() != null) {
                 if (status)
@@ -277,7 +289,7 @@ public class SuccessViewDialogFragment extends BaseDialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,getIntentFilterKey());
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, getIntentFilterKey());
         Log.e("aswin", "onResume: ");
         animatePreLoader();
     }

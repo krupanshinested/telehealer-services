@@ -585,7 +585,11 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 goToProfileUpdate();
                 break;
             case R.id.action_btn:
+                if (UserType.isUserAssistant()) {
                     getUsersApiViewModel.getUserDetail(createScheduleViewModel.getDoctorCommonModel().getUser_guid(), null);
+                }else {
+                    requestAppointment();
+                }
                 break;
         }
     }
