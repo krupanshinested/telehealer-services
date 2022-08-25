@@ -645,12 +645,25 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-                        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
-                            @Override
-                            public void onListItemSelected(int position, Bundle bundle) {
-                                openPDFFor(bundle);
+                        if (UserType.isUserAssistant()){
+                            if (!Constants.isVitalsViewEnable){
+                                Utils.displayPermissionMsg(getContext());
+                            }else {
+                                Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
+                                    @Override
+                                    public void onListItemSelected(int position, Bundle bundle) {
+                                        openPDFFor(bundle);
+                                    }
+                                });
                             }
-                        });
+                        }else {
+                            Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
+                                @Override
+                                public void onListItemSelected(int position, Bundle bundle) {
+                                    openPDFFor(bundle);
+                                }
+                            });
+                        }
 
                         break;
                 }
@@ -682,7 +695,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         if (UserType.isUserAssistant()){
             if(!Constants.isVitalsViewEnable){
-                Utils.displayPermissionMsg(getContext());
+//                Utils.displayPermissionMsg(getContext());
                 linechart.setVisibility(View.GONE);
                 vitalDetailCrv.setVisibility(View.GONE);
             }
