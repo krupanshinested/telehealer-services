@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.PracticesBean;
+import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesCreateRequestModel;
@@ -57,7 +59,9 @@ import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Aswin on 19,December,2018
@@ -95,6 +99,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
     private ViewPager insuranceViewPager;
     private LinearLayout pagerIndicator;
     private List<String> labelList;
+    private GetUsersApiViewModel getUsersApiViewModel;
+    private CommonUserApiResponseModel resultBean;
 
     @Override
     public void onAttach(Context context) {
@@ -106,6 +112,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
         createScheduleViewModel = new ViewModelProvider(getActivity()).get(CreateScheduleViewModel.class);
         schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
         whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
+        getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        attachObserverInterface.attachObserver(getUsersApiViewModel);
         attachObserverInterface.attachObserver(whoAmIApiViewModel);
 
         createScheduleViewModel.getTimeSlots().observe(this, new Observer<List<String>>() {
@@ -199,8 +207,8 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    String msg= String.format(getString(R.string.appointment_request_success), requestee_name);
-                    sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success), msg );
+                    String msg = String.format(getString(R.string.appointment_request_success), requestee_name);
+                    sendSuccessViewBroadCast(getActivity(), baseApiResponseModel.isSuccess(), getString(R.string.success), msg);
                 }
             }
         });
@@ -215,6 +223,27 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 }
             }
         });
+
+        getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
+                resultBean = model;
+                if (UserType.isUserAssistant()) {
+
+                    if (resultBean.getPermissions().size() > 0) {
+
+                        if (Utils.checkPermissionStatus(resultBean.getPermissions(), ArgumentKeys.SCHEDULING_CODE)) {
+                            requestAppointment();
+                        } else {
+                            Utils.displayPermissionMsg(getActivity());
+                        }
+                    }
+
+                }
+            }
+        });
+
     }
 
     @Nullable
@@ -556,56 +585,60 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 goToProfileUpdate();
                 break;
             case R.id.action_btn:
-                SchedulesCreateRequestModel schedulesCreateRequestModel = new SchedulesCreateRequestModel();
-                String to_guid = null;
-
-                if (UserType.isUserPatient()) {
-                    schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getDoctorCommonModel().getUser_id()));
-                    requestee_name = createScheduleViewModel.getDoctorCommonModel().getFirst_name();
-                    to_guid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
-                } else {
-                    schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getPatientCommonModel().getUser_id()));
-                    requestee_name = createScheduleViewModel.getPatientCommonModel().getFirst_name();
-                    to_guid = createScheduleViewModel.getPatientCommonModel().getUser_guid();
-                }
-
-                schedulesCreateRequestModel.setMessage(reasonEt.getText().toString());
-
-                SchedulesCreateRequestModel.Requestdetails requestdetails = new SchedulesCreateRequestModel.Requestdetails();
-
-                List<SchedulesCreateRequestModel.Requestdetails.Dates> datesList = new ArrayList<>();
-
-                for (int i = 0; i < createScheduleViewModel.getTimeSlots().getValue().size(); i++) {
-                    SchedulesCreateRequestModel.Requestdetails.Dates dates = new SchedulesCreateRequestModel.Requestdetails.Dates();
-                    dates.setStart(createScheduleViewModel.getTimeSlots().getValue().get(i));
-                    dates.setEnd(Utils.getIncreasedTime(createScheduleViewModel.getDoctorCommonModel().getAppt_length(), createScheduleViewModel.getTimeSlots().getValue().get(i)));
-                    datesList.add(dates);
-                }
-                requestdetails.setDates(datesList);
-                requestdetails.setReason(reasonEt.getText().toString());
-                requestdetails.setInsurance_to_date(isInsuranceUpdated);
-                requestdetails.setChange_demographic(isDemographicUpdated);
-
-                schedulesCreateRequestModel.setDetail(requestdetails);
-                createScheduleViewModel.setSchedulesCreateRequestModel(schedulesCreateRequestModel);
-
-                if (UserType.isUserPatient()) {
-                    createScheduleViewModel.setPatientHistory(UserDetailPreferenceManager.getWhoAmIResponse().getHistory());
-                    PatientHistoryFragment patientHistoryFragment = new PatientHistoryFragment();
-                    showSubFragmentInterface.onShowFragment(patientHistoryFragment);
-                } else {
-                    String doctorGuid = null;
-                    if (UserType.isUserAssistant()) {
-                        doctorGuid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
-                    }
-                    showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
-                    String currentUserGuid=to_guid;
-                    if(!UserType.isUserAssistant())
-                        currentUserGuid="";
-
-                    schedulesApiViewModel.createSchedule(currentUserGuid,doctorGuid, to_guid, createScheduleViewModel.getSchedulesCreateRequestModel(), false);
-                }
+                    getUsersApiViewModel.getUserDetail(createScheduleViewModel.getDoctorCommonModel().getUser_guid(), null);
                 break;
+        }
+    }
+
+    private void requestAppointment() {
+        SchedulesCreateRequestModel schedulesCreateRequestModel = new SchedulesCreateRequestModel();
+        String to_guid = null;
+
+        if (UserType.isUserPatient()) {
+            schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getDoctorCommonModel().getUser_id()));
+            requestee_name = createScheduleViewModel.getDoctorCommonModel().getFirst_name();
+            to_guid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
+        } else {
+            schedulesCreateRequestModel.setRequestee_id(String.valueOf(createScheduleViewModel.getPatientCommonModel().getUser_id()));
+            requestee_name = createScheduleViewModel.getPatientCommonModel().getFirst_name();
+            to_guid = createScheduleViewModel.getPatientCommonModel().getUser_guid();
+        }
+
+        schedulesCreateRequestModel.setMessage(reasonEt.getText().toString());
+
+        SchedulesCreateRequestModel.Requestdetails requestdetails = new SchedulesCreateRequestModel.Requestdetails();
+
+        List<SchedulesCreateRequestModel.Requestdetails.Dates> datesList = new ArrayList<>();
+
+        for (int i = 0; i < createScheduleViewModel.getTimeSlots().getValue().size(); i++) {
+            SchedulesCreateRequestModel.Requestdetails.Dates dates = new SchedulesCreateRequestModel.Requestdetails.Dates();
+            dates.setStart(createScheduleViewModel.getTimeSlots().getValue().get(i));
+            dates.setEnd(Utils.getIncreasedTime(createScheduleViewModel.getDoctorCommonModel().getAppt_length(), createScheduleViewModel.getTimeSlots().getValue().get(i)));
+            datesList.add(dates);
+        }
+        requestdetails.setDates(datesList);
+        requestdetails.setReason(reasonEt.getText().toString());
+        requestdetails.setInsurance_to_date(isInsuranceUpdated);
+        requestdetails.setChange_demographic(isDemographicUpdated);
+
+        schedulesCreateRequestModel.setDetail(requestdetails);
+        createScheduleViewModel.setSchedulesCreateRequestModel(schedulesCreateRequestModel);
+
+        if (UserType.isUserPatient()) {
+            createScheduleViewModel.setPatientHistory(UserDetailPreferenceManager.getWhoAmIResponse().getHistory());
+            PatientHistoryFragment patientHistoryFragment = new PatientHistoryFragment();
+            showSubFragmentInterface.onShowFragment(patientHistoryFragment);
+        } else {
+            String doctorGuid = null;
+            if (UserType.isUserAssistant()) {
+                doctorGuid = createScheduleViewModel.getDoctorCommonModel().getUser_guid();
+            }
+            showSuccessView(null, RequestID.REQ_SHOW_SUCCESS_VIEW, null);
+            String currentUserGuid = to_guid;
+            if (!UserType.isUserAssistant())
+                currentUserGuid = "";
+
+            schedulesApiViewModel.createSchedule(currentUserGuid, doctorGuid, to_guid, createScheduleViewModel.getSchedulesCreateRequestModel(), false);
         }
     }
 
