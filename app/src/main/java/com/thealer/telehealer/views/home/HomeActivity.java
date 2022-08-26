@@ -129,6 +129,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isSigningOutInProcess = false;
     private static boolean onAuthenticated = false;
     private static boolean creditcardstatus = false;
+    private boolean isFirstTime = true;
 
     private NotificationApiViewModel notificationApiViewModel;
 
@@ -218,8 +219,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()){
-                        showDoctorPatientList();
+                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+                        if (!isFirstTime) {
+                            showDoctorPatientList();
+                        }
+                        isFirstTime = false;
                         creditcardstatus = whoAmIApiResponseModel.getPayment_account_info().isCCCaptured();
                     }
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
@@ -383,12 +387,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         attachView();
     }
 
-    public Fragment getVisibleFragment(){
+    public Fragment getVisibleFragment() {
         FragmentManager fragmentManager = HomeActivity.this.getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible())
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
                     return fragment;
             }
         }
@@ -977,8 +981,10 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         application.addShortCuts();
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
-            if (getVisibleFragment() instanceof DoctorPatientListingFragment){
-                whoAmIApiViewModel.assignWhoAmI();
+            if (getVisibleFragment() instanceof DoctorPatientListingFragment) {
+                if (!isFirstTime) {
+                    whoAmIApiViewModel.assignWhoAmI();
+                }
             }
             showHelpScreen();
         }

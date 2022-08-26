@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pubnub.api.models.consumer.access_manager.v3.User;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -47,17 +48,18 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private FragmentActivity fragmentActivity;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private boolean isDietView;
+    private boolean isDietView,isfromMAView;
     private Bundle bundle;
     private List<AssociationAdapterListModel> adapterListModels;
     private CommonUserApiResponseModel doctorModel;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, boolean isfromMAView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
         fragmentActivity = activity;
         this.doctorModel = doctorModel;
         adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
+        this.isfromMAView = isfromMAView;
         this.bundle = bundle;
         if (bundle == null) {
             this.bundle = new Bundle();
@@ -129,7 +131,12 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 } else if (UserType.isUserPatient()) {
                     viewHolder.actionIv.setVisibility(View.GONE);
                 }
-                viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
+                if (isfromMAView){
+                    viewHolder.subTitleTv.setText(userModel.getDesignation()!=null && !userModel.getDesignation().isEmpty()? userModel.getDesignation() : "");
+                }else {
+                    viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
+                }
+
 
                 viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
                     @Override
