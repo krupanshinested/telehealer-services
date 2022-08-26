@@ -46,7 +46,7 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
             itemEndListener.itemEnd(position);
         }
         String designation = adapterList.get(position);
-        if (!designation.isEmpty()) {
+        if (this.designation != null && !designation.isEmpty()) {
             if (currentSelected == -1) {
                 if (this.designation.equals(designation)) {
                     currentSelected = position;
@@ -55,7 +55,10 @@ public class DesignationListAdapter extends RecyclerView.Adapter<DesignationList
                 }
             }
         } else {
-            currentSelected = 0;
+            if (currentSelected == -1){
+                currentSelected = 0;
+            }
+
         }
         if (position == currentSelected)
             holder.rbDesignation.setChecked(true);

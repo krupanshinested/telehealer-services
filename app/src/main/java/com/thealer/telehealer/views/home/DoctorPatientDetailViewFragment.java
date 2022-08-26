@@ -217,9 +217,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     }
 
                     Log.d("Data Model", "Data Model user api");
-                    manageSAPermission();
 
                 }
+                manageSAPermission();
                 if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
                     set.add(doctorGuid);
@@ -672,7 +672,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     e.printStackTrace();
                 }
             }
-        }else {
+        } else {
             MenuItem callMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_call);
             MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
             MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
@@ -681,7 +681,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                 //TODO : Call Menu item
                 try {
-                    callMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start ), PorterDuff.Mode.SRC_IN);
+                    callMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
                     SpannableString s = new SpannableString(callMenuItem.getTitle());
                     s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start)), 0, s.length(), 0);
                     callMenuItem.setTitle(s);
@@ -692,7 +692,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                 // TODO : Schedule Menu item
                 try {
-                    scheduleMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start ), PorterDuff.Mode.SRC_IN);
+                    scheduleMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
                     SpannableString s = new SpannableString(scheduleMenuItem.getTitle());
                     s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start)), 0, s.length(), 0);
                     scheduleMenuItem.setTitle(s);
@@ -703,9 +703,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
                 // TODO : Chat Menu item
                 try {
-                    chatMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start ), PorterDuff.Mode.SRC_IN);
+                    chatMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
                     SpannableString s = new SpannableString(chatMenuItem.getTitle());
-                    s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start) ), 0, s.length(), 0);
+                    s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start)), 0, s.length(), 0);
                     chatMenuItem.setTitle(s);
 
                 } catch (Exception e) {
