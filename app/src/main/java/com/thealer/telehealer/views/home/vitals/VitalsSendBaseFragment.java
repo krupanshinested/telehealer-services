@@ -179,20 +179,35 @@ public class VitalsSendBaseFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 Log.v("VitalsSendBaseFragment", "vitalsApiViewModel error");
 //                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
-                    String title = getString(R.string.failure);
-                    callFailureView(errorModel);
+                String title = getString(R.string.failure);
+                callFailureView(errorModel);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
+                    sendSuccessView(getActivity(), false, title, errorModel.getMessage());
+                } else {
                     if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
-                        sendSuccessViewBroadCast(getActivity(), false, title, errorModel.getMessage());
+                        sendSuccessView(getActivity(), false, title, errorModel.getMessage());
                         PaymentInfo paymentInfo = new PaymentInfo();
                         paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
                         paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
                         paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, "");
 //                    }
+                    }
                 }
 
             }
         });
+    }
+
+    private void sendSuccessView(Context context, boolean status, String title, String description){
+        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+        bundle.putString(Constants.SUCCESS_VIEW_TITLE, title);
+        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
+        intent.putExtras(bundle);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(getString(R.string.success_vital_broadcast_receiver)).putExtras(bundle));
+
     }
 
     private void callFailureView(ErrorModel errorModel) {
