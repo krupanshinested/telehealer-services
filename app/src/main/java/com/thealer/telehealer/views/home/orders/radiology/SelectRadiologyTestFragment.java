@@ -123,6 +123,8 @@ public class SelectRadiologyTestFragment extends OrdersBaseFragment implements V
                         @Override
                         public void run() {
                             radiologyModelList = new RadiologyConstants().getRadiologyListModel(searchEt.getText().toString().toLowerCase());
+                            radiologyListAdapter.setData(radiologyModelList);
+                            radiologyListAdapter.notifyDataSetChanged();
                         }
                     });
                     uiToggleTimer = runnable;

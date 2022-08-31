@@ -11,6 +11,15 @@ public class AddConnectionRequestModel implements Serializable {
     private String type;
     private String message;
     private String detail;
+    private String designation;
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
 
     public String getRequestee_id() {
         return requestee_id;

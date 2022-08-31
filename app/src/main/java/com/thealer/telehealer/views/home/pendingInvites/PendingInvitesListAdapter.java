@@ -134,7 +134,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null);
                         }
                     });
 
@@ -147,15 +147,21 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.REJECTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT));
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null);
                         }
                     });
 
                 } else {
                     viewHolder.actionCl.setVisibility(View.GONE);
-                    avatarUrl = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getUser_avatar();
-                    title = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayName();
-                    subTitle = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayInfo();
+                    if(adapterModelList.get(position).getInvitesResponseModel().getRequestee()!=null) {
+                        avatarUrl = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getUser_avatar();
+                        title = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayName();
+                        subTitle = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayInfo();
+                    }else{
+                        avatarUrl="";
+                        title="";
+                        subTitle="";
+                    }
                 }
 
                 Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.avatarCiv, avatarUrl, activity.getDrawable(R.drawable.profile_placeholder), true, true);
@@ -220,18 +226,19 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
         notifyDataSetChanged();
     }
 
-    public void setData(List<PendingInvitesNonRegisterdApiResponseModel.ResultBean> result, int page) {
+    public void setData(List<PendingInvitesNonRegisterdApiResponseModel.ResultBean> result, int page,boolean isDisplayHeader) {
         PendingInvitesAdapterModel adapterModel;
 
         if (page == 1) {
 
             nonRegisteredUsers.clear();
+            if(isDisplayHeader) {
+                adapterModel = new PendingInvitesAdapterModel();
+                adapterModel.setType(TYPE_HEADER);
+                adapterModel.setHeaderString(activity.getString(R.string.non_registered_users));
 
-            adapterModel = new PendingInvitesAdapterModel();
-            adapterModel.setType(TYPE_HEADER);
-            adapterModel.setHeaderString(activity.getString(R.string.non_registered_users));
-
-            nonRegisteredUsers.add(adapterModel);
+                nonRegisteredUsers.add(adapterModel);
+            }
         }
 
         for (int i = 0; i < result.size(); i++) {

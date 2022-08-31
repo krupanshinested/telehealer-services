@@ -23,11 +23,11 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.vitals.VitalErrorThreshold;
+import com.thealer.telehealer.views.settings.Adapters.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideo;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
-import com.thealer.telehealer.apilayer.models.vitals.VitalErrorThreshold;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.views.settings.Adapters.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.vitals.VitalThresholdModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalsApiViewModel;
 import com.thealer.telehealer.common.Utils;
@@ -177,12 +177,13 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         editTv.setText(getString(R.string.edit));
         editTv.setVisibility(View.VISIBLE);
         toolbarTitle.setText(R.string.vital_chart);
+        rpmCellView.updateTextviewPadding(20,20,25,20);
+        notificationCellView.updateTextviewPadding(20,20,20,20);
+        toolbarTitle.setText(R.string.vital_chart);
         if (getArguments() != null)
             userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 
         vitalsApiViewModel.getVitalThreshold(true, userGuid);
-        rpmCellView.updateTextviewPadding(20, 20, 25, 20);
-        notificationCellView.updateTextviewPadding(20, 20, 20, 20);
         notificationCellView.setRightDrawableIcon(R.drawable.ic_baseline_info_24);
         rpmCellView.setOnClickListener(new View.OnClickListener() {
             @Override

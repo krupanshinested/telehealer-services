@@ -1,7 +1,6 @@
 package com.thealer.telehealer.stripe;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
@@ -45,11 +44,11 @@ public class AppPaymentCardUtils {
      * @param errorModel instance of error model from api response
      */
     public static void handleCardCasesFromErrorModel(Activity activity, ErrorModel errorModel, @Nullable String doctorName) {
-        if (!errorModel.isCCCaptured()) {
+        if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured()) {
             openCardNotAddedScreen(activity, doctorName);
 
-        } else if (!errorModel.isDefaultCardValid()) {
-            openCardExpiredScreen(activity, errorModel.getSavedCardsCount(), doctorName);
+        } else if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+            openCardExpiredScreen(activity, UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount(), doctorName);
         }
     }
 
@@ -58,16 +57,16 @@ public class AppPaymentCardUtils {
      * @param errorModel instance of error model from api response
      */
     public static void handleCardCasesFromErrorModel(Fragment fragment, ErrorModel errorModel, @Nullable String doctorName) {
-        if (!errorModel.isCCCaptured()) {
+        if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured()) {
             openCardNotAddedScreen(fragment, doctorName);
 
-        } else if (!errorModel.isDefaultCardValid()) {
-            openCardExpiredScreen(fragment, errorModel.getSavedCardsCount(), doctorName);
+        } else if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+            openCardExpiredScreen(fragment, UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount(), doctorName);
         }
     }
 
     public static boolean hasValidPaymentCard(ErrorModel errorModel) {
-        return errorModel.isCCCaptured() && errorModel.isDefaultCardValid();
+        return UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() && UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid();
     }
 
     public static boolean hasValidPaymentCard(@Nullable PaymentInfo paymentInfo) {
@@ -78,7 +77,7 @@ public class AppPaymentCardUtils {
     }
 
 
-    private static void openCardNotAddedScreen(Activity activity, @Nullable String doctorName) {
+    public static void openCardNotAddedScreen(Activity activity, @Nullable String doctorName) {
         activity.startActivityForResult(getCardNotAddedIntent(activity, doctorName), RequestID.REQ_CARD_INFO);
     }
 
@@ -152,6 +151,7 @@ public class AppPaymentCardUtils {
 
         /*if (canViewCardStatus) {*/
             if (paymentInfo != null) {
+                imageView.setVisibility(View.VISIBLE);
                 if (hasValidPaymentCard(paymentInfo)) {
                     imageView.setImageResource(R.drawable.ic_card_enabled);
                 } else {

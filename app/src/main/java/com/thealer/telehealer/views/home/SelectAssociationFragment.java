@@ -150,8 +150,10 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    associationRv.setScrollable(true);
-                    associationRv.hideProgressBar();
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        associationRv.setScrollable(true);
+                        associationRv.hideProgressBar();
+                    }
                 }
             }
         });
@@ -160,8 +162,10 @@ public class SelectAssociationFragment extends BaseFragment implements OnListIte
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    associationRv.setScrollable(false);
-                    associationRv.hideProgressBar();
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        associationRv.setScrollable(false);
+                        associationRv.hideProgressBar();
+                    }
                 }
             }
         });

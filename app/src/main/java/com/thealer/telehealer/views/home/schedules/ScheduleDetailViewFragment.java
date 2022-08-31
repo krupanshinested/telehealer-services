@@ -187,11 +187,13 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     @Override
                     public void onChanged(@Nullable ErrorModel errorModel) {
                         Log.d("ErrorModel", "whoAmIApiViewModel");
-                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
-                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+//                        if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                            Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                            intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                            intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                            intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+//                        }
                     }
                 });
         askToAddCardViewModel = new ViewModelProvider(this).get(AskToAddCardViewModel.class);
@@ -364,12 +366,12 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             case R.id.patient_call_iv:
 
                 ArrayList<String> callTypes = new ArrayList<>();
-                if (resultBean.getDoctor().getApp_details() != null) {
-                    if (!resultBean.getDoctor().getApp_details().isWebUser()) {
+//                if (resultBean.getDoctor().getApp_details() != null) {
+//                    if (!resultBean.getDoctor().getApp_details().isWebUser()) {
                         callTypes.add(getString(R.string.audio_call));
                         callTypes.add(getString(R.string.video_call));
-                    }
-                }
+//                    }
+//                }
                 callTypes.add(getString(R.string.one_way_call));
                 if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPatient().getPayment_account_info())) {
                     if (UserType.isUserDoctor()) {
@@ -397,6 +399,10 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                             return;
                         } else {
                             callType = OpenTokConstants.oneWay;
+                        }
+
+                        if (doctorGuid == null || doctorGuid.isEmpty()) {
+                            doctorGuid = UserDetailPreferenceManager.getUser_guid();
                         }
 
 

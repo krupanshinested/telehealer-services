@@ -25,7 +25,6 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-
                     getAuthApiService().getUnConnectedUsers(paginate,true, page, page_size, name, isMedicalAssistant, Constants.ROLE_DOCTOR, speciality)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
@@ -38,4 +37,24 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void getDesignationList(){
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if(status){
+                    getAuthApiService().getDesignationList()
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(false)){
+
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
 }
+

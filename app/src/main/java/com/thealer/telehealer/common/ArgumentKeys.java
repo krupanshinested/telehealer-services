@@ -57,6 +57,7 @@ public class ArgumentKeys {
     public static final String TRANSCRIPTION_DETAIL = "transcription_detail";
     public static final String USER_GUID = "user_guid";
     public static final String isUserPatient = "isUserPatient";
+    public static final String MODULE_CODE = "module_code";
     public static final String SCHEDULE_DETAIL = "schedule_detail";
     public static final String DOCTOR_GUID = "doctor_guid";
     public static final String DOCTOR_ID = "doctor_id";
@@ -148,6 +149,20 @@ public class ArgumentKeys {
     public static final String SIZE = "0";
     public static final String DOCTOR_NAME = "DOCTOR_NAME";
     public static final String SESSION_ID = "SESSION_ID";
+    public static final String PRESCRIPTION_CODE ="PRESCRIPTIONS";
+    public static final String ADD_VITALS_CODE ="ADD_VITALS";
+    public static final String MAKE_CALLS_CODE ="MAKE_CALLS";
+    public static final String REFERRALS_CODE ="REFERRALS";
+    public static final String LABS_CODE ="LABS";
+    public static final String RADIOLOGY_CODE ="RADIOLOGY";
+    public static final String MEDICAL_DOCUMENTS_CODE ="MEDICAL_DOCUMENTS";
+    public static final String FORMS_CODE ="FORMS";
+    public static final String EDUCATIONAL_VIDEOS_CODE ="EDUCATIONAL_VIDEOS";
+    public static final String BILLING_AND_CHARGES_CODE ="BILLING_AND_CHARGES";
+    public static final String MANAGE_REFUND_CODE ="MANAGE_REFUND";
+    public static final String PAYMENT_PROCESSING_CODE ="PAYMENT_PROCESSING";
+    public static final String SCHEDULING_CODE ="SCHEDULING";
+    public static final String INVITE_OTHERS_CODE ="INVITE_OTHERS";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
@@ -213,6 +228,7 @@ public class ArgumentKeys {
 
     public static final String TO_USER_GUID = "TO_USER_GUID";
 
+    public static final String CALL_REQUEST = "call_request";
 
     public static final String TRANSACTION = "TRANSACTION";
     public static String NOTIFICATION_ID = "notification-id";
@@ -262,6 +278,20 @@ public class ArgumentKeys {
     public static final String IS_USER_ADMITTED = "IS_USER_ADMITTED";
 
     public static final String IS_HEAD_LESS = "IS_HEAD_LESS";
+
+    public static final String IS_SWITCH_ENABLE = "IS_SWITCH_ENABLE";
+    public static final String ITEM_CLICK_CHILD_POS = "ITEM_CLICK_CHILD_POS";
+    public static final String ITEM_CLICK_PARENT_POS = "ITEM_CLICK_PARENT_POS";
+    public static final String IS_FROM_PARENT = "IS_FROM_PARENT";
+    public static final String IS_INVITED_VISIBLE = "IS_INVITED_VISIBLE";
+
+    public static final String Reason="reason";
+    public static final String PlanID="plan_id";
+    public static final String BillingCycle="billing_cycle";
+    public static String IS_CONTINUE_PLAN="IS_CONTINUE_PLAN";
+    public static String IS_RESUBSCRIBE_PLAN="IS_RESUBSCRIBE_PLAN";
+    public static String IS_CHANGE_PLAN="IS_CHANGE_PLAN";
+    public static String IS_HIDE_BACK="IS_HIDE_BACK";
     public static final String DEVICE_TITLE = "title";
     public static final String HEALTH_CARE_ID = "health_care_id";
     public static final String DEVICE_FLAG = "device_flag";

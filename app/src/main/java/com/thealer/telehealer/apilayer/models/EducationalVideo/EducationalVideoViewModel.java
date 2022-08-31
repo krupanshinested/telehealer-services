@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
-import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiResponseModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CameraUtil;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
@@ -16,6 +16,7 @@ import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EducationalVideoViewModel extends BaseApiViewModel {
     public EducationalVideoViewModel(@NonNull Application application) {
@@ -27,7 +28,7 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getEducationalVideo(search,true, doctorGuid, page, Constants.PAGINATION_SIZE)
+                    getAuthApiService().getEducationalVideo(search, true, doctorGuid, page, Constants.PAGINATION_SIZE)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -40,14 +41,14 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
         });
     }
 
-    public void getEducationalVideos(@Nullable String doctorGuid, String ids,String userGuid) {
+    public void getEducationalVideos(@Nullable String doctorGuid, String ids, String userGuid) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getEducationalVideos(!UserType.isUserPatient(),ids,userGuid, doctorGuid)
+                    getAuthApiService().getEducationalVideos(!UserType.isUserPatient(), ids, userGuid, doctorGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAListObserver<EducationalVideoOrder>(Constants.SHOW_PROGRESS){
+                            .subscribe(new RAListObserver<EducationalVideoOrder>(Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(ArrayList<EducationalVideoOrder> data) {
                                     ArrayList<BaseApiResponseModel> apiResponseModels = new ArrayList<>(data);
@@ -79,7 +80,7 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
     }
 
 
-    public void postEducationalVideo(EducationalVideoRequest request) {
+    public void postEducationalVideo(String doctorGuid, EducationalVideoRequest request) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -102,9 +103,9 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    HashMap<String,Object> req = new HashMap<>();
-                    req.put("viewed",true);
-                    getAuthApiService().patchEducationalVideo(id,req)
+                    HashMap<String, Object> req = new HashMap<>();
+                    req.put("viewed", true);
+                    getAuthApiService().patchEducationalVideo(id, req)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
@@ -117,15 +118,15 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
         });
     }
 
-    public void postEducationalVideoOrder(String doctorGuid,String userGuid,ArrayList<String> selectedIds) {
+    public void postEducationalVideoOrder(String doctorGuid, String userGuid, ArrayList<String> selectedIds) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    HashMap<String,Object> map = new HashMap<>();
-                    map.put("user_guid",userGuid);
-                    map.put("videos",selectedIds);
-                    getAuthApiService().postEducationalOrder(doctorGuid,map)
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("user_guid", userGuid);
+                    map.put("videos", selectedIds);
+                    getAuthApiService().postEducationalOrder(doctorGuid, map)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -138,15 +139,15 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
         });
     }
 
-    public void updateEducationalVideo(String title,String description,int videoId) {
+    public void updateEducationalVideo(String doctorGuid, String title, String description, int videoId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    HashMap<String,Object> details = new HashMap<>();
-                    details.put("title",title);
-                    details.put("description",description);
-                    getAuthApiService().updateEducationalVideo(videoId+"",details)
+                    HashMap<String, Object> details = new HashMap<>();
+                    details.put("title", title);
+                    details.put("description", description);
+                    getAuthApiService().updateEducationalVideo(videoId + "", details)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -159,7 +160,7 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
         });
     }
 
-    public void deleteEducationalVideo(int videoId) {
+    public void deleteEducationalVideo(String userGuid, int videoId) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -182,10 +183,10 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    HashMap<String,Object> req = new HashMap<>();
-                    req.put("user_guid",userGuid);
-                    req.put("videos",ids);
-                    getAuthApiService().unAssociateEducationalVideoOrder(doctorGuid,req)
+                    HashMap<String, Object> req = new HashMap<>();
+                    req.put("user_guid", userGuid);
+                    req.put("videos", ids);
+                    getAuthApiService().unAssociateEducationalVideoOrder(doctorGuid, req)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

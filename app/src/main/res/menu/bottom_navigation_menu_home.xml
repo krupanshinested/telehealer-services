@@ -37,6 +37,10 @@
             android:id="@+id/menu_recent"
             android:icon="@drawable/recent_drawable_selector"
             android:title="@string/visits" />
+<!--        <item-->
+<!--            android:id="@+id/menu_invite"-->
+<!--            android:icon="@drawable/ic_pending_invite"-->
+<!--            android:title="@string/send_invitation" />-->
 
     </group>
     <item

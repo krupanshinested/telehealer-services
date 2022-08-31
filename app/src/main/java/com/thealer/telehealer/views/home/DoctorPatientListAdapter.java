@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
@@ -86,14 +88,19 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                 ItemViewHolder viewHolder = (ItemViewHolder) holder;
                 CommonUserApiResponseModel userModel = adapterListModels.get(i).getCommonUserApiResponseModel();
 
-                viewHolder.titleTv.setText(userModel.getUserDisplay_name());
+                viewHolder.titleTv.setText(userModel.getDisplayName());
                 loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
 
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
+                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
                     if (doctorModel != null)
-                        viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
+                        if (bundle.getBoolean("CC_Capture")){
+                            viewHolder.userListIv.getAddChargeBtn().setVisibility(View.VISIBLE);
+                        }else {
+                            viewHolder.userListIv.getAddChargeBtn().setVisibility(View.GONE);
+                        }
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

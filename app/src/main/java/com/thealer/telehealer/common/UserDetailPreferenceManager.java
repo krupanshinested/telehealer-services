@@ -60,6 +60,30 @@ public class UserDetailPreferenceManager {
         appPreference.setString(PreferenceConstants.VERSION, version);
     }
 
+    public static boolean getTrialExpired() {
+        return appPreference.getBoolean(PreferenceConstants.TRIALEXPIRED);
+    }
+
+    public static void setTrialExpired(Boolean trialExpired) {
+        appPreference.setBoolean(PreferenceConstants.TRIALEXPIRED, trialExpired);
+    }
+
+    public static boolean getPlanActive() {
+        return appPreference.getBoolean(PreferenceConstants.TRIALEXPIRED);
+    }
+
+    public static void setPlanActive(Boolean planActive) {
+        appPreference.setBoolean(PreferenceConstants.PLANACTIVE, planActive);
+    }
+
+    public static boolean getCancelledPlan() {
+        return appPreference.getBoolean(PreferenceConstants.CANCELLEDPLAN);
+    }
+
+    public static void setCancelledPlan(Boolean cancelledPlan) {
+        appPreference.setBoolean(PreferenceConstants.CANCELLEDPLAN, cancelledPlan);
+    }
+
     public static String getUser_activated() {
         return appPreference.getString(PreferenceConstants.USER_ACTIVATED);
     }
@@ -260,6 +284,10 @@ public class UserDetailPreferenceManager {
         setUser_avatar(whoAmIApiResponseModel.getUser_avatar());
         setUser_guid(whoAmIApiResponseModel.getUser_guid());
         setVersion(whoAmIApiResponseModel.getVersion());
+        setFirstTimePurchase(whoAmIApiResponseModel.isFirst_time_subscription_purchased());
+        setTrialExpired(whoAmIApiResponseModel.getisTrialExpired());
+        setPlanActive(whoAmIApiResponseModel.getisPlanActive());
+        setCancelledPlan(whoAmIApiResponseModel.getisCancelledPlan());
 
         if (whoAmIApiResponseModel.getUser_detail() != null) {
 
@@ -272,6 +300,10 @@ public class UserDetailPreferenceManager {
         }
 
         deleteUserImageCaches(application);
+    }
+
+    private static void setFirstTimePurchase(boolean isPurchase) {
+        appPreference.setBoolean(PreferenceConstants.IS_USER_PURCHASED, isPurchase);
     }
 
     public static void invalidateUser() {

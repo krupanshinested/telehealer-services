@@ -12,7 +12,42 @@ public class WhoAmIApiResponseModel extends CommonUserApiResponseModel {
     private String install_type;
     private boolean orders_enabled;
     private boolean integration_requests;
+    private boolean isTrialExpired = false;
+    private boolean isPlanActive = false;
+    private boolean isCancelledPlan = false;
+    private boolean first_time_subscription_purchased=false;
 
+    public boolean getisTrialExpired() {
+        return isTrialExpired;
+    }
+
+    public void setisTrialExpired(boolean isTrialExpired) {
+        this.isTrialExpired = isTrialExpired;
+    }
+
+    public boolean getisPlanActive() {
+        return isPlanActive;
+    }
+
+    public void setisPlanActive(boolean isPlanActive) {
+        this.isPlanActive = isPlanActive;
+    }
+
+    public boolean getisCancelledPlan() {
+        return isCancelledPlan;
+    }
+
+    public void setisCancelledPlan(boolean isCancelledPlan) {
+        this.isCancelledPlan = isCancelledPlan;
+    }
+
+    public boolean isFirst_time_subscription_purchased() {
+        return first_time_subscription_purchased;
+    }
+
+    public void setFirst_time_subscription_purchased(boolean first_time_subscription_purchased) {
+        this.first_time_subscription_purchased = first_time_subscription_purchased;
+    }
 
     public String getVersion() {
         return version;

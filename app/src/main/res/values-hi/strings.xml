@@ -312,6 +312,7 @@
     <string name="order_status">आदेश की स्थिति</string>
     <string name="prescription">पर्चे</string>
     <string name="form">फार्म</string>
+    <string name="subscription">Subscription</string>
     <string name="strength">शक्ति</string>
     <string name="direction">दिशा</string>
     <string name="dispense">बांटना</string>
@@ -714,17 +715,17 @@
     <string name="help_content_monitoring_doctor">अपने मरीज़ के कब्जे वाले आहार, आहार और दवाओं की समीक्षा करके दूरस्थ निगरानी करें। सूची उन सभी रोगियों को दिखाती है जिन्होंने एक चयनित निगरानी अवधि के दौरान अपने विटाल को पकड़ लिया है। रोगी द्वारा कब्जा किए गए \ n \ n माप को रक्तचाप, वजन, ग्लूकोज, तापमान, पल्स बैल और पल्स दर से अलग किया जा सकता है।</string>
     <string name="associations">संघों</string>
     <string name="referral_success">%s लिए आपका रेफरल सफलतापूर्वक पोस्ट किया गया है।</string>
-    <string name="referral_failure">%s लिए आपका रेफरल सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
+    <string name="referral_failure">%s के कारण आपका रेफरल %s कारणों से सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
     <string name="miscellaneous_success">%s लिए आपका विविध आदेश सफलतापूर्वक पोस्ट किया गया है।</string>
-    <string name="miscellaneous_failure">%s लिए आपका विविध आदेश सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
+    <string name="miscellaneous_failure">%s के कारण आपका विविध आदेश %s कारणों से सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
     <string name="create_radiology_success">%s लिए आपका X-Ray ऑर्डर सफलतापूर्वक पोस्ट किया गया है</string>
-    <string name="create_radiology_failure">%s लिए आपका X-Ray ऑर्डर सफलतापूर्वक पोस्ट नहीं किया गया है, कृपया पुनः प्रयास करें,</string>
+    <string name="create_radiology_failure">%s के कारण आपका प्लैब ऑर्डर %s कारणों से सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
     <string name="create_lab_success">%s लिए आपका लैब ऑर्डर सफलतापूर्वक पोस्ट किया गया है।</string>
-    <string name="create_lab_failure">%s लिए आपका लैब ऑर्डर सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
+    <string name="create_lab_failure">%s के कारण आपका प्लैब ऑर्डर %s कारणों से सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
     <string name="upload_document_failure">आपका दस्तावेज़ अपलोड विफल हो गया है कृपया पुनः प्रयास करें</string>
     <string name="create_prescription_success">%s लिए आपका पर्चे ऑर्डर सफलतापूर्वक पोस्ट किया गया है।</string>
-    <string name="create_prescription_failure">%s लिए आपका प्रिस्क्रिप्शन ऑर्डर सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
-    <string name="create_form_failure">फॉर्म जमा करने में विफल रहा। कृपया पुन: प्रयास करें।</string>
+    <string name="create_prescription_failure">%s के कारण आपका प्रिस्क्रिप्शन ऑर्डर %s कारणों से सफलतापूर्वक पोस्ट नहीं किया गया है।</string>
+    <string name="create_form_failure">%s के कारण फ़ॉर्म सबमिशन विफल रहा। कृपया पुन: प्रयास करें।</string>
     <string name="error_on_measure_vital">मेस्योर पर त्रुटि, कृपया पुनः प्रयास करें</string>
     <string name="vital_empty_pateint">कोई युग्मित विटाल डिवाइस नहीं मिला। लाइव वीडियो कॉल के दौरान महत्वपूर्ण मापों को कैप्चर करने के लिए \n इन्वर्टर, कृपया विटल पेज से एक या अधिक समर्थित उपकरणों को पेयर करें।</string>
     <string name="vital_empty_non_pateint">कोई माप नहीं चल रहा है।</string>
@@ -1512,12 +1513,15 @@
     <string name="str_current_plan">वर्तमान योजना</string>
     <string name="str_start_with_basic">बेसिक से शुरू करें</string>
     <string name="str_start_with_limited">लिमिटेड से शुरू करें</string>
+    <string name="str_start_with_current">वर्तमान योजना के साथ जारी रखें</string>
     <string name="str_start_with_better">बेहतर से शुरू करें</string>
     <string name="str_start_with_ideal">आदर्श से शुरू करें</string>
-    <string name="str_plan_is_continue_till">यह योजना महीने के अंत तक जारी रहेगी। आपके व्यापार के लिए धन्यवाद।</string>
+    <string name="str_plan_is_continue_till">आपकी योजना महीने के अंत तक जारी रहेगी। आपके व्यापार के लिए धन्यवाद।</string>
     <string name="str_unsubscribe">सदस्यता समाप्त</string>
+    <string name="str_dontsubscribe">जारी नहीं रखना चाहता</string>
     <string name="str_subscribe">सदस्यता</string>
     <string name="str_resubscribe">पुन: सदस्यता</string>
+    <string name="str_contsubscribe">सदस्यता जारी रखें</string>
     <string name="str_plan_already_activate">योजना पहले से सक्रिय</string>
     <string name="retrive_pricing_plan">आपके लिए मूल्य निर्धारण योजना प्राप्त करना</string>
     <string name="str_please_ask_for_permission">कृपया अपने प्रदाता से इन सुविधाओं को सक्षम करने के लिए कहें।</string>
@@ -1525,7 +1529,7 @@
     <string name="str_you_can_not_invite_yourself">स्वयं आमंत्रण निषिद्ध है।</string>
     <string name="str_new_device_setup">नया टेलिहेल्थ डिवाइस सेटअप करें</string>
     <string name="EMPTY_DEVICE">कोई टेलिहेल्थ डिवाइस नहीं जोड़ा गया</string>
-    <string name="str_new_device_dummy_desc">1. यहां अपना डिवाइस आईडी दर्ज करें फिर परिवर्तन सहेजें। यूनिट पर IMEI नंबर के रूप में अपना डिवाइस आईडी खोजें। आईएमईआई खोजने के लिए, <font color='#FF0000'><b>Click here.</b></font></string>
+    <string name="str_new_device_dummy_desc">यहां अपना डिवाइस आईडी दर्ज करें फिर परिवर्तन सहेजें। यूनिट पर IMEI नंबर के रूप में अपना डिवाइस आईडी खोजें। आईएमईआई खोजने के लिए, <font color='#FF0000'><b>Click here.</b></font></string>
     <string name="str_new_device_get_vital_desc">टेलिहेल्थ से टेलीहीलर तक की जानकारी प्राप्त करने के लिए, नीचे दिए गए यूआरएल को कॉपी करें और एपीआई यूआरएल में टेलिहेल्थ में अपने डैशबोर्ड के नीचे पेस्ट करें।</string>
     <string name="str_new_device_dummy_desc2">चिकित्सा देखभाल की सटीकता सुनिश्चित करने के लिए इस उपकरण से केवल आपके महत्वपूर्ण अंगों को मापा जाना चाहिए।</string>
     <string name="enter_device_id">डिवाइस IMEI नंबर दर्ज करें</string>
@@ -1535,7 +1539,7 @@
     <string name="key_manage_devices">टेलीहेल्थ डिवाइस प्रबंधित करें</string>
     <string name="key_add_new_device">नया उपकरण जोड़ें</string>
     <string name="key_device_delete_confirmation">क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?</string>
-    <string name="key_device_sms_enabled">2. अपने जरूरी कामों के बारे में फीडबैक प्राप्त करने के लिए प्रदाता का चयन करें:</string>
+    <string name="key_device_sms_enabled">4. अपनी ज़रूरी जानकारी के बारे में फ़ीडबैक पाने के लिए प्रदाता का चयन करें:</string>
     <string name="key_device_sms_enabled_view">निम्नलिखित चिकित्सक के लिए एसएमएस:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
@@ -1548,5 +1552,30 @@
     <string name="tellihealthstep">1. <font color="#FF0000"><b><a href="https://tellihealth.com/my-account/">Tellihealth</a></b></font> साइट पर लॉग इन करें। यदि पंजीकृत नहीं है तो कृपया पंजीकरण पूरा करें। 2. बाएँ मेनू से Developers पर जाएँ। 3. यहां आपको एपीआई कॉलबैक यूआरएल और उत्पाद सूची मिलेगी। 4. सूची से अपने उत्पाद का चयन करें और यहां से नीचे दिए गए अद्वितीय यूआरएल को कॉपी पेस्ट करें और एपीआई कॉलबैक यूआरएल में पेस्ट करें और परिवर्तनों को सहेजें।</string>
     <string name="str_with_htmltag"><![CDATA[%s]]></string>
     <string name="disclaimer_for_secure_messaging">अस्वीकरण: इस सेटिंग को सक्षम करने से रोगी से प्रतिरूपित प्रतिक्रियाओं पर मौजूदा प्रतिबंध हटा दिए जाएंगे और इसके बजाय उन्हें मुफ़्त-फ़ॉर्म सामग्री भेजने की अनुमति मिल जाएगी।\\n\\nहालांकि रोगी को सूचित किया जाएगा कि तत्काल या आपातकालीन चिकित्सा के लिए सुरक्षित संदेश का उपयोग न करें, %s रोगी द्वारा और उसे भेजे गए किसी भी और सभी सुरक्षित संदेश संचार के उपयोग से उत्पन्न होने वाली कोई जिम्मेदारी या दायित्व नहीं लेता है।</string>
-
+    <string name="stepone">1. डिवाइस से IMEI नंबर दर्ज करें:</string>
+    <string name="steptwo">2. यूआरएल कॉपी करें:</string>
+    <string name="stepthree">3. टेलिहेल्थ में लॉग इन करें और अपना एपीआई यूआरएल पेस्ट करें:</string>
+    <string name="confirm">Confirm</string>
+    <string name="lbl_type_your_reason_here">Type your reason here</string>
+    <string name="str_select_designation_for">Select designation for %s</string>
+    <string name="user_permission">Permissions</string>
+    <string name="lbl_plan_name">Plan Name</string>
+    <string name="lbl_monitored_patients_for_month">Monitored Patients for Month \n (RPM / BHI/ CCM)</string>
+    <string name="lbl_plan_note">All subscription plans are renewed every month until \n you cancel and changes are not Proratable.</string>
+    <string name="lbl_change_plan">Change Plan</string>
+    <string name="lbl_my_subscriptions">My Subscriptions</string>
+    <string name="select_whome_you_want_to_send_invitation">Select to Whom you want to send invitation</string>
+    <string name="lbl_add_staff">Add Staff</string>
+    <string name="view_invited_list">View Invited List</string>
+    <string name="send_invitation">Send Invitation</string>
+    <string name="add_support_staff">Add Support Staff</string>
+    <string name="hippa_msg">Telehealer assumes that as a Provider you have signed BAA agreement and HIPPA Policy with your support staff, Telehealer platform is not responsible for any violations.</string>
+    <string name="help_content_invite_patient">Send manual invitation to provider and its support staff.</string>
+    <string name="help_content_invite_assistant">As being support staff you can send manually invitation to provider, patient as well as other support staff.</string>
+    <string name="help_content_invite_provider">As being provider you can send manually invitation to support staff as well as patient</string>
+    <string name="invited_user_list">Invited User List</string>
+    <string name="str_select_your_physician">Select your physician</string>
+    <string name="lbl_subscriptions_plan">Subscription Plan</string>
+    <string name="symbol_dollar">$</string>
+    <string name="subscription_history">Subscription history</string>
 </resources>

@@ -12,7 +12,6 @@ import android.net.Network;
 import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -39,6 +38,8 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.chat.UserKeysApiResponseModel;
+import com.thealer.telehealer.apilayer.models.diet.DietApiViewModel;
+import com.thealer.telehealer.apilayer.models.diet.DietUserListApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.ResetPasswordRequestModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
@@ -53,7 +54,6 @@ import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.Signal.SignalKeyManager;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.CallPlacingActivity;
@@ -66,7 +66,6 @@ import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.monitoring.MonitoringFragment;
 import com.thealer.telehealer.views.onboarding.OnBoardingActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -133,6 +132,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
         attachObserver(signinApiViewModel);
         attachObserver(whoAmIApiViewModel);
 
+
         whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -145,16 +145,6 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                         if (!appPreference.getString(PreferenceConstants.USER_EMAIL).equals(emailEt.getText().toString())) {
                             UserDetailPreferenceManager.deleteAllPreference();
                         }
-
-                        String prevEmail=appPreference.getString(PreferenceConstants.USER_EMAIL);
-                        String currentEmail =emailEt.getText().toString();
-
-                        //TODO - Uncomment If condition if you do not want to create pin every time on login for same User.
-//                        if(!prevEmail.equalsIgnoreCase("") && !currentEmail.equalsIgnoreCase("") && !prevEmail.equalsIgnoreCase(currentEmail)) {
-                            appPreference.setInt(Constants.QUICK_LOGIN_TYPE, -1);
-                            isQuickLogin =false;
-                            appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
-//                        }
 
                         setQuickLoginView();
 
@@ -231,13 +221,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if(errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
-                            errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token))){
-                        UserDetailPreferenceManager.invalidateUser();
-                        PubnubUtil.shared.unsubscribe();
-                        EventRecorder.updateUserId(null);
-                        setQuickLoginText(false, null);
-                    } else if (errorModel.isLocked()) {
+                    if (errorModel.isLocked()) {
                         UserDetailPreferenceManager.invalidateUser();
                         setQuickLoginView();
 
@@ -298,7 +282,7 @@ public class SigninActivity extends BaseActivity implements View.OnClickListener
                 onNetworkAvailable(false);
             }
         };
-        new Handler().postDelayed(() -> runOnUiThread(() -> Constants.ErrorFlag = false),1000);
+
     }
 
     private void checkSignalKeys() {

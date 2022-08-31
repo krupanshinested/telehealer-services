@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,6 +37,9 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
+import com.thealer.telehealer.apilayer.models.feedback.FeedbackApiViewModel;
+import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
+import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
@@ -54,6 +58,7 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
+import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -76,11 +81,13 @@ import com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment;
 import com.thealer.telehealer.views.home.schedules.SchedulesListFragment;
 import com.thealer.telehealer.views.home.vitals.VitalsListFragment;
 import com.thealer.telehealer.views.home.vitals.vitalReport.VitalReportFragment;
+import com.thealer.telehealer.views.inviteUser.SendInvitationFragment;
 import com.thealer.telehealer.views.notification.NotificationActivity;
-import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
+import com.thealer.telehealer.views.subscription.SubscriptionActivity;
+import com.thealer.telehealer.views.subscription.SubscriptionPlanFragment;
 
 import java.util.Calendar;
 import java.util.List;
@@ -121,11 +128,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isPropserShown = false;
     private boolean isSigningOutInProcess = false;
     private static boolean onAuthenticated = false;
+    private static boolean creditcardstatus = false;
 
     private NotificationApiViewModel notificationApiViewModel;
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
     private SignoutApiViewModel signoutApiViewModel;
+    private FeedbackApiViewModel feedbackApiViewModel;
+    public boolean cardScreen = true;
 
     private BroadcastReceiver NotificationCountReceiver = new BroadcastReceiver() {
         @Override
@@ -136,6 +146,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     };
     private CommonUserApiResponseModel commonUserApiResponseModel;
     private AddConnectionApiViewModel addConnectionApiViewModel;
+    private WhoAmIApiResponseModel whoAmIApiResponseModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -191,11 +202,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                    intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
-                    intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                    intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                    LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                    }
                 }
             }
         });
@@ -204,9 +217,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
-                    WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole()))
-                        AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                    whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()){
+                        showDoctorPatientList();
+                        creditcardstatus = whoAmIApiResponseModel.getPayment_account_info().isCCCaptured();
+                    }
+                    if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
+                     if (cardScreen) {
+                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                     }
+                    }
                 }
             }
         });
@@ -229,13 +249,21 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    showToast(errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        showToast(errorModel.getMessage());
+                    }
                 }
                 isSigningOutInProcess = false;
             }
         });
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cardScreen = false;
     }
 
     private void checkNotification() {
@@ -277,7 +305,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 startActivity(new Intent(this, DoctorOnBoardingActivity.class));
                 finish();
                 return false;
+            } else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
+                startActivity(new Intent(this, SubscriptionActivity.class));
+                finish();
+                return false;
             }
+
         }
         return true;
     }
@@ -375,6 +408,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 case R.id.menu_schedules:
                     showSchedulesFragment(scheduleTypeCalendar);
                     break;
+//                case R.id.menu_invite:
+//                    showSendInvitation();
+//                    break;
             }
         }
 
@@ -521,7 +557,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
 
     private void showDoctorsOverflowMenu() {
-        Utils.showDoctorOverflowMenu(this);
+        Bundle bundle=new Bundle();
+        if(UserType.isUserAssistant()) {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
+        }else if(UserType.isUserPatient()) {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+        }else {
+            bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_DOCTOR);
+        }
+
+        Utils.showDoctorOverflowMenu(this,bundle);
     }
 
     private void showNotificationFragment() {
@@ -554,6 +599,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
+        if (whoAmIApiResponseModel != null){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("CC_Capture", whoAmIApiResponseModel.getPayment_account_info().isCCCaptured());
+            doctorPatientListingFragment.setArguments(bundle);
+        }
         setFragment(doctorPatientListingFragment);
 
         /*TransactionListFragment transactionListFragment = new TransactionListFragment();
@@ -607,8 +657,12 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             String userGuid = bundle.getString(ArgumentKeys.USER_GUID);
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
+            String designation = bundle.getString(Constants.DESIGNATION);
+            String currentUserGuid=userGuid;
+            if(!UserType.isUserAssistant())
+                currentUserGuid="";
 
-            addConnectionApiViewModel.connectUser(userGuid, doctorGuid, String.valueOf(selectedId));
+            addConnectionApiViewModel.connectUser(currentUserGuid,userGuid, doctorGuid, String.valueOf(selectedId), designation);
 
         } else {
             showDetailView(bundle);
@@ -725,9 +779,25 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             case R.id.menu_monitoring:
                 showMonitoringView(null);
                 break;
+//            case R.id.menu_invite:
+//                selecteMenuItem = R.id.menu_invite;
+//                showSendInvitation();
+//                break;
         }
         toggleDrawer();
         return true;
+    }
+
+    private void showSendInvitation() {
+        helpContent = HelpContent.HELP_INVITATION;
+        setToolbarTitle(getString(R.string.send_invitation));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.IS_FROM_HOME, true);
+
+        SendInvitationFragment sendInvitationFragment = new SendInvitationFragment();
+        sendInvitationFragment.setArguments(bundle);
+        setFragment(sendInvitationFragment);
+
     }
 
     private void performSignOut() {
@@ -785,6 +855,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 } else if (UserType.isUserDoctor()) {
+                    optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
+                    optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
+                }else if(UserType.isUserAssistant()){
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 }
@@ -895,6 +968,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         application.addShortCuts();
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
+            whoAmIApiViewModel.assignWhoAmI();
             showHelpScreen();
         }
     }

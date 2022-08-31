@@ -108,23 +108,7 @@
                             android:background="@color/colorGrey" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_stepnotes"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:ellipsize="end"
-                            android:ems="3"
-                            android:fontFamily="@font/open_sans"
-                            android:gravity="center|left"
-                            android:linksClickable="true"
-                            android:text="@string/tellihealthnotes"
-                            android:textColor="@color/colorBlack_85"
-                            android:textSize="@dimen/_11ssp"
-                            android:textStyle="bold"
-                            tools:text="@string/tellihealthnotes" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_stepinfo"
+                            android:id="@+id/device_telehealerstep"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_7sdp"
@@ -133,26 +117,77 @@
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
                             android:linksClickable="true"
-                            android:text="@string/tellihealt"
+                            android:text="@string/stepone"
                             android:textColor="@color/colorBlack_85"
                             android:textSize="@dimen/_12ssp"
                             android:textStyle="bold"
-                            tools:text="@string/tellihealt" />
+                            tools:text="@string/stepone" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_step"
+                            android:id="@+id/device_description1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_dummy_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            android:visibility="visible"
+                            tools:text="@string/str_new_device_dummy_desc" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_get_vital"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:text="@string/str_new_device_get_vital_desc"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            android:visibility="gone"
+                            tools:text="@string/str_new_device_get_vital_desc" />
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/edt_device_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_5sdp"
+                            android:background="@drawable/device_id_background"
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:hint="@string/enter_device_id"
+                            android:inputType="textNoSuggestions"
+                            android:padding="@dimen/_10sdp"
+                            android:singleLine="true"
+                            android:textColorHint="@color/colorBlack"
+                            android:textSize="@dimen/_12ssp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
                             android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@color/colorGrey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_steptwo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_7sdp"
                             android:ellipsize="end"
                             android:ems="3"
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
                             android:linksClickable="true"
-                            android:text="@string/tellihealthstep"
-                            android:textColor="@color/device_description_color"
+                            android:text="@string/steptwo"
+                            android:textColor="@color/colorBlack_85"
                             android:textSize="@dimen/_12ssp"
-                            tools:text="@string/tellihealthstep" />
+                            android:textStyle="bold"
+                            tools:text="@string/steptwo" />
 
                         <LinearLayout
                             android:id="@+id/linkLayout"
@@ -215,7 +250,24 @@
                             android:background="@color/colorGrey" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_telehealerstep"
+                            android:id="@+id/device_stepnotes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:visibility="gone"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/tellihealthnotes"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_11ssp"
+                            android:textStyle="bold"
+                            tools:text="@string/tellihealthnotes" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_stepinfo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_7sdp"
@@ -224,55 +276,32 @@
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
                             android:linksClickable="true"
-                            android:text="@string/telehealerstep"
+                            android:text="@string/stepthree"
                             android:textColor="@color/colorBlack_85"
                             android:textSize="@dimen/_12ssp"
                             android:textStyle="bold"
-                            tools:text="@string/telehealerstep" />
+                            tools:text="@string/stepthree" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_description1"
+                            android:id="@+id/device_step"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center|left"
+                            android:linksClickable="true"
+                            android:text="@string/tellihealthstep"
+                            android:textColor="@color/device_description_color"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/tellihealthstep" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
                             android:layout_marginTop="@dimen/_10sdp"
-                            android:ellipsize="end"
-                            android:ems="3"
-                            android:fontFamily="@font/open_sans"
-                            android:gravity="center|left"
-                            android:text="@string/str_new_device_dummy_desc"
-                            android:textColor="@color/device_description_color"
-                            android:textSize="@dimen/_12ssp"
-                            android:visibility="visible"
-                            tools:text="@string/str_new_device_dummy_desc" />
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/edt_device_id"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_10sdp"
-                            android:background="@drawable/device_id_background"
-                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
-                            android:fontFamily="@font/open_sans_semibold"
-                            android:hint="@string/enter_device_id"
-                            android:inputType="textNoSuggestions"
-                            android:padding="@dimen/_10sdp"
-                            android:singleLine="true"
-                            android:textColorHint="@color/colorBlack"
-                            android:textSize="@dimen/_12ssp" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/device_get_vital"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:ems="3"
-                            android:fontFamily="@font/open_sans"
-                            android:gravity="center|left"
-                            android:text="@string/str_new_device_get_vital_desc"
-                            android:textColor="@color/device_description_color"
-                            android:textSize="@dimen/_12ssp"
-                            android:visibility="gone"
-                            tools:text="@string/str_new_device_get_vital_desc" />
+                            android:background="@color/colorGrey" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/device_sms_physician"
@@ -281,9 +310,10 @@
                             android:ellipsize="end"
                             android:ems="3"
                             android:fontFamily="@font/open_sans_semibold"
+                            android:layout_marginTop="@dimen/_8sdp"
                             android:gravity="center|left"
                             android:text="@string/key_device_sms_enabled"
-                            android:textColor="@color/device_description_color"
+                            android:textColor="@color/colorBlack_85"
                             android:textSize="@dimen/_12ssp"
                             tools:text="@string/key_device_sms_enabled" />
 
@@ -392,12 +422,12 @@
                             android:gravity="center|left"
                             android:text="@string/str_new_device_dummy_desc2"
                             android:textColor="@color/device_description_color"
-                            android:textSize="@dimen/_11ssp"
+                            android:textSize="@dimen/_13ssp"
                             tools:text="@string/str_new_device_dummy_desc2" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtSubmit"
-                            android:layout_width="150dp"
+                            android:layout_width="@dimen/_130sdp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_10sdp"
@@ -409,7 +439,7 @@
                             android:paddingVertical="@dimen/_10sdp"
                             android:text="@string/submit"
                             android:textColor="@color/bt_white"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_15sdp"
                             tools:text="@string/submit" />
 
                     </LinearLayout>

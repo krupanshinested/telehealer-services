@@ -2,12 +2,28 @@ package com.thealer.telehealer.views.call;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.manager.RetrofitManager;
+import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.CommonObject;
+import com.thealer.telehealer.common.Feedback.FeedbackCallback;
+import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.ContentActivity;
 import com.thealer.telehealer.views.home.chat.ChatActivity;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Aswin on 09,August,2019
@@ -26,5 +42,45 @@ public class CallMessageActivity extends ContentActivity {
         } else {
             super.onClick(v);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonObject.dismissdialog(this);
+        CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
+
+    }
+
+    FeedbackCallback feedbackCallback = new FeedbackCallback() {
+        @Override
+        public void onActionSuccess(HashMap<String, Object> param) {
+            CommonObject.tempdata.clear();
+            submitFeedback(param);
+        }
+    };
+
+    private void submitFeedback(HashMap<String, Object> param) {
+        this.showProgressDialog();
+        Call<SubmitResponse> call = RetrofitManager.getInstance(getApplication()).getAuthApiService().submitFeedback(param);
+        call.enqueue(new Callback<SubmitResponse>() {
+            @Override
+            public void onResponse(Call<SubmitResponse> call, Response<SubmitResponse> response) {
+                dismissProgressDialog();
+                SubmitResponse submitResponse = response.body();
+                if (submitResponse.getSuccess() != null) {
+                    if (submitResponse.getSuccess()) {
+                        Toast.makeText(CallMessageActivity.this, "" + submitResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SubmitResponse> call, Throwable t) {
+                call.cancel();
+                dismissProgressDialog();
+            }
+        });
+
     }
 }

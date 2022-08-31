@@ -2,21 +2,12 @@ package com.thealer.telehealer.views.inviteUser;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -26,6 +17,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
@@ -68,6 +68,7 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
     private View bottomView;
     private RecyclerView contactsRv;
     private Button inviteBtn;
+    private Bundle bundle = null;
 
     private List<ContactModel> contactModelList = new ArrayList<>();
     private List<ContactModel> searchList = new ArrayList<>();
@@ -88,6 +89,9 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite_contact);
+        if(getIntent()!=null){
+            bundle=getIntent().getExtras();
+        }
         initViewModels();
         initView();
     }
@@ -136,7 +140,9 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    sendSuccessViewBroadCast(InviteContactUserActivity.this, false, getString(R.string.failure), errorModel.getMessage());
+                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        sendSuccessViewBroadCast(InviteContactUserActivity.this, false, getString(R.string.failure), errorModel.getMessage());
+                    }
                 }
             }
         });
@@ -296,7 +302,11 @@ public class InviteContactUserActivity extends BaseActivity implements View.OnCl
 
         apiRequestModel = new InviteByEmailPhoneRequestModel();
         apiRequestModel.setInvitations(invitationsBeanList);
-
+        String role="";
+        if(bundle!=null){
+            role=bundle.getString(ArgumentKeys.ROLE,"");
+        }
+        apiRequestModel.setRole(role);
         inviteUserApiViewModel.inviteUserByEmailPhone(doctorGuid, apiRequestModel, false);
     }
 
