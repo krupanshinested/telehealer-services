@@ -144,7 +144,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                     }
 
 
-                    if (isCallEnable){
+                    if (ischatEnable){
                         patientChatIv.setColorFilter(ContextCompat.getColor(context, R.color.app_gradient_start));
                     }else {
                         patientChatIv.setColorFilter(ContextCompat.getColor(context, R.color.colorGrey));
