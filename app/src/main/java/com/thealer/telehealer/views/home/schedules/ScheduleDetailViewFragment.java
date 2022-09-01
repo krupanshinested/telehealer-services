@@ -111,7 +111,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
     private PatientInvite patientInvite;
     private AskToAddCardViewModel askToAddCardViewModel;
-    private boolean isCallEnable = true;
+    private boolean isCallEnable = true,ischatEnable = true;
 
     @Override
     public void onAttach(Context context) {
@@ -134,14 +134,20 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
                     if (resultBeans.getPermissions().size() > 0) {
                         isCallEnable = Utils.checkPermissionStatus(resultBeans.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                        ischatEnable = Utils.checkPermissionStatus(resultBeans.getPermissions(), ArgumentKeys.CHAT_CODE);
                     }
 
                     if (isCallEnable){
-                        patientCallIv.setEnabled(true);
                         patientCallIv.setColorFilter(ContextCompat.getColor(context, R.color.app_gradient_start));
                     }else {
-                        patientCallIv.setEnabled(false);
                         patientCallIv.setColorFilter(ContextCompat.getColor(context, R.color.colorGrey));
+                    }
+
+
+                    if (isCallEnable){
+                        patientChatIv.setColorFilter(ContextCompat.getColor(context, R.color.app_gradient_start));
+                    }else {
+                        patientChatIv.setColorFilter(ContextCompat.getColor(context, R.color.colorGrey));
                     }
 
                     if (resultBean != null) {
@@ -412,9 +418,18 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 break;
             case R.id.doctor_chat_iv:
             case R.id.patient_chat_iv:
+                if (!ischatEnable){
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
                 startActivity(new Intent(getActivity(), ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
                 break;
             case R.id.patient_call_iv:
+
+                if (!isCallEnable){
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
 
                 ArrayList<String> callTypes = new ArrayList<>();
 //                if (resultBean.getDoctor().getApp_details() != null) {
