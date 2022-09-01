@@ -185,7 +185,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         attachObserverInterface.attachObserver(connectionListApiViewModel);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
         attachObserverInterface.attachObserver(userPermissionApiViewModel);
-        connectionListApiViewModel.getDesignationList();
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
+            connectionListApiViewModel.getDesignationList();
+        }
 
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
@@ -824,10 +826,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private void startCall(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
         String doctorGuid = null, doctorName = null;
         if (doctorModel != null) {
-            if (!doctorModel.getRole().equals(Constants.ROLE_DOCTOR)){
+            if (!doctorModel.getRole().equals(Constants.ROLE_DOCTOR)) {
                 doctorGuid = Constants.finalDoctor.getUser_guid();
                 doctorName = Constants.finalDoctor.getUserDisplay_name();
-            }else {
+            } else {
                 doctorGuid = doctorModel.getUser_guid();
                 doctorName = doctorModel.getUserDisplay_name();
             }

@@ -792,7 +792,7 @@ public interface ApiInterface {
     Observable<BaseApiResponseModel> askToAddCard(@Body() HashMap<String, String> req);
 
     @POST("/api/charge/add-charge")
-    Observable<AddChargeResp> addCharge(@HeaderMap Map<String,String> headers,@Body() AddChargeReq req);
+    Observable<AddChargeResp> addCharge(@HeaderMap Map<String,String> headers,@Body() AddChargeReq req,@Query(DOCTOR_GUID) String doctorGuid);
 
     @PUT("/api/charge/update-charge-v2")
     Observable<AddChargeResp> updateCharge(@HeaderMap Map<String,String> headers,@Query("id") int id,@Query(DOCTOR_GUID) String doctorGuid, @Body() AddChargeReq req);

@@ -13,6 +13,7 @@ import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
@@ -155,7 +156,11 @@ public class AddChargeViewModel extends BaseApiViewModel {
                                     }
                                 });
                     } else {
-                        getAuthApiService().addCharge(headers,req).compose(applySchedulers())
+                        String doctorid = null;
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                            doctorid = Constants.finalDoctor.getUser_guid();
+                        }
+                        getAuthApiService().addCharge(headers,req,doctorid).compose(applySchedulers())
                                 .subscribe(new RAObserver<AddChargeResp>(Constants.SHOW_PROGRESS) {
                                     @Override
                                     public void onSuccess(AddChargeResp baseApiResponseModel) {
