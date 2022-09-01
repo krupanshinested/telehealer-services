@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -700,8 +701,8 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 vitalDetailCrv.setVisibility(View.GONE);
             }
             if(!Constants.isVitalsAddEnable){
-                addFab.setClickable(false);
-                addFab.setEnabled(false);
+//                addFab.setClickable(false);
+//                addFab.setEnabled(false);
                 addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
                         Constants.isVitalsAddEnable ? R.color.app_gradient_start : R.color.colorGrey)));            }
         }
@@ -798,7 +799,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             if (selectedItem != null) {
                 if (!isFromHome) {
                     if (commonUserApiResponseModel != null) {
-                        vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                        if (Constants.isVitalsViewEnable) {
+                            vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                        }else {
+                            Utils.displayPermissionMsg(getActivity());
+                        }
                     }
                 } else {
                     vitalsApiViewModel.getVitals(getCurrentVitalType(), page, isShowProgress);
@@ -860,6 +865,12 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.add_fab:
+
+                if (!Constants.isVitalsAddEnable){
+
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
 
                 if (CallManager.shared.isActiveCallPresent()) {
                     Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -389,6 +390,11 @@ public class VitalReportFragment extends BaseFragment {
         } else {
             getUsersList(selectedFilter, startDate, endDate);
         }
+
+        if (!Constants.isVitalsViewEnable){
+            Utils.displayPermissionMsg(getActivity());
+        }
+
     }
 
     private void showFilterDialog() {
