@@ -185,9 +185,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         attachObserverInterface.attachObserver(connectionListApiViewModel);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
         attachObserverInterface.attachObserver(userPermissionApiViewModel);
-        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
-            connectionListApiViewModel.getDesignationList();
-        }
+        connectionListApiViewModel.getDesignationList();
 
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
