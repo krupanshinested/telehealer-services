@@ -1624,7 +1624,7 @@
     <string name="str_contsubscribe">Continue Subscribe</string>
     <string name="str_plan_already_activate">Plan already activated</string>
     <string name="retrive_pricing_plan">Retrieving pricing plan for you</string>
-    <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
+    <string name="str_please_ask_for_permission">Please ask your provider to enable this feature.</string>
     <string name="visit_questionary">Visit  Questionnaire</string>
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
     <string name="str_new_device_setup">Setup New Tellihealth Device</string>
