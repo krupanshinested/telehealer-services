@@ -1072,6 +1072,24 @@ public class Utils {
         return convetDateFormat.format(date);
     }
 
+    public static String getNewDatefromString(String dateStr, String pattern) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (date == null) {
+            return "";
+        }
+        SimpleDateFormat convetDateFormat = new SimpleDateFormat(Utils.dd_mmm_yyyy_hh_mm_a);
+        convetDateFormat.setTimeZone(TimeZone.getDefault());
+        return convetDateFormat.format(date);
+    }
+
     public static String getSelectedSlotTime(String timeSlot) {
         DateFormat inputFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         DateFormat outputFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);

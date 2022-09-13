@@ -20,6 +20,7 @@ import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 
+import java.util.Date;
 import java.util.List;
 
 public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.TransactionListVH> {
@@ -60,6 +61,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             holder.itemView.findViewById(R.id.container).setBackground(null);
         }
 
+        holder.tvDate.setText(Utils.getNewDatefromString(list.get(position).getCreatedAt(),Utils.UTCFormat));
         String statusString = list.get(position).getStatusString();
         if (list.get(position).getChargeStatus() == Constants.ChargeStatus.CHARGE_PROCESSED) {
             int color = 0;
