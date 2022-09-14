@@ -22,6 +22,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
@@ -84,7 +85,17 @@ class MonitoringListAdapter extends RecyclerView.Adapter<MonitoringListAdapter.V
         viewHolder.listCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFragment(i);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+
+                    if (!Constants.isVitalsAddEnable && !Constants.isVitalsViewEnable){
+                        Utils.displayPermissionMsg(activity);
+                    }else {
+                        openFragment(i);
+                    }
+
+                }else {
+                    openFragment(i);
+                }
             }
         });
     }
