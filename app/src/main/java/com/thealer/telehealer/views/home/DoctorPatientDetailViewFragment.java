@@ -16,6 +16,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -161,7 +162,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private String view_type;
     private String doctorGuid = null, userGuid = null;
     private boolean isUserDataFetched = false;
-    private ImageView favoriteIv, searchIV, hasCardIV;
+    private ImageView favoriteIv, searchIV, hasCardIV, addIv;
     private CircleImageView statusCiv;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private PatientInvite patientInvite;
@@ -478,6 +479,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
         favoriteIv = (ImageView) view.findViewById(R.id.favorite_iv);
+        addIv = (ImageView) view.findViewById(R.id.add_iv);
         searchIV = (ImageView) view.findViewById(R.id.search_iv);
         statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
         hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
@@ -548,7 +550,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         });
 
         if (UserType.isUserAssistant()) {
-            addFab.show();
+            addFab.hide();
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -564,6 +566,23 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
+
+            addIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!Constants.isInviteEnable) {
+                        Utils.displayPermissionMsg(getActivity());
+                        return;
+                    }
+                    Bundle inviteBundle = getArguments();
+                    if (inviteBundle == null)
+                        inviteBundle = new Bundle();
+
+                    inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+                    Utils.showInviteAlert(getActivity(), getArguments());
+                }
+            });
+
         }
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
@@ -585,10 +604,17 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     toolbarSearch.setVisibility(View.GONE);
                     collapseBackgroundRl.setVisibility(View.VISIBLE);
                     if (UserType.isUserAssistant() && resultBean != null && viewPager.getCurrentItem() == 1) {
-                        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR))
+                        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
                             searchIV.setVisibility(View.VISIBLE);
-                    } else
+                            addIv.setVisibility(View.VISIBLE);
+                        }
+                    } else {
                         searchIV.setVisibility(View.GONE);
+                        addIv.setVisibility(View.GONE);
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)favoriteIv.getLayoutParams();
+                        params.gravity = Gravity.END;
+                        favoriteIv.setLayoutParams(params);
+                    }
                 } else {
                     // Somewhere in between
                     toolbarTitle.setVisibility(View.GONE);
@@ -968,7 +994,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private void updateView(CommonUserApiResponseModel resultBean) {
         if (UserType.isUserAssistant()) {
             if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                addFab.show();
+                addFab.hide();
                 Constants.isInviteEnable = Utils.checkPermissionStatus(resultBean.getPermissions(), ArgumentKeys.INVITE_OTHERS_CODE);
 
                 addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
