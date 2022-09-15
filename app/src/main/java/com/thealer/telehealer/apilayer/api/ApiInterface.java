@@ -197,8 +197,11 @@ public interface ApiInterface {
     String SESSIONID = "session_id";
     String HEALTHCARE_DEVICE_ID = "healthcare_device_id";
     String DEVICE_ID = "device_id";
+    String TERMCONDITION = "hasUserAcceptedTermAndCondition";
     String SMS_ENABLED = "sms_enabled";
-    String PHYSICIAN_NOTIFICATION = "physicianNotification";
+    String CALL_ENABLED = "call_enabled";
+    String PHYSICIAN_NOTIFICATION_SMS = "physicianNotificationForSMS";
+    String PHYSICIAN_NOTIFICATION_CALL = "physicianNotificationForCall";
     String FEEDBACK_TYPE = "feedback_type";
 
     @GET("users/check")

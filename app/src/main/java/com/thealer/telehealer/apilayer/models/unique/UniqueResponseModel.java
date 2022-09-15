@@ -28,6 +28,7 @@ public class UniqueResponseModel extends BaseApiResponseModel implements Seriali
 
     public class Data {
         private String external_id;
+        private String termAndConditionLink;
 
         public String getExternal_id() {
             return external_id;
@@ -36,5 +37,14 @@ public class UniqueResponseModel extends BaseApiResponseModel implements Seriali
         public void setExternal_id(String external_id) {
             this.external_id = external_id;
         }
+
+        public String gettermAndConditionLink() {
+            return termAndConditionLink;
+        }
+
+        public void settermAndConditionLink(String termAndConditionLink) {
+            this.termAndConditionLink = termAndConditionLink;
+        }
+
     }
 }

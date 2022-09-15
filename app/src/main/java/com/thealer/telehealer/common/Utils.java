@@ -143,6 +143,7 @@ public class Utils {
     public static final TimeZone UtcTimezone = TimeZone.getTimeZone("UTC");
     public static final TimeZone GmtTimezone = TimeZone.getTimeZone("GMT");
     public static final String defaultDateFormat = "dd MMM, yyyy";
+    public static final String defaultNewDateFormat = "dd MMM yyyy";
     public static final String yyyy_mm = "yyyy-MM";
     public static final String yyyy_mm_dd = "yyyy-MM-dd";
     public static final String mmm_dd = "MMM dd";
@@ -602,6 +603,20 @@ public class Utils {
         DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
         dateFormat.setTimeZone(UtcTimezone);
         DateFormat returnFormat = new SimpleDateFormat(defaultDateFormat, Locale.ENGLISH);
+        returnFormat.setTimeZone(TimeZone.getDefault());
+        try {
+            return returnFormat.format(dateFormat.parse(date));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static String getNewDayMonthYear(String date) {
+
+        DateFormat dateFormat = new SimpleDateFormat(UTCFormat, Locale.ENGLISH);
+        dateFormat.setTimeZone(UtcTimezone);
+        DateFormat returnFormat = new SimpleDateFormat(defaultNewDateFormat, Locale.ENGLISH);
         returnFormat.setTimeZone(TimeZone.getDefault());
         try {
             return returnFormat.format(dateFormat.parse(date));

@@ -5,14 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -70,7 +74,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     AppCompatTextView deviceLink;
     private AssociationApiViewModel associationApiViewModel;
     private AssociationApiViewModel associationUniqueApiViewModel;
-    private String uniqueUrl = "";
+    private String uniqueUrl = "", termandconditions = "";
     private NewDeviceSetApiViewModel newDeviceSetApiViewModel;
     private MyDeviceListApiResponseModel.Devices myDeviceDetail;
     private NewDeviceSetApiResponseModel.Data deviceDetail;
@@ -85,6 +89,8 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private RippleBackground contentprevious;
     private RippleBackground contentpreviouss;
     private CardView vwprevious, vwnext;
+    private AppCompatTextView tvtandc;
+    private CheckBox checkboxsms,checkboxcall;
 
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
@@ -93,7 +99,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
 
-                if (!errorModel.geterrorCode().isEmpty() && errorModel.geterrorCode().equals("SUBSCRIPTION")){
+                if (!errorModel.geterrorCode().isEmpty() && errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
@@ -145,7 +151,22 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             @Override
             public void onChanged(UniqueResponseModel uniqueResponseModel) {
                 uniqueUrl = uniqueResponseModel.getData().getExternal_id();
+                termandconditions = uniqueResponseModel.getData().gettermAndConditionLink();
                 deviceLink.setText("" + uniqueUrl);
+                if (deviceFlag) {
+
+                    if (myDeviceDetail.getcreated_at() == null || myDeviceDetail.getcreated_at().isEmpty()) {
+                        tvtandc.setVisibility(View.GONE);
+                    } else {
+                        String linkedText = "On " + Utils.getNewDayMonthYear(myDeviceDetail.getcreated_at()) + ", you agree to the " + String.format("<a href=\"%s\">" + activity.getString(R.string.terms_and_conditions) + "</a> ", termandconditions) + ".";
+                        tvtandc.setText(Html.fromHtml(linkedText));
+                        tvtandc.setMovementMethod(LinkMovementMethod.getInstance());
+                    }
+                } else {
+                    String linkedText = "By click on submit, you agree to the " + String.format("<a href=\"%s\">" + activity.getString(R.string.terms_and_conditions) + "</a> ", termandconditions) + ".";
+                    tvtandc.setText(Html.fromHtml(linkedText));
+                    tvtandc.setMovementMethod(LinkMovementMethod.getInstance());
+                }
             }
         });
     }
@@ -183,11 +204,37 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         devicestep = findViewById(R.id.device_step);
         deviceLink1 = findViewById(R.id.device_link1);
         deviceLink2 = findViewById(R.id.device_link2);
+        checkboxsms = findViewById(R.id.checkboxsms);
+        checkboxcall = findViewById(R.id.checkboxcall);
+        tvtandc = findViewById(R.id.tv_tandc);
+
         backIv.setOnClickListener(this);
         deviceLink1.setOnClickListener(this);
         deviceLink2.setOnClickListener(this);
         previousPhysician.setOnClickListener(this);
         nextPhysician.setOnClickListener(this);
+
+        checkboxcall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    checkboxcall.setClickable(false);
+                    checkboxsms.setChecked(false);
+                    checkboxsms.setClickable(true);
+                }
+            }
+        });
+
+        checkboxsms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    checkboxsms.setClickable(false);
+                    checkboxcall.setChecked(false);
+                    checkboxcall.setClickable(true);
+                }
+            }
+        });
 
         Gson gson = new Gson();
         if (getIntent().getExtras() != null) {
@@ -202,6 +249,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 image = deviceDetail.getImage();
                 productLink1 = deviceDetail.getProduct_info_link();
                 productLink2 = deviceDetail.getProduct_info_link_1();
+
 //                edtDeviceId.setText(deviceDetail.getId());
 //                edtDeviceId.setEnabled(false);
 //                edtDeviceId.setClickable(false);
@@ -216,6 +264,15 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 edtDeviceId.setText(myDeviceDetail.getDevice_id());
                 edtDeviceId.setEnabled(false);
                 edtDeviceId.setClickable(false);
+                if (myDeviceDetail.getsms_enabled().equals("true")){
+                    checkboxsms.setChecked(true);
+                    checkboxcall.setChecked(false);
+                    checkboxsms.setClickable(false);
+                }else {
+                    checkboxcall.setChecked(true);
+                    checkboxsms.setChecked(false);
+                    checkboxcall.setClickable(false);
+                }
             }
 
             newDeviceCrv = findViewById(R.id.physician_crv);
@@ -287,11 +344,21 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         HashMap<String, Object> param = new HashMap<>();
         param.put(ApiInterface.HEALTHCARE_DEVICE_ID, healthCareId);
         param.put(ApiInterface.DEVICE_ID, edtDeviceId.getText().toString().trim());
-        if (smsList.size() == 0)
-            param.put(ApiInterface.SMS_ENABLED, false);
-        else
+        param.put(ApiInterface.TERMCONDITION, true);
+//        if (smsList.size() == 0)
+//            param.put(ApiInterface.SMS_ENABLED, false);
+//        else
+//            param.put(ApiInterface.SMS_ENABLED, true);
+
+        if (checkboxsms.isChecked()){
             param.put(ApiInterface.SMS_ENABLED, true);
-        param.put(ApiInterface.PHYSICIAN_NOTIFICATION, smsList);
+            param.put(ApiInterface.CALL_ENABLED, false);
+            param.put(ApiInterface.PHYSICIAN_NOTIFICATION_SMS, smsList);
+        }else {
+            param.put(ApiInterface.SMS_ENABLED, false);
+            param.put(ApiInterface.CALL_ENABLED, true);
+            param.put(ApiInterface.PHYSICIAN_NOTIFICATION_CALL, smsList);
+        }
         newDeviceSetApiViewModel.setDevice(param);
     }
 
