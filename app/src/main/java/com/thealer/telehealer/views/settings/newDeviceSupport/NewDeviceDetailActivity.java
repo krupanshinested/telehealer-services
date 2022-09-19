@@ -6,13 +6,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Layout;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -160,12 +164,30 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                     } else {
                         String linkedText = "On " + Utils.getNewDayMonthYear(myDeviceDetail.getcreated_at()) + ", you agree to the " + String.format("<a href=\"%s\">Terms of Service</a>.", termandconditions);
                         tvtandc.setText(Html.fromHtml(linkedText));
-                        tvtandc.setMovementMethod(LinkMovementMethod.getInstance());
+                        tvtandc.setMovementMethod(new TextViewLinkHandler() {
+                            @Override
+                            public void onLinkClick(String url) {
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                                browserIntent.setDataAndType(Uri.parse(termandconditions), "application/pdf");
+                                Intent chooser = Intent.createChooser(browserIntent, "");
+                                chooser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(chooser);
+                            }
+                        });
                     }
                 } else {
                     String linkedText = "By click on submit, you agree to the " + String.format("<a href=\"%s\">Terms of Service.</a>", termandconditions);
                     tvtandc.setText(Html.fromHtml(linkedText));
-                    tvtandc.setMovementMethod(LinkMovementMethod.getInstance());
+                    tvtandc.setMovementMethod(new TextViewLinkHandler() {
+                        @Override
+                        public void onLinkClick(String url) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                            browserIntent.setDataAndType(Uri.parse(termandconditions), "application/pdf");
+                            Intent chooser = Intent.createChooser(browserIntent, "");
+                            chooser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(chooser);
+                        }
+                    });
                 }
             }
         });
@@ -464,3 +486,33 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         }
     }
 }
+
+abstract class TextViewLinkHandler extends LinkMovementMethod {
+
+    public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
+        if (event.getAction() != MotionEvent.ACTION_UP)
+            return super.onTouchEvent(widget, buffer, event);
+
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+
+        x -= widget.getTotalPaddingLeft();
+        y -= widget.getTotalPaddingTop();
+
+        x += widget.getScrollX();
+        y += widget.getScrollY();
+
+        Layout layout = widget.getLayout();
+        int line = layout.getLineForVertical(y);
+        int off = layout.getOffsetForHorizontal(line, x);
+
+        URLSpan[] link = buffer.getSpans(off, off, URLSpan.class);
+        if (link.length != 0) {
+            onLinkClick(link[0].getURL());
+        }
+        return true;
+    }
+
+    abstract public void onLinkClick(String url);
+}
+
