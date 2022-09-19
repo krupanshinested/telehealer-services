@@ -113,24 +113,6 @@ public class NotificationListFragment extends BaseFragment implements OnFilterSe
                                 if (baseApiResponseModel.isSuccess()) {
                                     page = 1;
                                     getNotification(true);
-                                    if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
-                                        try {
-                                            Utils.showAlertDialog(context, context.getString(R.string.app_name), baseApiResponseModel.getMessage(),
-                                                    null, context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    }, new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
                                 }
                             }
                         } else {
