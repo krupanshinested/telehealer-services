@@ -351,10 +351,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         chatMessageCrv.getSwipeLayout().setEnabled(false);
     }
 
-    private void enableOrDisableSend(boolean enable){
-        if (enable){
+    private void enableOrDisableSend(boolean enable) {
+        if (enable) {
             sendIv.setAlpha(1f);
-        }else {
+        } else {
             sendIv.setAlpha(0.5f);
         }
         sendIv.setEnabled(enable);
@@ -362,7 +362,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (userModel!=null) {
+        if (userModel != null) {
             if (userModel.getApp_details() != null) {
                 if (!UserType.isUserPatient() && !(userModel.getApp_details().isWebUser()))
                     getMenuInflater().inflate(R.menu.menu_chat, menu);
@@ -390,15 +390,29 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             doctorName = doctorModel.getDoctorDisplayName();
         }
 
-        if (doctorGuid == null||doctorGuid.isEmpty()){
+        if (doctorGuid == null || doctorGuid.isEmpty()) {
             doctorGuid = UserDetailPreferenceManager.getUser_guid();
         }
 
-        CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
-                userGuid, userModel, doctorGuid, doctorName, null, callType,true,null);
-        Intent intent = new Intent(this, CallPlacingActivity.class);
-        intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
-        startActivity(intent);
+        if (UserType.isUserAssistant()) {
+
+            if (Constants.isCallEnable) {
+                CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                        userGuid, userModel, doctorGuid, doctorName, null, callType, true, null);
+                Intent intent = new Intent(this, CallPlacingActivity.class);
+                intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
+                startActivity(intent);
+            } else {
+                Utils.displayPermissionMsg(this);
+            }
+
+        } else {
+            CallRequest callRequest = new CallRequest(UUID.randomUUID().toString(),
+                    userGuid, userModel, doctorGuid, doctorName, null, callType, true, null);
+            Intent intent = new Intent(this, CallPlacingActivity.class);
+            intent.putExtra(ArgumentKeys.CALL_INITIATE_MODEL, callRequest);
+            startActivity(intent);
+        }
 
 
         return super.onOptionsItemSelected(item);
@@ -473,8 +487,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     protected void onResume() {
         super.onResume();
         createChannel();
-        Log.d("ChatActivity","onResume");
-        if (UserType.isUserPatient()){
+        Log.d("ChatActivity", "onResume");
+        if (UserType.isUserPatient()) {
             showSnack(findViewById(R.id.rootLayout), getString(R.string.chat_disclaimer), 5000).show();
         }
     }
@@ -483,7 +497,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     protected void onPause() {
         super.onPause();
 
-        Log.d("ChatActivity","onPause");
+        Log.d("ChatActivity", "onPause");
         if (!TextUtils.isEmpty(UserDetailPreferenceManager.getUser_guid())) {
             unSubscribeChannel();
         }
@@ -500,7 +514,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
                 @Override
                 public void message(@NotNull PubNub pubnub, @NotNull PNMessageResult message) {
-                    Log.d("ChatActivity","message "+message.getMessage().getAsJsonObject().toString());
+                    Log.d("ChatActivity", "message " + message.getMessage().getAsJsonObject().toString());
                     JsonObject root = message.getMessage().getAsJsonObject();
                     APNSPayload pubnubChatModel;
                     if (root.get("pn_apns") != null) {
@@ -521,7 +535,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 }
 
                 @Override
-                public void presence(@NotNull PubNub pubnub,@NotNull  PNPresenceEventResult presence) {
+                public void presence(@NotNull PubNub pubnub, @NotNull PNPresenceEventResult presence) {
 
                 }
 

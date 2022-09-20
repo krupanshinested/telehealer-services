@@ -10,7 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -55,11 +58,17 @@ public class InviteUserActivity extends BaseActivity implements ChangeTitleInter
         emailCb.setOnClickListener(this);
         phoneCb.setOnClickListener(this);
         demographicsCb.setOnClickListener(this);
-
+        demographicsCb.setVisibility(View.GONE);
         if (getIntent() != null && getIntent().getExtras() != null) {
             bundle = getIntent().getExtras();
         }
 
+        if(bundle!=null) {
+            String role = bundle.getString(ArgumentKeys.ROLE,"");
+            if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && (!role.isEmpty() && role.equalsIgnoreCase(Constants.ROLE_PATIENT))) {
+                    demographicsCb.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override

@@ -48,17 +48,17 @@ public class UserSubPermissionAdapter extends RecyclerView.Adapter<UserSubPermis
     public void onBindViewHolder(@NonNull OnUserSubPermissionViewHolder holder, int position) {
         PermissionBean currentPermission = adapterList.get(position);
         if (currentPermission != null) {
-//            holder.permissionSubSwitch.setChecked(currentPermission.getValue());
+            holder.permissionSubSwitch.setChecked(currentPermission.getValue());
             PermissionDetails childPermissionInfo = currentPermission.getPermission();
             holder.title.setText(childPermissionInfo.getName());
             holder.permissionSubSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt(ArgumentKeys.ITEM_CLICK_CHILD_POS, position);
-//                    bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, rootPosition);
-//                    bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, false);
-//                    onAdapterListener.onEventTrigger(bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(ArgumentKeys.ITEM_CLICK_CHILD_POS, position);
+                    bundle.putInt(ArgumentKeys.ITEM_CLICK_PARENT_POS, rootPosition);
+                    bundle.putBoolean(ArgumentKeys.IS_FROM_PARENT, false);
+                    onAdapterListener.onEventTrigger(bundle);
                 }
             });
         }

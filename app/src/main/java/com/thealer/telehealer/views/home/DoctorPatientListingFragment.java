@@ -164,9 +164,9 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
         if (UserType.isUserPatient()) {
             search_view.setSearchHint(getString(R.string.search_doctors));
-        } else if(UserType.isUserDoctor()) {
+        } else if (UserType.isUserDoctor()) {
             search_view.setSearchHint(getString(R.string.lbl_search_patient));
-        }else{
+        } else {
             search_view.setSearchHint(getString(R.string.search_associations));
         }
 
@@ -179,7 +179,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         });
 
         if (getArguments() != null) {
-            isUserPatient= getArguments().getBoolean(ArgumentKeys.isUserPatient,false);
+            isUserPatient = getArguments().getBoolean(ArgumentKeys.isUserPatient, false);
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.patients));
@@ -199,7 +199,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 search_view.setVisibility(View.GONE);
             }
-            if(getArguments().getBoolean(ArgumentKeys.CLEAR_BG_SEARCH,false)){
+            if (getArguments().getBoolean(ArgumentKeys.CLEAR_BG_SEARCH, false)) {
                 search_view.setBackgroundColor(Color.TRANSPARENT);
             }
             if (!getArguments().getBoolean(ArgumentKeys.SHOW_FAB_ADD, true)) {
@@ -211,19 +211,19 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         }
         if (UserType.isUserPatient()) {
             search_view.setSearchHint(getString(R.string.search_doctors));
-        } else if(UserType.isUserDoctor()) {
+        } else if (UserType.isUserDoctor()) {
             search_view.setSearchHint(getString(R.string.lbl_search_patient));
-        }else{
-            if(isUserPatient){
+        } else {
+            if (isUserPatient) {
                 search_view.setSearchHint(getString(R.string.lbl_search_patient));
-            }else {
+            } else {
                 search_view.setSearchHint(getString(R.string.search_associations));
             }
         }
         if (UserType.isUserPatient() || UserType.isUserAssistant()) {
-            if(isUserPatient){
+            if (isUserPatient) {
                 doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_PATIENT_WITH_BTN);
-            }else {
+            } else {
                 doctorPatientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_WITH_BTN);
             }
         } else if (UserType.isUserDoctor()) {
@@ -241,7 +241,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         } else if (UserType.isUserDoctor())
             doctorModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, getArguments(),doctorModel);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, false, getArguments(), doctorModel);
 
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);
@@ -290,7 +290,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             String title;
             if (UserType.isUserPatient() || UserType.isUserAssistant()) {
                 title = getString(R.string.Doctors);
-                if(isUserPatient){
+                if (isUserPatient) {
                     title = getString(R.string.Patients);
                 }
             } else {
@@ -334,7 +334,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
                 if (UserType.isUserDoctor() || isUserPatient) {
                     Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_PATIENT, dismissListener);
-                }else {
+                } else {
                     Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_DOCTOR, dismissListener);
                 }
             }
@@ -452,8 +452,8 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (!UserType.isUserDoctor()) {
                     startActivity(new Intent(getActivity(), AddConnectionActivity.class));
                 } else {
-                    Bundle inviteBundle=new Bundle();
-                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
+                    Bundle inviteBundle = new Bundle();
+                    inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
                     Utils.showInviteAlert(getActivity(), inviteBundle);
                 }
                 break;

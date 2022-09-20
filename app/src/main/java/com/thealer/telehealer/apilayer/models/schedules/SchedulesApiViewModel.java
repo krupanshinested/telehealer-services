@@ -88,7 +88,11 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().createSchedules(doctorGuid, createRequestModel)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING_CODE);
+                    }
+                    getAuthApiService().createSchedules(headers,doctorGuid, createRequestModel)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowBoolean)) {
                                 @Override
@@ -109,7 +113,11 @@ public class SchedulesApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().deleteSchedule(scheduleId, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()){
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.SCHEDULING_CODE);
+                    }
+                    getAuthApiService().deleteSchedule(headers,scheduleId, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.home.orders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -96,6 +98,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     private String userGuid, doctorGuid;
     @Nullable
     private SearchCellView searchView;
+    private  Boolean isPermissionAllowed = true;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -572,12 +575,11 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
-
         if (getArguments() != null) {
             selectedItem = getArguments().getString(Constants.SELECTED_ITEM);
 
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
-
+            isPermissionAllowed = getArguments().getBoolean(ArgumentKeys.isPermissionAllowed,true);
             if (!isFromHome) {
                 commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
                 if (commonUserApiResponseModel != null) {
@@ -658,6 +660,8 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     public void onResume() {
         super.onResume();
         addFab.setClickable(true);
+        addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
+                isPermissionAllowed ? R.color.app_gradient_start : R.color.colorGrey)));
         makeApiCall(true);
     }
 
@@ -820,6 +824,10 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.add_fab:
+                if(!isPermissionAllowed){
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
                 addFab.setClickable(false);
                 Bundle bundle = getArguments();
                 if (UserType.isUserDoctor() && (UserDetailPreferenceManager.getSignature() == null || UserDetailPreferenceManager.getSignature().isEmpty())) {

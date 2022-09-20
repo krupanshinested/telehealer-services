@@ -1,5 +1,6 @@
 package com.thealer.telehealer.common;
 
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
 import com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity;
 
@@ -23,6 +24,16 @@ public class Constants {
     public final static int PARTIAL_DELAY_TIME = 500;
     public final static int ERROR_TIMEOUT = 5000;
     public final static int AUDIO_BEEP_DISABLED_TIMEOUT = 30000;
+    public static boolean isCallEnable = true;
+    public static boolean isScheduleEnable = true;
+    public static boolean isChatEnable = true;
+    public static boolean isVitalsAddEnable = true;
+    public static boolean isVitalsViewEnable = true;
+    public static boolean isInviteEnable = true;
+    public static boolean isBillingAndChargeEnable = true;
+    public static boolean isChargesEnable = true;
+    public static boolean isRefundEnable = true;
+    public static boolean isPaymentProcessEnable = true;
 
     public static boolean ErrorCodeFlag = false;
 
@@ -207,6 +218,7 @@ public class Constants {
     public static int activatedPlan=-1;
     public static boolean isFromSubscriptionPlan=false;
 
+    public static CommonUserApiResponseModel finalDoctor;
     public static boolean ErrorFlag = false;
 
     public interface MasterCodes {

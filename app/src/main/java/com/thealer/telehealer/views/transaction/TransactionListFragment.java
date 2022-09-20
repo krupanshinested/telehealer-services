@@ -45,6 +45,7 @@ import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.emptyState.EmptyViewConstants;
@@ -94,7 +95,7 @@ public class TransactionListFragment extends BaseFragment {
     private Boolean isFromProfile=false;
     private TransactionItem selectedTransaction = null;
     private boolean isAllItemLoaded = false;
-    private String userGuid="";
+    private String userGuid="",doctorGuid="";
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -110,6 +111,7 @@ public class TransactionListFragment extends BaseFragment {
             patientId=getArguments().getInt(ArgumentKeys.PATIENT_ID,0);
             isFromProfile=getArguments().getBoolean(ArgumentKeys.IS_FROM_PROFILE,false);
             userGuid=getArguments().getString(ArgumentKeys.USER_GUID,"");
+            doctorGuid=getArguments().getString(ArgumentKeys.DOCTOR_GUID,"");
         }
 
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
@@ -199,7 +201,7 @@ public class TransactionListFragment extends BaseFragment {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 String currentUserGuid="";
                                                 try{
-                                                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                                                    currentUserGuid=doctorGuid;
                                                 }catch (Exception e){
                                                     currentUserGuid="";
                                                 }
@@ -227,7 +229,7 @@ public class TransactionListFragment extends BaseFragment {
                                             public void run() {
                                                 String currentUserGuid="";
                                                 try{
-                                                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                                                    currentUserGuid=doctorGuid;
                                                 }catch (Exception e){
                                                     currentUserGuid="";
                                                 }
@@ -301,7 +303,7 @@ public class TransactionListFragment extends BaseFragment {
                 public void onClick(DialogInterface dialog, int which) {
                     String currentUserGuid="";
                     try{
-                        currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                        currentUserGuid=doctorGuid;
                     }catch (Exception e){
                         currentUserGuid="";
                     }
@@ -318,7 +320,7 @@ public class TransactionListFragment extends BaseFragment {
             public void didSelectedItem(int position) {
                 String currentUserGuid="";
                 try{
-                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                    currentUserGuid=doctorGuid;
                 }catch (Exception e){
                     currentUserGuid="";
                 }
@@ -464,7 +466,7 @@ public class TransactionListFragment extends BaseFragment {
                         Utils.showAlertDialog(getContext(), getString(R.string.app_name), getString(R.string.msg_transaction_failed, selectedTransaction.getPatientId().getDisplayName()), getString(R.string.lbl_proceed_offline), getString(R.string.cancel), (dialog, which) -> {
                             String currentUserGuid="";
                             try{
-                                currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                                currentUserGuid=doctorGuid;
                             }catch (Exception e){
                                 currentUserGuid="";
                             }
@@ -478,7 +480,7 @@ public class TransactionListFragment extends BaseFragment {
                 }
                 String currentUserGuid="";
                 try{
-                    currentUserGuid=selectedTransaction.getPatientId().getUser_guid();
+                    currentUserGuid=doctorGuid;
                 }catch (Exception e){
                     currentUserGuid="";
                 }
@@ -494,14 +496,26 @@ public class TransactionListFragment extends BaseFragment {
 
             @Override
             public void onAddChargeClick(int position) {
-                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
-                        .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(ArgumentKeys.DOCTOR_GUID,doctorGuid)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }else {
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }
             }
 
             @Override
             public void onUpdateChargeClick(int position) {
-                startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
-                        .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(ArgumentKeys.DOCTOR_GUID,doctorGuid)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }else {
+                    startActivityForResult(new Intent(getActivity(), AddChargeActivity.class)
+                            .putExtra(AddChargeActivity.EXTRA_TRANSACTION_ITEM, new Gson().toJson(transactionListViewModel.getTransactions().get(position))), RequestID.REQ_UPDATE_LIST);
+                }
             }
 
             @Override

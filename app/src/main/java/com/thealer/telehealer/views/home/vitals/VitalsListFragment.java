@@ -12,6 +12,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
@@ -24,8 +26,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
@@ -40,6 +44,10 @@ import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.home.VitalsOrdersListAdapter;
 
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
@@ -57,6 +65,7 @@ public class VitalsListFragment extends BaseFragment {
     private Toolbar toolbar;
     private ImageView backIv;
     private TextView toolbarTitle;
+    private CommonUserApiResponseModel doctorModel;
 
     private OnCloseActionInterface onCloseActionInterface;
     private boolean isKnowYourNumberOpened = false;
@@ -105,6 +114,7 @@ public class VitalsListFragment extends BaseFragment {
         listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (getArguments() != null) {
+            doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
             if (getArguments().getBoolean(ArgumentKeys.SHOW_TOOLBAR)) {
                 appbarLayout.setVisibility(View.VISIBLE);
                 toolbarTitle.setText(getString(R.string.vitals));
@@ -120,6 +130,7 @@ public class VitalsListFragment extends BaseFragment {
             }
         }
         VitalsOrdersListAdapter vitalsOrdersListAdapter = new VitalsOrdersListAdapter(getActivity(), SupportedMeasurementType.getItems(), Constants.VIEW_VITALS, getArguments());
+        vitalsOrdersListAdapter.setDoctorModel(doctorModel);
         listRv.setAdapter(vitalsOrdersListAdapter);
 
     }

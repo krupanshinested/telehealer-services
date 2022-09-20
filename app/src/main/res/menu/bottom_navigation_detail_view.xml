@@ -14,7 +14,7 @@
             android:title="@string/call" />
         <item
             android:id="@+id/menu_chat"
-            android:icon="@drawable/ic_chat_drawable"
+            android:icon="@drawable/ic_chat"
             android:title="@string/chat" />
         <item
             android:id="@+id/menu_schedules"

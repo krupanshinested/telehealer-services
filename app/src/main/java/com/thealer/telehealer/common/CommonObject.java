@@ -163,7 +163,7 @@ public class CommonObject {
                 param.put("user_id", to_guid);
             } else {
                 param.put("taget_user_id", to_guid);
-                param.put("user_id", doctorGuid);
+                param.put("user_id", doctorGuid==null?UserDetailPreferenceManager.getWhoAmIResponse().getUser_guid():doctorGuid);
             }
             if (responseModels.size() != 0) {
 

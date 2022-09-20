@@ -4,16 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pubnub.api.models.consumer.access_manager.v3.User;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -23,6 +26,7 @@ import com.thealer.telehealer.common.Animation.CustomUserListItemView;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -44,17 +48,18 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private FragmentActivity fragmentActivity;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private boolean isDietView;
+    private boolean isDietView,isfromMAView;
     private Bundle bundle;
     private List<AssociationAdapterListModel> adapterListModels;
     private CommonUserApiResponseModel doctorModel;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, boolean isfromMAView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
         fragmentActivity = activity;
         this.doctorModel = doctorModel;
         adapterListModels = new ArrayList<>();
         onActionCompleteInterface = (OnActionCompleteInterface) activity;
         this.isDietView = isDietView;
+        this.isfromMAView = isfromMAView;
         this.bundle = bundle;
         if (bundle == null) {
             this.bundle = new Bundle();
@@ -90,31 +95,48 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 viewHolder.titleTv.setText(userModel.getDisplayName());
                 loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
-
                 if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
                     viewHolder.actionIv.setVisibility(View.VISIBLE);
                     Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
                     viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
-                    if (doctorModel != null)
-                        if (bundle.getBoolean("CC_Capture")){
+                    if (doctorModel != null) {
+                        if (doctorModel.getPayment_account_info().isCCCaptured()){
                             viewHolder.userListIv.getAddChargeBtn().setVisibility(View.VISIBLE);
                         }else {
                             viewHolder.userListIv.getAddChargeBtn().setVisibility(View.GONE);
                         }
+                        ManageSAPermission(viewHolder,userModel);
+                    }
                     viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
-                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
-                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
-                            );
+//                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+//                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+//                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+//                            );
+                            if(UserType.isUserAssistant() &&
+                            doctorModel.getPermissions()!= null && doctorModel.getPermissions().size()>0){
+                                boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHARGES_CODE);
+                                if(isPermissionAllowed){
+                                    visitAddChargeActivity(userModel);
+                                }else{
+                                    Utils.displayPermissionMsg(fragmentActivity);
+                                }
+                            }else {
+                                visitAddChargeActivity(userModel);
+                            }
                         }
                     });
 
                 } else if (UserType.isUserPatient()) {
                     viewHolder.actionIv.setVisibility(View.GONE);
                 }
-                viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
+                if (isfromMAView){
+                    viewHolder.subTitleTv.setText(userModel.getDesignation()!=null && !userModel.getDesignation().isEmpty()? userModel.getDesignation() : "");
+                }else {
+                    viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
+                }
+
 
                 viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -126,6 +148,28 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 viewHolder.userListIv.setStatus(userModel.getStatus(), userModel.getLast_active());
                 break;
+        }
+    }
+
+    private void ManageSAPermission(ItemViewHolder viewHolder, CommonUserApiResponseModel userModel) {
+        if(UserType.isUserAssistant() &&
+                doctorModel.getPermissions()!= null && doctorModel.getPermissions().size()>0){
+            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHARGES_CODE);
+            viewHolder.userListIv.manageAddChargeButton(fragmentActivity,isPermissionAllowed);
+        }
+    }
+
+    private void visitAddChargeActivity(CommonUserApiResponseModel userModel) {
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
+                    .putExtra(ArgumentKeys.DOCTOR_GUID,doctorModel.getUser_guid())
+                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+            );
+        }else {
+            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class).putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
+                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
+            );
         }
     }
 
