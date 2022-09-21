@@ -6,12 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -53,6 +62,7 @@ import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.transaction.AskToAddCardViewModel;
+import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.GetUserDetails;
@@ -130,6 +140,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
     private GetUsersApiViewModel getUsersApiViewModel;
     private CommonUserApiResponseModel resultBean, doctorModel;
+
     private OnCloseActionInterface onCloseActionInterface;
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private OnActionCompleteInterface onActionCompleteInterface;
@@ -140,6 +151,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private AskToAddCardViewModel askToAddCardViewModel;
     private ConnectionListApiViewModel connectionListApiViewModel;
     private DesignationResponseModel designationResponseModel;
+    private UserPermissionApiViewModel userPermissionApiViewModel;
 
     private List<Fragment> fragmentList;
     private List<String> titleList;
@@ -150,14 +162,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private String view_type;
     private String doctorGuid = null, userGuid = null;
     private boolean isUserDataFetched = false;
-    private ImageView favoriteIv, searchIV, hasCardIV;
+    private ImageView favoriteIv, searchIV, hasCardIV, addIv;
     private CircleImageView statusCiv;
     private ShowSubFragmentInterface showSubFragmentInterface;
     private PatientInvite patientInvite;
     private int doctorId = 0, patientId = 0;
 
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
-            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7,paymentHistoryTab=8;
+            orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
     private List<String> designationList = new ArrayList<>();
 
     @Override
@@ -170,15 +182,45 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
         connectionListApiViewModel = new ViewModelProvider(this).get(ConnectionListApiViewModel.class);
         getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        userPermissionApiViewModel = new ViewModelProvider(this).get(UserPermissionApiViewModel.class);
         attachObserverInterface.attachObserver(connectionListApiViewModel);
         attachObserverInterface.attachObserver(getUsersApiViewModel);
+        attachObserverInterface.attachObserver(userPermissionApiViewModel);
         connectionListApiViewModel.getDesignationList();
+
         getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
+                Log.d("Data Model", "Data Model first " + resultBean.getPermissions());
+
                 patientId = resultBean.getUser_id();
+                if (UserType.isUserAssistant()) {
+                    if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+                        Constants.finalDoctor = resultBean;
+                    }
+
+                    doctorModel = resultBean;
+
+                    if (doctorModel.getPermissions().size() > 0) {
+                        Constants.isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                        Constants.isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+                        Constants.isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                        Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
+                        Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
+                        Constants.isBillingAndChargeEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.BILLING_AND_CHARGES_CODE);
+                        if (Constants.isBillingAndChargeEnable) {
+                            Constants.isChargesEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHARGES_CODE);
+                            Constants.isRefundEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MANAGE_REFUND_CODE);
+                            Constants.isPaymentProcessEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.PAYMENT_PROCESSING_CODE);
+                        }
+                    }
+
+                    Log.d("Data Model", "Data Model user api");
+
+                }
+                manageSAPermission();
                 if (doctorGuid != null) {
                     Set<String> set = new HashSet<>();
                     set.add(doctorGuid);
@@ -298,11 +340,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     public void onChanged(@Nullable ErrorModel errorModel) {
                         Log.d("ErrorModel", "whoAmIApiViewModel");
 //                        if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
-                            Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
-                            intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
-                            intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
-                            intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 //                        }
                     }
                 });
@@ -327,6 +369,37 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 }
                             });
                 }
+            }
+        });
+        userPermissionApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null && baseApiResponseModel.isSuccess())
+                    if (baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.MAKE_CALLS_CODE))
+                        setUpMakeCall();
+                    else if (baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.CHAT_CODE))
+                        setUpMakeCall();
+                    else if (baseApiResponseModel.getPermissionCode().equals(ArgumentKeys.ADD_VITALS_CODE))
+                        visitVitalFragment();
+            }
+        });
+
+        userPermissionApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Utils.showAlertDialog(getContext(), getString(R.string.error),
+                        errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                        null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
             }
         });
     }
@@ -370,6 +443,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             Log.d("enableOrDisableCall", "true");
             enableOrDisableCall(true);
         }
+//        manageSAPermission();
     }
 
     @Override
@@ -405,101 +479,59 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         bottomView = (LinearLayout) view.findViewById(R.id.bottom_view);
         userDetailBnv = (BottomNavigationView) view.findViewById(R.id.user_detail_bnv);
         favoriteIv = (ImageView) view.findViewById(R.id.favorite_iv);
+        addIv = (ImageView) view.findViewById(R.id.add_iv);
         searchIV = (ImageView) view.findViewById(R.id.search_iv);
         statusCiv = (CircleImageView) view.findViewById(R.id.status_civ);
         hasCardIV = (ImageView) view.findViewById(R.id.card_iv);
 
         userDetailBnv.getMenu().findItem(R.id.menu_call).setVisible(false);
-
+//        manageSAPermission();
         userDetailBnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Bundle bundle = getArguments();
                 switch (menuItem.getItemId()) {
                     case R.id.menu_chat:
-                        startActivity(new Intent(getActivity(), ChatActivity.class).putExtras(bundle));
+//                        if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                        if (UserType.isUserAssistant() && doctorModel != null) {
+                            boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+                            if (isPermissionAllowed && Constants.isChatEnable) {
+                                setUpChat(bundle);
+                            } else {
+                                Utils.displayPermissionMsg(getContext());
+                            }
+                        } else {
+                            setUpChat(bundle);
+                        }
                         break;
                     case R.id.menu_schedules:
-
-                        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) &&
-                                resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-
-                            if (resultBean.getAppt_requests()) {
-                                startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+//                        if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                        if (UserType.isUserAssistant() && doctorModel != null) {
+                            boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+                            if (isPermissionAllowed && Constants.isScheduleEnable) {
+                                manageSchedule();
                             } else {
-
-                                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), resultBean.getOfficePhoneNo(), getString(R.string.ok)
-                                        , new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Uri uri = Uri.parse("tel:" + resultBean.getOfficePhoneNo());
-                                                startActivity(new Intent(Intent.ACTION_DIAL, uri));
-                                            }
-                                        }, null);
+                                Utils.displayPermissionMsg(getContext());
                             }
-
                         } else {
-                            startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+                            manageSchedule();
                         }
-
                         break;
                     case R.id.menu_call:
                         if (CallManager.shared.isActiveCallPresent()) {
                             return false;
-                        }
-
-                        CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
-
-                        if (commonUserApiResponseModel == null) {
-                            commonUserApiResponseModel = resultBean;
-                        }
-
-                        ArrayList<String> callTypes = new ArrayList<>();
-                        if (resultBean.getApp_details() != null) {
-                            if (resultBean.isAvailable() && !(resultBean.getApp_details().isWebUser())) {
-                                callTypes.add(getString(R.string.audio_call));
-                                callTypes.add(getString(R.string.video_call));
-                            }
-                        }
-                        callTypes.add(getString(R.string.one_way_call));
-                        if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
-                            if (UserType.isUserDoctor()) {
-                                if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status())
-                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
-                            } else if (UserType.isUserAssistant()) {
-                                if (doctorModel != null && doctorModel.isCan_view_card_status())
-                                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
-                            }
-                        }
-
-                        CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
-                        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
-                            @Override
-                            public void didSelectedItem(int position) {
-
-                                String callType;
-                                if (getString(R.string.audio_call).equals(callTypes.get(position))) {
-                                    callType = OpenTokConstants.audio;
-                                } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
-                                    callType = OpenTokConstants.video;
-                                } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
-                                    askToAddCardViewModel.askToAddCard(finalCommonUserApiResponseModel.getUser_guid(), doctorGuid);
-                                    return;
+                        } else {
+//                            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                            if (UserType.isUserAssistant() && doctorModel != null) {
+                                boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                                if (isPermissionAllowed && Constants.isCallEnable) {
+                                    setUpMakeCall();
                                 } else {
-                                    callType = OpenTokConstants.oneWay;
+                                    Utils.displayPermissionMsg(getContext());
                                 }
-                                startCall(finalCommonUserApiResponseModel, callType);
-
-                            }
-
-                            @Override
-                            public void didCancelled() {
-
-                            }
-                        });
-                        itemPickerDialog.setCancelable(false);
-                        itemPickerDialog.show();
-
+                            } else
+                                setUpMakeCall();
+                        }
                         break;
                     case R.id.menu_upload:
                         if (bundle == null)
@@ -518,18 +550,39 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         });
 
         if (UserType.isUserAssistant()) {
-            addFab.show();
+            addFab.hide();
             addFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle inviteBundle=getArguments();
-                    if(inviteBundle==null)
-                        inviteBundle=new Bundle();
+                    if (!Constants.isInviteEnable) {
+                        Utils.displayPermissionMsg(getActivity());
+                        return;
+                    }
+                    Bundle inviteBundle = getArguments();
+                    if (inviteBundle == null)
+                        inviteBundle = new Bundle();
 
-                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_PATIENT);
+                    inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
                     Utils.showInviteAlert(getActivity(), getArguments());
                 }
             });
+
+            addIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!Constants.isInviteEnable) {
+                        Utils.displayPermissionMsg(getActivity());
+                        return;
+                    }
+                    Bundle inviteBundle = getArguments();
+                    if (inviteBundle == null)
+                        inviteBundle = new Bundle();
+
+                    inviteBundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
+                    Utils.showInviteAlert(getActivity(), getArguments());
+                }
+            });
+
         }
 
         appbarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
@@ -551,10 +604,17 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     toolbarSearch.setVisibility(View.GONE);
                     collapseBackgroundRl.setVisibility(View.VISIBLE);
                     if (UserType.isUserAssistant() && resultBean != null && viewPager.getCurrentItem() == 1) {
-                        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR))
+                        if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
                             searchIV.setVisibility(View.VISIBLE);
-                    } else
+                            addIv.setVisibility(View.VISIBLE);
+                        }
+                    } else {
                         searchIV.setVisibility(View.GONE);
+                        addIv.setVisibility(View.GONE);
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)favoriteIv.getLayoutParams();
+                        params.gravity = Gravity.END;
+                        favoriteIv.setLayoutParams(params);
+                    }
                 } else {
                     // Somewhere in between
                     toolbarTitle.setVisibility(View.GONE);
@@ -572,8 +632,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     getArguments().getSerializable(Constants.USER_DETAIL) instanceof CommonUserApiResponseModel) {
 
                 userGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL)).getUser_guid();
-                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null)
+                if (getArguments().getSerializable(Constants.DOCTOR_DETAIL) != null) {
                     doctorGuid = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_guid();
+                    doctorId = ((CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL)).getUser_id();
+                }
             } else {
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
@@ -589,6 +651,176 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+
+    private void manageSAPermission() {
+        Log.d("Data Model", "Data Model permission " + Constants.isCallEnable + " " + Constants.isScheduleEnable + " " + Constants.isChatEnable);
+
+
+        if (UserType.isUserAssistant()) {
+            MenuItem callMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_call);
+            MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
+            MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
+//            if (doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+            if (doctorModel != null) {
+
+                //TODO : Call Menu item
+                try {
+                    callMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), Constants.isCallEnable ? R.color.app_gradient_start : R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(callMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(Constants.isCallEnable ? getActivity().getColor(R.color.app_gradient_start) : getContext().getColor(R.color.colorGrey)), 0, s.length(), 0);
+                    callMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Schedule Menu item
+                try {
+                    scheduleMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), Constants.isScheduleEnable ? R.color.app_gradient_start : R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(scheduleMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(Constants.isScheduleEnable ? getActivity().getColor(R.color.app_gradient_start) : getContext().getColor(R.color.colorGrey)), 0, s.length(), 0);
+                    scheduleMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Chat Menu item
+                try {
+                    chatMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), Constants.isChatEnable ? R.color.app_gradient_start : R.color.colorGrey), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(chatMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(Constants.isChatEnable ? getActivity().getColor(R.color.app_gradient_start) : getContext().getColor(R.color.colorGrey)), 0, s.length(), 0);
+                    chatMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            MenuItem callMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_call);
+            MenuItem scheduleMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_schedules);
+            MenuItem chatMenuItem = userDetailBnv.getMenu().findItem(R.id.menu_chat);
+//            if (doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+            if (doctorModel != null) {
+
+                //TODO : Call Menu item
+                try {
+                    callMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(callMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start)), 0, s.length(), 0);
+                    callMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Schedule Menu item
+                try {
+                    scheduleMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(scheduleMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start)), 0, s.length(), 0);
+                    scheduleMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Chat Menu item
+                try {
+                    chatMenuItem.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.app_gradient_start), PorterDuff.Mode.SRC_IN);
+                    SpannableString s = new SpannableString(chatMenuItem.getTitle());
+                    s.setSpan(new ForegroundColorSpan(getActivity().getColor(R.color.app_gradient_start)), 0, s.length(), 0);
+                    chatMenuItem.setTitle(s);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void manageSchedule() {
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT) &&
+                resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
+
+            if (resultBean.getAppt_requests()) {
+                startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+            } else {
+
+                Utils.showAlertDialog(getActivity(), getString(R.string.no_new_appointment), String.format(getString(R.string.appointment_not_allowed_create)), resultBean.getOfficePhoneNo(), getString(R.string.ok)
+                        , new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Uri uri = Uri.parse("tel:" + resultBean.getOfficePhoneNo());
+                                startActivity(new Intent(Intent.ACTION_DIAL, uri));
+                            }
+                        }, null);
+            }
+
+        } else {
+            startActivity(new Intent(getActivity(), CreateNewScheduleActivity.class).putExtras(getArguments()));
+        }
+    }
+
+    private void setUpChat(Bundle bundle) {
+        startActivity(new Intent(getActivity(), ChatActivity.class).putExtras(bundle));
+    }
+
+    private void setUpMakeCall() {
+        CommonUserApiResponseModel commonUserApiResponseModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
+
+        if (commonUserApiResponseModel == null) {
+            commonUserApiResponseModel = resultBean;
+        }
+
+        ArrayList<String> callTypes = new ArrayList<>();
+        if (resultBean.getApp_details() != null) {
+            if (resultBean.isAvailable() && !(resultBean.getApp_details().isWebUser())) {
+                callTypes.add(getString(R.string.audio_call));
+                callTypes.add(getString(R.string.video_call));
+            }
+        }
+        callTypes.add(getString(R.string.one_way_call));
+        if (!AppPaymentCardUtils.hasValidPaymentCard(resultBean.getPayment_account_info())) {
+            if (UserType.isUserDoctor()) {
+                if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status())
+                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+            } else if (UserType.isUserAssistant()) {
+                if (doctorModel != null && doctorModel.isCan_view_card_status())
+                    callTypes.add(getString(R.string.lbl_ask_to_add_credit_card));
+            }
+        }
+
+        CommonUserApiResponseModel finalCommonUserApiResponseModel = commonUserApiResponseModel;
+        ItemPickerDialog itemPickerDialog = new ItemPickerDialog(getActivity(), getString(R.string.choose_call_type), callTypes, new PickerListener() {
+            @Override
+            public void didSelectedItem(int position) {
+
+                String callType;
+                if (getString(R.string.audio_call).equals(callTypes.get(position))) {
+                    callType = OpenTokConstants.audio;
+                } else if (getString(R.string.video_call).equals(callTypes.get(position))) {
+                    callType = OpenTokConstants.video;
+                } else if (getString(R.string.lbl_ask_to_add_credit_card).equals(callTypes.get(position))) {
+                    askToAddCardViewModel.askToAddCard(finalCommonUserApiResponseModel.getUser_guid(), doctorGuid);
+                    return;
+                } else {
+                    callType = OpenTokConstants.oneWay;
+                }
+                startCall(finalCommonUserApiResponseModel, callType);
+
+            }
+
+            @Override
+            public void didCancelled() {
+
+            }
+        });
+        itemPickerDialog.setCancelable(false);
+        itemPickerDialog.show();
+
     }
 /*
     private void showWithoutCardOptions(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
@@ -618,8 +850,14 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private void startCall(CommonUserApiResponseModel finalCommonUserApiResponseModel, String callType) {
         String doctorGuid = null, doctorName = null;
         if (doctorModel != null) {
-            doctorGuid = doctorModel.getUser_guid();
-            doctorName = doctorModel.getUserDisplay_name();
+            if (!doctorModel.getRole().equals(Constants.ROLE_DOCTOR)) {
+                doctorGuid = Constants.finalDoctor.getUser_guid();
+                doctorName = Constants.finalDoctor.getUserDisplay_name();
+            } else {
+                doctorGuid = doctorModel.getUser_guid();
+                doctorName = doctorModel.getUserDisplay_name();
+            }
+
         }
 
         if (doctorGuid == null) {
@@ -661,38 +899,49 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     }
 
     private void getUserDetail(Set<String> guidSet) {
-        if (!isUserDataFetched) {
-            GetUserDetails
-                    .getInstance(getActivity())
-                    .getDetails(guidSet)
-                    .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
-                @Override
-                public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
-                    if (userDetailHashMap != null) {
-                        isUserDataFetched = true;
+//        if (!isUserDataFetched) {
 
-                        for (String guid : guidSet) {
-                            CommonUserApiResponseModel model = userDetailHashMap.get(guid);
-                            if (model != null) {
-                                switch (model.getRole()) {
-                                    case Constants.ROLE_DOCTOR:
+
+        GetUserDetails
+                .getInstance(getActivity())
+                .getDetails(guidSet)
+                .getHashMapMutableLiveData().observe(this, new Observer<HashMap<String, CommonUserApiResponseModel>>() {
+            @Override
+            public void onChanged(@Nullable HashMap<String, CommonUserApiResponseModel> userDetailHashMap) {
+                if (userDetailHashMap != null) {
+//                        isUserDataFetched = true;
+
+                    for (String guid : guidSet) {
+                        CommonUserApiResponseModel model = userDetailHashMap.get(guid);
+                        if (model != null) {
+                            switch (model.getRole()) {
+                                case Constants.ROLE_DOCTOR:
+//
+//
+                                    Log.d("Data Model", "Data Model" + doctorModel.getPermissions() + UserType.isUserAssistant());
+//                                        if(UserType.isUserAssistant()) {
+//                                            isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+//                                            isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
+//                                            isChatEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHAT_CODE);
+//                                            manageSAPermission();
+//                                        }
+                                    if (UserType.isUserPatient() && resultBean == null) {
                                         doctorModel = model;
-                                        if (UserType.isUserPatient() && resultBean == null) {
-                                            resultBean = doctorModel;
-                                        }
-                                        break;
-                                    case Constants.ROLE_PATIENT:
-                                    case Constants.ROLE_ASSISTANT:
-                                        resultBean = model;
-                                        break;
-                                }
+                                        resultBean = doctorModel;
+                                    }
+                                    break;
+                                case Constants.ROLE_PATIENT:
+                                case Constants.ROLE_ASSISTANT:
+                                    resultBean = model;
+                                    break;
                             }
                         }
-                        updateView(resultBean);
                     }
+                    updateView(resultBean);
                 }
-            });
-        }
+            }
+        });
+//        }
     }
 
     private BroadcastReceiver callStartReceiver = new BroadcastReceiver() {
@@ -745,7 +994,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private void updateView(CommonUserApiResponseModel resultBean) {
         if (UserType.isUserAssistant()) {
             if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
-                addFab.show();
+                addFab.hide();
+                Constants.isInviteEnable = Utils.checkPermissionStatus(resultBean.getPermissions(), ArgumentKeys.INVITE_OTHERS_CODE);
+
+                addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
+                        Constants.isInviteEnable ? R.color.app_gradient_start : R.color.colorGrey)));
             } else {
                 addFab.hide();
             }
@@ -828,7 +1081,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
 
 
             if (doctorModel != null) {
-                doctorGuid = doctorModel.getUser_guid();
+                if (doctorModel.getRole().equals(Constants.ROLE_DOCTOR)) {
+                    doctorGuid = doctorModel.getUser_guid();
+                    doctorId = doctorModel.getUser_id();
+                }
             }
 
             fragmentList = new ArrayList<>();
@@ -896,8 +1152,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             addFragment(getString(R.string.about), aboutFragment);
                             break;
                         case vitalTab:
-                            VitalsListFragment vitalsFragment = new VitalsListWithGoogleFitFragment();
-                            addFragment(getString(R.string.vitals), vitalsFragment);
+                            visitVitalFragment();
                             break;
                         case schedulesTab:
                             bundle = new Bundle();
@@ -948,6 +1203,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle.putInt(ArgumentKeys.PATIENT_ID, patientId);
                             bundle.putBoolean(ArgumentKeys.IS_FROM_PROFILE, true);
                             bundle.putString(ArgumentKeys.USER_GUID, userGuid);
+                            bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
                             transactionListFragment.setArguments(bundle);
                             addFragment(getString(R.string.lbl_payment_history), transactionListFragment);
                             break;
@@ -1001,6 +1257,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             } else
                 hasCardIV.setVisibility(View.GONE);
         }
+    }
+
+    private void visitVitalFragment() {
+
+        VitalsListFragment vitalsFragment = new VitalsListFragment();
+        addFragment(getString(R.string.vitals), vitalsFragment);
     }
 
     private void showAssociationSelection(int requestCode, String searchType, String user_guid) {
@@ -1090,7 +1352,6 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 } else {
                     actionBtn.setText(getString(R.string.add_connection_pending));
                     actionBtn.setEnabled(false);
-                    actionBtn.setVisibility(View.GONE);
                 }
                 break;
             default:
@@ -1114,7 +1375,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             if (resultBean.getRole().equals(Constants.ROLE_DOCTOR) && !resultBean.getConnection_requests()) {
 
             } else {
-                actionBtn.setVisibility(View.GONE);
+                actionBtn.setVisibility(View.VISIBLE);
             }
 
             userDetailBnv.setVisibility(View.GONE);
@@ -1155,7 +1416,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         if (resultBean.getRole().equals(Constants.ROLE_DOCTOR)) {
             bundle.putSerializable(Constants.DOCTOR_DETAIL, resultBean);
         } else {
-            bundle.putSerializable(Constants.DOCTOR_DETAIL, doctorModel);
+            bundle.putSerializable(Constants.DOCTOR_DETAIL, Constants.finalDoctor);
             bundle.putSerializable(Constants.USER_DETAIL, resultBean);
         }
 

@@ -54,7 +54,37 @@ public class MyDeviceListApiResponseModel extends BaseApiResponseModel {
 
         private String healthcare_device_id;
 
+        private String termAndConditionLink;
+
+        private String sms_enabled;
+
+        private String created_at;
+
         private String id;
+
+        public String gettermAndConditionLink() {
+            return termAndConditionLink;
+        }
+
+        public void settermAndConditionLink(String termAndConditionLink) {
+            this.termAndConditionLink = termAndConditionLink;
+        }
+
+        public String getsms_enabled() {
+            return sms_enabled;
+        }
+
+        public void setsms_enabled(String sms_enabled) {
+            this.sms_enabled = sms_enabled;
+        }
+
+        public String getcreated_at() {
+            return created_at;
+        }
+
+        public void setcreated_at(String device_id) {
+            this.created_at = created_at;
+        }
 
         public String getDevice_id() {
             return device_id;

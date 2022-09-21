@@ -27,7 +27,11 @@ public class VitalsCreateApiModel extends BaseApiViewModel {
             public void onStatus(boolean status) {
                 Log.v("VitalsCreateApiModel","status "+status);
                 if (status){
-                    getAuthApiService().createVital(createVitalApiRequestModel, doctorGuid)
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.ADD_VITALS_CODE);
+                    }
+                    getAuthApiService().createVital(headers,createVitalApiRequestModel, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override

@@ -9,6 +9,7 @@ public class BaseApiResponseModel implements Serializable {
 
     private boolean success;
     private String message;
+    private String permissionCode;
 
     public boolean isSuccess() {
         return success;
@@ -24,5 +25,13 @@ public class BaseApiResponseModel implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getPermissionCode() {
+        return permissionCode;
+    }
+
+    public void setPermissionCode(String permissionCode) {
+        this.permissionCode = permissionCode;
     }
 }

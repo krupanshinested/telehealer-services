@@ -1,15 +1,19 @@
 package com.thealer.telehealer.common.Animation;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.cardview.widget.CardView;
 
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +33,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.views.transaction.AddChargeActivity;
 
+import androidx.core.content.ContextCompat;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.thealer.telehealer.common.Constants.ACTIVATION_PENDING;
@@ -262,6 +267,11 @@ public class CustomUserListItemView extends ConstraintLayout {
         addChargeBtn.setVisibility(VISIBLE);
     }
 
+    public void manageAddChargeButton(Context context, Boolean isPermissionAllowed){
+        if(!isPermissionAllowed){
+            addChargeBtn.assignBackgroundColor(ContextCompat.getColor(context,R.color.colorGrey));
+        }
+    }
     public CustomButton getAddChargeBtn() {
         return addChargeBtn;
     }

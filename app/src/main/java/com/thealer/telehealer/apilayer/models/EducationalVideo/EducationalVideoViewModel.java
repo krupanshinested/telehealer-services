@@ -85,7 +85,11 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().postEducationalVideo(request)
+                    Map<String, String> headers = new HashMap<>();
+                    if (UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.EDUCATIONAL_VIDEOS_CODE);
+                    }
+                    getAuthApiService().postEducationalVideo(headers,request,doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -147,7 +151,11 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
                     HashMap<String, Object> details = new HashMap<>();
                     details.put("title", title);
                     details.put("description", description);
-                    getAuthApiService().updateEducationalVideo(videoId + "", details)
+                    Map<String, String> headers = new HashMap<>();
+                    if (UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.EDUCATIONAL_VIDEOS_CODE);
+                    }
+                    getAuthApiService().updateEducationalVideo(headers, videoId + "", details,doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
@@ -165,7 +173,12 @@ public class EducationalVideoViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().deleteEducationalVideo(videoId+"")
+                    Map<String, String> headers = new HashMap<>();
+                    if (userGuid != null && !userGuid.isEmpty()) {
+                        headers.put(ArgumentKeys.USER_GUID, userGuid);
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.EDUCATIONAL_VIDEOS_CODE);
+                    }
+                    getAuthApiService().deleteEducationalVideo(headers, videoId + "")
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override

@@ -129,6 +129,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private boolean isSigningOutInProcess = false;
     private static boolean onAuthenticated = false;
     private static boolean creditcardstatus = false;
+    private boolean isFirstTime = true;
 
     private NotificationApiViewModel notificationApiViewModel;
 
@@ -218,8 +219,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
-                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()){
-                        showDoctorPatientList();
+                    if (creditcardstatus != whoAmIApiResponseModel.getPayment_account_info().isCCCaptured()) {
+                        if (!isFirstTime) {
+                            showDoctorPatientList();
+                        }
+                        isFirstTime = false;
                         creditcardstatus = whoAmIApiResponseModel.getPayment_account_info().isCCCaptured();
                     }
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
@@ -305,7 +309,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 startActivity(new Intent(this, DoctorOnBoardingActivity.class));
                 finish();
                 return false;
-            } else if(!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
+            } else if (!appPreference.getBoolean(PreferenceConstants.IS_USER_PURCHASED)) {
                 startActivity(new Intent(this, SubscriptionActivity.class));
                 finish();
                 return false;
@@ -381,6 +385,18 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         }
 
         attachView();
+    }
+
+    public Fragment getVisibleFragment() {
+        FragmentManager fragmentManager = HomeActivity.this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
     }
 
     private void showMedicalHistory() {
@@ -557,16 +573,16 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
 
     private void showDoctorsOverflowMenu() {
-        Bundle bundle=new Bundle();
-        if(UserType.isUserAssistant()) {
+        Bundle bundle = new Bundle();
+        if (UserType.isUserAssistant()) {
             bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_ASSISTANT);
-        }else if(UserType.isUserPatient()) {
+        } else if (UserType.isUserPatient()) {
             bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_PATIENT);
-        }else {
+        } else {
             bundle.putString(ArgumentKeys.ROLE, Constants.ROLE_DOCTOR);
         }
 
-        Utils.showDoctorOverflowMenu(this,bundle);
+        Utils.showDoctorOverflowMenu(this, bundle);
     }
 
     private void showNotificationFragment() {
@@ -605,9 +621,6 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             doctorPatientListingFragment.setArguments(bundle);
         }
         setFragment(doctorPatientListingFragment);
-
-        /*TransactionListFragment transactionListFragment = new TransactionListFragment();
-        setFragment(transactionListFragment);*/
     }
 
     private void setDoctorPatientTitle() {
@@ -658,11 +671,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             String doctorGuid = bundle.getString(ArgumentKeys.DOCTOR_GUID);
             commonUserApiResponseModel = (CommonUserApiResponseModel) bundle.getSerializable(Constants.USER_DETAIL);
             String designation = bundle.getString(Constants.DESIGNATION);
-            String currentUserGuid=userGuid;
-            if(!UserType.isUserAssistant())
-                currentUserGuid="";
+            String currentUserGuid = userGuid;
+            if (!UserType.isUserAssistant())
+                currentUserGuid = "";
 
-            addConnectionApiViewModel.connectUser(currentUserGuid,userGuid, doctorGuid, String.valueOf(selectedId), designation);
+            addConnectionApiViewModel.connectUser(currentUserGuid, userGuid, doctorGuid, String.valueOf(selectedId), designation);
 
         } else {
             showDetailView(bundle);
@@ -857,7 +870,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 } else if (UserType.isUserDoctor()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
-                }else if(UserType.isUserAssistant()){
+                } else if (UserType.isUserAssistant()) {
                     optionsMenu.findItem(R.id.menu_overflow).setVisible(true);
                     optionsMenu.findItem(R.id.menu_pending_invites).setVisible(false);
                 }
@@ -968,7 +981,11 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         application.addShortCuts();
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
-            whoAmIApiViewModel.assignWhoAmI();
+            if (getVisibleFragment() instanceof DoctorPatientListingFragment) {
+                if (!isFirstTime) {
+                    whoAmIApiViewModel.assignWhoAmI();
+                }
+            }
             showHelpScreen();
         }
     }

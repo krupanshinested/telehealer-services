@@ -30,6 +30,7 @@ import com.thealer.telehealer.apilayer.models.transaction.TransactionListViewMod
 import com.thealer.telehealer.apilayer.models.transaction.req.AddChargeReq;
 import com.thealer.telehealer.apilayer.models.transaction.resp.AddChargeResp;
 import com.thealer.telehealer.apilayer.models.transaction.resp.TransactionItem;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
@@ -444,9 +445,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                 if (isValid()) {
                     if(isRedirectedPayment){
                         isRedirectedPayment=false;
-                        addChargeViewModel.addCharge(getReq(), true);
+                        addChargeViewModel.addCharge(getIntent().getStringExtra(ArgumentKeys.DOCTOR_GUID),getReq(), true);
                     }else {
-                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                        addChargeViewModel.addCharge(getIntent().getStringExtra(ArgumentKeys.DOCTOR_GUID),getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
                     }
                 }
                 break;
@@ -456,9 +457,9 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
                     addChargeViewModel.setSaveAndProcess(true);
                     if(isRedirectedPayment){
                         isRedirectedPayment=false;
-                        addChargeViewModel.addCharge(getReq(), true);
+                        addChargeViewModel.addCharge(getIntent().getStringExtra(ArgumentKeys.DOCTOR_GUID),getReq(), true);
                     }else {
-                        addChargeViewModel.addCharge(getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
+                        addChargeViewModel.addCharge(getIntent().getStringExtra(ArgumentKeys.DOCTOR_GUID),getReq(), getIntent().getStringExtra(EXTRA_TRANSACTION_ITEM) != null);
                     }
                 }
             }

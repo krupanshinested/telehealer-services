@@ -89,6 +89,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
     private int selectedSlot = 0;
     private NotificationApiViewModel notificationApiViewModel;
     private AskToAddCardViewModel askToAddCardViewModel;
+    private boolean showNotification = false;
 
     private ShowSubFragmentInterface showSubFragmentInterface;
 
@@ -469,6 +470,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 if (resultModel.getEntity_id() == null) {
                                     VitalsListFragment vitalsListFragment = new VitalsListFragment();
                                     bundle.putBoolean(ArgumentKeys.SHOW_TOOLBAR, true);
+                                    bundle.putString(ArgumentKeys.DOCTOR_GUID, finalDoctorModel.getUser_guid());
                                     vitalsListFragment.setArguments(bundle);
                                     showSubFragmentInterface.onShowFragment(vitalsListFragment);
                                 } else {
@@ -660,6 +662,9 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                                 doctorGuid = resultModel.getDoctorModel().getUser_guid();
                             }
                         }
+                        if (resultModel.getRequestor().getRole().equals(Constants.ROLE_DOCTOR) && resultModel.getRequestee().getRole().equals(Constants.ROLE_ASSISTANT)){
+                            showNotification = true;
+                        }
                         updateRequest(resultModel.getType(), false, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), REJECTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),viewHolder.rejectBtn);
                     }
                 });
@@ -683,6 +688,9 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
                             if (UserType.isUserAssistant()) {
                                 doctorGuid = resultModel.getDoctorModel().getUser_guid();
                             }
+                        }
+                        if (resultModel.getRequestor().getRole().equals(Constants.ROLE_DOCTOR) && resultModel.getRequestee().getRole().equals(Constants.ROLE_ASSISTANT)) {
+                            showNotification = true;
                         }
                         updateRequest(resultModel.getType(), true, resultModel.getRequestor().getUser_guid(), resultModel.getRequest_id(), ACCEPTED.toLowerCase(), startDate, endDate, doctorGuid, true, resultModel.getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),viewHolder.acceptBtn);
                     }
@@ -785,7 +793,7 @@ public class NewNotificationListAdapter extends RecyclerView.Adapter<NewNotifica
 
     private void updateRequest(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String status, @Nullable String startDate, @Nullable String endDate,
                                @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA,Button acceptreject) {
-        notificationApiViewModel.updateNotification(type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress, isRequestorMA,acceptreject);
+        notificationApiViewModel.updateNotification(this.activity,type, isAccept, toGuid, id, status, startDate, endDate, doctorGuid, isShowProgress, isRequestorMA,acceptreject,showNotification);
     }
 
     @Override

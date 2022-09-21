@@ -515,12 +515,17 @@ public class VitalCreateNewFragment extends VitalsSendBaseFragment implements Vi
                     vitalApiRequestModel.setValue(value);
                 }
 
+
                 String doctorGuid = null;
-                CommonUserApiResponseModel doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                CommonUserApiResponseModel doctorModel;
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                    doctorModel = Constants.finalDoctor;
+                }else {
+                    doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+                }
                 if (doctorModel != null) {
                     doctorGuid = doctorModel.getUser_guid();
                 }
-
                 sendVitals(vitalApiRequestModel, secondary, doctorGuid);
 
                 break;

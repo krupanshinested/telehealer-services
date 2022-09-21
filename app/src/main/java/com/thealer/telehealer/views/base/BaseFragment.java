@@ -144,7 +144,6 @@ public class BaseFragment extends Fragment {
         bundle.putString(Constants.SUCCESS_VIEW_TITLE, title);
         bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, description);
         intent.putExtras(bundle);
-
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
     public void showSnack(View view, String message) {

@@ -1624,7 +1624,7 @@
     <string name="str_contsubscribe">Continue Subscribe</string>
     <string name="str_plan_already_activate">Plan already activated</string>
     <string name="retrive_pricing_plan">Retrieving pricing plan for you</string>
-    <string name="str_please_ask_for_permission">Please ask your provider to enable this features.</string>
+    <string name="str_please_ask_for_permission">Please ask your provider to enable this feature.</string>
     <string name="visit_questionary">Visit  Questionnaire</string>
     <string name="str_you_can_not_invite_yourself">Self Invitation is prohibited.</string>
     <string name="str_new_device_setup">Setup New Tellihealth Device</string>
@@ -1656,6 +1656,7 @@
     <string name="confirm">Confirm</string>
     <string name="lbl_type_your_reason_here">Type your reason here</string>
     <string name="str_select_designation_for">Select designation for %s</string>
+    <string name="designation">Designation</string>
     <string name="user_permission">Permissions</string>
     <string name="lbl_plan_name">Plan Name</string>
     <string name="lbl_monitored_patients_for_month">Monitored Patients for Month \n (RPM / BHI/ CCM)</string>

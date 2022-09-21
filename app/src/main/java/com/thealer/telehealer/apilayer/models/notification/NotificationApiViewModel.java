@@ -1,16 +1,21 @@
 package com.thealer.telehealer.apilayer.models.notification;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.DialogInterface;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
 import com.thealer.telehealer.common.pubNub.PubnubUtil;
 import com.thealer.telehealer.views.base.BaseViewInterface;
@@ -67,8 +72,8 @@ public class NotificationApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void updateNotification(String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String requestStatus, @Nullable String startDate, @Nullable String endDate,
-                                   @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA, Button acceptreject) {
+    public void updateNotification(Activity activity, String type, boolean isAccept, String toGuid, @NonNull int id, @NonNull String requestStatus, @Nullable String startDate, @Nullable String endDate,
+                                   @Nullable String doctorGuid, boolean isShowProgress, boolean isRequestorMA, Button acceptreject, Boolean shownotification) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -114,6 +119,29 @@ public class NotificationApiViewModel extends BaseApiViewModel {
                                             }
                                             break;
                                     }
+
+                                   if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
+                                       try {
+                                           if (shownotification) {
+                                               if (baseApiResponseModel.getMessage() != null && !baseApiResponseModel.getMessage().equals("null")) {
+                                                   Utils.showAlertDialog(activity, activity.getString(R.string.app_name), baseApiResponseModel.getMessage(),
+                                                           null, activity.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                                               @Override
+                                                               public void onClick(DialogInterface dialog, int which) {
+                                                                   dialog.dismiss();
+                                                               }
+                                                           }, new DialogInterface.OnClickListener() {
+                                                               @Override
+                                                               public void onClick(DialogInterface dialog, int which) {
+                                                                   dialog.dismiss();
+                                                               }
+                                                           });
+                                               }
+                                           }
+                                       } catch (Exception e) {
+                                           e.printStackTrace();
+                                       }
+                                   }
                                     baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
                                 }
 

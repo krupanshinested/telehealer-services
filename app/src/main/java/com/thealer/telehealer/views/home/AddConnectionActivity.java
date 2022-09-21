@@ -379,7 +379,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             });
         } else if (UserType.isUserDoctor()) {
             getMenuInflater().inflate(R.menu.menu_connection, menu);
-//            MenuItem filterItem = menu.findItem(R.id.menu_add_support_staff);
+            MenuItem filterItem = menu.findItem(R.id.menu_add_support_staff);
             MenuItem inviteMenuItem = menu.findItem(R.id.menu_overflow);
 
             inviteMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -392,16 +392,16 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 }
             });
 
-//            View view = filterItem.getActionView();
-//            LinearLayout llStaff = view.findViewById(R.id.btnAddPatient);
-//            llStaff.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Bundle inviteBundle=new Bundle();
-//                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
-//                    Utils.showInviteAlert(AddConnectionActivity.this, inviteBundle);
-//                }
-//            });
+            View view = filterItem.getActionView();
+            LinearLayout llStaff = view.findViewById(R.id.btnAddPatient);
+            llStaff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle inviteBundle=new Bundle();
+                    inviteBundle.putString(ArgumentKeys.ROLE,Constants.ROLE_ASSISTANT);
+                    Utils.showInviteAlert(AddConnectionActivity.this, inviteBundle);
+                }
+            });
         }
         return true;
     }

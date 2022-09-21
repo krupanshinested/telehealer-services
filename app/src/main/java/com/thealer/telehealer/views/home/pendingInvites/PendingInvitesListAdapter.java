@@ -130,11 +130,11 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                             selectedPosition = position;
                             Utils.vibrate(activity);
 
-                            notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), true,
+                            notificationApiViewModel.updateNotification(activity,adapterModelList.get(position).getInvitesResponseModel().getType(), true,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null);
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null,false);
                         }
                     });
 
@@ -143,11 +143,11 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                         public void onClick(View v) {
                             viewHolder.rejectBtn.setEnabled(false);
                             selectedPosition = position;
-                            notificationApiViewModel.updateNotification(adapterModelList.get(position).getInvitesResponseModel().getType(), false,
+                            notificationApiViewModel.updateNotification(activity,adapterModelList.get(position).getInvitesResponseModel().getType(), false,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.REJECTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null);
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null,false);
                         }
                     });
 

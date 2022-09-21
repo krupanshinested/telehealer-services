@@ -13,9 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 49
-        versionName "2.9.20"
-        multiDexEnabled true
+        versionCode 50
+        versionName "2.9.22"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
@@ -46,8 +45,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 30
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 49
-            versionName "2.9.20"
+            versionCode 50
+            versionName "2.9.22"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
@@ -175,12 +174,6 @@ dependencies {
     //mp char
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 
-    // Import the Firebase BoM
-//    implementation platform('com.google.firebase:firebase-bom:29.0.3')
-//    implementation 'com.google.firebase:firebase-analytics'
-//    implementation 'com.google.firebase:firebase-crashlytics'
-////    implementation 'com.google.firebase:firebase-perf'
-////    implementation 'com.google.firebase:firebase-core'
     //firebase
     implementation 'com.google.firebase:firebase-core:17.4.4'
     implementation 'com.google.firebase:firebase-messaging:20.2.3'

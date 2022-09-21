@@ -112,7 +112,11 @@ public class TransactionListViewModel extends BaseApiViewModel {
 
         fetchToken(status -> {
             if (status) {
-                getAuthApiService().processPayment(id, req)
+                Map<String, String> headers = new HashMap<>();
+                if(UserType.isUserAssistant()) {
+                    headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.PAYMENT_PROCESSING_CODE);
+                }
+                getAuthApiService().processPayment(headers,id, req,doctorGuid)
                         .compose(applySchedulers())
                         .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                             @Override
