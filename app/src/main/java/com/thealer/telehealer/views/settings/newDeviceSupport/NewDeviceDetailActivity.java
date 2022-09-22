@@ -162,7 +162,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                     if (myDeviceDetail.getcreated_at() == null || myDeviceDetail.getcreated_at().isEmpty()) {
                         tvtandc.setVisibility(View.GONE);
                     } else {
-                        String linkedText = "On " + Utils.getNewDayMonthYear(myDeviceDetail.getcreated_at()) + ", you agree to the " + String.format("<a href=\"%s\">Terms of Service</a>.", termandconditions);
+                        String linkedText = "On " + Utils.getNewDayMonthYear(myDeviceDetail.getcreated_at()) + ", you agreed to the " + String.format("<a href=\"%s\">Terms of Service</a>.", termandconditions);
                         tvtandc.setText(Html.fromHtml(linkedText));
                         tvtandc.setMovementMethod(new TextViewLinkHandler() {
                             @Override
@@ -176,7 +176,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                         });
                     }
                 } else {
-                    String linkedText = "By click on submit, you agree to the " + String.format("<a href=\"%s\">Terms of Service.</a>", termandconditions);
+                    String linkedText = "By click on submit, you agreed to the " + String.format("<a href=\"%s\">Terms of Service.</a>", termandconditions);
                     tvtandc.setText(Html.fromHtml(linkedText));
                     tvtandc.setMovementMethod(new TextViewLinkHandler() {
                         @Override
