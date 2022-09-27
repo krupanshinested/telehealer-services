@@ -173,6 +173,9 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
         private Object appt_length;
 
         private String status;
+        private String compName;
+        private String compEmail;
+        private String compAddress;
 
         public UserDataBean() {
         }
@@ -209,6 +212,31 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
             this.dob = whoAmIApiResponseModel.getUnformattedDob();
             this.appt_length = whoAmIApiResponseModel.getAppt_length();
             this.user_avatar = whoAmIApiResponseModel.getUser_avatar();
+        }
+
+
+        public String getCompName() {
+            return compName;
+        }
+
+        public void setCompName(String compName) {
+            this.compName = compName;
+        }
+
+        public String getCompEmail() {
+            return compEmail;
+        }
+
+        public void setCompEmail(String compEmail) {
+            this.compEmail = compEmail;
+        }
+
+        public String getCompAddress() {
+            return compAddress;
+        }
+
+        public void setCompAddress(String compAddress) {
+            this.compAddress = compAddress;
         }
 
         public String getPhone() {

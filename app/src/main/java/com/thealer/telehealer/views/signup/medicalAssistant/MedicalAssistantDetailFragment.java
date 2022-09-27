@@ -19,12 +19,15 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -78,13 +81,13 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     //not for Registration
     private ImageView certificate_iv;
     private TextView certificate_tv;
-    private TextView gender_value, title_value;
+    private TextView gender_value, title_value,role_value;
 
     private String certificateImagePath;
     private String profileImgPath;
     private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private String[] genderList, titleList;
+    private String[] genderList, titleList,roleList;
     private int imagePickedFor;
 
     private CreateUserRequestModel createUserRequestModel;
@@ -99,6 +102,10 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
     private ImageView backIv;
     private TextView toolbarTitle;
     private TextView nextTv;
+    private TextView roleTv;
+    private Spinner roleSpinner;
+    private RelativeLayout serviceproviderdetail;
+    private EditText compnameet,compemailet,compaddet;
 
     @Nullable
     @Override
@@ -194,6 +201,8 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         nextTv = (TextView) view.findViewById(R.id.next_tv);
         profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
         cameraIv = (ImageView) view.findViewById(R.id.camera_iv);
+        roleTv = (TextView) view.findViewById(R.id.role_tv);
+        roleSpinner = (Spinner) view.findViewById(R.id.role_spinner);
         firstnameTil = (TextInputLayout) view.findViewById(R.id.firstname_til);
         firstnameEt = (EditText) view.findViewById(R.id.firstname_et);
         lastnameTil = (TextInputLayout) view.findViewById(R.id.lastname_til);
@@ -212,7 +221,13 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         certificate_tv = (TextView) view.findViewById(R.id.certificate_tv);
 
         gender_value = view.findViewById(R.id.gender_value);
+        role_value = view.findViewById(R.id.role_value);
         title_value = view.findViewById(R.id.title_value);
+
+        serviceproviderdetail = view.findViewById(R.id.rl_sp_detail);
+        compnameet = (EditText) view.findViewById(R.id.compname_et);
+        compemailet = (EditText) view.findViewById(R.id.compemail_et);
+        compaddet = (EditText) view.findViewById(R.id.compadd_et);
 
         profileCiv.setOnClickListener(this);
         certificate_iv.setOnClickListener(this);
@@ -220,6 +235,28 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
         addTextWatcher(firstnameEt);
         addTextWatcher(lastnameEt);
         addTextWatcher(degreeEt);
+
+        String[] roleList = getActivity().getResources().getStringArray(R.array.role_list);
+        this.roleList = roleList;
+        ArrayAdapter roleAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, roleList);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roleSpinner.setAdapter(roleAdapter);
+
+        roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (roleList[i].equals("Service Provider")){
+                    serviceproviderdetail.setVisibility(View.VISIBLE);
+                }else {
+                    serviceproviderdetail.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         String[] genderList = getActivity().getResources().getStringArray(R.array.gender_list);
         this.genderList = genderList;
@@ -333,6 +370,15 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
             List genders = Arrays.asList(genderList);
             genderSp.setSelection(genders.indexOf(gender), false);
             gender_value.setText(genderSp.getSelectedItem().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String role = createUserRequestModel.getUser_data().getRole();
+            List roles = Arrays.asList(roleList);
+            roleSpinner.setSelection(roles.indexOf(role), false);
+            role_value.setText(roleSpinner.getSelectedItem().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -515,9 +561,13 @@ public class MedicalAssistantDetailFragment extends BaseFragment implements View
 
     private CreateUserRequestModel createUserRequestModel() {
         CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean(createUserRequestModel.getUser_data().getPhone(), createUserRequestModel.getUser_data().getEmail());
+        userDataBean.setCompName(compnameet.getText().toString());
+        userDataBean.setCompEmail(compemailet.getText().toString());
+        userDataBean.setCompAddress(compaddet.getText().toString());
         userDataBean.setFirst_name(firstnameEt.getText().toString());
         userDataBean.setLast_name(lastnameEt.getText().toString());
         userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
+        userDataBean.setRole(roleSpinner.getSelectedItem().toString());
 
         DataBean dataBean = new DataBean();
         dataBean.setDegree(degreeEt.getText().toString());

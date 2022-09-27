@@ -6,6 +6,9 @@
     <string name="next">Next</string>
     <string name="registration">Registration</string>
     <string name="first_name">First Name</string>
+    <string name="comp_name">Company Name</string>
+    <string name="comp_email">Company Email</string>
+    <string name="comp_address">Company Address</string>
     <string name="last_name">Last Name</string>
     <string name="date_of_birth">Date of birth</string>
     <string name="gender">Gender</string>
@@ -142,6 +145,12 @@
         <item>PA</item>
         <item>FNP</item>
         <item>Other</item>
+    </string-array>
+
+    <string-array name="role_list">
+        <item>Please Select Role</item>
+        <item>Medical Assistant</item>
+        <item>Service Provider</item>
     </string-array>
 
     <!--Doctor speciality list-->
@@ -1677,4 +1686,5 @@
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">Subscription history</string>
+    <string name="please_select_role">Role</string>
 </resources>

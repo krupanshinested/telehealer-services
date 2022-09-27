@@ -54,6 +54,11 @@
         <item>Hembra</item>
         <item>Otros</item>
     </string-array>
+    <string-array name="role_list">
+        <item>Please Select Role</item>
+        <item>Medical Assistant</item>
+        <item>Service Provider</item>
+    </string-array>
     <string-array name="onboarding_list">
         <item>Visite a los médicos de forma remota a través de una videollamada privada y segura</item>
         <item>Medir los signos vitales para evaluar la condición.</item>
@@ -78,6 +83,9 @@
     <string name="next">Siguiente</string>
     <string name="registration">Registro</string>
     <string name="first_name">Nombre de pila</string>
+    <string name="comp_name">Company Name</string>
+    <string name="comp_email">Company Email</string>
+    <string name="comp_address">Company Address</string>
     <string name="last_name">Apellido</string>
     <string name="date_of_birth">Fecha de nacimiento</string>
     <string name="gender">Género</string>
@@ -1591,4 +1599,5 @@
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">Subscription history</string>
+    <string name="please_select_role">Role</string>
 </resources>
