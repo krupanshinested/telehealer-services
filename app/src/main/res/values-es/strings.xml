@@ -129,6 +129,7 @@
     <string name="select_your_role">Selecciona tu rol</string>
     <string name="doctor">DOCTOR</string>
     <string name="medical_assistant">Asistente médico</string>
+    <string name="my_team">My Team</string>
     <string name="title">Título</string>
     <string name="degree">La licenciatura</string>
     <string name="image_of_certification">Imagen de certificacion</string>

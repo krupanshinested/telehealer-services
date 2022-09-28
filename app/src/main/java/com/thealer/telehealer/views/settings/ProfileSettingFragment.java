@@ -56,6 +56,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private ProfileCellView documents;
     private TextView versionTv;
     private TextView lastLoginTv;
+    private ProfileCellView serviceprovider;
 
     @Nullable
     @Override
@@ -116,6 +117,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
+        serviceprovider = (ProfileCellView) baseView.findViewById(R.id.service_provider);
         educational_video = baseView.findViewById(R.id.educational_video);
         versionTv = (TextView) baseView.findViewById(R.id.version_tv);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);

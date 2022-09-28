@@ -129,6 +129,7 @@
     <string name="select_your_role">अपनी भूमिका का चयन करें</string>
     <string name="doctor">चिकित्सक</string>
     <string name="medical_assistant">चिकित्सा सहायक</string>
+    <string name="my_team">My Team</string>
     <string name="title">शीर्षक</string>
     <string name="degree">हद</string>
     <string name="image_of_certification">प्रमाणीकरण की छवि</string>

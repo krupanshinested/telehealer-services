@@ -58,6 +58,7 @@
     <string name="select_your_role">Select your role</string>
     <string name="doctor">PROVIDER</string>
     <string name="medical_assistant">Medical Assistants</string>
+    <string name="my_team">My Team</string>
     <string name="title">Title</string>
     <string name="degree">Degree</string>
     <string name="image_of_certification">Image of certification</string>

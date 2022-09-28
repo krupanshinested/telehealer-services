@@ -76,6 +76,7 @@ import com.thealer.telehealer.views.settings.medicalAssistant.MedicalAssistantLi
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryList;
 import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFragment;
 import com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity;
+import com.thealer.telehealer.views.settings.serviceProvider.ServiceProviderListFragment;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.CreatePasswordFragment;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
@@ -367,6 +368,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 ActivePlanFragment activePlanFragment = new ActivePlanFragment();
                 showSubFragment(activePlanFragment);
                 break;
+            case R.id.service_provider:
+                showServiceProviderList();
+                break;
             case R.id.medical_assistant_ll:
                 showMedicalAssistantList();
                 break;
@@ -403,6 +407,11 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 showSubFragment(patientRegistrationDetailFragment);
                 break;
         }
+    }
+
+    private void showServiceProviderList() {
+        ServiceProviderListFragment serviceProviderListFragment = new ServiceProviderListFragment();
+        showSubFragment(serviceProviderListFragment);
     }
 
     private void showMedicalAssistantList() {
