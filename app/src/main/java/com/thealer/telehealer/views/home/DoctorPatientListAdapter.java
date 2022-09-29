@@ -48,12 +48,12 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private FragmentActivity fragmentActivity;
     private OnActionCompleteInterface onActionCompleteInterface;
-    private boolean isDietView,isfromMAView;
+    private boolean isDietView, isfromMAView, isfromServiceProvider;
     private Bundle bundle;
     private List<AssociationAdapterListModel> adapterListModels;
     private CommonUserApiResponseModel doctorModel;
 
-    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, boolean isfromMAView, Bundle bundle, CommonUserApiResponseModel doctorModel) {
+    public DoctorPatientListAdapter(FragmentActivity activity, boolean isDietView, boolean isfromMAView, Bundle bundle, CommonUserApiResponseModel doctorModel, boolean isfromServiceProvider) {
         fragmentActivity = activity;
         this.doctorModel = doctorModel;
         adapterListModels = new ArrayList<>();
@@ -61,6 +61,7 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
         this.isDietView = isDietView;
         this.isfromMAView = isfromMAView;
         this.bundle = bundle;
+        this.isfromServiceProvider = isfromServiceProvider;
         if (bundle == null) {
             this.bundle = new Bundle();
         }
@@ -84,71 +85,74 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
 
-        switch (adapterListModels.get(i).getType()) {
-            case TYPE_HEADER:
-                HeaderHolder headerHolder = (HeaderHolder) holder;
-                headerHolder.headerTv.setText(adapterListModels.get(i).getTitle());
-                break;
-            case TYPE_ITEM:
-                ItemViewHolder viewHolder = (ItemViewHolder) holder;
-                CommonUserApiResponseModel userModel = adapterListModels.get(i).getCommonUserApiResponseModel();
+        if (!isfromServiceProvider) {
+            switch (adapterListModels.get(i).getType()) {
+                case TYPE_HEADER:
+                    HeaderHolder headerHolder = (HeaderHolder) holder;
+                    headerHolder.headerTv.setText(adapterListModels.get(i).getTitle());
+                    break;
+                case TYPE_ITEM:
+                    ItemViewHolder viewHolder = (ItemViewHolder) holder;
+                    CommonUserApiResponseModel userModel = adapterListModels.get(i).getCommonUserApiResponseModel();
 
-                viewHolder.titleTv.setText(userModel.getDisplayName());
-                loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
-                if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
-                    viewHolder.actionIv.setVisibility(View.VISIBLE);
-                    Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
-                    viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
-                    if (doctorModel != null) {
-                        if (doctorModel.getPayment_account_info().isCCCaptured()){
-                            viewHolder.userListIv.getAddChargeBtn().setVisibility(View.VISIBLE);
-                        }else {
-                            viewHolder.userListIv.getAddChargeBtn().setVisibility(View.GONE);
+                    viewHolder.titleTv.setText(userModel.getDisplayName());
+                    loadAvatar(viewHolder.avatarCiv, userModel.getUser_avatar());
+                    if ((UserType.isUserDoctor() || UserType.isUserAssistant()) && Constants.ROLE_PATIENT.equals(userModel.getRole())) {
+                        viewHolder.actionIv.setVisibility(View.VISIBLE);
+                        Utils.setGenderImage(fragmentActivity, viewHolder.actionIv, userModel.getGender());
+                        viewHolder.userListIv.showCardStatus(userModel.getPayment_account_info(), doctorModel.isCan_view_card_status());
+                        if (doctorModel != null) {
+                            if (doctorModel.getPayment_account_info().isCCCaptured()) {
+                                viewHolder.userListIv.getAddChargeBtn().setVisibility(View.VISIBLE);
+                            } else {
+                                viewHolder.userListIv.getAddChargeBtn().setVisibility(View.GONE);
+                            }
+                            ManageSAPermission(viewHolder, userModel);
                         }
-                        ManageSAPermission(viewHolder,userModel);
-                    }
-                    viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                        viewHolder.userListIv.getAddChargeBtn().setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 //                            fragmentActivity.startActivity(new Intent(fragmentActivity, AddChargeActivity.class)
 //                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, userModel.getUser_id())
 //                                    .putExtra(AddChargeActivity.EXTRA_DOCTOR_ID, doctorModel != null ? doctorModel.getUser_id() : -1)
 //                            );
-                            if(UserType.isUserAssistant() &&
-                            doctorModel.getPermissions()!= null && doctorModel.getPermissions().size()>0){
-                                boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorModel.getPermissions(),ArgumentKeys.CHARGES_CODE);
-                                if(isPermissionAllowed){
+                                if (UserType.isUserAssistant() &&
+                                        doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                                    boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.CHARGES_CODE);
+                                    if (isPermissionAllowed) {
+                                        visitAddChargeActivity(userModel);
+                                    } else {
+                                        Utils.displayPermissionMsg(fragmentActivity);
+                                    }
+                                } else {
                                     visitAddChargeActivity(userModel);
-                                }else{
-                                    Utils.displayPermissionMsg(fragmentActivity);
                                 }
-                            }else {
-                                visitAddChargeActivity(userModel);
                             }
+                        });
+
+                    } else if (UserType.isUserPatient()) {
+                        viewHolder.actionIv.setVisibility(View.GONE);
+                    }
+                    if (isfromMAView) {
+                        viewHolder.subTitleTv.setText(userModel.getDesignation() != null && !userModel.getDesignation().isEmpty() ? userModel.getDesignation() : "");
+                    } else {
+                        viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
+                    }
+
+
+                    viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Utils.hideKeyboard(fragmentActivity);
+                            proceed(userModel);
                         }
                     });
 
-                } else if (UserType.isUserPatient()) {
-                    viewHolder.actionIv.setVisibility(View.GONE);
-                }
-                if (isfromMAView){
-                    viewHolder.subTitleTv.setText(userModel.getDesignation()!=null && !userModel.getDesignation().isEmpty()? userModel.getDesignation() : "");
-                }else {
-                    viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
-                }
-
-
-                viewHolder.patientTemplateCv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Utils.hideKeyboard(fragmentActivity);
-                        proceed(userModel);
-                    }
-                });
-
-                viewHolder.userListIv.setStatus(userModel.getStatus(), userModel.getLast_active());
-                break;
+                    viewHolder.userListIv.setStatus(userModel.getStatus(), userModel.getLast_active());
+                    break;
+            }
         }
+
     }
 
     private void ManageSAPermission(ItemViewHolder viewHolder, CommonUserApiResponseModel userModel) {
@@ -192,12 +196,23 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemViewType(int position) {
-        return adapterListModels.get(position).getType();
+        if (isfromServiceProvider) {
+            return 2;
+        }else {
+            return adapterListModels.get(position).getType();
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return adapterListModels.size();
+        if (isfromServiceProvider) {
+            return 5;
+
+        }else {
+            return adapterListModels.size();
+
+        }
     }
 
     public void setData(List<CommonUserApiResponseModel> associationApiResponseModelResult, int page) {

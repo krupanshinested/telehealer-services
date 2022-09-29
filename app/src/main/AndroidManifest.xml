@@ -47,6 +47,9 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".views.settings.serviceProvider.AddServiceProviderActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.settings.DateFilterActivity"
             android:exported="false" />
         <activity

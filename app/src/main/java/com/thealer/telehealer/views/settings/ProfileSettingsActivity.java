@@ -368,7 +368,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 ActivePlanFragment activePlanFragment = new ActivePlanFragment();
                 showSubFragment(activePlanFragment);
                 break;
-            case R.id.service_provider:
+            case R.id.myteam:
                 showServiceProviderList();
                 break;
             case R.id.medical_assistant_ll:

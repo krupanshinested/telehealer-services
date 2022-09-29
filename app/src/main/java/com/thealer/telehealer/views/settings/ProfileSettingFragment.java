@@ -117,7 +117,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         medicalAssistantLl = (LinearLayout) baseView.findViewById(R.id.medical_assistant_ll);
         billLl = (LinearLayout) baseView.findViewById(R.id.bill_view);
         medicalAssistant = (ProfileCellView) baseView.findViewById(R.id.medical_assistant);
-        serviceprovider = (ProfileCellView) baseView.findViewById(R.id.service_provider);
+        serviceprovider = (ProfileCellView) baseView.findViewById(R.id.myteam);
         educational_video = baseView.findViewById(R.id.educational_video);
         versionTv = (TextView) baseView.findViewById(R.id.version_tv);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
@@ -175,6 +175,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         telehealer_billings.setOnClickListener(this);
         subscription.setOnClickListener(this);
         medicalAssistantLl.setOnClickListener(this);
+        serviceprovider.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
         newDeviceSetup.setOnClickListener(this);
 
@@ -229,6 +230,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     subscription.setVisibility(View.GONE);
                     subscription.hideSplitter(true);
                     patient_payments.setVisibility(View.VISIBLE);
+                    serviceprovider .setVisibility(View.VISIBLE);
                 } else {
                     billLl.setVisibility(View.GONE);
                 }

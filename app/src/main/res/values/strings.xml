@@ -72,6 +72,7 @@
     <string name="search_form">Search Forms</string>
     <string name="search_lab">Search Labs</string>
     <string name="search_ma">Search Medical Assistant</string>
+    <string name="search_sp">Search Service Provider Assistant</string>
     <string name="search_prescription">Search Prescriptions</string>
     <string name="search_radiology">Search Radiology</string>
     <string name="search_referral">Search Referrals</string>

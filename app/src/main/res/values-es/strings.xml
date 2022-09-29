@@ -143,6 +143,7 @@
     <string name="search_form">Formularios de búsqueda</string>
     <string name="search_lab">Laboratorios de búsqueda</string>
     <string name="search_ma">Buscar asistente médica</string>
+    <string name="search_sp">Search Service Provider Assistant</string>
     <string name="search_prescription">Buscar recetas</string>
     <string name="search_radiology">Buscar Radiología</string>
     <string name="search_referral">Referencias de búsqueda</string>

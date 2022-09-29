@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".views.settings.serviceProvider.AddServiceProviderActivity">
+
+    <include
+        layout="@layout/appbar_app_color_title_back_next"
+        android:visibility="gone" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="50dp">
+
+            <include
+                android:id="@+id/circular_layout"
+                layout="@layout/layout_circular_profile"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/firstname_til"
+                android:layout_width="@dimen/max_width"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/circular_layout"
+                android:layout_centerHorizontal="true">
+
+                <EditText
+                    android:id="@+id/firstname_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/first_name"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lastname_til"
+                android:layout_width="@dimen/max_width"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/firstname_til"
+                android:layout_centerHorizontal="true">
+
+                <EditText
+                    android:id="@+id/lastname_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/last_name"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/email_til"
+                android:layout_width="@dimen/max_width"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lastname_til"
+                android:layout_centerHorizontal="true">
+
+                <EditText
+                    android:id="@+id/email_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RelativeLayout
+                android:layout_below="@id/email_til"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/rl_sp_detail"
+                android:layout_width="@dimen/max_width"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/compname_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:clickable="false"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:cursorVisible="false"
+                        android:id="@+id/compname_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/comp_name"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/compemail_til"
+                    android:layout_below="@id/compname_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:cursorVisible="false"
+                        android:id="@+id/compemail_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/comp_email"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/compadd_til"
+                    android:layout_below="@id/compemail_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:cursorVisible="false"
+                        android:id="@+id/compadd_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/comp_address"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

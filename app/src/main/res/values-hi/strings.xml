@@ -143,6 +143,7 @@
     <string name="search_form">खोज प्रपत्र</string>
     <string name="search_lab">प्रयोगशाला खोजें</string>
     <string name="search_ma">चिकित्सा सहायक खोजें</string>
+    <string name="search_sp">Search Service Provider Assistant</string>
     <string name="search_prescription">खोज नुस्खे</string>
     <string name="search_radiology">रेडियोलॉजी खोजें</string>
     <string name="search_referral">रेफ़रल खोजें</string>

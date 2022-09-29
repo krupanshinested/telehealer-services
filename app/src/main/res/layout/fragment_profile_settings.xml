@@ -167,6 +167,33 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/myteam_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/myteam"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/medical_assistant_icon"
+                    app:title="@string/my_team" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey_light" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/medical_assistant_ll"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -207,13 +234,6 @@
                     android:layout_height="wrap_content"
                     app:icon="@drawable/medical_assistant_icon"
                     app:title="@string/medical_assistant" />
-
-                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
-                    android:id="@+id/service_provider"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/medical_assistant_icon"
-                    app:title="@string/my_team" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/logs"

@@ -241,7 +241,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         } else if (UserType.isUserDoctor())
             doctorModel = UserDetailPreferenceManager.getWhoAmIResponse();
 
-        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, false, getArguments(), doctorModel);
+        doctorPatientListAdapter = new DoctorPatientListAdapter(getActivity(), isDietView, false, getArguments(), doctorModel,false);
 
 
         doctorPatientListRv.setAdapter(doctorPatientListAdapter);
