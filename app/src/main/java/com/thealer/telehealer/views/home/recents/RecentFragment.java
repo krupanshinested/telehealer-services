@@ -81,6 +81,7 @@ public class RecentFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 recentsCrv.getSwipeLayout().setRefreshing(false);
+                recentsCrv.hideProgressBar();
                 throbberIv.setVisibility(View.GONE);
 
                 if (baseApiResponseModel != null) {
@@ -153,7 +154,7 @@ public class RecentFragment extends BaseFragment {
         recentsCrv.setOnPaginateInterface(new OnPaginateInterface() {
             @Override
             public void onPaginate() {
-                throbberIv.setVisibility(View.VISIBLE);
+                throbberIv.setVisibility(View.GONE);
                 ++page;
                 makeApiCall(false);
                 isApiRequested = true;
