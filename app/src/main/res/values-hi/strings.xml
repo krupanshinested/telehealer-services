@@ -74,7 +74,7 @@
     </string-array>
     <string name="sign_up">रजिस्टर</string>
     <string name="sign_in">लॉग इन करें</string>
-    <string name="dummy_text">पाठ यहाँ आता है</string>
+    <string name="dummy_text"> </string>
     <string name="next">आगामी</string>
     <string name="registration">पंजीकरण</string>
     <string name="first_name">पहला नाम</string>
