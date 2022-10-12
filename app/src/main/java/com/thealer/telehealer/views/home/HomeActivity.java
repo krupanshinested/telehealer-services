@@ -648,10 +648,30 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 fragmentManager.popBackStackImmediate();
                 if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
                     updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder), false);
+
+                changeTitle();
+
             }
         } else {
             finishAffinity();
         }
+    }
+
+    private void changeTitle() {
+
+        switch (selecteMenuItem){
+            case R.id.menu_doctor:
+            case R.id.menu_patient:
+                setDoctorPatientTitle();
+                break;
+            case R.id.menu_schedules:
+                setToolbarTitle(getString(R.string.schedules));
+                break;
+            case R.id.menu_recent:
+                setToolbarTitle(getString(R.string.visits));
+                break;
+        }
+
     }
 
     @Override
