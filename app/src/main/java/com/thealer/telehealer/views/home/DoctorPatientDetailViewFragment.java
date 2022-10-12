@@ -1524,7 +1524,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
                     bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
                     bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
-
+                    actionBtn.setEnabled(false);
                     onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
 
                 }
