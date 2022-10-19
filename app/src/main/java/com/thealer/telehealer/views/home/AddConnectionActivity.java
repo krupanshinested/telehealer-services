@@ -137,12 +137,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                             intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                             intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
                         }
-                        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
                             if (actionBtn != null) {
                                 actionBtn.setText(getString(R.string.add_connection_pending));
                                 actionBtn.setEnabled(false);
                             }
-                        }
                         LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
                     }
                 }
@@ -158,12 +156,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
-                        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
                             if (actionBtn != null) {
                                 actionBtn.setText(getString(R.string.add_connection_connect));
                                 actionBtn.setEnabled(true);
                             }
-                        }
                         LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
                     }
                 }
