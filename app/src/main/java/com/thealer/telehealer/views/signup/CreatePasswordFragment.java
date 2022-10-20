@@ -93,7 +93,22 @@ public class CreatePasswordFragment extends BaseFragment implements DoCurrentTra
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        passwordEt.clearFocus();
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+
+                        showSuccessView(bundle);
+
+
+                        if (errorModel.getMessage() != null) {
+                            EventRecorder.recordRegistration("SIGNUP_ERROR_" + errorModel.getMessage(), null);
+                        } else {
+                            EventRecorder.recordRegistration("SIGNUP_ERROR_UNKNOWN", null);
+                        }
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         passwordEt.clearFocus();
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);

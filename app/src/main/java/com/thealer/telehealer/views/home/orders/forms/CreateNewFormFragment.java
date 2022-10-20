@@ -128,7 +128,9 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
         ordersCreateApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                if (errorModel.geterrorCode() == null){
+                    sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.create_form_failure), errorModel.getMessage()));
+                }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.create_form_failure), errorModel.getMessage()));
                 }
             }

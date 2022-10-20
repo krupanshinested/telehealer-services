@@ -241,7 +241,9 @@ public class PaymentsListingFragment extends BaseFragment implements DoCurrentTr
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        loadEmptyView();
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         loadEmptyView();
                     }
                 }

@@ -279,7 +279,9 @@ public class PaymentDetailFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        loadEmptyViewIfNeeded();
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         loadEmptyViewIfNeeded();
                     }
                 }

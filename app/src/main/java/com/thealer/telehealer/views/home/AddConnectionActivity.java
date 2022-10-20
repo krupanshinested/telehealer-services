@@ -151,7 +151,17 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        if (actionBtn != null) {
+                            actionBtn.setText(getString(R.string.add_connection_connect));
+                            actionBtn.setEnabled(true);
+                        }
+                        LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));

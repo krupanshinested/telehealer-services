@@ -144,17 +144,69 @@ public class OrdersBaseFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        boolean status = false;
+                        String title = getString(R.string.failure);
+                        String description = errorModel.getMessage();
+                        switch (currentOrder) {
+                            case OrderConstant.ORDER_PRESCRIPTIONS:
+                                description = String.format(getString(R.string.create_prescription_failure), patientName, errorModel.getMessage());
+                                break;
+                            case OrderConstant.ORDER_REFERRALS:
+                                description = String.format(getString(R.string.referral_failure), patientName, errorModel.getMessage());
+                                break;
+                            case OrderConstant.ORDER_LABS:
+                                description = String.format(getString(R.string.create_lab_failure), patientName, errorModel.getMessage());
+                                break;
+                            case OrderConstant.ORDER_RADIOLOGY:
+                                description = String.format(getString(R.string.create_radiology_failure), patientName, errorModel.getMessage());
+                                break;
+                            case OrderConstant.ORDER_MISC:
+                                description = String.format(getString(R.string.miscellaneous_failure), patientName, errorModel.getMessage());
+                                break;
+                        }
+                        if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
+                            sendSuccessViewBroadCast(getActivity(), false, title, description);
+//                            PaymentInfo paymentInfo = new PaymentInfo();
+//                            paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+//                            paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+//                            paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+//                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
+                        } else {
+                            switch (currentOrder) {
+                                case OrderConstant.ORDER_PRESCRIPTIONS:
+                                    description = String.format(getString(R.string.create_prescription_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_REFERRALS:
+                                    description = String.format(getString(R.string.referral_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_LABS:
+                                    description = String.format(getString(R.string.create_lab_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_RADIOLOGY:
+                                    description = String.format(getString(R.string.create_radiology_failure), patientName, errorModel.getMessage());
+                                    break;
+                                case OrderConstant.ORDER_MISC:
+                                    description = String.format(getString(R.string.miscellaneous_failure), patientName, errorModel.getMessage());
+                                    break;
+                            }
+                            if (isSendFax) {
+                                isSendFax = false;
+                                description = errorModel.getMessage();
+                            }
+                            sendSuccessViewBroadCast(getActivity(), status, title, description);
+                        }
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         boolean status = false;
                         String title = getString(R.string.failure);
                         String description = getString(R.string.order_posting_failed);
                         if (!UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() || !UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid()) {
                             sendSuccessViewBroadCast(getActivity(), false, title, description);
-                            PaymentInfo paymentInfo = new PaymentInfo();
-                            paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
-                            paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
-                            paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
-                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
+//                            PaymentInfo paymentInfo = new PaymentInfo();
+//                            paymentInfo.setCCCaptured(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured());
+//                            paymentInfo.setSavedCardsCount(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().getSavedCardsCount());
+//                            paymentInfo.setDefaultCardValid(UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid());
+//                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(getActivity(), paymentInfo, patientName);
                         } else {
                             switch (currentOrder) {
                                 case OrderConstant.ORDER_PRESCRIPTIONS:
