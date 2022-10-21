@@ -192,6 +192,8 @@ public class CallPlacingActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        dismissProgressDialog();
+                        finish();
                     }
                 }, null);
             }

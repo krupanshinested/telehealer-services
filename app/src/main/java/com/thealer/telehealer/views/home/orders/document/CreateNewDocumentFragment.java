@@ -124,7 +124,17 @@ public class CreateNewDocumentFragment extends OrdersBaseFragment implements Vie
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, errorModel.isSuccess());
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, getString(R.string.upload_document_failure));
+
+                        LocalBroadcastManager
+                                .getInstance(getActivity())
+                                .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                        .putExtras(bundle));
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, errorModel.isSuccess());
                         bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));

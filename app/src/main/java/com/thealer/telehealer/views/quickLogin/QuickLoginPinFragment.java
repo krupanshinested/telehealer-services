@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.PreferenceConstants;
@@ -57,6 +58,7 @@ public class QuickLoginPinFragment extends BaseFragment {
     private final String PIN = "pin";
     boolean isRefreshToken = false;
     private int pinCount=0;
+    private AppPreference appPreference;
 
     @Nullable
     @Override
@@ -93,7 +95,7 @@ public class QuickLoginPinFragment extends BaseFragment {
         forgetPasswordTv = (TextView) view.findViewById(R.id.forget_password_tv);
         enterPinTv = (TextView) view.findViewById(R.id.enter_pin_tv);
         closeIv = (ImageView) view.findViewById(R.id.close_iv);
-
+        appPreference = AppPreference.getInstance(getActivity());
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,6 +214,7 @@ public class QuickLoginPinFragment extends BaseFragment {
                     showErrorDialog(getString(R.string.pin_not_match,attemptsRemaining));
                 }else {
                     pinCount=0;
+                    appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
                     sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
                 }
             }

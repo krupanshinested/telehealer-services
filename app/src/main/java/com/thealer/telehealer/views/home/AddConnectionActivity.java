@@ -42,6 +42,7 @@ import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
 import com.thealer.telehealer.common.Util.TimerRunnable;
@@ -66,6 +67,7 @@ import java.util.List;
 
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.isContentViewProceed;
+import static com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment.actionBtn;
 
 /**
  * Created by Aswin on 19,November,2018
@@ -98,7 +100,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
     @Nullable
     private TimerRunnable uiToggleTimer;
-    private List<String> designationList=new ArrayList<>();
+    private List<String> designationList = new ArrayList<>();
 
 
     @Override
@@ -135,7 +137,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                             intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                             intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, String.format(getString(R.string.add_connection_failure), connectionListResponseModel.getResult().get(selectedPosition).getFirst_name()));
                         }
-
+                            if (actionBtn != null) {
+                                actionBtn.setText(getString(R.string.add_connection_pending));
+                                actionBtn.setEnabled(false);
+                            }
                         LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
                     }
                 }
@@ -146,11 +151,25 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        if (actionBtn != null) {
+                            actionBtn.setText(getString(R.string.add_connection_connect));
+                            actionBtn.setEnabled(true);
+                        }
+                        LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                            if (actionBtn != null) {
+                                actionBtn.setText(getString(R.string.add_connection_connect));
+                                actionBtn.setEnabled(true);
+                            }
                         LocalBroadcastManager.getInstance(AddConnectionActivity.this).sendBroadcast(intent);
                     }
                 }
