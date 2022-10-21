@@ -74,7 +74,7 @@
     </string-array>
     <string name="sign_up">Registro</string>
     <string name="sign_in">Iniciar sesión</string>
-    <string name="dummy_text">El texto viene aqui</string>
+    <string name="dummy_text"> </string>
     <string name="next">Siguiente</string>
     <string name="registration">Registro</string>
     <string name="first_name">Nombre de pila</string>

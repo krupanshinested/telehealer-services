@@ -167,7 +167,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        showToast(errorModel.getMessage());
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage());
                     }
                 }

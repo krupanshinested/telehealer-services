@@ -82,7 +82,10 @@ public class PatientHistoryFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
+                                String.format(getString(R.string.appointment_request_failure), createScheduleViewModel.getDoctorCommonModel().getDoctorDisplayName()));
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         sendSuccessViewBroadCast(getActivity(), errorModel.isSuccess(), getString(R.string.failure),
                                 String.format(getString(R.string.appointment_request_failure), createScheduleViewModel.getDoctorCommonModel().getDoctorDisplayName()));
                     }

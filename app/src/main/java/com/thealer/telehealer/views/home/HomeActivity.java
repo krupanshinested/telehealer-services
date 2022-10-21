@@ -203,7 +203,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
+                        intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
+                        intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -253,7 +259,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        showToast(errorModel.getMessage());
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage());
                     }
                 }
@@ -648,10 +656,30 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 fragmentManager.popBackStackImmediate();
                 if (fragmentManager.findFragmentById(R.id.sub_fragment_holder) == null)
                     updateToolbarOptions(fragmentManager.findFragmentById(R.id.fragment_holder), false);
+
+                changeTitle();
+
             }
         } else {
             finishAffinity();
         }
+    }
+
+    private void changeTitle() {
+
+        switch (selecteMenuItem){
+            case R.id.menu_doctor:
+            case R.id.menu_patient:
+                setDoctorPatientTitle();
+                break;
+            case R.id.menu_schedules:
+                setToolbarTitle(getString(R.string.schedules));
+                break;
+            case R.id.menu_recent:
+                setToolbarTitle(getString(R.string.visits));
+                break;
+        }
+
     }
 
     @Override

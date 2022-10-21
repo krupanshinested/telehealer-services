@@ -10,10 +10,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputLayout;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -29,6 +33,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiViewModel;
+import com.thealer.telehealer.common.AppPreference;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
@@ -53,11 +58,11 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
     private TextInputLayout passwordTil;
     private EditText passwordEt;
     private CustomButton validateBtn;
-
+    private AppPreference appPreference;
     private SigninApiViewModel signinApiViewModel;
     private SigninApiResponseModel signinApiResponseModel;
     private AttachObserverInterface attachObserverInterface;
-    int passCount=0;
+    int passCount = 0;
 
     @Override
     public void onAttach(Context context) {
@@ -70,7 +75,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
                         if (passCount < 2) {
                             passCount++;
                             String attemptRemains = (3 - passCount) + "";
@@ -78,6 +83,19 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
                             passwordEt.setText("");
                         } else {
                             passCount = 0;
+                            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                            sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
+                            getActivity().finish();
+                        }
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        if (passCount < 2) {
+                            passCount++;
+                            String attemptRemains = (3 - passCount) + "";
+                            showErrorDialog(getString(R.string.wrong_password, attemptRemains));
+                            passwordEt.setText("");
+                        } else {
+                            passCount = 0;
+                            appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
                             sendQuickLoginBroadCast(ArgumentKeys.AUTH_FAILED);
                             getActivity().finish();
                         }
@@ -94,7 +112,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
                     if (signinApiResponseModel.isSuccess()) {
                         appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, signinApiResponseModel.getToken());
                         appPreference.setString(PreferenceConstants.USER_REFRESH_TOKEN, signinApiResponseModel.getRefresh_token());
-                        passCount=0;
+                        passCount = 0;
                         appPreference.setBoolean(PreferenceConstants.IS_AUTH_PENDING, false);
                         sendQuickLoginBroadCast(ArgumentKeys.AUTH_SUCCESS);
                         getActivity().finish();
@@ -128,7 +146,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
         passwordTil = (TextInputLayout) view.findViewById(R.id.password_til);
         passwordEt = (EditText) view.findViewById(R.id.password_et);
         validateBtn = (CustomButton) view.findViewById(R.id.validate_btn);
-
+        appPreference = AppPreference.getInstance(getActivity());
         closeIv.setOnClickListener(this);
         validateBtn.setOnClickListener(this);
 
@@ -176,6 +194,7 @@ public class QuickLoginPasswordFragment extends BaseFragment implements View.OnC
                 break;
         }
     }
+
     private void showErrorDialog(String pin) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle(getString(R.string.app_name));

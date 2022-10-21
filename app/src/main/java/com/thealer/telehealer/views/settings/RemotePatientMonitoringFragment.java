@@ -186,6 +186,14 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         rpmCellView.updateTextviewPadding(20,20,25,20);
         notificationCellView.updateTextviewPadding(20,20,20,20);
         toolbarTitle.setText(R.string.vital_chart);
+
+        backIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCloseActionInterface.onClose(false);
+            }
+        });
+
         if (getArguments() != null)
             userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
 

@@ -1899,7 +1899,17 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null && (errorModel.getMessage() != null || !errorModel.getMessage().isEmpty())) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        String message = errorModel.getMessage();
+                        if (message != null) {
+                            currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    activeCall.endCall(OpenTokConstants.other);
+                                }
+                            }, null);
+                        }
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         String message = errorModel.getMessage();
                         if (message != null) {
                             currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {

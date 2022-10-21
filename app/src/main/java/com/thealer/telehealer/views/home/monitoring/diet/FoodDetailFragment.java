@@ -138,7 +138,9 @@ public class FoodDetailFragment extends BaseFragment implements View.OnClickList
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), isDeleteMode ? getString(R.string.diet_delete_failure) : getString(R.string.diet_post_failure));
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), isDeleteMode ? getString(R.string.diet_delete_failure) : getString(R.string.diet_post_failure));
                     }
                 }
