@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -20,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -546,7 +549,13 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
             toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
-            linechart.setVisibility(View.VISIBLE);
+            if (UserType.isUserAssistant()) {
+                if (!Constants.isVitalsViewEnable) {
+                    Utils.displayPermissionMsg(getContext());
+                    linechart.setVisibility(View.GONE);
+                    vitalDetailCrv.setVisibility(View.GONE);
+                }
+            }
 
             linechart.setOnChartGestureListener(new OnChartGestureListener() {
                 @Override
@@ -637,12 +646,25 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-                        Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
-                            @Override
-                            public void onListItemSelected(int position, Bundle bundle) {
-                                openPDFFor(bundle);
+                        if (UserType.isUserAssistant()){
+                            if (!Constants.isVitalsViewEnable){
+                                Utils.displayPermissionMsg(getContext());
+                            }else {
+                                Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
+                                    @Override
+                                    public void onListItemSelected(int position, Bundle bundle) {
+                                        openPDFFor(bundle);
+                                    }
+                                });
                             }
-                        });
+                        }else {
+                            Utils.showMonitoringFilter(null, getActivity(), new OnListItemSelectInterface() {
+                                @Override
+                                public void onListItemSelected(int position, Bundle bundle) {
+                                    openPDFFor(bundle);
+                                }
+                            });
+                        }
 
                         break;
                 }
@@ -672,6 +694,18 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
         vitalDetailCrv.setErrorModel(this, vitalsApiViewModel.getErrorModelLiveData());
 
+        if (UserType.isUserAssistant()){
+            if(!Constants.isVitalsViewEnable){
+//                Utils.displayPermissionMsg(getContext());
+                linechart.setVisibility(View.GONE);
+                vitalDetailCrv.setVisibility(View.GONE);
+            }
+            if(!Constants.isVitalsAddEnable){
+//                addFab.setClickable(false);
+//                addFab.setEnabled(false);
+                addFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(),
+                        Constants.isVitalsAddEnable ? R.color.app_gradient_start : R.color.colorGrey)));            }
+        }
         if (getArguments() != null) {
 
             isGetType = getArguments().getBoolean(ArgumentKeys.IS_GET_TYPE, false);
@@ -765,7 +799,11 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
             if (selectedItem != null) {
                 if (!isFromHome) {
                     if (commonUserApiResponseModel != null) {
-                        vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                        if (Constants.isVitalsViewEnable) {
+                            vitalsApiViewModel.getUserVitals(getCurrentVitalType(), commonUserApiResponseModel.getUser_guid(), doctorGuid, isShowProgress, page);
+                        }else {
+                            Utils.displayPermissionMsg(getActivity());
+                        }
                     }
                 } else {
                     vitalsApiViewModel.getVitals(getCurrentVitalType(), page, isShowProgress);
@@ -827,6 +865,12 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
                 onCloseActionInterface.onClose(false);
                 break;
             case R.id.add_fab:
+
+                if (!Constants.isVitalsAddEnable){
+
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
 
                 if (CallManager.shared.isActiveCallPresent()) {
                     Toast.makeText(getActivity(), getString(R.string.live_call_going_error), Toast.LENGTH_LONG).show();

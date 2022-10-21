@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,6 +74,7 @@ public class VitalReportFragment extends BaseFragment {
     private View bottomView;
     private ImageView filterIv;
     private CustomRecyclerView patientListCrv;
+    private  Boolean isPermissionAllowed = true;
 
     private AttachObserverInterface attachObserverInterface;
     private VitalReportApiViewModel vitalReportApiViewModel;
@@ -330,6 +332,7 @@ public class VitalReportFragment extends BaseFragment {
 
         if (getArguments() != null) {
             doctorModel = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
+            isPermissionAllowed = getArguments().getBoolean(ArgumentKeys.isPermissionAllowed,true);
             if (doctorModel != null) {
                 doctorGuid = doctorModel.getUser_guid();
             }
@@ -387,6 +390,11 @@ public class VitalReportFragment extends BaseFragment {
         } else {
             getUsersList(selectedFilter, startDate, endDate);
         }
+
+        if (!Constants.isVitalsViewEnable){
+            Utils.displayPermissionMsg(getActivity());
+        }
+
     }
 
     private void showFilterDialog() {
@@ -433,7 +441,8 @@ public class VitalReportFragment extends BaseFragment {
     }
 
     private void getUsersList(String filter, String startDate, String endDate) {
-        vitalReportApiViewModel.getVitalUsers(filter, startDate, endDate, doctorGuid, true);
+        if(isPermissionAllowed)
+            vitalReportApiViewModel.getVitalUsers(filter, startDate, endDate, doctorGuid, true);
     }
 
     private void setToolbarTitle(String text) {

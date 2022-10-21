@@ -159,69 +159,69 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<ConnectionListAd
 
     //Allow physician to view list of support staff. Also physician can request to add them.
     private void selectDesignation(View v, CommonUserApiResponseModel apiResponseModelList) {
-//        LayoutInflater layoutInflater=LayoutInflater.from(context);
-//        View layoutInflateView=layoutInflater.inflate
-//                (R.layout.designation_alert,(ViewGroup)v.findViewById(R.id.cl_root));
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-//        alertDialog.setView(layoutInflateView);
-//        alertDialog.setCancelable(false);
-//        AlertDialog dialog = alertDialog.create();
-//        TextView headerTitle=layoutInflateView.findViewById(R.id.header_title);
-//        RecyclerView rvDesignation=layoutInflateView.findViewById(R.id.rv_designation);
-//        rvDesignation.setLayoutManager(new LinearLayoutManager(fragmentActivity));
-//        Button btnYes=layoutInflateView.findViewById(R.id.btn_yes);
-//        TextView noRecordFound=layoutInflateView.findViewById(R.id.no_record_found);
-//        Button btnCancel=layoutInflateView.findViewById(R.id.btn_cancel);
-//        View viewDevider=layoutInflateView.findViewById(R.id.view_devider);
-//
-//
-//        headerTitle.setText(String.format(fragmentActivity.getString(R.string.str_select_designation_for),apiResponseModelList.getUserDisplay_name()));
-//
-//        if(designationList.size()==0) {
-//            rvDesignation.setVisibility(View.GONE);
-//            noRecordFound.setVisibility(View.VISIBLE);
-//            btnYes.setVisibility(View.GONE);
-//            viewDevider.setVisibility(View.GONE);
-//        } else{
-//            rvDesignation.setVisibility(View.VISIBLE);
-//            noRecordFound.setVisibility(View.GONE);
-//            btnYes.setVisibility(View.VISIBLE);
-//            viewDevider.setVisibility(View.VISIBLE);
-//        }
-//        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity, designationList, new OnItemEndListener() {
-//            @Override
-//            public void itemEnd(int position) {
-//            }
-//        });
-//        rvDesignation.setAdapter(designationListAdapter);
-//
-//        btnCancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        btnYes.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(designationListAdapter!=null) {
-//                    String designation = designationListAdapter.getSpecialistInfo();
+        LayoutInflater layoutInflater=LayoutInflater.from(context);
+        View layoutInflateView=layoutInflater.inflate
+                (R.layout.designation_alert,(ViewGroup)v.findViewById(R.id.cl_root));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setView(layoutInflateView);
+        alertDialog.setCancelable(false);
+        AlertDialog dialog = alertDialog.create();
+        TextView headerTitle=layoutInflateView.findViewById(R.id.header_title);
+        RecyclerView rvDesignation=layoutInflateView.findViewById(R.id.rv_designation);
+        rvDesignation.setLayoutManager(new LinearLayoutManager(fragmentActivity));
+        Button btnYes=layoutInflateView.findViewById(R.id.btn_yes);
+        TextView noRecordFound=layoutInflateView.findViewById(R.id.no_record_found);
+        Button btnCancel=layoutInflateView.findViewById(R.id.btn_cancel);
+        View viewDevider=layoutInflateView.findViewById(R.id.view_devider);
+
+
+        headerTitle.setText(String.format(fragmentActivity.getString(R.string.str_select_designation_for),apiResponseModelList.getUserDisplay_name()));
+
+        if(designationList.size()==0) {
+            rvDesignation.setVisibility(View.GONE);
+            noRecordFound.setVisibility(View.VISIBLE);
+            btnYes.setVisibility(View.GONE);
+            viewDevider.setVisibility(View.GONE);
+        } else{
+            rvDesignation.setVisibility(View.VISIBLE);
+            noRecordFound.setVisibility(View.GONE);
+            btnYes.setVisibility(View.VISIBLE);
+            viewDevider.setVisibility(View.VISIBLE);
+        }
+        DesignationListAdapter designationListAdapter=new DesignationListAdapter(fragmentActivity, designationList, new OnItemEndListener() {
+            @Override
+            public void itemEnd(int position) {
+            }
+        });
+        rvDesignation.setAdapter(designationListAdapter);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(designationListAdapter!=null) {
+                    String designation = designationListAdapter.getSpecialistInfo();
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.ADD_CONNECTION_ID, apiResponseModelList.getUser_id());
                     bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
-//                    if(designation!=null)
-//                        bundle.putString(Constants.DESIGNATION,designation);
+                    if(designation!=null)
+                        bundle.putString(Constants.DESIGNATION,designation);
                     onActionCompleteInterface.onCompletionResult(null, true, bundle);
-//                }
-//                dialog.dismiss();
-//
-//            }
-//        });
-//
-//
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        dialog.show();
+                }
+                dialog.dismiss();
+
+            }
+        });
+
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     @Override

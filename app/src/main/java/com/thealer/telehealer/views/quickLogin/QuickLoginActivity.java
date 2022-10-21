@@ -180,7 +180,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 if (isFromSignup) {
                     goToMainActivity();
                 } else {
-                    getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginPasswordFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(fragmentHolder.getId(), new QuickLoginPasswordFragment()).commit();
                 }
                 break;
             case Constants.QUICK_LOGIN_TYPE_PASSWORD:

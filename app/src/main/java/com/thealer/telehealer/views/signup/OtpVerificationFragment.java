@@ -267,7 +267,14 @@ public class OtpVerificationFragment extends BaseFragment implements View.OnClic
                 }
             }
         });
-
+        requestOtpApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                if(errorModel != null){
+                    Log.e("neem", "onChanged: "+errorModel.getMessage() );
+                }
+            }
+        });
     }
 
     private void initView(View view) {

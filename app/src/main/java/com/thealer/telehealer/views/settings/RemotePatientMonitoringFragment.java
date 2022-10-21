@@ -24,6 +24,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.vitals.VitalErrorThreshold;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.views.settings.Adapters.VitalThresholdAdapter;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideo;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoOrder;
@@ -73,6 +74,11 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
         vitalsApiViewModel = new ViewModelProvider(this).get(VitalsApiViewModel.class);
         attachObserverInterface.attachObserver(vitalsApiViewModel);
 
+        if(getArguments() != null){
+            userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
+            if(userGuid != null && userGuid.isEmpty())
+                userGuid=null;
+        }
         vitalsApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
@@ -222,14 +228,6 @@ public class RemotePatientMonitoringFragment extends BaseFragment {
                 editTv.setVisibility(View.GONE);
             }
         });
-
-        backIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCloseActionInterface.onClose(false);
-            }
-        });
-
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

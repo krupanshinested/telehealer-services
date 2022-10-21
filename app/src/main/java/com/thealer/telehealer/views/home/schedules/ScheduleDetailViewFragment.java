@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -33,6 +34,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.OpenTok.CallRequest;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
+import com.thealer.telehealer.apilayer.models.getUsers.GetUsersApiViewModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestLoginApiResponseModel;
 import com.thealer.telehealer.apilayer.models.guestviewmodel.GuestloginViewModel;
 import com.thealer.telehealer.apilayer.models.schedules.SchedulesApiResponseModel;
@@ -64,7 +66,9 @@ import com.thealer.telehealer.views.home.chat.ChatActivity;
 import com.thealer.telehealer.views.home.orders.OrdersCustomView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
@@ -93,8 +97,10 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private SchedulesApiViewModel schedulesApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private OnCloseActionInterface onCloseActionInterface;
+    private GetUsersApiViewModel getUsersApiViewModel;
 
     private SchedulesApiResponseModel.ResultBean resultBean;
+    private CommonUserApiResponseModel resultBeans;
     private RecyclerView patientHistoryRv;
     private TextView statusTv;
     private String userGuid = null, doctorGuid = null, doctorName = null;
@@ -105,6 +111,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     private GuestLoginApiResponseModel guestLoginApiResponseModel;
     private PatientInvite patientInvite;
     private AskToAddCardViewModel askToAddCardViewModel;
+    private boolean isCallEnable = true,ischatEnable = true;
 
     @Override
     public void onAttach(Context context) {
@@ -113,6 +120,52 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
         attachObserverInterface = (AttachObserverInterface) getActivity();
         schedulesApiViewModel = new ViewModelProvider(this).get(SchedulesApiViewModel.class);
         attachObserverInterface.attachObserver(schedulesApiViewModel);
+        getUsersApiViewModel = new ViewModelProvider(this).get(GetUsersApiViewModel.class);
+        attachObserverInterface.attachObserver(getUsersApiViewModel);
+
+        getUsersApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
+                resultBeans = model;
+                Log.d("Data Model", "Data Model first " + resultBeans.getPermissions());
+
+                if (UserType.isUserAssistant()) {
+
+                    if (resultBeans.getPermissions().size() > 0) {
+                        isCallEnable = Utils.checkPermissionStatus(resultBeans.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
+                        ischatEnable = Utils.checkPermissionStatus(resultBeans.getPermissions(), ArgumentKeys.CHAT_CODE);
+                    }
+
+                    if (isCallEnable){
+                        patientCallIv.setColorFilter(ContextCompat.getColor(context, R.color.app_gradient_start));
+                    }else {
+                        patientCallIv.setColorFilter(ContextCompat.getColor(context, R.color.colorGrey));
+                    }
+
+
+                    if (ischatEnable){
+                        patientChatIv.setColorFilter(ContextCompat.getColor(context, R.color.app_gradient_start));
+                    }else {
+                        patientChatIv.setColorFilter(ContextCompat.getColor(context, R.color.colorGrey));
+                    }
+
+                    if (resultBean != null) {
+                        schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
+                    }
+
+                }
+            }
+        });
+
+        getUsersApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                if (resultBean != null) {
+                    schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
+                }
+            }
+        });
 
         schedulesApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
                 new Observer<BaseApiResponseModel>() {
@@ -314,7 +367,11 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
             }
 
             if (resultBean != null) {
-                schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
+                if (UserType.isUserAssistant()){
+                    getUsersApiViewModel.getUserDetail(doctorGuid, null);
+                }else {
+                    schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
+                }
             }
 
         }
@@ -361,9 +418,18 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                 break;
             case R.id.doctor_chat_iv:
             case R.id.patient_chat_iv:
+                if (!ischatEnable){
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
                 startActivity(new Intent(getActivity(), ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
                 break;
             case R.id.patient_call_iv:
+
+                if (!isCallEnable){
+                    Utils.displayPermissionMsg(getActivity());
+                    return;
+                }
 
                 ArrayList<String> callTypes = new ArrayList<>();
 //                if (resultBean.getDoctor().getApp_details() != null) {

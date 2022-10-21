@@ -151,7 +151,10 @@ public class ArgumentKeys {
     public static final String SESSION_ID = "SESSION_ID";
     public static final String PRESCRIPTION_CODE ="PRESCRIPTIONS";
     public static final String ADD_VITALS_CODE ="ADD_VITALS";
+    public static final String VIEW_VITALS_CODE ="VIEW_VITALS";
     public static final String MAKE_CALLS_CODE ="MAKE_CALLS";
+    public static final String VIEW_CALLS_CODE ="VIEW_CALLS";
+    public static final String CHAT_CODE ="CHAT";
     public static final String REFERRALS_CODE ="REFERRALS";
     public static final String LABS_CODE ="LABS";
     public static final String RADIOLOGY_CODE ="RADIOLOGY";
@@ -159,10 +162,12 @@ public class ArgumentKeys {
     public static final String FORMS_CODE ="FORMS";
     public static final String EDUCATIONAL_VIDEOS_CODE ="EDUCATIONAL_VIDEOS";
     public static final String BILLING_AND_CHARGES_CODE ="BILLING_AND_CHARGES";
+    public static final String CHARGES_CODE ="CHARGES";
     public static final String MANAGE_REFUND_CODE ="MANAGE_REFUND";
     public static final String PAYMENT_PROCESSING_CODE ="PAYMENT_PROCESSING";
     public static final String SCHEDULING_CODE ="SCHEDULING";
     public static final String INVITE_OTHERS_CODE ="INVITE_OTHERS";
+    public static final String ADD_CREDIT_CARD ="ADD_CREDIT_CARD";
     public static int AUTH_NONE = 0;
     public static int AUTH_SUCCESS = 1;
     public static int AUTH_FAILED = 2;
@@ -296,4 +301,5 @@ public class ArgumentKeys {
     public static final String HEALTH_CARE_ID = "health_care_id";
     public static final String DEVICE_FLAG = "device_flag";
     public static final String DEVICE_DETAILS = "device_details";
+    public static String isPermissionAllowed="IS_Permission_Allowed";
 }

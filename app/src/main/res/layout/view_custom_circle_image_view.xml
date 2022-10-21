@@ -44,10 +44,10 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/status_civ"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginEnd="2dp"
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginEnd="@dimen/_2sdp"
                         android:src="@color/status_offline"
                         app:civ_border_color="@color/colorWhite"
                         app:civ_border_width="1dp"
@@ -95,8 +95,8 @@
 
                         <ImageView
                             android:id="@+id/card_iv"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="@dimen/_24sdp"
+                            android:layout_height="@dimen/_24sdp"
                             android:layout_marginBottom="10dp"
                             android:src="@drawable/ic_card_enabled"
                             android:visibility="gone"
@@ -104,8 +104,8 @@
 
                         <ImageView
                             android:id="@+id/action_iv"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="@dimen/_24sdp"
+                            android:layout_height="@dimen/_24sdp"
                             android:src="@drawable/gender_male"
                             android:visibility="gone"
                             tools:visibility="visible" />
@@ -136,18 +136,18 @@
             <com.thealer.telehealer.common.CustomButton
                 android:id="@+id/accept_btn"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:paddingStart="30dp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:paddingStart="@dimen/_30sdp"
                 android:paddingTop="0dp"
-                android:paddingEnd="30dp"
+                android:paddingEnd="@dimen/_30sdp"
                 android:paddingBottom="0dp"
                 android:text="@string/lbl_add_fees"
-                android:textSize="12sp"
+                android:textSize="@dimen/_12ssp"
                 android:visibility="gone"
                 app:app_gradient="true"
-                app:corner_radius="25dp"
+                app:corner_radius="@dimen/_25sdp"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/margin_default"
                 app:text_color="@color/colorWhite"

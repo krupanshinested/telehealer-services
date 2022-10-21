@@ -34,6 +34,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.Procedure.ProcedureConstants;
@@ -106,12 +107,23 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 if (baseApiResponseModel != null) {
                     finish();
                     if (!UserType.isUserPatient())
-                        startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
-                                .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
-                                .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
-                                .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
-                                .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK, true)
-                        );
+
+                        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                            startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
+                                    .putExtra(ArgumentKeys.DOCTOR_GUID,doctorGuid)
+                                    .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
+                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                                    .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
+                                    .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK, true)
+                            );
+                        }else {
+                            startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
+                                    .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
+                                    .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                                    .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
+                                    .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK, true)
+                            );
+                        }
                 }
 
                 submit_btn.setEnabled(true);
@@ -409,12 +421,22 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.close_iv:
                 if (!UserType.isUserPatient())
-                    startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
-                            .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
-                            .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
-                            .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
-                            .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK, true)
-                    );
+                    if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
+                        startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
+                                .putExtra(ArgumentKeys.DOCTOR_GUID,doctorGuid)
+                                .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
+                                .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                                .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
+                                .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK, true)
+                        );
+                    }else {
+                        startActivity(new Intent(CallFeedBackActivity.this, AddChargeActivity.class)
+                                .putExtra(AddChargeActivity.EXTRA_REASON, Constants.ChargeReason.VISIT)
+                                .putExtra(AddChargeActivity.EXTRA_PATIENT_ID, getIntent().getIntExtra(ArgumentKeys.PATIENT_ID, -1))
+                                .putExtra(AddChargeActivity.EXTRA_ORDER_ID, sessionId)
+                                .putExtra(AddChargeActivity.EXTRA_IS_FROM_FEEDBACK, true)
+                        );
+                    }
                 finish();
                 break;
             case R.id.first_item:
