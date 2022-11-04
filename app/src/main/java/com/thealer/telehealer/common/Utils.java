@@ -435,23 +435,27 @@ public class Utils {
     }
 
     public static void setImageWithGlide(Context context, ImageView imageView, String path, Drawable placeHolder, boolean isUrlAuthNeeded, boolean decrypt) {
-        if (path != null && !path.isEmpty()) {
-            TeleCacheUrl glideUrl;
-            if (isUrlAuthNeeded) {
-                glideUrl = getGlideUrlWithAuth(context, path, decrypt);
+        try{
+            if (path != null && !path.isEmpty()) {
+                TeleCacheUrl glideUrl;
+                if (isUrlAuthNeeded) {
+                    glideUrl = getGlideUrlWithAuth(context, path, decrypt);
+                } else {
+                    glideUrl = new TeleCacheUrl(path);
+                }
+                if (placeHolder != null) {
+                    Glide.with(context).load(glideUrl).apply(new RequestOptions().placeholder(placeHolder)).into(imageView);
+                } else {
+                    Glide.with(context).load(glideUrl).into(imageView);
+                }
             } else {
-                glideUrl = new TeleCacheUrl(path);
+                if (placeHolder == null)
+                    imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
+                else
+                    imageView.setImageDrawable(placeHolder);
             }
-            if (placeHolder != null) {
-                Glide.with(context).load(glideUrl).apply(new RequestOptions().placeholder(placeHolder)).into(imageView);
-            } else {
-                Glide.with(context).load(glideUrl).into(imageView);
-            }
-        } else {
-            if (placeHolder == null)
-                imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
-            else
-                imageView.setImageDrawable(placeHolder);
+        }catch (Exception e){
+            Log.d("TAG", "setImageWithGlide: "+e.getMessage());
         }
     }
 
