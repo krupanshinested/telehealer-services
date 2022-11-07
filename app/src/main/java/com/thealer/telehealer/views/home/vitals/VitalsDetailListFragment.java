@@ -549,6 +549,7 @@ public class VitalsDetailListFragment extends BaseFragment implements View.OnCli
 
             toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
             toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
+            linechart.setVisibility(View.VISIBLE);
             if (UserType.isUserAssistant()) {
                 if (!Constants.isVitalsViewEnable) {
                     Utils.displayPermissionMsg(getContext());
