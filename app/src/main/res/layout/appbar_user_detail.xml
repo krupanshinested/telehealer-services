@@ -23,6 +23,16 @@
             app:contentInsetStart="0dp"
             app:layout_collapseMode="pin">
 
+            <ImageView
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_arrow_back_black_24dp"
+                app:layout_collapseMode="pin" />
+
             <TextView
                 android:id="@+id/toolbar_title"
                 style="@style/text_title_lignt_bold"
@@ -30,6 +40,9 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/dummy_text"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingEnd="@dimen/_4sdp"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/toolbar_title"
                 android:textStyle="bold" />
