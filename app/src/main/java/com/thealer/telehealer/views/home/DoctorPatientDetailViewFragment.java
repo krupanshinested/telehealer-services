@@ -134,7 +134,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private TabLayout userDetailTab;
     private ViewPager viewPager;
     private ImageView backIv;
-    private Button actionBtn;
+    public static Button actionBtn;
     private ViewPagerAdapter viewPagerAdapter;
     private FloatingActionButton addFab;
 
@@ -354,7 +354,21 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                if (errorModel.geterrorCode() == null){
+                    Utils.showAlertDialog(getContext(), getString(R.string.error),
+                            errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
+                            null, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     Utils.showAlertDialog(getContext(), getString(R.string.error),
                             errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                             null, getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -611,7 +625,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     } else {
                         searchIV.setVisibility(View.GONE);
                         addIv.setVisibility(View.GONE);
-                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)favoriteIv.getLayoutParams();
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) favoriteIv.getLayoutParams();
                         params.gravity = Gravity.END;
                         favoriteIv.setLayoutParams(params);
                     }
@@ -1388,17 +1402,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     if (actionBtn.getText().equals(getString(R.string.add_connection_connect)) && resultBean.getRole().equals(Constants.ROLE_ASSISTANT)) {
                         selectDesignation(v, resultBean);
                     } else {
-                        Utils.vibrate(getActivity());
-                        Bundle bundle = new Bundle();
-                        bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
-                        bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
-                        bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
-                        bundle.putSerializable(Constants.USER_DETAIL, resultBean);
-                        bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
-                        bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
+                        if (actionBtn.getText().equals(getString(R.string.add_connection_connect))) {
+                            Utils.vibrate(getActivity());
+                            Bundle bundle = new Bundle();
+                            bundle.putInt(Constants.ADD_CONNECTION_ID, resultBean.getUser_id());
+                            bundle.putString(ArgumentKeys.USER_GUID, resultBean.getUser_guid());
+                            bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                            bundle.putSerializable(Constants.USER_DETAIL, resultBean);
+                            bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
+                            bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
 
-                        onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
-
+                            onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
+                        }
 
                     }
 
@@ -1524,7 +1539,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     bundle.putSerializable(Constants.USER_DETAIL, apiResponseModelList);
                     bundle.putBoolean(ArgumentKeys.CHECK_CONNECTION_STATUS, true);
                     bundle.putBoolean(ArgumentKeys.CONNECT_USER, true);
-
+                    actionBtn.setEnabled(false);
                     onActionCompleteInterface.onCompletionResult(RequestID.REQ_ADD_CONNECTION, true, bundle);
 
                 }

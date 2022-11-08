@@ -154,7 +154,9 @@ public class VitalUserReportListFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.associate_order_failure), VisitConstants.TYPE_VITALS));
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.associate_order_failure), VisitConstants.TYPE_VITALS));
                     }
                 }
@@ -166,7 +168,23 @@ public class VitalUserReportListFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    if (errorModel.geterrorCode() == null){
+                        if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
+                            sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
+                            bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.success));
+                            bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, "");
+                            bundle.putBoolean(Constants.SUCCESS_VIEW_AUTO_DISMISS, true);
+                            LocalBroadcastManager
+                                    .getInstance(getActivity())
+                                    .sendBroadcast(new Intent(getString(R.string.success_broadcast_receiver))
+                                            .putExtras(bundle));
+
+                            AppPaymentCardUtils.handleCardCasesFromErrorModel(VitalUserReportListFragment.this, errorModel, doctorName);
+                        }
+                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
                             sendSuccessViewBroadCast(getActivity(), false, getString(R.string.failure), String.format(getString(R.string.failed_to_connect)));
                         } else {

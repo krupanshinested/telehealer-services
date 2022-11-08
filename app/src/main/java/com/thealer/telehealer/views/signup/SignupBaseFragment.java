@@ -49,7 +49,9 @@ public class SignupBaseFragment extends BaseFragment {
         whoAmIApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                if (errorModel.geterrorCode() == null){
+                    showToast(errorModel.getMessage());
+                }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     showToast(errorModel.getMessage());
                 }
             }
@@ -75,7 +77,9 @@ public class SignupBaseFragment extends BaseFragment {
             @Override
             public void onChanged(ErrorModel errorModel) {
                 showToast(errorModel.getMessage());
-                if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                if (errorModel.geterrorCode() == null){
+                    sendSuccessViewBroadCast(getContext(), false, getString(R.string.failure), getString(R.string.registration_error));
+                }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     sendSuccessViewBroadCast(getContext(), false, getString(R.string.failure), getString(R.string.registration_error));
                 }
             }
