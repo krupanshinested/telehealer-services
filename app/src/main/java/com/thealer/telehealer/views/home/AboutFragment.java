@@ -52,6 +52,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OnItemEndListener;
 import com.thealer.telehealer.common.RequestID;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
@@ -141,6 +142,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private List<String> designationList = new ArrayList<>();
     private int selectedId;
     private String finaldesignation;
+    private LinearLayout valuebasesummarypermission;
 
     @Override
     public void onAttach(Context context) {
@@ -308,6 +310,8 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         websiteCv = (CardView) view.findViewById(R.id.website_cv);
         websiteTv = (TextView) view.findViewById(R.id.website_tv);
 
+        valuebasesummarypermission = (LinearLayout) view.findViewById(R.id.ll_valuebasesummarypermission);
+
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
             doctorDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.DOCTOR_DETAIL);
@@ -335,6 +339,16 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             rvVitalHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
             vitalHistoryAdapter = new AboutHistoryAdapter(getActivity());
             rvVitalHistory.setAdapter(vitalHistoryAdapter);
+
+            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)){
+                if (userDetail.getRole().equals(Constants.ROLE_PATIENT)){
+                    valuebasesummarypermission.setVisibility(View.VISIBLE);
+                }else {
+                    valuebasesummarypermission.setVisibility(View.GONE);
+                }
+            }else {
+                valuebasesummarypermission.setVisibility(View.GONE);
+            }
 
             if (userDetail != null) {
                 switch (userDetail.getRole()) {
