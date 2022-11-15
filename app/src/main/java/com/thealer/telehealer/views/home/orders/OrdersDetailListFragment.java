@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -20,12 +21,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalVideoApiResponseModel;
@@ -46,6 +49,7 @@ import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.GetUserDetails;
 import com.thealer.telehealer.common.OnPaginateInterface;
 import com.thealer.telehealer.common.PreferenceConstants;
+import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Util.TimerInterface;
@@ -59,6 +63,7 @@ import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.OverlayViewConstants;
 import com.thealer.telehealer.views.common.SearchCellView;
 import com.thealer.telehealer.views.common.SearchInterface;
+import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.settings.SignatureActivity;
 
 import java.util.ArrayList;
@@ -99,6 +104,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
     @Nullable
     private SearchCellView searchView;
     private  Boolean isPermissionAllowed = true;
+    private Toolbar toolbar;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -572,11 +578,27 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         toolbarTitle = (TextView) view.findViewById(R.id.toolbar_title);
         orderDetailCelv = (CustomExpandableListView) view.findViewById(R.id.order_detail_celv);
         addFab = (FloatingActionButton) view.findViewById(R.id.add_fab);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
         backIv.setOnClickListener(this);
         addFab.setOnClickListener(this);
         if (getArguments() != null) {
             selectedItem = getArguments().getString(Constants.SELECTED_ITEM);
+
+            if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
+                toolbar.inflateMenu(R.menu.orders_detail_menu);
+                toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.print_menu:
+                                Log.d(TAG, "onMenuItemClick: print");
+                        }
+                        return true;
+                    }
+                });
+            }
 
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
             isPermissionAllowed = getArguments().getBoolean(ArgumentKeys.isPermissionAllowed,true);
