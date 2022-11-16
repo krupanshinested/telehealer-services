@@ -585,19 +585,21 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
         if (getArguments() != null) {
             selectedItem = getArguments().getString(Constants.SELECTED_ITEM);
 
-            if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
-                toolbar.inflateMenu(R.menu.orders_detail_menu);
-                toolbar.getMenu().removeItem(R.id.send_fax_menu);
-                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.print_menu:
-                                Log.d(TAG, "onMenuItemClick: print");
+            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)){
+                if (selectedItem.equals(OrderConstant.ORDER_FORM)) {
+                    toolbar.inflateMenu(R.menu.orders_detail_menu);
+                    toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                    toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.print_menu:
+                                    Log.d(TAG, "onMenuItemClick: print");
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                });
+                    });
+                }
             }
 
             isFromHome = getArguments().getBoolean(Constants.IS_FROM_HOME);
