@@ -612,7 +612,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/cl_permission"
             android:layout_margin="16dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:cardUseCompatPadding="true">
 
             <LinearLayout
@@ -648,8 +648,8 @@
                             android:paddingVertical="8dp"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"
-                            android:text="@string/ccm"
-                            android:textColor="@color/bt_theme_orange"
+                            android:text="@string/rpm"
+                            android:textColor="@color/bt_theme_green"
                             android:textSize="@dimen/_11sdp"
                             style="@style/text_sub_title_bold"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -657,7 +657,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <Switch
-                            android:id="@+id/permission_ccm"
+                            android:id="@+id/permission_rpm"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:clickable="true"
@@ -677,8 +677,8 @@
                             android:paddingVertical="8dp"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"
-                            android:text="@string/rpm"
-                            android:textColor="@color/bt_theme_green"
+                            android:text="@string/ccm"
+                            android:textColor="@color/bt_theme_orange"
                             android:textSize="@dimen/_11sdp"
                             style="@style/text_sub_title_bold"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -686,7 +686,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <Switch
-                            android:id="@+id/permission_rpm"
+                            android:id="@+id/permission_ccm"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:clickable="true"
