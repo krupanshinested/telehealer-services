@@ -142,7 +142,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private List<String> designationList = new ArrayList<>();
     private int selectedId;
     private String finaldesignation;
-    private LinearLayout valuebasesummarypermission;
+    private CardView valuebasesummarypermission;
 
     @Override
     public void onAttach(Context context) {
@@ -310,7 +310,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         websiteCv = (CardView) view.findViewById(R.id.website_cv);
         websiteTv = (TextView) view.findViewById(R.id.website_tv);
 
-        valuebasesummarypermission = (LinearLayout) view.findViewById(R.id.ll_valuebasesummarypermission);
+        valuebasesummarypermission = (CardView) view.findViewById(R.id.ll_valuebasesummarypermission);
 
         if (getArguments() != null) {
             userDetail = (CommonUserApiResponseModel) getArguments().getSerializable(Constants.USER_DETAIL);
