@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +37,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -103,9 +105,9 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.geterrorCode() == null){
+                    if (errorModel.geterrorCode() == null) {
                         showToast(errorModel.getMessage());
-                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage());
                     }
                 }
@@ -136,6 +138,21 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
         if (getArguments() != null) {
             formsApiResponseModel = (OrdersUserFormsApiResponseModel) getArguments().getSerializable(ArgumentKeys.FORM_DETAIL);
             hideToolbar = getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false);
+
+            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)) {
+                toolbar.inflateMenu(R.menu.orders_detail_menu);
+                toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.print_menu:
+                                Log.d(TAG, "onMenuItemClick: print");
+                        }
+                        return true;
+                    }
+                });
+            }
 
             if (formsApiResponseModel != null) {
                 setData(formsApiResponseModel);
@@ -258,13 +275,13 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                             }
                             try {
                                 if (itemsBean.getScore() != null) {
-                                    for(int j=0;j<itemsBean.getProperties().getOptions().size();j++){
-                                        if(itemsBean.getProperties().getOptions().get(j).getScore() == itemsBean.getScore()){
+                                    for (int j = 0; j < itemsBean.getProperties().getOptions().size(); j++) {
+                                        if (itemsBean.getProperties().getOptions().get(j).getScore() == itemsBean.getScore()) {
                                             formCsv.getSpinner().setSelection(j, true);
-                                            j=itemsBean.getProperties().getOptions().size()+1;
+                                            j = itemsBean.getProperties().getOptions().size() + 1;
                                         }
                                     }
-                                        int pos = (int) ((itemsBean.getProperties().getOptions().size()-1)- itemsBean.getScore());
+                                    int pos = (int) ((itemsBean.getProperties().getOptions().size() - 1) - itemsBean.getScore());
 
                                 }
                             } catch (Exception e) {
