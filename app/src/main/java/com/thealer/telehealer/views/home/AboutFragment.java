@@ -17,8 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +43,7 @@ import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.ConnectionListApiViewModel;
 import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseModel;
+import com.thealer.telehealer.apilayer.models.addConnection.ValueBaseCareViewModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
@@ -72,6 +75,7 @@ import com.thealer.telehealer.views.settings.medicalHistory.MedicalHistoryViewFr
 import com.thealer.telehealer.views.signup.patient.InsuranceViewPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import config.AppConfig;
@@ -138,11 +142,16 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private TextView designationTv;
     private ConnectionListApiViewModel connectionListApiViewModel;
     private AddConnectionApiViewModel addConnectionApiViewModel;
+    private ValueBaseCareViewModel valueBaseCareViewModel;
     private DesignationResponseModel designationResponseModel;
     private List<String> designationList = new ArrayList<>();
     private int selectedId;
     private String finaldesignation;
+    private CompoundButton rpmbhiccm;
+    private Boolean rpmbhiccmValue;
     private CardView valuebasesummarypermission;
+    private Switch permissionrpm,permissionccm,permissionbhi;
+
 
     @Override
     public void onAttach(Context context) {
@@ -155,6 +164,8 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         attachObserverInterface.attachObserver(userPermissionApiViewModel);
         connectionListApiViewModel = new ViewModelProvider(this).get(ConnectionListApiViewModel.class);
         attachObserverInterface.attachObserver(connectionListApiViewModel);
+        valueBaseCareViewModel = new ViewModelProvider(this).get(ValueBaseCareViewModel.class);
+        attachObserverInterface.attachObserver(valueBaseCareViewModel);
         addConnectionApiViewModel = new ViewModelProvider(this).get(AddConnectionApiViewModel.class);
         attachObserverInterface.attachObserver(addConnectionApiViewModel);
 
@@ -209,6 +220,37 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 } catch (Exception e) {
                     Log.e("neem", "Success: ");
                 }
+            }
+        });
+
+        valueBaseCareViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+            @Override
+            public void onChanged(BaseApiResponseModel baseApiResponseModel) {
+                if (baseApiResponseModel != null) {
+                    if (baseApiResponseModel.isSuccess()){
+                        switch (rpmbhiccm.getId()){
+                            case R.id.permission_bhi:
+                                userDetail.setShow_bhi(rpmbhiccmValue);
+                                rpmbhiccm = null;
+                                break;
+                            case R.id.permission_ccm:
+                                userDetail.setShow_ccm(rpmbhiccmValue);
+                                rpmbhiccm = null;
+                                break;
+                            case R.id.permission_rpm:
+                                userDetail.setShow_rpm(rpmbhiccmValue);
+                                rpmbhiccm = null;
+                                break;
+                        }
+                    }
+                }
+            }
+        });
+
+        valueBaseCareViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
+            @Override
+            public void onChanged(ErrorModel errorModel) {
+                Log.d("TAG", "onChanged: "+errorModel.getMessage());
             }
         });
 
@@ -310,6 +352,10 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         websiteCv = (CardView) view.findViewById(R.id.website_cv);
         websiteTv = (TextView) view.findViewById(R.id.website_tv);
 
+        permissionrpm = (Switch) view.findViewById(R.id.permission_rpm);
+        permissionccm = (Switch) view.findViewById(R.id.permission_ccm);
+        permissionbhi = (Switch) view.findViewById(R.id.permission_bhi);
+
         valuebasesummarypermission = (CardView) view.findViewById(R.id.ll_valuebasesummarypermission);
 
         if (getArguments() != null) {
@@ -343,6 +389,14 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)){
                 if (userDetail.getRole().equals(Constants.ROLE_PATIENT)){
                     valuebasesummarypermission.setVisibility(View.VISIBLE);
+                    permissionrpm.setChecked(userDetail.getShow_rpm());
+                    permissionccm.setChecked(userDetail.getShow_ccm());
+                    permissionbhi.setChecked(userDetail.getShow_bhi());
+
+                    permissionrpm.setOnCheckedChangeListener(multiListener);
+                    permissionccm.setOnCheckedChangeListener(multiListener);
+                    permissionbhi.setOnCheckedChangeListener(multiListener);
+
                 }else {
                     valuebasesummarypermission.setVisibility(View.GONE);
                 }
@@ -626,6 +680,35 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             }
         }
     }
+
+    CompoundButton.OnCheckedChangeListener multiListener = new CompoundButton.OnCheckedChangeListener() {
+
+        public void onCheckedChanged(CompoundButton v, boolean isChecked) {
+            HashMap<String, Object> param = new HashMap<>();
+            param.put(ArgumentKeys.USER_ID, String.valueOf(userDetail.getUser_id()));
+            param.put(ArgumentKeys.buser_id, String.valueOf(UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()));
+            rpmbhiccmValue = isChecked;
+            switch (v.getId()){
+                case R.id.permission_bhi:
+                    param.put(ArgumentKeys.show_bhi, isChecked);
+                    param.put(ArgumentKeys.show_rpm, userDetail.getShow_rpm());
+                    param.put(ArgumentKeys.show_ccm, userDetail.getShow_ccm());
+                    break;
+                case R.id.permission_ccm:
+                    param.put(ArgumentKeys.show_bhi, userDetail.getShow_bhi());
+                    param.put(ArgumentKeys.show_rpm, userDetail.getShow_rpm());
+                    param.put(ArgumentKeys.show_ccm, isChecked);
+                    break;
+                case R.id.permission_rpm:
+                    param.put(ArgumentKeys.show_bhi, userDetail.getShow_bhi());
+                    param.put(ArgumentKeys.show_rpm, isChecked);
+                    param.put(ArgumentKeys.show_ccm, userDetail.getShow_ccm());
+                    break;
+            }
+            rpmbhiccm = v;
+            valueBaseCareViewModel.changevaluebase(param);
+        }
+    };
 
     private void showRemotePatientMonitoring(String user_guid) {
         RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();

@@ -839,4 +839,7 @@ public interface ApiInterface {
     @GET("/api/user-invoice/")
     Observable<TransactionResponse> getInvoice(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(START_DATENEW) String startDate, @Query(END_DATENEW) String endDate);
 
+    @PUT("/api/value-based-summary/setting")
+    Observable<BaseApiResponseModel> changevaluebase(@Body HashMap<String, Object> req);
+
 }
