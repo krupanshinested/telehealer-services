@@ -94,10 +94,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
 
         GlideUrl glideUrl = Utils.getGlideUrlWithAuth(activity.getApplicationContext(), resultBeanList.get(i).getPath(), true);
 
-        Thread  thread = new Thread(){
-            @Override
-            public void run() {
-                Glide.with(activity.getApplicationContext()).asFile().load(glideUrl).addListener(new RequestListener<File>() {
+        Glide.with(activity.getApplicationContext()).asFile().load(glideUrl).addListener(new RequestListener<File>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
                         return false;
@@ -122,9 +119,6 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
                         return false;
                     }
                 }).submit();
-            }
-        };
-        thread.start();
 
         viewHolder.titleTv.setText(resultBeanList.get(i).getName());
 
