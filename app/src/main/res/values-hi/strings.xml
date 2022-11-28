@@ -531,6 +531,7 @@
     <string name="insurance_sentenceCase">बीमा</string>
     <string name="payment_methods">भुगतान की विधि</string>
     <string name="email">ईमेल</string>
+    <string name="default_physician">Default Physician</string>
     <string name="not_connected">जुड़े नहीं हैं</string>
     <string name="scan_completed">स्कैन पूरा हुआ</string>
     <string name="scan_complete_description">सुनिश्चित करें कि आपका डिवाइस युग्मन मोड में है और यह पूरी तरह से चार्ज है।</string>
@@ -671,6 +672,7 @@
     <string name="ccm">सीसीएम</string>
     <string name="rpm">आरपीएम</string>
     <string name="bhi">BHI</string>
+    <string name="is_default_physician">is your Default Physician?</string>
     <string name="ccm_title">क्रोनिक केयर मैनेजमेंट</string>
     <string name="rpm_title">दूरस्थ रोगी निगरानी</string>
     <string name="bhi_title">व्यवहार स्वास्थ्य एकता</string>

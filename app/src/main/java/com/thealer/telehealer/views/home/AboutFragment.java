@@ -151,6 +151,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private Boolean rpmbhiccmValue;
     private CardView valuebasesummarypermission;
     private Switch permissionrpm,permissionccm,permissionbhi;
+    private CardView default_physician;
 
 
     @Override
@@ -351,7 +352,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         mciTv = (TextView) view.findViewById(R.id.mci_tv);
         websiteCv = (CardView) view.findViewById(R.id.website_cv);
         websiteTv = (TextView) view.findViewById(R.id.website_tv);
-
+        default_physician = (CardView) view.findViewById(R.id.ll_default_physician);
         permissionrpm = (Switch) view.findViewById(R.id.permission_rpm);
         permissionccm = (Switch) view.findViewById(R.id.permission_ccm);
         permissionbhi = (Switch) view.findViewById(R.id.permission_bhi);
@@ -400,8 +401,14 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 }else {
                     valuebasesummarypermission.setVisibility(View.GONE);
                 }
+                default_physician.setVisibility(View.GONE);
             }else {
                 valuebasesummarypermission.setVisibility(View.GONE);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_PATIENT)){
+                    default_physician.setVisibility(View.VISIBLE);
+                }else {
+                    default_physician.setVisibility(View.GONE);
+                }
             }
 
             if (userDetail != null) {

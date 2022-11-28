@@ -44,7 +44,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private SettingClickListener settingClickListener;
     private OnViewChangeInterface onViewChangeInterface;
 
-    private ProfileCellView profile, medical_history, settings, email_id,
+    private ProfileCellView default_physician,profile, medical_history, settings, email_id,
             phone_number, change_password, checkCallQuality, logs,
             feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription, newDeviceSetup;
 
@@ -120,10 +120,12 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         versionTv = (TextView) baseView.findViewById(R.id.version_tv);
         lastLoginTv = (TextView) baseView.findViewById(R.id.last_login_tv);
         newDeviceSetup = (ProfileCellView) baseView.findViewById(R.id.new_device_setup);
+        default_physician = baseView.findViewById(R.id.default_physician);
 
         lastLoginTv.setText(getString(R.string.last_login, appPreference.getString(PreferenceConstants.LAST_LOGIN)));
 
         email_id.hideOrShowRightArrow(false);
+        default_physician.hideOrShowRightArrow(false);
         phone_number.hideOrShowRightArrow(false);
 
         try {
@@ -177,6 +179,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         newDeviceSetup.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
+        default_physician.updateValue("p6@mailinator.com");
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
@@ -194,12 +197,14 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                     add_card.hideSplitter(true);
                     patient_payments.setVisibility(View.GONE);
                 }
+                default_physician.setVisibility(View.VISIBLE);
                 documents.setVisibility(View.VISIBLE);
                 medicalAssistant.setVisibility(View.GONE);
                 educational_video.setVisibility(View.GONE);
                 break;
             case Constants.TYPE_DOCTOR:
                 medical_history.setVisibility(View.GONE);
+                default_physician.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
                     telehealer_billings.setVisibility(View.VISIBLE);
@@ -218,6 +223,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
                 break;
             case Constants.TYPE_MEDICAL_ASSISTANT:
                 medicalAssistantLl.setVisibility(View.GONE);
+                default_physician.setVisibility(View.GONE);
                 if (!appConfig.getRemovedFeatures().contains(AppConfig.FEATURE_PAYMENT)) {
                     billLl.setVisibility(View.VISIBLE);
                     telehealer_billings.setVisibility(View.GONE);
