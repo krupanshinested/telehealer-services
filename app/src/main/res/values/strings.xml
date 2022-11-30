@@ -585,7 +585,7 @@
     <string name="speaker_1_s_text">Speaker 1\'s text</string>
     <string name="experimental_feature">Experimental Feature</string>
     <string name="transcript_file">Transcript File</string>
-    <string name="default_physician">Default Physician</string>
+    <string name="default_physician">Monitoring Provider</string>
 
 
     <string name="precanned_hint_text">Your provider has restricted chat functionality and only includes the following pre-canned options</string>

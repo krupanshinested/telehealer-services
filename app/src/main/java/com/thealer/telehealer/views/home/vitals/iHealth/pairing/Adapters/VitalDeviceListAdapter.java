@@ -2,20 +2,22 @@ package com.thealer.telehealer.views.home.vitals.iHealth.pairing.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.TeleHealerApplication;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.common.ClickListener;
 import com.thealer.telehealer.common.Constants;
@@ -34,7 +36,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static final int data = 2;
     public static final int data_without_subitem = 3;
     public static final int empty_space = 4;
-
+    public static final int monitoring_provider = 6;
     public static final int none = 0;
     public static final int manual_entry_type = 1;
     public static final int device_type = 2;
@@ -48,28 +50,29 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public ClickListener clickListener;
 
     private ArrayList<DataSource> sources = new ArrayList<>();
+    private ArrayList<CommonUserApiResponseModel> doctorGroupedAssociations = new ArrayList<>();
 
-    public VitalDeviceListAdapter(Context context,ArrayList<VitalDevice> connectedDevices,ArrayList<VitalDevice> unconnectedDevices,@Nullable String measurementType) {
+    public VitalDeviceListAdapter(Context context, ArrayList<VitalDevice> connectedDevices, ArrayList<VitalDevice> unconnectedDevices, @Nullable String measurementType) {
         this.context = context;
         this.connectedDevices = connectedDevices;
         this.unconnectedDevices = unconnectedDevices;
 
         if (connectedDevices.size() > 0) {
-            sources.add(new DataSource(null,sectionHeader,context.getString(R.string.connected_devices),none));
+            sources.add(new DataSource(null, sectionHeader, context.getString(R.string.connected_devices), none));
 
-            for (int i = 0;i<connectedDevices.size();i++) {
+            for (int i = 0; i < connectedDevices.size(); i++) {
                 VitalDevice device = connectedDevices.get(i);
-                sources.add(new DataSource(device,data,"",device_type));
+                sources.add(new DataSource(device, data, "", device_type));
             }
 
         }
 
         if (unconnectedDevices.size() > 0) {
-            sources.add(new DataSource(null,sectionHeader,context.getString(R.string.unconnected_devices),none));
+            sources.add(new DataSource(null, sectionHeader, context.getString(R.string.unconnected_devices), none));
 
-            for (int i = 0;i<unconnectedDevices.size();i++) {
+            for (int i = 0; i < unconnectedDevices.size(); i++) {
                 VitalDevice device = unconnectedDevices.get(i);
-                sources.add(new DataSource(device,data,"",device_type));
+                sources.add(new DataSource(device, data, "", device_type));
             }
 
         }
@@ -78,24 +81,30 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
             sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.setup_new_devices), set_up_device));
-            sources.add(new DataSource(null,empty_space,"",none));
+            sources.add(new DataSource(null, empty_space, "", none));
         }
 
-        sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manual_input),manual_entry_type));
+        sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.manual_input), manual_entry_type));
 
         if (measurementType != null && measurementType.equals(SupportedMeasurementType.height)) {
 
         } else if (TeleHealerApplication.appConfig.getVitalPemFileName() != null) {
-            sources.add(new DataSource(null,empty_space,"",none));
-            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)){
-                sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.str_new_device_setup),set_up_telihealth_device));
+            sources.add(new DataSource(null, empty_space, "", none));
+            if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
+                sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.str_new_device_setup), set_up_telihealth_device));
             }
         }
 
         if (BuildConfig.FLAVOR_TYPE.equals(Constants.BUILD_PATIENT)) {
-            sources.add(new DataSource(null,empty_space,"",none));
-            sources.add(new DataSource(null,data_without_subitem,context.getString(R.string.manage_sources),google_fit_sources));
-            sources.add(new DataSource(null,sectionHeader,context.getString(R.string.manage_sources_sub),none));
+            sources.add(new DataSource(null, empty_space, "", none));
+            sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.manage_sources), google_fit_sources));
+            sources.add(new DataSource(null, empty_space, "", none));
+            sources.add(new DataSource(null, monitoring_provider, context.getString(R.string.default_physician), none));
+            sources.add(new DataSource(null, sectionHeader, context.getString(R.string.manage_sources_sub), none));
+        }
+
+        if (doctorGroupedAssociations.size() == 0) {
+            doctorGroupedAssociations.add(new CommonUserApiResponseModel("Select Monitoring Provider"));
         }
 
     }
@@ -121,6 +130,9 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case empty_space:
                 View spaceView = LayoutInflater.from(context).inflate(R.layout.adapter_space, viewGroup, false);
                 return new VitalDeviceListAdapter.SectionHolder(spaceView);
+            case monitoring_provider:
+                View provider = LayoutInflater.from(context).inflate(R.layout.monitoring_provider, viewGroup, false);
+                return new VitalDeviceListAdapter.MonitoringProviderHolder(provider);
             default:
                 return null;
         }
@@ -157,9 +169,15 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 if (dataSource.dataSubType == set_up_device) {
                     dataHolder1.top_view.setVisibility(View.GONE);
                 } else {
-                    dataHolder1.top_view.setVisibility(View.VISIBLE);
+                    dataHolder1.top_view.setVisibility(View.GONE);
                 }
                 baseView = dataHolder1.mainContainer;
+                break;
+            case monitoring_provider:
+                MonitoringProviderHolder monitoringProviderHolder = ((MonitoringProviderHolder) viewHolder);
+                ProviderAdapter aa = new ProviderAdapter(context, doctorGroupedAssociations);
+                aa.setDropDownViewResource(R.layout.monitoring_provider_textview);
+                monitoringProviderHolder.monitoringprovider.setAdapter(aa);
                 break;
         }
 
@@ -169,7 +187,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void onClick(View view) {
                     if (clickListener != null) {
-                        clickListener.onClick(finalBaseView,position);
+                        clickListener.onClick(finalBaseView, position);
                     }
                 }
             });
@@ -181,10 +199,14 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return sources.size();
     }
 
+    public void setProviderData(ArrayList<CommonUserApiResponseModel> doctorGroupedAssociations) {
+        this.doctorGroupedAssociations.addAll(doctorGroupedAssociations);
+        notifyDataSetChanged();
+    }
 
     private class DataHolder extends RecyclerView.ViewHolder {
 
-        private TextView titleTv,subTitleTv;
+        private TextView titleTv, subTitleTv;
         private ConstraintLayout mainContainer;
         private ImageView icon;
 
@@ -223,6 +245,16 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
+    private class MonitoringProviderHolder extends RecyclerView.ViewHolder {
+
+        private final Spinner monitoringprovider;
+
+        private MonitoringProviderHolder(@NonNull View itemView) {
+            super(itemView);
+            monitoringprovider = itemView.findViewById(R.id.monitoring_provider);
+        }
+    }
+
     public class DataSource {
         @Nullable
         VitalDevice device;
@@ -230,7 +262,7 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String title;
         int dataSubType;
 
-        DataSource(@Nullable VitalDevice device, int dataType, String title,int dataSubType) {
+        DataSource(@Nullable VitalDevice device, int dataType, String title, int dataSubType) {
             this.device = device;
             this.dataType = dataType;
             this.title = title;

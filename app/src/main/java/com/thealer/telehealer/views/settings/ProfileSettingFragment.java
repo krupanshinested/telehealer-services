@@ -1,5 +1,8 @@
 package com.thealer.telehealer.views.settings;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -31,9 +34,6 @@ import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 
 import config.AppConfig;
-
-import static com.thealer.telehealer.TeleHealerApplication.appConfig;
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -177,6 +177,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
         newDeviceSetup.setOnClickListener(this);
+        default_physician.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         default_physician.updateValue("p6@mailinator.com");

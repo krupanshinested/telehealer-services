@@ -1,23 +1,14 @@
 package com.thealer.telehealer.views.settings;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.common.Constants.activatedPlan;
+
 import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -89,9 +80,6 @@ import com.thealer.telehealer.views.subscription.ActivePlanFragment;
 import com.thealer.telehealer.views.transaction.TransactionListFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.common.Constants.activatedPlan;
 
 /**
  * Created by rsekar on 11/15/18.
@@ -391,12 +379,18 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             case R.id.new_device_setup:
                 startActivity(new Intent(this, MyDeviceListActivity.class));
                 break;
-            case R.id.patient_payments: {
+            case R.id.patient_payments:
                 bundle = new Bundle();
                 TransactionListFragment transactionListFragment = new TransactionListFragment();
                 transactionListFragment.setArguments(bundle);
                 showSubFragment(transactionListFragment);
-            }
+                break;
+            case R.id.default_physician:
+                bundle = new Bundle();
+                MonitoringProviderFragment monitoringProviderFragment = new MonitoringProviderFragment();
+                monitoringProviderFragment.setArguments(bundle);
+                showSubFragment(monitoringProviderFragment);
+                break;
         }
     }
 

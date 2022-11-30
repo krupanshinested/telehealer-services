@@ -531,7 +531,7 @@
     <string name="insurance_sentenceCase">बीमा</string>
     <string name="payment_methods">भुगतान की विधि</string>
     <string name="email">ईमेल</string>
-    <string name="default_physician">Default Physician</string>
+    <string name="default_physician">Monitoring Provider</string>
     <string name="not_connected">जुड़े नहीं हैं</string>
     <string name="scan_completed">स्कैन पूरा हुआ</string>
     <string name="scan_complete_description">सुनिश्चित करें कि आपका डिवाइस युग्मन मोड में है और यह पूरी तरह से चार्ज है।</string>

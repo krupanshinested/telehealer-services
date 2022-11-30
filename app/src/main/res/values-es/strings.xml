@@ -533,7 +533,7 @@
     <string name="insurance_sentenceCase">Seguro</string>
     <string name="payment_methods">Métodos de pago</string>
     <string name="email">Correo electrónico</string>
-    <string name="default_physician">Default Physician</string>
+    <string name="default_physician">Monitoring Provider</string>
     <string name="not_connected">No conectado</string>
     <string name="scan_completed">Escaneo completado</string>
     <string name="scan_complete_description">Asegúrese de que su dispositivo esté en modo de emparejamiento y que esté completamente cargado.</string>

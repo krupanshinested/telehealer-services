@@ -1,26 +1,31 @@
 package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
+import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
+import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -32,6 +37,7 @@ import com.thealer.telehealer.common.VitalCommon.SupportedMeasurementType;
 import com.thealer.telehealer.common.VitalCommon.VitalDeviceType;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.views.base.BaseFragment;
+import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
@@ -42,8 +48,6 @@ import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import java.util.ArrayList;
 
 import flavor.GoogleFit.VitalDeviceListWithGoogleFitFragment;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 
 /**
@@ -72,6 +76,9 @@ public class VitalDeviceListFragment extends BaseFragment {
     private ArrayList<VitalDevice> unconnectedDevice = new ArrayList<>();
     private ArrayList<VitalDevice> connectedDevice = new ArrayList<>();
     private VitalDeviceListAdapter vitalDeviceListAdapter;
+    private AssociationApiViewModel associationApiViewModel;
+    private AttachObserverInterface attachObserverInterface;
+    private ArrayList<DoctorGroupedAssociations> doctorGroupedAssociations;
 
     @Override
     public void onCreate(Bundle saveInstance) {
@@ -116,6 +123,36 @@ public class VitalDeviceListFragment extends BaseFragment {
         onViewChangeInterface = (OnViewChangeInterface) getActivity();
         toolBarInterface = (ToolBarInterface) getActivity();
         vitalManagerInstance = (VitalManagerInstance) getActivity();
+        attachObserverInterface = (AttachObserverInterface) getActivity();
+        associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
+        attachObserverInterface.attachObserver(associationApiViewModel);
+
+        associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
+            @Override
+            public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                doctorGroupedAssociations = new ArrayList(baseApiResponseModels);
+
+                Log.d("TAG", "onChanged: " + doctorGroupedAssociations.size());
+                vitalDeviceListAdapter.setProviderData(doctorGroupedAssociations.get(0).getDoctors());
+            }
+        });
+
+//        associationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
+//            @Override
+//            public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+//                doctorPatientListCrv.getSwipeLayout().setRefreshing(false);
+//                if (baseApiResponseModel != null) {
+//
+//                    if (baseApiResponseModel instanceof AssociationApiResponseModel) {
+//                        associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
+//                    }
+//
+//
+//                    didReceivedResult();
+//                }
+//            }
+//        });
+
     }
 
     @Override
@@ -134,6 +171,7 @@ public class VitalDeviceListFragment extends BaseFragment {
         VitalDeviceListAdapter vitalDeviceListAdapter = new VitalDeviceListAdapter(getActivity(), connectedDevice, unconnectedDevice, measurementType);
         this.vitalDeviceListAdapter = vitalDeviceListAdapter;
         recyclerView.setAdapter(vitalDeviceListAdapter);
+        associationApiViewModel.getDoctorGroupedAssociations(true);
 
         vitalDeviceListAdapter.clickListener = new ClickListener() {
             @Override

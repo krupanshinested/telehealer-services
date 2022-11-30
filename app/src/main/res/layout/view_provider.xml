@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="6dp"
+    app:cardUseCompatPadding="true"
+    app:layout_constraintBottom_toTopOf="@+id/bottom_view"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/topView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/list_data_cl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/_4sdp"
+                android:layout_weight="1">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar_civ"
+                    android:layout_width="@dimen/card_image_view_size"
+                    android:layout_height="@dimen/card_image_view_size"
+                    android:src="@drawable/profile_placeholder"
+                    app:civ_border_color="@android:color/darker_gray"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/status_civ"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_2sdp"
+                    android:src="@color/status_offline"
+                    android:visibility="gone"
+                    app:civ_border_color="@color/colorWhite"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintEnd_toEndOf="@id/avatar_civ"
+                    app:layout_constraintTop_toTopOf="@+id/avatar_civ" />
+
+                <TextView
+                    android:id="@+id/list_title_tv"
+                    style="@style/card_title_text"
+                    android:layout_marginEnd="@dimen/margin_default"
+                    app:layout_constraintBottom_toTopOf="@+id/list_sub_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/avatar_civ"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/dummy_text" />
+
+                <TextView
+                    android:id="@+id/list_sub_title_tv"
+                    style="@style/card_sub_title_text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/list_title_tv"
+                    app:layout_constraintStart_toStartOf="@id/list_title_tv"
+                    app:layout_constraintTop_toBottomOf="@id/list_title_tv"
+                    tools:text="@string/dummy_text" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/list_info_cl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/anim_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="@dimen/_30sdp">
+
+                    <ImageView
+                        android:id="@+id/preloader_iv"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:src="@drawable/pre_loader_drawable"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="@+id/loader_iv"
+                        app:layout_constraintEnd_toEndOf="@+id/loader_iv"
+                        app:layout_constraintStart_toStartOf="@+id/loader_iv"
+                        app:layout_constraintTop_toTopOf="@+id/loader_iv" />
+
+                    <ImageView
+                        android:id="@+id/loader_iv"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:src="@drawable/circle_animation_drawable"
+                        android:visibility="visible" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.thealer.telehealer.common.CustomButton
+                    android:id="@+id/accept_btn"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/margin_default"
+                    android:text="@string/default_physician"
+                    android:textSize="@dimen/_9ssp"
+                    android:visibility="gone"
+                    app:app_gradient="true"
+                    app:corner_radius="@dimen/_25sdp"
+                    app:text_color="@color/colorWhite"
+                    tools:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!--        <FrameLayout-->
+        <!--            android:visibility="gone"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content">-->
+
+        <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--                android:id="@+id/anim_ok"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_gravity="end|center"-->
+        <!--                android:layout_marginEnd="@dimen/_30sdp"-->
+        <!--                android:layout_height="wrap_content">-->
+
+        <!--                <ImageView-->
+        <!--                    android:id="@+id/preloader_iv"-->
+        <!--                    android:layout_width="@dimen/_30sdp"-->
+        <!--                    android:layout_height="@dimen/_30sdp"-->
+        <!--                    android:src="@drawable/pre_loader_drawable"-->
+        <!--                    android:visibility="visible"-->
+        <!--                    app:layout_constraintBottom_toBottomOf="@+id/loader_iv"-->
+        <!--                    app:layout_constraintEnd_toEndOf="@+id/loader_iv"-->
+        <!--                    app:layout_constraintStart_toStartOf="@+id/loader_iv"-->
+        <!--                    app:layout_constraintTop_toTopOf="@+id/loader_iv" />-->
+
+        <!--                <ImageView-->
+        <!--                    android:id="@+id/loader_iv"-->
+        <!--                    android:layout_width="@dimen/_30sdp"-->
+        <!--                    android:layout_height="@dimen/_30sdp"-->
+        <!--                    android:src="@drawable/circle_animation_drawable"-->
+        <!--                    android:visibility="visible" />-->
+
+        <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+        <!--        <com.thealer.telehealer.common.CustomButton-->
+        <!--            android:id="@+id/accept_btn"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="@dimen/_30sdp"-->
+        <!--            android:layout_marginTop="@dimen/_3sdp"-->
+        <!--            android:layout_marginBottom="@dimen/_3sdp"-->
+        <!--            android:paddingStart="@dimen/_30sdp"-->
+        <!--            android:paddingTop="0dp"-->
+        <!--            android:paddingEnd="@dimen/_30sdp"-->
+        <!--            android:paddingBottom="0dp"-->
+        <!--            android:text="@string/lbl_add_fees"-->
+        <!--            android:textSize="@dimen/_12ssp"-->
+        <!--            android:visibility="gone"-->
+        <!--            app:app_gradient="true"-->
+        <!--            app:corner_radius="@dimen/_25sdp"-->
+        <!--            android:layout_gravity="end"-->
+        <!--            android:layout_marginEnd="@dimen/margin_default"-->
+        <!--            app:text_color="@color/colorWhite"-->
+        <!--            tools:visibility="visible" />-->
+
+        <!--        </FrameLayout>-->
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -56,7 +56,11 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         this.history = history;
         this.app_details = appDetail;
         this.user_detail = user_detail;
-        this.permissions=permissions;
+        this.permissions = permissions;
+    }
+
+    public CommonUserApiResponseModel(String name) {
+        this.setName(name);
     }
 
 //    public List<PermissionBean> getPermissions() {
