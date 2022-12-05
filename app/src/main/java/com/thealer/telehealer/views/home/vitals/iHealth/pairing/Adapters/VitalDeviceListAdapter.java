@@ -99,8 +99,8 @@ public class VitalDeviceListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             sources.add(new DataSource(null, empty_space, "", none));
             sources.add(new DataSource(null, data_without_subitem, context.getString(R.string.manage_sources), google_fit_sources));
             sources.add(new DataSource(null, empty_space, "", none));
-            sources.add(new DataSource(null, monitoring_provider, context.getString(R.string.default_physician), none));
             sources.add(new DataSource(null, sectionHeader, context.getString(R.string.manage_sources_sub), none));
+            sources.add(new DataSource(null, monitoring_provider, context.getString(R.string.default_physician), none));
         }
 
         if (doctorGroupedAssociations.size() == 0) {
