@@ -64,12 +64,11 @@ public class MonitoringProviderFragment extends BaseFragment {
     private int page = 1;
     private ChangeTitleInterface changeTitleInterface;
     private ProviderListAdapter providerListAdapter;
+    List<CommonUserApiResponseModel> providerdetail = new ArrayList<>();
 
     public void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
         View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
         if (view == null) {
             view = new View(activity);
         }
@@ -247,7 +246,16 @@ public class MonitoringProviderFragment extends BaseFragment {
                 providerListAdapter.setData(associationApiResponseModel.getResult(), page);
             } else {
                 rvProvide.setNextPage(null);
-                providerListAdapter.setData(doctorGroupedAssociations);
+                for (DoctorGroupedAssociations doctorlist : doctorGroupedAssociations) {
+                    for (CommonUserApiResponseModel provider : doctorlist.getDoctors()) {
+                        if (provider.getisDefualtPhysician()) {
+                            providerdetail.set(0, provider);
+                        } else {
+                            providerdetail.add(provider);
+                        }
+                    }
+                }
+                providerListAdapter.setData(providerdetail, 0);
             }
 
             if (isItemsPresent) {

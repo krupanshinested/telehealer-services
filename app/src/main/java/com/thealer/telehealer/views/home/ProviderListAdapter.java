@@ -39,6 +39,7 @@ public class ProviderListAdapter extends RecyclerView.Adapter<ProviderListAdapte
     public boolean isAnimationEnd = false;
     public boolean auto_dismiss = false;
     protected Integer successReplaceDrawableId = null;
+    int defaultphysician = -1;
     Activity activity;
     private boolean isDataReceived = false;
 
@@ -73,25 +74,45 @@ public class ProviderListAdapter extends RecyclerView.Adapter<ProviderListAdapte
         viewHolder.subTitleTv.setText(userModel.getDisplayInfo());
         viewHolder.statusciv.setVisibility(View.GONE);
 
+        if (defaultphysician == -1) {
+            if (userModel.getisDefualtPhysician()) {
+                isDataReceived = true;
+                defaultphysician = position;
+                viewHolder.loaderiv.setVisibility(View.VISIBLE);
+                viewHolder.dftprovider.setVisibility(View.GONE);
+                viewHolder.loaderiv.setImageDrawable(activity.getDrawable(R.drawable.success_animation_drawable));
+                ((Animatable) viewHolder.loaderiv.getDrawable()).start();
+            } else {
+                viewHolder.loaderiv.setVisibility(View.GONE);
+                viewHolder.dftprovider.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (userModel.getisDefualtPhysician()) {
+                isDataReceived = true;
+                defaultphysician = position;
+                viewHolder.loaderiv.setImageDrawable(activity.getDrawable(R.drawable.success_animation_drawable));
+                ((Animatable) viewHolder.loaderiv.getDrawable()).start();
+                viewHolder.loaderiv.setVisibility(View.VISIBLE);
+                viewHolder.dftprovider.setVisibility(View.GONE);
+            } else {
+                viewHolder.loaderiv.setVisibility(View.GONE);
+                viewHolder.dftprovider.setVisibility(View.VISIBLE);
+            }
+        }
         viewHolder.dftprovider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (defaultphysician == -1){
+                    defaultphysician = position;
+                }
                 Animatable2 animatable2 = (Animatable2) viewHolder.loaderiv.getDrawable();
-                animatePreLoader(viewHolder.loaderiv, viewHolder.preloaderiv, animatable2, viewHolder.dftprovider);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 5s = 5000ms
-                        isDataReceived = true;
-                    }
-                }, 6000);
+                proceed(viewHolder.loaderiv, viewHolder.preloaderiv, animatable2, viewHolder.dftprovider, userModel, true);
             }
         });
 
     }
 
-    private void animatePreLoader(ImageView loaderiv, ImageView preloaderiv, Animatable2 animatable2, CustomButton dftprovider) {
+    private void animatePreLoader(ImageView loaderiv, ImageView preloaderiv, Animatable2 animatable2, CustomButton dftprovider, CommonUserApiResponseModel userModel, boolean fromclick) {
         Animation animation = new TranslateAnimation(0, 0, 500, 0);
         animation.setDuration(1250);
         preloaderiv.startAnimation(animation);
@@ -103,7 +124,7 @@ public class ProviderListAdapter extends RecyclerView.Adapter<ProviderListAdapte
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                startLoaderAnimation(animatable2, loaderiv);
+                startLoaderAnimation(animatable2, loaderiv, userModel, fromclick);
                 preloaderiv.animate().alpha(0.0f).setDuration(1500).setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -135,7 +156,7 @@ public class ProviderListAdapter extends RecyclerView.Adapter<ProviderListAdapte
         });
     }
 
-    private void startLoaderAnimation(Animatable2 animatable2, ImageView loaderiv) {
+    private void startLoaderAnimation(Animatable2 animatable2, ImageView loaderiv, CommonUserApiResponseModel userModel, boolean fromclick) {
 
         animatable2.registerAnimationCallback(new Animatable2.AnimationCallback() {
             @Override
@@ -149,6 +170,11 @@ public class ProviderListAdapter extends RecyclerView.Adapter<ProviderListAdapte
 //                        dismissScreen();
                     } else {
                         isAnimationEnd = true;
+                        if (fromclick) {
+                            adapterListModels.get(defaultphysician).getCommonUserApiResponseModel().setisDefualtPhysician(false);
+                            userModel.setisDefualtPhysician(true);
+                            notifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -175,8 +201,16 @@ public class ProviderListAdapter extends RecyclerView.Adapter<ProviderListAdapte
 
     }
 
-    private void proceed(CommonUserApiResponseModel resultBean) {
-
+    private void proceed(ImageView loaderiv, ImageView preloaderiv, Animatable2 animatable2, CustomButton dftprovider, CommonUserApiResponseModel userModel, boolean fromclick) {
+        animatePreLoader(loaderiv, preloaderiv, animatable2, dftprovider, userModel, fromclick);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 5s = 5000ms
+                isDataReceived = true;
+            }
+        }, 3000);
     }
 
     private void loadAvatar(ImageView imageView, String user_avatar) {

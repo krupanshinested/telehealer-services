@@ -33,6 +33,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean show_ccm = false;
     private Boolean show_rpm = false;
     private Boolean show_bhi = false;
+    private Boolean isDefualtPhysician = false;
     private Boolean transcription_enabled = false;
     private Boolean recording_enabled = false;
     private String appt_start_time;
@@ -388,6 +389,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public void setShow_bhi(Boolean show_bhi) {
         this.show_bhi = show_bhi;
+    }
+
+    public Boolean getisDefualtPhysician() {
+        return isDefualtPhysician;
+    }
+
+    public void setisDefualtPhysician(Boolean isDefualtPhysician) {
+        this.isDefualtPhysician = isDefualtPhysician;
     }
 
 }

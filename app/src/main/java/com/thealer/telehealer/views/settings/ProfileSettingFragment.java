@@ -180,7 +180,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         default_physician.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
-        default_physician.updateValue("p6@mailinator.com");
+        default_physician.updateValue(UserDetailPreferenceManager.getUserDisplayName());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());
 
         switch (appPreference.getInt(Constants.USER_TYPE)) {
