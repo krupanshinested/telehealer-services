@@ -298,7 +298,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             }
 
             if (associationApiResponseModel != null) {
-                changeTitleInterface.onTitleChange(Utils.getPaginatedTitle(title, associationApiResponseModel.getCount()));
+                changeTitleInterface.onTitleChange(title/*Utils.getPaginatedTitle(title, associationApiResponseModel.getCount())*/);
             } else {
                 changeTitleInterface.onTitleChange(title);
             }

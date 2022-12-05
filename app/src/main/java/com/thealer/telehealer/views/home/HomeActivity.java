@@ -203,13 +203,13 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.geterrorCode() == null){
+                    if (errorModel.geterrorCode() == null) {
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
                         intent.putExtra(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
                         LocalBroadcastManager.getInstance(HomeActivity.this).sendBroadcast(intent);
-                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         Intent intent = new Intent(getString(R.string.success_broadcast_receiver));
                         intent.putExtra(Constants.SUCCESS_VIEW_STATUS, false);
                         intent.putExtra(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
@@ -233,9 +233,9 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                         creditcardstatus = whoAmIApiResponseModel.getPayment_account_info().isCCCaptured();
                     }
                     if (Constants.ROLE_DOCTOR.equals(whoAmIApiResponseModel.getRole())) {
-                     if (cardScreen) {
-                         AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
-                     }
+                        if (cardScreen) {
+                            AppPaymentCardUtils.handleCardCasesFromPaymentInfo(HomeActivity.this, whoAmIApiResponseModel.getPayment_account_info(), null);
+                        }
                     }
                 }
             }
@@ -249,6 +249,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                 isSigningOutInProcess = false;
                 if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
                     appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                    changeConstant(true);
                     startActivity(new Intent(HomeActivity.this, SigninActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     finish();
@@ -259,15 +260,30 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.geterrorCode() == null){
+                    if (errorModel.geterrorCode() == null) {
                         showToast(errorModel.getMessage());
-                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage());
                     }
                 }
                 isSigningOutInProcess = false;
             }
         });
+
+
+    }
+
+    private void changeConstant(boolean value) {
+        Constants.isCallEnable = value;
+        Constants.isScheduleEnable = value;
+        Constants.isChatEnable = value;
+        Constants.isVitalsAddEnable = value;
+        Constants.isVitalsViewEnable = value;
+        Constants.isInviteEnable = value;
+        Constants.isBillingAndChargeEnable = value;
+        Constants.isChargesEnable = value;
+        Constants.isRefundEnable = value;
+        Constants.isPaymentProcessEnable = value;
 
 
     }
@@ -623,7 +639,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         helpContent = HelpContent.HELP_DOC_PATIENT;
         setDoctorPatientTitle();
         DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
-        if (whoAmIApiResponseModel != null){
+        if (whoAmIApiResponseModel != null) {
             Bundle bundle = new Bundle();
             bundle.putBoolean("CC_Capture", whoAmIApiResponseModel.getPayment_account_info().isCCCaptured());
             doctorPatientListingFragment.setArguments(bundle);
@@ -667,7 +683,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
     private void changeTitle() {
 
-        switch (selecteMenuItem){
+        switch (selecteMenuItem) {
             case R.id.menu_doctor:
             case R.id.menu_patient:
                 setDoctorPatientTitle();

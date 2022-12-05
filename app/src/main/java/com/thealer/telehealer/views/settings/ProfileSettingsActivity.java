@@ -157,6 +157,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 isSigningOutInProcess = false;
                 if (baseApiResponseModel != null && baseApiResponseModel.isSuccess()) {
                     appPreference.setBoolean(PreferenceConstants.IS_USER_LOGGED_IN, false);
+                    changeConstant(true);
                     startActivity(new Intent(ProfileSettingsActivity.this, SigninActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     finish();
@@ -167,9 +168,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.geterrorCode() == null){
+                    if (errorModel.geterrorCode() == null) {
                         showToast(errorModel.getMessage());
-                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage());
                     }
                 }
@@ -266,6 +267,21 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 didSelecteItem(R.id.add_card);
             }
         }
+    }
+
+    private void changeConstant(boolean value) {
+        Constants.isCallEnable = value;
+        Constants.isScheduleEnable = value;
+        Constants.isChatEnable = value;
+        Constants.isVitalsAddEnable = value;
+        Constants.isVitalsViewEnable = value;
+        Constants.isInviteEnable = value;
+        Constants.isBillingAndChargeEnable = value;
+        Constants.isChargesEnable = value;
+        Constants.isRefundEnable = value;
+        Constants.isPaymentProcessEnable = value;
+
+
     }
 
     /*

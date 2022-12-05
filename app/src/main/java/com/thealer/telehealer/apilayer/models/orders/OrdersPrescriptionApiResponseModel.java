@@ -34,13 +34,13 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
             private String directions_select_two;
             private boolean label;
             private String directions_select_one;
-            private float rx_strength;
+            private String rx_strength;
             private String rx_drug_name;
             private String rx_form;
-            private float directions_quantity;
-            private float dispense_quantity;
+            private String directions_quantity;
+            private String dispense_quantity;
             private boolean do_not_substitute;
-            private int refill_quantity;
+            private String refill_quantity;
             private String rx_metric;
 
             public String getDirections_select_two() {
@@ -67,11 +67,11 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
                 this.directions_select_one = directions_select_one;
             }
 
-            public float getRx_strength() {
+            public String getRx_strength() {
                 return rx_strength;
             }
 
-            public void setRx_strength(int rx_strength) {
+            public void setRx_strength(String rx_strength) {
                 this.rx_strength = rx_strength;
             }
 
@@ -91,19 +91,19 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
                 this.rx_form = rx_form;
             }
 
-            public float getDirections_quantity() {
+            public String getDirections_quantity() {
                 return directions_quantity;
             }
 
-            public void setDirections_quantity(int directions_quantity) {
+            public void setDirections_quantity(String directions_quantity) {
                 this.directions_quantity = directions_quantity;
             }
 
-            public float getDispense_quantity() {
+            public String getDispense_quantity() {
                 return dispense_quantity;
             }
 
-            public void setDispense_quantity(int dispense_quantity) {
+            public void setDispense_quantity(String dispense_quantity) {
                 this.dispense_quantity = dispense_quantity;
             }
 
@@ -115,11 +115,11 @@ public class OrdersPrescriptionApiResponseModel extends OrdersApiResponseModel {
                 this.do_not_substitute = do_not_substitute;
             }
 
-            public int getRefill_quantity() {
+            public String getRefill_quantity() {
                 return refill_quantity;
             }
 
-            public void setRefill_quantity(int refill_quantity) {
+            public void setRefill_quantity(String refill_quantity) {
                 this.refill_quantity = refill_quantity;
             }
 

@@ -7,6 +7,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,29 +95,30 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
         GlideUrl glideUrl = Utils.getGlideUrlWithAuth(activity.getApplicationContext(), resultBeanList.get(i).getPath(), true);
 
         Glide.with(activity.getApplicationContext()).asFile().load(glideUrl).addListener(new RequestListener<File>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
-                return false;
-            }
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
+                        return false;
+                    }
 
-            @Override
-            public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
+                    @Override
+                    public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
 
-                int kb = 1000;
-                int mb = kb * 1000;
+                        int kb = 1000;
+                        int mb = kb * 1000;
 
-                String size;
+                        String size;
 
-                if (resource.length() >= mb) {
-                    size = String.format("%.2f %s", ((float) resource.length() / mb), " MB");
-                } else {
-                    size = String.format("%.2f %s", ((float) resource.length() / kb), " KB");
-                }
-                viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName(activity) + " - " + size);
+                        if (resource.length() >= mb) {
+                            size = String.format("%.2f %s", ((float) resource.length() / mb), " MB");
+                        } else {
+                            size = String.format("%.2f %s", ((float) resource.length() / kb), " KB");
+                        }
+                        Log.d("TAG", "onResourceReady: "+size);
+                        viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName(activity) == null ? "" : resultBeanList.get(i).getCreator().getUserName(activity) + " - " + size);
 
-                return false;
-            }
-        }).submit();
+                        return false;
+                    }
+                }).submit();
 
         viewHolder.titleTv.setText(resultBeanList.get(i).getName());
 

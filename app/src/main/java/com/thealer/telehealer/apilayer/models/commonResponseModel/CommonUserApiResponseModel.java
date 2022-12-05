@@ -30,6 +30,9 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean favorite;
     private Boolean connection_requests;
     private Boolean appt_requests = false;
+    private Boolean show_ccm = false;
+    private Boolean show_rpm = false;
+    private Boolean show_bhi = false;
     private Boolean transcription_enabled = false;
     private Boolean recording_enabled = false;
     private String appt_start_time;
@@ -358,4 +361,29 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
         }
         return phoneNo;
     }
+
+    public Boolean getShow_ccm() {
+        return show_ccm;
+    }
+
+    public void setShow_ccm(Boolean show_ccm) {
+        this.show_ccm = show_ccm;
+    }
+
+    public Boolean getShow_rpm() {
+        return show_rpm;
+    }
+
+    public void setShow_rpm(Boolean show_rpm) {
+        this.show_rpm = show_rpm;
+    }
+
+    public Boolean getShow_bhi() {
+        return show_bhi;
+    }
+
+    public void setShow_bhi(Boolean show_bhi) {
+        this.show_bhi = show_bhi;
+    }
+
 }

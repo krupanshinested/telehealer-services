@@ -13,6 +13,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.models.whoami.PaymentInfo;
 import com.thealer.telehealer.common.ArgumentKeys;
+import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.RequestID;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
@@ -66,7 +67,11 @@ public class AppPaymentCardUtils {
     }
 
     public static boolean hasValidPaymentCard(ErrorModel errorModel) {
-        return UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() && UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid();
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_PATIENT) || UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
+            return errorModel.isCCCaptured() && errorModel.isDefaultCardValid();
+        } else {
+            return UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isCCCaptured() && UserDetailPreferenceManager.getWhoAmIResponse().getPayment_account_info().isDefaultCardValid();
+        }
     }
 
     public static boolean hasValidPaymentCard(@Nullable PaymentInfo paymentInfo) {
@@ -150,16 +155,16 @@ public class AppPaymentCardUtils {
             canViewCardStatus = UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status();
 
         /*if (canViewCardStatus) {*/
-            if (paymentInfo != null) {
-                imageView.setVisibility(View.VISIBLE);
-                if (hasValidPaymentCard(paymentInfo)) {
-                    imageView.setImageResource(R.drawable.ic_card_enabled);
-                } else {
-                    imageView.setImageResource(R.drawable.ic_card_disabled);
-                }
-            }else{
+        if (paymentInfo != null) {
+            imageView.setVisibility(View.VISIBLE);
+            if (hasValidPaymentCard(paymentInfo)) {
+                imageView.setImageResource(R.drawable.ic_card_enabled);
+            } else {
                 imageView.setImageResource(R.drawable.ic_card_disabled);
             }
+        } else {
+            imageView.setImageResource(R.drawable.ic_card_disabled);
+        }
 //        }
     }
 
