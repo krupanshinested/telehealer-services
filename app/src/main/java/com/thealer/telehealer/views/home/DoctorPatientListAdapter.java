@@ -142,6 +142,9 @@ public class DoctorPatientListAdapter extends RecyclerView.Adapter<RecyclerView.
                     @Override
                     public void onClick(View v) {
                         Utils.hideKeyboard(fragmentActivity);
+                        if (bundle.getBoolean("fromFragment", false)) {
+                            DoctorPatientDetailViewFragment.isABoutclick = true;
+                        }
                         proceed(userModel);
                     }
                 });
