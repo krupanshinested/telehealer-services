@@ -142,6 +142,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)) {
                 toolbar.inflateMenu(R.menu.orders_detail_menu);
                 toolbar.getMenu().removeItem(R.id.send_fax_menu);
+                toolbar.getMenu().removeItem(R.id.print_menu);
                 toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {

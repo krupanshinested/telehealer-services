@@ -386,7 +386,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
             vitalHistoryAdapter = new AboutHistoryAdapter(getActivity());
             rvVitalHistory.setAdapter(vitalHistoryAdapter);
 
-            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)){
+            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR) || UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)){
                 if (userDetail.getRole().equals(Constants.ROLE_PATIENT)){
                     valuebasesummarypermission.setVisibility(View.VISIBLE);
                     permissionrpm.setChecked(userDetail.getShow_rpm());
@@ -686,7 +686,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         public void onCheckedChanged(CompoundButton v, boolean isChecked) {
             HashMap<String, Object> param = new HashMap<>();
             param.put(ArgumentKeys.USER_ID, String.valueOf(userDetail.getUser_id()));
-            param.put(ArgumentKeys.buser_id, String.valueOf(UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()));
+            param.put(ArgumentKeys.buser_id, UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT) ? Constants.finalDoctor.getUser_id() : UserDetailPreferenceManager.getWhoAmIResponse().getUser_id());
             rpmbhiccmValue = isChecked;
             switch (v.getId()){
                 case R.id.permission_bhi:

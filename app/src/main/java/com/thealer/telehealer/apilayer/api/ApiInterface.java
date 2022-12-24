@@ -557,6 +557,9 @@ public interface ApiInterface {
     @GET("api/users-v2/{id}")
     Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
 
+    @GET("api/users-v2/{id}")
+    Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id,@QueryMap Map<String, Object> body);
+
     @POST("api/users/permissions")
     Observable<BaseApiResponseModel> updateUserPermission(@Body PermissionRequestModel createRequestModel);
 
