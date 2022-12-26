@@ -1510,8 +1510,12 @@ public class Utils {
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(application);
             taskStackBuilder.addNextIntentWithParentStack(intent);
 
-            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
+            PendingIntent pendingIntent; /*= taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
             notification.setContentIntent(pendingIntent);
         }
 

@@ -325,7 +325,12 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         notificationIntent.addCategory(Intent.CATEGORY_DEFAULT);
         notificationIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, new Gson().toJson(resultBean));
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), resultBean.getSchedule_id(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent; /*= PendingIntent.getBroadcast(getActivity(), resultBean.getSchedule_id(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getBroadcast(getActivity(), resultBean.getSchedule_id(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(getActivity(), resultBean.getSchedule_id(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         Date date = Utils.getDateFromString(resultBean.getStart());
         Calendar calendar = Calendar.getInstance();
