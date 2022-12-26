@@ -8,11 +8,11 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
     defaultConfig {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 52
         versionName "2.9.24"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -43,7 +43,7 @@ android {
         }
         patient {
             minSdkVersion 23
-            targetSdkVersion 30
+            targetSdkVersion 33
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 52
             versionName "2.9.24"
@@ -53,7 +53,7 @@ android {
         }
         pepTalkHealth {
             minSdkVersion 23
-            targetSdkVersion 30
+            targetSdkVersion 33
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 9
             versionName '2.8.3'
@@ -63,7 +63,7 @@ android {
         }
         pepTalkMd {
             minSdkVersion 23
-            targetSdkVersion 30
+            targetSdkVersion 33
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 9
             versionName '2.8.3'

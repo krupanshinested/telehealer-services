@@ -52,24 +52,33 @@
         <activity
             android:name=".views.subscription.SubscriptionHistoryActivity"
             android:exported="false" />
-        <activity android:name=".views.subscription.SubscriptionActivity" />
-        <activity android:name=".views.inviteUser.InvitedListActivity" />
-        <activity android:name=".views.home.broadcastMessages.ChoosePatientActivity" />
+        <activity android:name=".views.subscription.SubscriptionActivity"
+            android:exported="false"/>
+        <activity android:name=".views.inviteUser.InvitedListActivity"
+            android:exported="false"/>
+        <activity android:name=".views.home.broadcastMessages.ChoosePatientActivity"
+            android:exported="false"/>
         <activity
             android:name=".views.home.broadcastMessages.BroadcastMessagesActivity"
+            android:exported="false"
             android:label="@string/title_activity_broadcast_messages" />
-        <activity android:name=".views.guestlogin.screens.PatientWaitingRoom" />
-        <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity" />
+        <activity android:name=".views.guestlogin.screens.PatientWaitingRoom"
+            android:exported="false"/>
+        <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity"
+            android:exported="false"/>
         <activity
             android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
+            android:exported="false"
             android:launchMode="singleTask" />
         <activity
             android:name=".views.guestlogin.GuestLoginActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".views.common.SplashActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,72 +88,94 @@
         </activity>
         <activity
             android:name=".views.home.HomeActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.onboarding.OnBoardingActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.signup.SignUpActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.signup.PasswordRequirementActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.quickLogin.QuickLoginActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.signin.SigninActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.signin.ForgotPassword"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.QRCodeReaderActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.proposer.ProposerActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".views.home.AddConnectionActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.ProfileSettingsActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.DeleteAccountActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.orders.CreateOrderActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.DoctorOnBoardingActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.vitals.BluetoothEnableActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.schedules.CreateNewScheduleActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.inviteUser.InviteUserActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.ContentActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".views.call.CallMessageActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallFeedBackActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.EmailVerificationActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.common.AppUpdateActivity"
+            android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
@@ -155,22 +186,28 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
+            android:exported="true"
             android:turnScreenOn="true" />
         <activity
             android:name=".views.settings.SignatureActivity"
+            android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".views.common.CallPlacingActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.Transparent" />
         <activity
             android:name=".views.home.UserDetailActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.vitals.iHealth.pairing.VitalCreationActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
             android:launchMode="singleTask"
+            android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -185,71 +222,92 @@
             android:name=".views.notification.NotificationActivity"
             android:parentActivityName=".views.home.HomeActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".views.notification.NotificationDetailActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallNetworkTestActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.monitoring.diet.SelectDietActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.inviteUser.InviteContactUserActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.pendingInvites.PendingInvitesActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.quickLogin.QuickLoginAgreementActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.vitals.LandscapeImageView"
+            android:exported="false"
             android:screenOrientation="landscape" />
         <activity
             android:name=".views.home.chat.ChatActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.common.RecentsSelectionActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.home.schedules.WaitingRoomActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.accessLogs.AccessLogActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.transaction.AddChargeActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".stripe.PaymentContentActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".views.transaction.TransactionFilterActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".common.fragmentcontainer.FragmentContainerActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.transaction.TransactionDetailsActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.newDeviceSupport.NewDeviceSupportActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.newDeviceSupport.MyDeviceListActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.settings.newDeviceSupport.NewDeviceDetailActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
@@ -276,9 +334,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver" />
+        <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver"
+            android:exported="true"/>
 
-        <service android:name=".common.pubNub.TelehealerFirebaseMessagingService">
+        <service android:name=".common.pubNub.TelehealerFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
