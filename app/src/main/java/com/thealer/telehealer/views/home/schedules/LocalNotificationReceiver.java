@@ -95,14 +95,23 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
         TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(context);
         taskStackBuilder.addNextIntentWithParentStack(contentIntent);
 
-        PendingIntent contentPendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        PendingIntent contentPendingIntent; /*= taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            contentPendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            contentPendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
         // Cancel click intent
         Intent cancelIntent = new Intent(context, NotificationCancelAppointmentReceiver.class);
         cancelIntent.putExtra(ArgumentKeys.SCHEDULE_DETAIL, new Gson().toJson(resultBean));
         cancelIntent.putExtra(ArgumentKeys.NOTIFICATION_ID, resultBean.getSchedule_id());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, resultBean.getSchedule_id(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent; /*= PendingIntent.getBroadcast(context, resultBean.getSchedule_id(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getBroadcast(context, resultBean.getSchedule_id(), cancelIntent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(context, resultBean.getSchedule_id(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         // Call click intent
         Intent callIntent = new Intent(context, CallPlacingActivity.class);
@@ -113,8 +122,12 @@ public class LocalNotificationReceiver extends BroadcastReceiver {
         TaskStackBuilder builder = TaskStackBuilder.create(context);
         builder.addNextIntentWithParentStack(callIntent);
 
-        PendingIntent callPendingIntent = builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        PendingIntent callPendingIntent; /*= builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            callPendingIntent = builder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            callPendingIntent = builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
         String title = context.getString(R.string.local_notification_title), message = context.getString(R.string.local_notification_message);
 
         String titleName, messageName;
