@@ -368,7 +368,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
             if (resultBean != null) {
                 if (UserType.isUserAssistant()){
-                    getUsersApiViewModel.getUserDetail(doctorGuid, null);
+                    getUsersApiViewModel.getUserDetail(doctorGuid,false, null);
                 }else {
                     schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
                 }

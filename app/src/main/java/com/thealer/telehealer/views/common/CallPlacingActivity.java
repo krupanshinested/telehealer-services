@@ -113,7 +113,7 @@ public class CallPlacingActivity extends BaseActivity {
         openTokViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
-
+                dismissProgressDialog();
                 if (baseApiResponseModel != null && baseApiResponseModel instanceof CallSettings) {
 
                     CallSettings tokenFetchModel = (CallSettings) baseApiResponseModel;

@@ -48,7 +48,9 @@ public class CallMessageActivity extends ContentActivity {
     protected void onResume() {
         super.onResume();
         CommonObject.dismissdialog(this);
-        CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
+        if (!CommonObject.dialog.isShowing()) {
+            CommonObject.showDialog(this, TeleHealerApplication.questiondata, TeleHealerApplication.callrequest, TeleHealerApplication.popsessionId, TeleHealerApplication.popto_guid, TeleHealerApplication.popdoctorGuid, feedbackCallback);
+        }
 
     }
 
