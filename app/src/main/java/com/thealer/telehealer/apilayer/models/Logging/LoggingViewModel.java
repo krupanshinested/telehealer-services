@@ -48,7 +48,7 @@ public class LoggingViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().postExternalApiLog(payload)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel tokenFetchModel) {
 

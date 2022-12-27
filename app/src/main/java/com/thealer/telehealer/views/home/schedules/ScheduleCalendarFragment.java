@@ -116,6 +116,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     private LocalNotificationReceiver localNotificationReceiver = null;
     private CustomButton emptyActionBtn;
     private String selectedMonth;
+    public static boolean schduleDetailVisible = false;
 
     @Override
     public void onAttach(Context context) {
@@ -558,6 +559,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
     @Override
     public void onEventClick(Object data, RectF eventRect) {
 
+        schduleDetailVisible = true;
         SchedulesApiResponseModel.ResultBean resultBean = (SchedulesApiResponseModel.ResultBean) data;
 
         ScheduleDetailViewFragment scheduleDetailViewFragment = new ScheduleDetailViewFragment();
@@ -676,7 +678,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         super.onResume();
         addFab.setClickable(true);
         if (getUserVisibleHint()) {
-            setUserVisibleHint(true);
+            if (!schduleDetailVisible){
+                setUserVisibleHint(true);
+            }
         }
         if (!Utils.isInternetEnabled(getActivity())) {
             setNoNetworkEmptyState();
