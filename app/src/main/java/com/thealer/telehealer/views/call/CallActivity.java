@@ -1486,6 +1486,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onResponse(Call<FeedbackSettingModel> call, Response<FeedbackSettingModel> response) {
                 feedbackSettingModel = response.body();
+                dismissProgressDialog();
                 try {
                     for (FeedbackSettingModel.Datum datum : feedbackSettingModel.getData()) {
                         if (datum.getCode().equals("CALL_REVIEW")) {
@@ -1508,6 +1509,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onFailure(Call<FeedbackSettingModel> call, Throwable t) {
                 call.cancel();
+                dismissProgressDialog();
             }
         });
     }
@@ -1517,6 +1519,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         call.enqueue(new Callback<FeedbackQuestionModel>() {
             @Override
             public void onResponse(Call<FeedbackQuestionModel> call, Response<FeedbackQuestionModel> response) {
+                dismissProgressDialog();
                 try {
                     feedbackQuestionModel = response.body();
                 }catch (Exception e){
@@ -1528,6 +1531,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onFailure(Call<FeedbackQuestionModel> call, Throwable t) {
                 call.cancel();
+                dismissProgressDialog();
             }
         });
     }

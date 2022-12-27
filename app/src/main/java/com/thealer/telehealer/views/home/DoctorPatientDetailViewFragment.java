@@ -665,10 +665,10 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                     body.put("doctor_guid", Constants.finalDoctor.getUser_guid());
                     getUsersApiViewModel.getUserDetailforMA(userGuid, body, null);
                 } else {
-                    getUsersApiViewModel.getUserDetail(userGuid, null);
+                    getUsersApiViewModel.getUserDetail(userGuid,false, null);
                 }
             } else {
-                getUsersApiViewModel.getUserDetail(userGuid, null);
+                getUsersApiViewModel.getUserDetail(userGuid,false, null);
             }
         }
 

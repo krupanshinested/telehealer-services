@@ -56,14 +56,14 @@ public class GetUsersApiViewModel extends BaseApiViewModel {
     }
 
 
-    public void getUserDetail(String userGuid, @Nullable UserDetailFetcher userDetailFetcher) {
+    public void getUserDetail(String userGuid,Boolean fromopenTok, @Nullable UserDetailFetcher userDetailFetcher) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
                     getAuthApiService().getUserDetail(userGuid)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<CommonUserApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<CommonUserApiResponseModel>(fromopenTok ? Constants.SHOW_NOTHING: Constants.SHOW_PROGRESS) {
                                 @Override
                                 public void onSuccess(CommonUserApiResponseModel commonUserApiResponseModel) {
                                     baseApiResponseModelMutableLiveData.setValue(commonUserApiResponseModel);

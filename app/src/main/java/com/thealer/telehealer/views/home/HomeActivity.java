@@ -300,6 +300,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         notificationApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                dismissProgressDialog();
                 if (baseApiResponseModel != null) {
                     NotificationApiResponseModel notificationApiResponseModel = (NotificationApiResponseModel) baseApiResponseModel;
                     if (notificationApiResponseModel.getResult().getUnread_count() > 0) {
@@ -1022,6 +1023,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         super.onResume();
         Constants.ErrorFlag = false;
         checkNotification();
+        Log.d("TAG", "onResume: "+getVisibleFragment());
         application.addShortCuts();
         if (isInForeGround) {
             Log.d("Home_Called", "showHelpScreen");
