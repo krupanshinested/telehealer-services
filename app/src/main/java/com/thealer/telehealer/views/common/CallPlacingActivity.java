@@ -164,7 +164,7 @@ public class CallPlacingActivity extends BaseActivity {
         });
 
         openTokViewModel.getErrorModelLiveData().observe(this, errorModel -> {
-
+            dismissProgressDialog();
             String errorMessage = null;
             if (errorModel != null) {
 
@@ -209,11 +209,11 @@ public class CallPlacingActivity extends BaseActivity {
         if (callRequest.isCallForDirectWaitingRoom()) {
             openTokViewModel.getTokenForSession(callRequest.getSessionId(), null);
         } else {
-            String currentUserGuid="";
-            if(UserType.isUserAssistant()){
-                currentUserGuid=callRequest.getOtherUserGuid()!=null?callRequest.getOtherUserGuid():"";
+            String currentUserGuid = "";
+            if (UserType.isUserAssistant()) {
+                currentUserGuid = callRequest.getOtherUserGuid() != null ? callRequest.getOtherUserGuid() : "";
             }
-            openTokViewModel.postaVoipCall(currentUserGuid,callRequest.getDoctorGuid(), callRequest.getOtherUserGuid(), callRequest.getScheduleId(), callType);
+            openTokViewModel.postaVoipCall(currentUserGuid, callRequest.getDoctorGuid(), callRequest.getOtherUserGuid(), callRequest.getScheduleId(), callType);
         }
     }
 
