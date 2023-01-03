@@ -128,14 +128,13 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
 
                 itemHolder.itemCv.setOnClickListener(v -> {
-                    if (isChat){
+                    if (isChat) {
                         try {
                             activity.startActivity(new Intent(activity, ChatActivity.class).putExtra(ArgumentKeys.USER_GUID, UserType.isUserPatient() ? resultBean.getDoctor().getUser_guid() : resultBean.getPatient().getUser_guid()));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-                    else if (resultBean.getDurationInSecs() > 0) {
+                    } else if (resultBean.getDurationInSecs() > 0) {
                         VisitsDetailFragment visitsDetailFragment = new VisitsDetailFragment();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL, resultBean);
@@ -190,9 +189,10 @@ public class NewRecentListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 } else {
 
-                    userName = resultBean.getPatient().getFirst_name() + " " + resultBean.getPatient().getLast_name();
-                    avatar = resultBean.getPatient().getUser_avatar();
-
+                    if (resultBean.getPatient() != null) {
+                        userName = resultBean.getPatient().getFirst_name() + " " + resultBean.getPatient().getLast_name();
+                        avatar = resultBean.getPatient().getUser_avatar();
+                    }
                 }
 
                 Utils.setImageWithGlide(activity, itemHolder.userAvatarCiv, avatar, activity.getDrawable(R.drawable.profile_placeholder), true, true);
