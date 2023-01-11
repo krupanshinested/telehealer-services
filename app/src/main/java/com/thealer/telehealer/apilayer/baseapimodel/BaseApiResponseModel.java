@@ -11,6 +11,16 @@ public class BaseApiResponseModel implements Serializable {
     private String message;
     private String permissionCode;
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    private String path;
+
     public boolean isSuccess() {
         return success;
     }
