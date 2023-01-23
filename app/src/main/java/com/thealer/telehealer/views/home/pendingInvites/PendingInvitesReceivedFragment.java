@@ -6,14 +6,18 @@ import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesApiViewModel;
+import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRegisterdApiResponseModel;
 import com.thealer.telehealer.common.CustomRecyclerView;
 import com.thealer.telehealer.common.CustomSwipeRefreshLayout;
 import com.thealer.telehealer.common.OnPaginateInterface;
@@ -79,7 +83,15 @@ public class PendingInvitesReceivedFragment extends BaseFragment {
         pendingInvitesCrv = (CustomRecyclerView) view.findViewById(R.id.pending_invites_crv);
         pendingInvitesCrv.setEmptyState(EmptyViewConstants.EMPTY_RECEIVED_PENDING_INVITES);
         pendingInvitesCrv.hideEmptyState();
-        pendingInvitesListAdapter = new PendingInvitesListAdapter(getActivity(), true);
+        pendingInvitesListAdapter = new PendingInvitesListAdapter(getActivity(), true, new PendingInvitesListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemRegisterClick(CommonUserApiResponseModel item) {
+            }
+
+            @Override
+            public void onItemUnRegisterClick(PendingInvitesNonRegisterdApiResponseModel.ResultBean item) {
+            }
+        });
         pendingInvitesCrv.getRecyclerView().setAdapter(pendingInvitesListAdapter);
 
         pendingInvitesCrv.getSwipeLayout().setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
