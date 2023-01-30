@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class InviteByEmailPhoneRequestModel {
 
+    private Boolean resend_invite;
     private String role;
     private List<InvitationsBean> invitations = new ArrayList<>();
 
@@ -17,6 +18,14 @@ public class InviteByEmailPhoneRequestModel {
 
     public void setInvitations(List<InvitationsBean> invitations) {
         this.invitations = invitations;
+    }
+
+    public Boolean getResend_invite() {
+        return resend_invite;
+    }
+
+    public void setResend_invite(Boolean resend_invite) {
+        this.resend_invite = resend_invite;
     }
 
     public String getRole() {

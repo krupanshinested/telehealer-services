@@ -107,7 +107,7 @@ public class PendingInvitesApiViewModel extends BaseApiViewModel {
         });
     }
 
-    public void connectUser(String doctorGuid, String userId,String designation) {
+    public void connectUser(String doctorGuid, String userId,String designation,boolean resendinvite) {
         fetchToken(new BaseViewInterface() {
             @Override
             public void onStatus(boolean status) {
@@ -122,6 +122,7 @@ public class PendingInvitesApiViewModel extends BaseApiViewModel {
                     addConnectionRequestModel.setType(Constants.ADD_CONNECTION_REQ_TYPE);
                     addConnectionRequestModel.setMessage(Constants.ADD_CONNECTION_REQ_MSG);
                     addConnectionRequestModel.setDesignation(designation);
+                    addConnectionRequestModel.setResend_invite(resendinvite);
 
                     getAuthApiService().addConnection(headers,addConnectionRequestModel, doctorGuid)
                             .compose(applySchedulers())

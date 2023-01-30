@@ -56,7 +56,7 @@ public class PendingInvitesSentFragment extends BaseFragment {
     public NotificationApiResponseModel invitesResponseModel;
     private AttachObserverInterface attachObserverInterface;
     public PendingInvitesListAdapter pendingInvitesListAdapter;
-
+    public String username;
 
     @Nullable
     @Override
@@ -73,6 +73,7 @@ public class PendingInvitesSentFragment extends BaseFragment {
         pendingInvitesListAdapter = new PendingInvitesListAdapter(getActivity(), false, new PendingInvitesListAdapter.OnItemClickListener() {
             @Override
             public void onItemRegisterClick(CommonUserApiResponseModel item) {
+                username = item.getDisplayName();
                 if (UserType.isUserDoctor()) {
                     InviteByEmailPhoneRequestModel inviteByEmailPhoneRequestModel = new InviteByEmailPhoneRequestModel();
                     String mode;
@@ -87,10 +88,11 @@ public class PendingInvitesSentFragment extends BaseFragment {
                     }
 
                     inviteByEmailPhoneRequestModel.setRole(Constants.ROLE_PATIENT);
+                    inviteByEmailPhoneRequestModel.setResend_invite(true);
 
                     pendingInvitesApiViewModel.inviteUserByEmailPhone(UserType.isUserDoctor() ? UserDetailPreferenceManager.getUser_guid() : " ", inviteByEmailPhoneRequestModel, true);
                 } else {
-                    pendingInvitesApiViewModel.connectUser(UserType.isUserPatient() ? item.getUser_guid() : null, String.valueOf(item.getUser_id()), UserType.isUserPatient() ? "" : null);
+                    pendingInvitesApiViewModel.connectUser(UserType.isUserPatient() ? item.getUser_guid() : null, String.valueOf(item.getUser_id()), UserType.isUserPatient() ? "" : null,true);
                 }
             }
 
@@ -109,6 +111,7 @@ public class PendingInvitesSentFragment extends BaseFragment {
                 if (UserType.isUserDoctor()) {
                     inviteByEmailPhoneRequestModel.setRole(Constants.ROLE_PATIENT);
                 }
+                inviteByEmailPhoneRequestModel.setResend_invite(true);
 
                 pendingInvitesApiViewModel.inviteUserByEmailPhone(UserType.isUserDoctor() ? UserDetailPreferenceManager.getUser_guid() : " ", inviteByEmailPhoneRequestModel, true);
 
@@ -246,9 +249,9 @@ public class PendingInvitesSentFragment extends BaseFragment {
                                 Toast.makeText(getActivity(), "" + inviteByEmailPhoneApiResponseModel.getResultData().get(0).getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 if (baseApiResponseModel.isSuccess()) {
-                                    Toast.makeText(getActivity(), "" + getString(R.string.add_connection_success), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "" + String.format(getString(R.string.add_connection_success),username) , Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(getActivity(), "" + getString(R.string.add_connection_failure), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "" + String.format(getString(R.string.add_connection_failure),username), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
