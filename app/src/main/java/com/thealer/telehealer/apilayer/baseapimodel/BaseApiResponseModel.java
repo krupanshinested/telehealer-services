@@ -12,14 +12,14 @@ public class BaseApiResponseModel implements Serializable {
     private String permissionCode;
 
     public String getPath() {
-        return path;
+        return pdfpath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setPath(String paths) {
+        this.pdfpath = paths;
     }
 
-    private String path;
+    private String pdfpath;
 
     public boolean isSuccess() {
         return success;
