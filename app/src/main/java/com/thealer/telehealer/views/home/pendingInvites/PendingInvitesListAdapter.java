@@ -163,7 +163,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                     });
 
                 } else {
-                    viewHolder.actionCl.setVisibility(View.VISIBLE);
+                    viewHolder.actionCl.setVisibility(View.GONE);
                     viewHolder.actionCl.setPadding(0, 8, 0, 8);
                     viewHolder.acceptBtn.setText("Resend invite");
                     viewHolder.rejectBtn.setVisibility(View.GONE);
@@ -201,7 +201,7 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
 
                 viewHolder.titleTv.setText(mode);
                 viewHolder.subTitleTv.setText(date);
-                viewHolder.actionCl.setVisibility(View.VISIBLE);
+                viewHolder.actionCl.setVisibility(View.GONE);
                 viewHolder.actionCl.setPadding(0, 8, 0, 8);
                 viewHolder.acceptBtn.setText("Resend invite");
                 viewHolder.rejectBtn.setVisibility(View.GONE);
