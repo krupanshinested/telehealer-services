@@ -1,6 +1,7 @@
 package com.thealer.telehealer.apilayer.models.orders.forms;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -27,6 +28,24 @@ public class FormsApiViewModel extends BaseApiViewModel {
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), new Gson().toJson(dynamicFormDataBean));
 
                     getAuthApiService().updateForm(userFormId, requestBody)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void printForm(int userFormId, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().printform(userFormId)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
                                 @Override

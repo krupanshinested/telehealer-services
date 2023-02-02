@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class AddConnectionRequestModel implements Serializable {
 
+    private Boolean resend_invite;
     private String requestee_id;
     private String type;
     private String message;
@@ -52,4 +53,14 @@ public class AddConnectionRequestModel implements Serializable {
     public void setDetail(String detail) {
         this.detail = detail;
     }
+
+    public Boolean getResend_invite() {
+        return resend_invite;
+    }
+
+    public void setResend_invite(Boolean resend_invite) {
+        this.resend_invite = resend_invite;
+    }
+
+
 }
