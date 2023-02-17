@@ -425,13 +425,16 @@ public class VitalReportFragment extends BaseFragment {
                     previousMonth.add(Calendar.MONTH, -1);
                     String previous = previousMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
                     setToolbarTitle(selectedItem);
-                    if (selectedItem.equals(previous)) {
-                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
-                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
-                    } else {
-                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(false);
-                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorGrey_light));
-                    }
+                    // if selectitem is more than previous month then print icon click is disable. Due to some issue we have comment this if else condition
+//                    if (selectedItem.equals(previous)) {
+//                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
+//                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
+//                    } else {
+//                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(false);
+//                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorGrey_light));
+//                    }
+                    toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
+                    toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
                     if (selectedItem.equals(getString(R.string.last_week))) {
                         patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
                         selectedFilter = VitalReportApiViewModel.LAST_WEEK;

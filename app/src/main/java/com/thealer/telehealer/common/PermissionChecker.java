@@ -132,7 +132,12 @@ public class PermissionChecker {
     }
 
     private boolean isCamerPermissionGranted() {
-        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        Boolean isGranted;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
+        }else {
+            isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        }
         TeleLogger.shared.log(TeleLogCapability.camera, isGranted);
         return isGranted;
     }
@@ -365,10 +370,18 @@ public class PermissionChecker {
         switch (permissionFor) {
             case PermissionConstants.PERMISSION_CAM_PHOTOS:
             case PermissionConstants.PERMISSION_CAMERA:
-                return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA};
+                }else {
+                    return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                }
             case PermissionConstants.PERMISSION_GALLERY:
             case PermissionConstants.PERMISSION_STORAGE:
-                return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO};
+                }else {
+                    return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                }
             case PermissionConstants.PERMISSION_CAM_MIC:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
@@ -381,7 +394,11 @@ public class PermissionChecker {
             case PermissionConstants.PERMISSION_LOCATION:
                 return new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
-                return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO};
+                }else {
+                    return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                }
             case PermissionConstants.PERMISSION_MICROPHONE:
                 return new String[]{Manifest.permission.RECORD_AUDIO};
             case PermissionConstants.PERMISSION_CONTACTS:
