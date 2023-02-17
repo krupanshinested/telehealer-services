@@ -1510,8 +1510,12 @@ public class Utils {
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(application);
             taskStackBuilder.addNextIntentWithParentStack(intent);
 
-            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
+            PendingIntent pendingIntent; /*= taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
             notification.setContentIntent(pendingIntent);
         }
 
@@ -1772,16 +1776,16 @@ public class Utils {
         }
 
         if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
-            invitedListTv.setVisibility(View.VISIBLE);
-            invitedListView.setVisibility(View.VISIBLE);
+            invitedListTv.setVisibility(View.GONE);
+            invitedListView.setVisibility(View.GONE);
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
         } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
-            invitedListTv.setVisibility(View.VISIBLE);
-            invitedListView.setVisibility(View.VISIBLE);
-            pendingInvitesTv.setVisibility(View.GONE);
-            pendingInvitesView.setVisibility(View.GONE);
+            invitedListTv.setVisibility(View.GONE);
+            invitedListView.setVisibility(View.GONE);
+            pendingInvitesTv.setVisibility(View.VISIBLE);
+            pendingInvitesView.setVisibility(View.VISIBLE);
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
@@ -1789,10 +1793,10 @@ public class Utils {
             if (bundle != null) {
                 String role = bundle.getString(ArgumentKeys.ROLE, "");
                 if (role.equals(Constants.ROLE_ASSISTANT)) {
-                    invitedListTv.setVisibility(View.VISIBLE);
-                    invitedListView.setVisibility(View.VISIBLE);
-                    pendingInvitesTv.setVisibility(View.GONE);
-                    pendingInvitesView.setVisibility(View.GONE);
+                    invitedListTv.setVisibility(View.GONE);
+                    invitedListView.setVisibility(View.GONE);
+                    pendingInvitesTv.setVisibility(View.VISIBLE);
+                    pendingInvitesView.setVisibility(View.VISIBLE);
                     broadCastMessageTv.setVisibility(View.GONE);
                     broadcastView.setVisibility(View.GONE);
                     broadcastAllTv.setVisibility(View.GONE);

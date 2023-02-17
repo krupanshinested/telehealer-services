@@ -739,7 +739,11 @@
             android:layout_below="@id/ll_valuebasesummarypermission"
             android:gravity="center"
             android:text="@string/disconnect"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:textAllCaps="true"
+            android:textSize ="@dimen/text_sub_title_size"
+            android:textStyle="bold"
             android:textColor="@android:color/holo_red_dark" />
     </RelativeLayout>
 

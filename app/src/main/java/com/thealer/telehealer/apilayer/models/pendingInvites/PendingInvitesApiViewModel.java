@@ -6,7 +6,12 @@ import androidx.annotation.NonNull;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionRequestModel;
+import com.thealer.telehealer.apilayer.models.inviteUser.InviteByEmailPhoneRequestModel;
+import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 import com.thealer.telehealer.views.notification.NewNotificationListAdapter;
 
@@ -85,4 +90,54 @@ public class PendingInvitesApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void inviteUserByEmailPhone(String doctor_user_guid, InviteByEmailPhoneRequestModel emailPhoneRequestModel, boolean isShowProgress) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                getAuthApiService().inviteUserByEmailPhone(doctor_user_guid,emailPhoneRequestModel)
+                        .compose(applySchedulers())
+                        .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(isShowProgress)) {
+                            @Override
+                            public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+                            }
+                        });
+            }
+        });
+    }
+
+    public void connectUser(String doctorGuid, String userId,String designation,boolean resendinvite) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    Map<String, String> headers = new HashMap<>();
+                    if(UserType.isUserAssistant()) {
+                        headers.put(ArgumentKeys.MODULE_CODE, ArgumentKeys.INVITE_OTHERS_CODE);
+                    }
+
+                    AddConnectionRequestModel addConnectionRequestModel = new AddConnectionRequestModel();
+                    addConnectionRequestModel.setRequestee_id(userId);
+                    addConnectionRequestModel.setType(Constants.ADD_CONNECTION_REQ_TYPE);
+                    addConnectionRequestModel.setMessage(Constants.ADD_CONNECTION_REQ_MSG);
+                    addConnectionRequestModel.setDesignation(designation);
+                    addConnectionRequestModel.setResend_invite(resendinvite);
+
+                    getAuthApiService().addConnection(headers,addConnectionRequestModel, doctorGuid)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                                @Override
+                                public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
+                                    baseApiResponseModelMutableLiveData.setValue(baseApiResponseModel);
+
+                                    EventRecorder.recordNotification("CONNECTION_REQUEST");
+                                    EventRecorder.recordConnection("CONNECTION_REQUESTED");
+                                }
+                            });
+                }
+            }
+        });
+    }
+
 }

@@ -77,12 +77,14 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private FormsApiViewModel formsApiViewModel;
+    private ShowSubFragmentInterface showSubFragmentInterface;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
         dynamicFormDataBean = new ViewModelProvider(this).get(DynamicFormDataBean.class);
 
@@ -94,8 +96,20 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
-                        showToast(getString(R.string.form_updated_successfully));
-                        onCloseActionInterface.onClose(false);
+                        if (baseApiResponseModel.getPath().isEmpty()){
+                            showToast(getString(R.string.form_updated_successfully));
+                            onCloseActionInterface.onClose(false);
+                        }else {
+                            showToast(getString(R.string.form_updated_successfully));
+                            onCloseActionInterface.onClose(false);
+                            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                            Bundle bundle =new Bundle();
+                            bundle.putString(ArgumentKeys.PDF_TITLE, formsApiResponseModel.getName());
+                            bundle.putString(ArgumentKeys.PDF_URL, baseApiResponseModel.getPath());
+                            bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                            pdfViewerFragment.setArguments(bundle);
+                            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                        }
                     }
                 }
             }
@@ -142,13 +156,14 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)) {
                 toolbar.inflateMenu(R.menu.orders_detail_menu);
                 toolbar.getMenu().removeItem(R.id.send_fax_menu);
-                toolbar.getMenu().removeItem(R.id.print_menu);
+//                toolbar.getMenu().removeItem(R.id.print_menu);
                 toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.print_menu:
-                                Log.d(TAG, "onMenuItemClick: print");
+                                formsApiViewModel.printForm(formsApiResponseModel.getUser_form_id(),true);
+                                Log.d(TAG, "onMenuItemClick: print"+formsApiResponseModel.getUser_form_id());
                         }
                         return true;
                     }

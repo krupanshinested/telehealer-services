@@ -218,7 +218,7 @@ public class OpenTok implements Session.SessionListener,
                 CallManager.shared.addCall(tokBox);
 
                 GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
-                getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(), new UserDetailFetcher() {
+                getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(),true, new UserDetailFetcher() {
                     @Override
                     public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
 
@@ -323,9 +323,10 @@ public class OpenTok implements Session.SessionListener,
             this.callState = OpenTokConstants.outGoingCallGoingOn;
 
             GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
-            getUsersApiViewModel.getUserDetail(callRequest.getOtherUserGuid(), new UserDetailFetcher() {
+            getUsersApiViewModel.getUserDetail(callRequest.getOtherUserGuid(),true, new UserDetailFetcher() {
                 @Override
                 public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
+
                     if (commonUserApiResponseModel == null) {
                         return;
                     }

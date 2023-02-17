@@ -1,17 +1,27 @@
 package com.thealer.telehealer.views.home.vitals.iHealth.pairing;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.BLUETOOTH_CONNECT;
+
 import com.thealer.telehealer.views.home.vitals.iHealth.pairing.CustomViews.BatteryView;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -75,6 +85,7 @@ public class VitalCreationActivity extends BaseActivity implements
         OnCloseActionInterface,
         AttachObserverInterface {
 
+    private static final int PERMISSION_REQUEST_CODE = 200;
     private FrameLayout mainContainer;
     private Toolbar toolbar;
     private ImageView closeButton, backIv, otherOption;
@@ -87,6 +98,7 @@ public class VitalCreationActivity extends BaseActivity implements
     @Nullable
     private VitalsManager vitalsManager;
     private String detailTitle = "";
+    private BluetoothAdapter bluetoothAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,13 +120,72 @@ public class VitalCreationActivity extends BaseActivity implements
             openRootFragment();
         }
 
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter != null) {
-            bluetoothAdapter.enable();
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (checkPermission()) {
+            if (bluetoothAdapter != null) {
+                bluetoothAdapter.enable();
+            }
+        } else {
+            requestPermission();
         }
 
         // registerReceiver(new BTStateChangedBroadcastReceiver(),new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_REQUEST_CODE);
+
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT);
+
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+
+                    boolean bluetoothAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+                    if (bluetoothAccepted) {
+                        if (bluetoothAdapter != null) {
+                            bluetoothAdapter.enable();
+                        }
+                    } else {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT)) {
+                                showMessageOKCancel("You need to allow access to both the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{BLUETOOTH_CONNECT}, PERMISSION_REQUEST_CODE);
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     private void openRootFragment() {

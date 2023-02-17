@@ -22,6 +22,7 @@ import com.thealer.telehealer.apilayer.models.FileSavedInterface;
 import com.thealer.telehealer.apilayer.models.PdfReceiverApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.PrintDocumentManager;
+import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 
 import java.io.File;
@@ -82,7 +83,7 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
             boolean isHideToolbar = getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR);
 
             title = getArguments().getString(ArgumentKeys.PDF_TITLE);
-            toolbarTitle.setText(title);
+            toolbarTitle.setText(Utils.fromHtml(title));
 
             if (isHideToolbar) {
                 toolbar.setVisibility(View.GONE);

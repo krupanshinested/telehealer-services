@@ -283,7 +283,7 @@ public class SendInvitationFragment extends BaseFragment implements View.OnClick
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUsersApiViewModel.getUserDetail(physicianMasterList.get(lastSelectedPosition).getUser_guid(), null);
+                getUsersApiViewModel.getUserDetail(physicianMasterList.get(lastSelectedPosition).getUser_guid(),false, null);
                 dialog.dismiss();
 
             }

@@ -67,7 +67,7 @@ public class CommonObject {
     private static int insertposition;
     private static EditText commentbox;
     private static String firstQ = "", secondQ = "", thirdQ = "", forthQ = "", fivthQ = "", sixthQ = "", seventhQ = "";
-    static Dialog dialog;
+    public static Dialog dialog;
     private static ListView lvquestion;
     private static FeedbackAdapter feedbackAdapter;
     public static List<FeedbackTemp> tempdata = new ArrayList<>();

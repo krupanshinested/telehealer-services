@@ -72,6 +72,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
+import static com.thealer.telehealer.views.home.schedules.ScheduleCalendarFragment.schduleDetailVisible;
 
 /**
  * Created by Aswin on 18,December,2018
@@ -302,7 +303,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        schduleDetailVisible = false;
         if (getActivity() != null) {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(callEndReceiver);
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(callStartReceiver);
@@ -368,7 +369,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
 
             if (resultBean != null) {
                 if (UserType.isUserAssistant()){
-                    getUsersApiViewModel.getUserDetail(doctorGuid, null);
+                    getUsersApiViewModel.getUserDetail(doctorGuid,false, null);
                 }else {
                     schedulesApiViewModel.getScheduleDetail(resultBean.getSchedule_id(), doctorGuid, true);
                 }

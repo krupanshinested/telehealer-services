@@ -186,6 +186,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<FeedbackSettingModel> call, Response<FeedbackSettingModel> response) {
                 feedbackSettingModel = response.body();
+                dismissProgressDialog();
                 String showFeedback = "", showFeedbackRating = "";
                 for (FeedbackSettingModel.Datum datum : feedbackSettingModel.getData()) {
                     if (datum.getCode().equals("CALL_REVIEW")) {
