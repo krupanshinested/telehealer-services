@@ -68,6 +68,13 @@
                     app:title="@string/profile" />
 
                 <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/default_physician"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_physician"
+                    app:title="@string/default_physician" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
                     android:id="@+id/settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

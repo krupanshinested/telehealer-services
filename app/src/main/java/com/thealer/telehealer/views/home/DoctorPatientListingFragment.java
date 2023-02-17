@@ -1,36 +1,35 @@
 package com.thealer.telehealer.views.home;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.associationlist.AssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomRecyclerView;
@@ -59,8 +58,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 13,November,2018
@@ -109,9 +106,14 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         associationApiViewModel.baseApiArrayListMutableLiveData.observe(this, new Observer<ArrayList<BaseApiResponseModel>>() {
             @Override
             public void onChanged(ArrayList<BaseApiResponseModel> baseApiResponseModels) {
+                if (doctorGroupedAssociations != null) {
+                    doctorGroupedAssociations.clear();
+                }
+                associationApiResponseModel = null;
                 doctorGroupedAssociations = new ArrayList(baseApiResponseModels);
 
                 didReceivedResult();
+                hideKeyboard(getActivity());
             }
         });
 
@@ -122,11 +124,15 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
                 if (baseApiResponseModel != null) {
 
                     if (baseApiResponseModel instanceof AssociationApiResponseModel) {
+                        if (associationApiResponseModel != null) {
+                            associationApiResponseModel.getResult().clear();
+                        }
                         associationApiResponseModel = (AssociationApiResponseModel) baseApiResponseModel;
                     }
 
 
                     didReceivedResult();
+                    hideKeyboard(getActivity());
                 }
             }
         });
@@ -159,6 +165,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         customPatientCountLayout.setOnClickListener(this::onClick);
         doctorPatientListCrv.showOrhideEmptyState(true);
 
+        hideKeyboard(getActivity());
 
         addFab.setOnClickListener(this);
 
@@ -174,7 +181,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void doSearch() {
                 page = 1;
-                getAssociationsList(true);
+                getAssociationsList(true, true);
             }
         });
 
@@ -250,7 +257,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onPaginate() {
                 page = page + 1;
-                getAssociationsList(false);
+                getAssociationsList(false, false);
                 isApiRequested = true;
                 doctorPatientListCrv.setScrollable(false);
             }
@@ -260,18 +267,29 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
             @Override
             public void onRefresh() {
                 page = 1;
-                getAssociationsList(false);
+                getAssociationsList(false, false);
             }
         });
 
         doctorPatientListCrv.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAssociationsList(true);
+                getAssociationsList(true, false);
             }
         });
 
         doctorPatientListCrv.setErrorModel(this, associationApiViewModel.getErrorModelLiveData());
+    }
+
+    public void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -281,7 +299,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         isApiRequested = false;
 
         if (isVisibleToUser && isResumed) {
-            getAssociationsList(true);
+            getAssociationsList(true, false);
         }
     }
 
@@ -426,12 +444,20 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
         }
     }
 
-    private void getAssociationsList(boolean isShowProgress) {
+    private void getAssociationsList(boolean isShowProgress, boolean isfromsearch) {
         if (!isApiRequested) {
             doctorPatientListCrv.setScrollable(true);
             doctorPatientListCrv.showOrhideEmptyState(false);
             if (UserType.isUserPatient()) {
-                associationApiViewModel.getDoctorGroupedAssociations(isShowProgress);
+                if (isfromsearch) {
+                    if (search_view.getCurrentSearchResult() == null || search_view.getCurrentSearchResult().isEmpty()) {
+                        associationApiViewModel.getDoctorGroupedAssociations(isShowProgress);
+                    } else {
+                        associationApiViewModel.getAssociationList(search_view.getCurrentSearchResult(), page, doctorGuid, isShowProgress, false);
+                    }
+                } else {
+                    associationApiViewModel.getDoctorGroupedAssociations(isShowProgress);
+                }
             } else {
                 associationApiViewModel.getAssociationList(search_view.getCurrentSearchResult(), page, doctorGuid, isShowProgress, false);
             }
@@ -471,7 +497,7 @@ public class DoctorPatientListingFragment extends BaseFragment implements View.O
 
     @Override
     public void doCurrentTransaction() {
-        getAssociationsList(false);
+        getAssociationsList(false, false);
     }
 
     @Override

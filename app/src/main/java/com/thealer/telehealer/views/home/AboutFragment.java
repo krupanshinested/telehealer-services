@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,11 +45,9 @@ import com.thealer.telehealer.apilayer.models.addConnection.DesignationResponseM
 import com.thealer.telehealer.apilayer.models.addConnection.ValueBaseCareViewModel;
 import com.thealer.telehealer.apilayer.models.associationDetail.DisconnectAssociationApiViewModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionBean;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.PermissionRequestModel;
 import com.thealer.telehealer.apilayer.models.userPermission.UserPermissionApiViewModel;
-import com.thealer.telehealer.apilayer.models.commonResponseModel.HistoryBean;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.OnItemEndListener;
@@ -61,7 +58,6 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
-import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
@@ -151,6 +147,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
     private Boolean rpmbhiccmValue;
     private CardView valuebasesummarypermission;
     private Switch permissionrpm,permissionccm,permissionbhi;
+    private CardView default_physician;
 
 
     @Override
@@ -351,7 +348,7 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
         mciTv = (TextView) view.findViewById(R.id.mci_tv);
         websiteCv = (CardView) view.findViewById(R.id.website_cv);
         websiteTv = (TextView) view.findViewById(R.id.website_tv);
-
+        default_physician = (CardView) view.findViewById(R.id.ll_default_physician);
         permissionrpm = (Switch) view.findViewById(R.id.permission_rpm);
         permissionccm = (Switch) view.findViewById(R.id.permission_ccm);
         permissionbhi = (Switch) view.findViewById(R.id.permission_bhi);
@@ -400,8 +397,14 @@ public class AboutFragment extends BaseFragment implements OnAdapterListener {
                 }else {
                     valuebasesummarypermission.setVisibility(View.GONE);
                 }
+                default_physician.setVisibility(View.GONE);
             }else {
                 valuebasesummarypermission.setVisibility(View.GONE);
+                if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_PATIENT)){
+                    default_physician.setVisibility(View.GONE);
+                }else {
+                    default_physician.setVisibility(View.GONE);
+                }
             }
 
             if (userDetail != null) {

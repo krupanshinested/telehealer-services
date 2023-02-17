@@ -585,6 +585,7 @@
     <string name="speaker_1_s_text">Speaker 1\'s text</string>
     <string name="experimental_feature">Experimental Feature</string>
     <string name="transcript_file">Transcript File</string>
+    <string name="default_physician">Monitoring Provider</string>
 
 
     <string name="precanned_hint_text">Your provider has restricted chat functionality and only includes the following pre-canned options</string>
@@ -712,6 +713,7 @@
     <string name="ccm">CCM</string>
     <string name="rpm">RPM</string>
     <string name="bhi">BHI</string>
+    <string name="is_default_physician">is your Default Physician?</string>
     <string name="ccm_title">Chronic Care Management</string>
     <string name="rpm_title">Remote Patient Monitoring</string>
     <string name="rpm_hint">Configure and customize normal and elevated vital thresholds, notification alerts, and feedback messages for vitals captured by your patients.</string>

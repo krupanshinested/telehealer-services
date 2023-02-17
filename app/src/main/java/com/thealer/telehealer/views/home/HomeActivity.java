@@ -1,5 +1,10 @@
 package com.thealer.telehealer.views.home;
 
+import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+import static com.thealer.telehealer.TeleHealerApplication.application;
+import static com.thealer.telehealer.TeleHealerApplication.isInForeGround;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,13 +12,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,8 +43,6 @@ import com.thealer.telehealer.apilayer.models.addConnection.AddConnectionApiView
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.createuser.LicensesBean;
 import com.thealer.telehealer.apilayer.models.feedback.FeedbackApiViewModel;
-import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestionModel;
-import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.signout.SignoutApiViewModel;
@@ -58,7 +61,6 @@ import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
-import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
@@ -87,17 +89,11 @@ import com.thealer.telehealer.views.settings.ProfileSettingsActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
 import com.thealer.telehealer.views.signup.OnViewChangeInterface;
 import com.thealer.telehealer.views.subscription.SubscriptionActivity;
-import com.thealer.telehealer.views.subscription.SubscriptionPlanFragment;
 
 import java.util.Calendar;
 import java.util.List;
 
 import flavor.GoogleFit.VitalsListWithGoogleFitFragment;
-
-import static com.thealer.telehealer.TeleHealerApplication.appConfig;
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
-import static com.thealer.telehealer.TeleHealerApplication.application;
-import static com.thealer.telehealer.TeleHealerApplication.isInForeGround;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
@@ -149,6 +145,17 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
     private AddConnectionApiViewModel addConnectionApiViewModel;
     private WhoAmIApiResponseModel whoAmIApiResponseModel;
 
+    public void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,7 +176,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         LocalBroadcastManager.getInstance(this).registerReceiver(isPropserShownListner, new IntentFilter(getString(R.string.APP_LIFECYCLE_STATUS)));
         LocalBroadcastManager.getInstance(this).registerReceiver(profileListener, new IntentFilter(getString(R.string.profile_picture_updated)));
         LocalBroadcastManager.getInstance(this).registerReceiver(NotificationCountReceiver, new IntentFilter(Constants.NOTIFICATION_COUNT_RECEIVER));
-
+        hideKeyboard(this);
     }
 
     private void initViewModels() {

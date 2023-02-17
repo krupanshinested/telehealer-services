@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,23 +36,18 @@ import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.models.feedback.SubmitResponse;
-import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.common.CommonObject;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.Feedback.FeedbackCallback;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
 import com.thealer.telehealer.common.Logs;
-import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.views.common.LockScreenReceiver;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.signin.SigninActivity;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
