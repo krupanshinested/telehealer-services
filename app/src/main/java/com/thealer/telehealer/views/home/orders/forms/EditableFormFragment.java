@@ -96,19 +96,24 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
-                        if (baseApiResponseModel.getPath().isEmpty()){
+                        if (submitBtn.getText().equals(getString(R.string.submit))){
                             showToast(getString(R.string.form_updated_successfully));
                             onCloseActionInterface.onClose(false);
                         }else {
-                            showToast(getString(R.string.form_updated_successfully));
-                            onCloseActionInterface.onClose(false);
-                            PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
-                            Bundle bundle =new Bundle();
-                            bundle.putString(ArgumentKeys.PDF_TITLE, formsApiResponseModel.getName());
-                            bundle.putString(ArgumentKeys.PDF_URL, baseApiResponseModel.getPath());
-                            bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
-                            pdfViewerFragment.setArguments(bundle);
-                            showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                            if (baseApiResponseModel.getPath().isEmpty()){
+                                showToast(getString(R.string.form_updated_successfully));
+                                onCloseActionInterface.onClose(false);
+                            }else {
+                                showToast(getString(R.string.form_updated_successfully));
+                                onCloseActionInterface.onClose(false);
+                                PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                                Bundle bundle =new Bundle();
+                                bundle.putString(ArgumentKeys.PDF_TITLE, formsApiResponseModel.getName());
+                                bundle.putString(ArgumentKeys.PDF_URL, baseApiResponseModel.getPath());
+                                bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                                pdfViewerFragment.setArguments(bundle);
+                                showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                            }
                         }
                     }
                 }
