@@ -101,11 +101,9 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                             onCloseActionInterface.onClose(false);
                         }else {
                             if (baseApiResponseModel.getPath().isEmpty()){
-                                showToast(getString(R.string.form_updated_successfully));
+                                showToast("Failed generate Form");
                                 onCloseActionInterface.onClose(false);
                             }else {
-                                showToast(getString(R.string.form_updated_successfully));
-                                onCloseActionInterface.onClose(false);
                                 PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
                                 Bundle bundle =new Bundle();
                                 bundle.putString(ArgumentKeys.PDF_TITLE, formsApiResponseModel.getName());
@@ -222,7 +220,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             if (formsApiResponseModel.getFilled_form_url() == null) {
                 submitBtn.setVisibility(View.GONE);
             } else {
-                submitBtn.setVisibility(View.VISIBLE);
+                submitBtn.setVisibility(View.GONE);
                 submitBtn.setText(getString(R.string.print));
             }
         }
