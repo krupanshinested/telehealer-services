@@ -1526,7 +1526,12 @@ public class Utils {
     }
 
     public static void displyNotificationOnTop(String title, String message, @Nullable Bitmap imageBitmap, Intent intent) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
+        PendingIntent pendingIntent; /*= PendingIntent.getActivity(application, 0, intent, 0);*/
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity(application, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(application, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon_notification)
                 .setContentTitle(title)
