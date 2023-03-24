@@ -48,7 +48,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
         if (BaseApiViewModel.isAuthExpired()) {
             getAuthApiService().refreshToken(appPreference.getString(PreferenceConstants.USER_REFRESH_TOKEN), true,BuildConfig.VERSION_NAME,true)
                     .compose(applySchedulers())
-                    .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                    .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                         @Override
                         public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
                             Utils.updateLastLogin();
@@ -101,7 +101,7 @@ public class OpenTokViewModel extends BaseApiViewModel {
                 if (status) {
                     getAuthApiService().updateCallStatus(sessionId, params)
                             .compose(applySchedulers())
-                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
+                            .subscribe(new RAObserver<BaseApiResponseModel>(Constants.SHOW_NOTHING) {
                                 @Override
                                 public void onSuccess(BaseApiResponseModel baseApiResponseModel) {
 

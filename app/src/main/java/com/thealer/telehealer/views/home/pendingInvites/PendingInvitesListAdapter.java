@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.ErrorModel;
+import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiResponseModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationApiViewModel;
 import com.thealer.telehealer.apilayer.models.notification.NotificationRequestUpdateResponseModel;
@@ -24,7 +26,9 @@ import com.thealer.telehealer.apilayer.models.pendingInvites.PendingInvitesNonRe
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomButton;
 import com.thealer.telehealer.common.Utils;
+import com.thealer.telehealer.views.base.BaseFragment;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
+import com.thealer.telehealer.views.common.OnItemClickListener;
 import com.thealer.telehealer.views.notification.NewNotificationListAdapter;
 
 import java.util.ArrayList;
@@ -49,13 +53,20 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
     private NotificationApiViewModel notificationApiViewModel;
     private AttachObserverInterface attachObserverInterface;
     private int selectedPosition = -1;
+    private final OnItemClickListener listener;
 
-    public PendingInvitesListAdapter(FragmentActivity activity, boolean showAction) {
+    public interface OnItemClickListener {
+        void onItemRegisterClick(CommonUserApiResponseModel item);
+        void onItemUnRegisterClick(PendingInvitesNonRegisterdApiResponseModel.ResultBean item);
+    }
+
+    public PendingInvitesListAdapter(FragmentActivity activity, boolean showAction, OnItemClickListener listener) {
         this.activity = activity;
         adapterModelList = new ArrayList<>();
         registeredUsers = new ArrayList<>();
         nonRegisteredUsers = new ArrayList<>();
         this.isShowAction = showAction;
+        this.listener = listener;
 
         attachObserverInterface = (AttachObserverInterface) activity;
         notificationApiViewModel = new ViewModelProvider(activity).get(NotificationApiViewModel.class);
@@ -130,11 +141,11 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                             selectedPosition = position;
                             Utils.vibrate(activity);
 
-                            notificationApiViewModel.updateNotification(activity,adapterModelList.get(position).getInvitesResponseModel().getType(), true,
+                            notificationApiViewModel.updateNotification(activity, adapterModelList.get(position).getInvitesResponseModel().getType(), true,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.ACCEPTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null,false);
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT), null, false);
                         }
                     });
 
@@ -143,31 +154,39 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                         public void onClick(View v) {
                             viewHolder.rejectBtn.setEnabled(false);
                             selectedPosition = position;
-                            notificationApiViewModel.updateNotification(activity,adapterModelList.get(position).getInvitesResponseModel().getType(), false,
+                            notificationApiViewModel.updateNotification(activity, adapterModelList.get(position).getInvitesResponseModel().getType(), false,
                                     adapterModelList.get(position).getInvitesResponseModel().getRequestor().getUser_guid(),
                                     adapterModelList.get(position).getInvitesResponseModel().getRequest_id(),
                                     NewNotificationListAdapter.REJECTED.toLowerCase(), null, null,
-                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT),null,false);
+                                    null, true, adapterModelList.get(position).getInvitesResponseModel().getRequestor().getRole().equals(Constants.ROLE_ASSISTANT), null, false);
                         }
                     });
 
                 } else {
                     viewHolder.actionCl.setVisibility(View.GONE);
-                    if(adapterModelList.get(position).getInvitesResponseModel().getRequestee()!=null) {
+                    viewHolder.actionCl.setPadding(0, 8, 0, 8);
+                    viewHolder.acceptBtn.setText("Resend invite");
+                    viewHolder.rejectBtn.setVisibility(View.GONE);
+                    if (adapterModelList.get(position).getInvitesResponseModel().getRequestee() != null) {
                         avatarUrl = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getUser_avatar();
                         title = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayName();
                         subTitle = adapterModelList.get(position).getInvitesResponseModel().getRequestee().getDisplayInfo();
-                    }else{
-                        avatarUrl="";
-                        title="";
-                        subTitle="";
+                    } else {
+                        avatarUrl = "";
+                        title = "";
+                        subTitle = "";
                     }
                 }
 
                 Utils.setImageWithGlide(activity.getApplicationContext(), viewHolder.avatarCiv, avatarUrl, activity.getDrawable(R.drawable.profile_placeholder), true, true);
                 viewHolder.titleTv.setText(title);
                 viewHolder.subTitleTv.setText(subTitle);
-
+                viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.onItemRegisterClick(adapterModelList.get(position).getInvitesResponseModel().getRequestee());
+                    }
+                });
                 break;
             case TYPE_UNREGISTERED_USER:
                 String mode = null, date;
@@ -183,6 +202,15 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
                 viewHolder.titleTv.setText(mode);
                 viewHolder.subTitleTv.setText(date);
                 viewHolder.actionCl.setVisibility(View.GONE);
+                viewHolder.actionCl.setPadding(0, 8, 0, 8);
+                viewHolder.acceptBtn.setText("Resend invite");
+                viewHolder.rejectBtn.setVisibility(View.GONE);
+                viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.onItemUnRegisterClick(adapterModelList.get(position).getNonRegisterdApiResponseModel());
+                    }
+                });
                 break;
         }
     }
@@ -226,13 +254,13 @@ public class PendingInvitesListAdapter extends RecyclerView.Adapter<PendingInvit
         notifyDataSetChanged();
     }
 
-    public void setData(List<PendingInvitesNonRegisterdApiResponseModel.ResultBean> result, int page,boolean isDisplayHeader) {
+    public void setData(List<PendingInvitesNonRegisterdApiResponseModel.ResultBean> result, int page, boolean isDisplayHeader) {
         PendingInvitesAdapterModel adapterModel;
 
         if (page == 1) {
 
             nonRegisteredUsers.clear();
-            if(isDisplayHeader) {
+            if (isDisplayHeader) {
                 adapterModel = new PendingInvitesAdapterModel();
                 adapterModel.setType(TYPE_HEADER);
                 adapterModel.setHeaderString(activity.getString(R.string.non_registered_users));

@@ -30,16 +30,28 @@ public class CallNotificationService extends Service {
         if (callRequest != null) {
             Intent fullScreenIntent = CallActivity.getCallIntent(getApplication(), isWaitingRoom, null, callRequest);
 
-            PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(getApplication(), 0,
-                    fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent fullScreenPendingIntent;/* = PendingIntent.getActivity(getApplication(), 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                fullScreenPendingIntent = PendingIntent.getActivity(getApplication(), 0, fullScreenIntent, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                fullScreenPendingIntent = PendingIntent.getActivity(getApplication(), 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
 
             Intent acceptScreenIntent = CallActivity.getCallIntent(getApplication(), isWaitingRoom, true, callRequest);
-            PendingIntent acceptScreenPendingIntent = PendingIntent.getActivity(getApplication(), 1,
-                    acceptScreenIntent, PendingIntent.FLAG_ONE_SHOT);
+            PendingIntent acceptScreenPendingIntent; /* = PendingIntent.getActivity(getApplication(), 1, acceptScreenIntent, PendingIntent.FLAG_ONE_SHOT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                acceptScreenPendingIntent = PendingIntent.getActivity(getApplication(), 1, acceptScreenIntent, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                acceptScreenPendingIntent = PendingIntent.getActivity(getApplication(), 1, acceptScreenIntent, PendingIntent.FLAG_ONE_SHOT);
+            }
 
             Intent rejectScreenIntent = CallActivity.getCallIntent(getApplication(), isWaitingRoom, false, callRequest);
-            PendingIntent rejectScreenPendingIntent = PendingIntent.getActivity(getApplication(), 2,
-                    rejectScreenIntent, PendingIntent.FLAG_ONE_SHOT);
+            PendingIntent rejectScreenPendingIntent; /*= PendingIntent.getActivity(getApplication(), 2,rejectScreenIntent, PendingIntent.FLAG_ONE_SHOT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                rejectScreenPendingIntent = PendingIntent.getActivity(getApplication(), 2, rejectScreenIntent, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                rejectScreenPendingIntent = PendingIntent.getActivity(getApplication(), 2, rejectScreenIntent, PendingIntent.FLAG_ONE_SHOT);
+            }
 
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(getApplication(), TeleHealerApplication.appConfig.getVoipChannel())

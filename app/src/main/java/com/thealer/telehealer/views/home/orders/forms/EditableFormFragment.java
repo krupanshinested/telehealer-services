@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +37,7 @@ import com.thealer.telehealer.apilayer.models.orders.forms.OrdersUserFormsApiRes
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.CustomSpinnerView;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
@@ -75,12 +77,14 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
     private OnCloseActionInterface onCloseActionInterface;
     private AttachObserverInterface attachObserverInterface;
     private FormsApiViewModel formsApiViewModel;
+    private ShowSubFragmentInterface showSubFragmentInterface;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         attachObserverInterface = (AttachObserverInterface) getActivity();
+        showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
 
         dynamicFormDataBean = new ViewModelProvider(this).get(DynamicFormDataBean.class);
 
@@ -92,8 +96,23 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
-                        showToast(getString(R.string.form_updated_successfully));
-                        onCloseActionInterface.onClose(false);
+                        if (submitBtn.getText().equals(getString(R.string.submit))){
+                            showToast(getString(R.string.form_updated_successfully));
+                            onCloseActionInterface.onClose(false);
+                        }else {
+                            if (baseApiResponseModel.getPath().isEmpty()){
+                                showToast("Failed generate Form");
+                                onCloseActionInterface.onClose(false);
+                            }else {
+                                PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
+                                Bundle bundle =new Bundle();
+                                bundle.putString(ArgumentKeys.PDF_TITLE, formsApiResponseModel.getName());
+                                bundle.putString(ArgumentKeys.PDF_URL, baseApiResponseModel.getPath());
+                                bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
+                                pdfViewerFragment.setArguments(bundle);
+                                showSubFragmentInterface.onShowFragment(pdfViewerFragment);
+                            }
+                        }
                     }
                 }
             }
@@ -103,9 +122,9 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
-                    if (errorModel.geterrorCode() == null){
+                    if (errorModel.geterrorCode() == null) {
                         showToast(errorModel.getMessage());
-                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         showToast(errorModel.getMessage());
                     }
                 }
@@ -136,6 +155,23 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
         if (getArguments() != null) {
             formsApiResponseModel = (OrdersUserFormsApiResponseModel) getArguments().getSerializable(ArgumentKeys.FORM_DETAIL);
             hideToolbar = getArguments().getBoolean(ArgumentKeys.IS_HIDE_TOOLBAR, false);
+
+            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_DOCTOR)) {
+                toolbar.inflateMenu(R.menu.orders_detail_menu);
+                toolbar.getMenu().removeItem(R.id.send_fax_menu);
+//                toolbar.getMenu().removeItem(R.id.print_menu);
+                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.print_menu:
+                                formsApiViewModel.printForm(formsApiResponseModel.getUser_form_id(),true);
+                                Log.d(TAG, "onMenuItemClick: print"+formsApiResponseModel.getUser_form_id());
+                        }
+                        return true;
+                    }
+                });
+            }
 
             if (formsApiResponseModel != null) {
                 setData(formsApiResponseModel);
@@ -184,7 +220,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             if (formsApiResponseModel.getFilled_form_url() == null) {
                 submitBtn.setVisibility(View.GONE);
             } else {
-                submitBtn.setVisibility(View.VISIBLE);
+                submitBtn.setVisibility(View.GONE);
                 submitBtn.setText(getString(R.string.print));
             }
         }
@@ -258,13 +294,13 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
                             }
                             try {
                                 if (itemsBean.getScore() != null) {
-                                    for(int j=0;j<itemsBean.getProperties().getOptions().size();j++){
-                                        if(itemsBean.getProperties().getOptions().get(j).getScore() == itemsBean.getScore()){
+                                    for (int j = 0; j < itemsBean.getProperties().getOptions().size(); j++) {
+                                        if (itemsBean.getProperties().getOptions().get(j).getScore() == itemsBean.getScore()) {
                                             formCsv.getSpinner().setSelection(j, true);
-                                            j=itemsBean.getProperties().getOptions().size()+1;
+                                            j = itemsBean.getProperties().getOptions().size() + 1;
                                         }
                                     }
-                                        int pos = (int) ((itemsBean.getProperties().getOptions().size()-1)- itemsBean.getScore());
+                                    int pos = (int) ((itemsBean.getProperties().getOptions().size() - 1) - itemsBean.getScore());
 
                                 }
                             } catch (Exception e) {

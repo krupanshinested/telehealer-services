@@ -105,6 +105,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -171,6 +172,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     private final int aboutTab = 0, visitTab = 1, schedulesTab = 2, patientTab = 3,
             orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
     private List<String> designationList = new ArrayList<>();
+    public static boolean isABoutclick = false;
 
     @Override
     public void onAttach(Context context) {
@@ -193,6 +195,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 CommonUserApiResponseModel model = (CommonUserApiResponseModel) baseApiResponseModel;
                 resultBean = model;
+                isABoutclick = false;
                 Log.d("Data Model", "Data Model first " + resultBean.getPermissions());
 
                 patientId = resultBean.getUser_id();
@@ -354,7 +357,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                if (errorModel.geterrorCode() == null){
+                if (errorModel.geterrorCode() == null) {
                     Utils.showAlertDialog(getContext(), getString(R.string.error),
                             errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                             null, getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -368,7 +371,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                     dialog.dismiss();
                                 }
                             });
-                }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     Utils.showAlertDialog(getContext(), getString(R.string.error),
                             errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                             null, getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -654,7 +657,19 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 userGuid = getArguments().getString(ArgumentKeys.USER_GUID);
                 doctorGuid = getArguments().getString(ArgumentKeys.DOCTOR_GUID);
             }
-            getUsersApiViewModel.getUserDetail(userGuid, null);
+            if (UserDetailPreferenceManager.getWhoAmIResponse().getRole().equals(Constants.ROLE_ASSISTANT)) {
+                if (isABoutclick) {
+                    Map<String, Object> body = new HashMap<>();
+                    body.put("getValueBaseForMA", true);
+                    body.put("buser_id", Constants.finalDoctor.getUser_id());
+                    body.put("doctor_guid", Constants.finalDoctor.getUser_guid());
+                    getUsersApiViewModel.getUserDetailforMA(userGuid, body, null);
+                } else {
+                    getUsersApiViewModel.getUserDetail(userGuid,false, null);
+                }
+            } else {
+                getUsersApiViewModel.getUserDetail(userGuid,false, null);
+            }
         }
 
         backIv = (ImageView) view.findViewById(R.id.back_iv);
@@ -1183,6 +1198,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             bundle.putBoolean(ArgumentKeys.SHOW_FAB_ADD, false);
                             bundle.putBoolean(ArgumentKeys.CLEAR_BG_SEARCH, true);
                             bundle.putBoolean(ArgumentKeys.isUserPatient, true);
+                            bundle.putBoolean("fromFragment", true);
                             DoctorPatientListingFragment doctorPatientListingFragment = new DoctorPatientListingFragment();
                             doctorPatientListingFragment.setArguments(bundle);
                             addFragment(getString(R.string.patients), doctorPatientListingFragment);

@@ -124,7 +124,6 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.HeaderMap;
-import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -151,6 +150,7 @@ public interface ApiInterface {
     String START_KEY = "start_key";
     String TYPE = "type";
     String ID = "id";
+    String USER_FORM_ID = "user_form_id";
     String CANCEL = "cancel";
     String SEARCH = "search";
     String SEARCH_FILTER = "filter_fullname__icontains";
@@ -557,6 +557,9 @@ public interface ApiInterface {
     @GET("api/users-v2/{id}")
     Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id);
 
+    @GET("api/users-v2/{id}")
+    Observable<CommonUserApiResponseModel> getUserDetail(@Path(ID) String id,@QueryMap Map<String, Object> body);
+
     @POST("api/users/permissions")
     Observable<BaseApiResponseModel> updateUserPermission(@Body PermissionRequestModel createRequestModel);
 
@@ -838,5 +841,11 @@ public interface ApiInterface {
 
     @GET("/api/user-invoice/")
     Observable<TransactionResponse> getInvoice(@Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize,@Query(START_DATENEW) String startDate, @Query(END_DATENEW) String endDate);
+
+    @PUT("/api/value-based-summary/setting")
+    Observable<BaseApiResponseModel> changevaluebase(@Body HashMap<String, Object> req);
+
+    @GET("/api/forms/generate/{user_form_id}")
+    Observable<BaseApiResponseModel> printform(@Path(USER_FORM_ID) int formId);
 
 }

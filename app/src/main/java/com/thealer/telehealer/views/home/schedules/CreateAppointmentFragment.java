@@ -588,7 +588,7 @@ public class CreateAppointmentFragment extends BaseFragment implements View.OnCl
                 break;
             case R.id.action_btn:
                 if (UserType.isUserAssistant()) {
-                    getUsersApiViewModel.getUserDetail(createScheduleViewModel.getDoctorCommonModel().getUser_guid(), null);
+                    getUsersApiViewModel.getUserDetail(createScheduleViewModel.getDoctorCommonModel().getUser_guid(),false, null);
                 }else {
                     requestAppointment();
                 }

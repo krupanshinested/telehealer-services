@@ -302,4 +302,10 @@ public class ArgumentKeys {
     public static final String DEVICE_FLAG = "device_flag";
     public static final String DEVICE_DETAILS = "device_details";
     public static String isPermissionAllowed="IS_Permission_Allowed";
+
+    public static String show_ccm="show_ccm";
+    public static String show_bhi="show_bhi";
+    public static String show_rpm="show_rpm";
+    public static String buser_id="buser_id";
+
 }

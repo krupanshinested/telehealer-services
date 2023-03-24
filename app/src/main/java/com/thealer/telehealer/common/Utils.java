@@ -435,23 +435,27 @@ public class Utils {
     }
 
     public static void setImageWithGlide(Context context, ImageView imageView, String path, Drawable placeHolder, boolean isUrlAuthNeeded, boolean decrypt) {
-        if (path != null && !path.isEmpty()) {
-            TeleCacheUrl glideUrl;
-            if (isUrlAuthNeeded) {
-                glideUrl = getGlideUrlWithAuth(context, path, decrypt);
+        try{
+            if (path != null && !path.isEmpty()) {
+                TeleCacheUrl glideUrl;
+                if (isUrlAuthNeeded) {
+                    glideUrl = getGlideUrlWithAuth(context, path, decrypt);
+                } else {
+                    glideUrl = new TeleCacheUrl(path);
+                }
+                if (placeHolder != null) {
+                    Glide.with(context).load(glideUrl).apply(new RequestOptions().placeholder(placeHolder)).into(imageView);
+                } else {
+                    Glide.with(context).load(glideUrl).into(imageView);
+                }
             } else {
-                glideUrl = new TeleCacheUrl(path);
+                if (placeHolder == null)
+                    imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
+                else
+                    imageView.setImageDrawable(placeHolder);
             }
-            if (placeHolder != null) {
-                Glide.with(context).load(glideUrl).apply(new RequestOptions().placeholder(placeHolder)).into(imageView);
-            } else {
-                Glide.with(context).load(glideUrl).into(imageView);
-            }
-        } else {
-            if (placeHolder == null)
-                imageView.setImageDrawable(context.getDrawable(R.drawable.profile_placeholder));
-            else
-                imageView.setImageDrawable(placeHolder);
+        }catch (Exception e){
+            Log.d("TAG", "setImageWithGlide: "+e.getMessage());
         }
     }
 
@@ -1506,8 +1510,12 @@ public class Utils {
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(application);
             taskStackBuilder.addNextIntentWithParentStack(intent);
 
-            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
+            PendingIntent pendingIntent; /*= taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+                pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
             notification.setContentIntent(pendingIntent);
         }
 
@@ -1518,7 +1526,12 @@ public class Utils {
     }
 
     public static void displyNotificationOnTop(String title, String message, @Nullable Bitmap imageBitmap, Intent intent) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
+        PendingIntent pendingIntent; /*= PendingIntent.getActivity(application, 0, intent, 0);*/
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity(application, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getActivity(application, 0, intent, 0);
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(application, notificationChannelId)
                 .setSmallIcon(R.drawable.app_icon_notification)
                 .setContentTitle(title)
@@ -1768,16 +1781,16 @@ public class Utils {
         }
 
         if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
-            invitedListTv.setVisibility(View.VISIBLE);
-            invitedListView.setVisibility(View.VISIBLE);
+            invitedListTv.setVisibility(View.GONE);
+            invitedListView.setVisibility(View.GONE);
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
         } else if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_ASSISTANT)) {
-            invitedListTv.setVisibility(View.VISIBLE);
-            invitedListView.setVisibility(View.VISIBLE);
-            pendingInvitesTv.setVisibility(View.GONE);
-            pendingInvitesView.setVisibility(View.GONE);
+            invitedListTv.setVisibility(View.GONE);
+            invitedListView.setVisibility(View.GONE);
+            pendingInvitesTv.setVisibility(View.VISIBLE);
+            pendingInvitesView.setVisibility(View.VISIBLE);
             broadCastMessageTv.setVisibility(View.GONE);
             broadcastView.setVisibility(View.GONE);
             broadcastAllTv.setVisibility(View.GONE);
@@ -1785,10 +1798,10 @@ public class Utils {
             if (bundle != null) {
                 String role = bundle.getString(ArgumentKeys.ROLE, "");
                 if (role.equals(Constants.ROLE_ASSISTANT)) {
-                    invitedListTv.setVisibility(View.VISIBLE);
-                    invitedListView.setVisibility(View.VISIBLE);
-                    pendingInvitesTv.setVisibility(View.GONE);
-                    pendingInvitesView.setVisibility(View.GONE);
+                    invitedListTv.setVisibility(View.GONE);
+                    invitedListView.setVisibility(View.GONE);
+                    pendingInvitesTv.setVisibility(View.VISIBLE);
+                    pendingInvitesView.setVisibility(View.VISIBLE);
                     broadCastMessageTv.setVisibility(View.GONE);
                     broadcastView.setVisibility(View.GONE);
                     broadcastAllTv.setVisibility(View.GONE);

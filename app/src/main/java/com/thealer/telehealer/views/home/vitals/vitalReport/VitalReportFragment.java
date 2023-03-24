@@ -93,7 +93,7 @@ public class VitalReportFragment extends BaseFragment {
     private OnCloseActionInterface onCloseActionInterface;
     private String doctorGuid;
     private ShowSubFragmentInterface showSubFragmentInterface;
-
+    private boolean isClick = false;
     private CommonUserApiResponseModel doctorModel;
 
     @Nullable
@@ -111,6 +111,7 @@ public class VitalReportFragment extends BaseFragment {
         vitalReportApiViewModel.baseApiResponseModelMutableLiveData.observe(this, new Observer<BaseApiResponseModel>() {
             @Override
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                isClick = false;
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel instanceof VitalReportApiReponseModel) {
                         vitalReportApiReponseModel = (VitalReportApiReponseModel) baseApiResponseModel;
@@ -157,6 +158,7 @@ public class VitalReportFragment extends BaseFragment {
         vitalReportApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
+                isClick = false;
                 if (errorModel != null) {
                     if (errorModel.geterrorCode() == null){
                         if (AppPaymentCardUtils.hasValidPaymentCard(errorModel)) {
@@ -258,27 +260,30 @@ public class VitalReportFragment extends BaseFragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.print_menu:
-                        Snackbar snackbar = Snackbar.make(view, "", 5000).setBackgroundTint(getResources().getColor(R.color.app_gradient_start));
-                        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-                        View snackbarView = getLayoutInflater().inflate(R.layout.view_snackbar, null);
-                        TextView textView = snackbarView.findViewById(R.id.snackbar_tv);
-                        textView.setMaxLines(10);
-                        textView.setText(getString(R.string.bulk_print_disclaimer));
-                        snackbarLayout.addView(snackbarView);
-                        snackbar.addCallback(new Snackbar.Callback() {
-                            @Override
-                            public void onDismissed(Snackbar transientBottomBar, int event) {
-                                super.onDismissed(transientBottomBar, event);
-                                if (UserType.isUserAssistant()) {
-                                    vitalReportApiViewModel.getBulkVitalPdf(doctorGuid, startDate, endDate);
-                                } else {
-                                    vitalReportApiViewModel.getBulkVitalPdf(null, startDate, endDate);
+                        if (!isClick) {
+                            isClick = true;
+                            Snackbar snackbar = Snackbar.make(view, "", 5000).setBackgroundTint(getResources().getColor(R.color.app_gradient_start));
+                            Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+                            View snackbarView = getLayoutInflater().inflate(R.layout.view_snackbar, null);
+                            TextView textView = snackbarView.findViewById(R.id.snackbar_tv);
+                            textView.setMaxLines(10);
+                            textView.setText(getString(R.string.bulk_print_disclaimer));
+                            snackbarLayout.addView(snackbarView);
+                            snackbar.addCallback(new Snackbar.Callback() {
+                                @Override
+                                public void onDismissed(Snackbar transientBottomBar, int event) {
+                                    super.onDismissed(transientBottomBar, event);
+                                    if (UserType.isUserAssistant()) {
+                                        vitalReportApiViewModel.getBulkVitalPdf(doctorGuid, startDate, endDate);
+                                    } else {
+                                        vitalReportApiViewModel.getBulkVitalPdf(null, startDate, endDate);
+                                    }
+                                    SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                                    successViewDialogFragment.setTargetFragment(getTargetFragment(), RequestID.REQ_SHOW_SUCCESS_VIEW);
+                                    successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
                                 }
-                                SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
-                                successViewDialogFragment.setTargetFragment(getTargetFragment(), RequestID.REQ_SHOW_SUCCESS_VIEW);
-                                successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
-                            }
-                        }).show();
+                            }).show();
+                        }
                 }
                 return true;
             }
@@ -425,13 +430,16 @@ public class VitalReportFragment extends BaseFragment {
                     previousMonth.add(Calendar.MONTH, -1);
                     String previous = previousMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
                     setToolbarTitle(selectedItem);
-                    if (selectedItem.equals(previous)) {
-                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
-                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
-                    } else {
-                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(false);
-                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorGrey_light));
-                    }
+                    // if selectitem is more than previous month then print icon click is disable. Due to some issue we have comment this if else condition
+//                    if (selectedItem.equals(previous)) {
+//                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
+//                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
+//                    } else {
+//                        toolbar.getMenu().findItem(R.id.print_menu).setEnabled(false);
+//                        toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorGrey_light));
+//                    }
+                    toolbar.getMenu().findItem(R.id.print_menu).setEnabled(true);
+                    toolbar.getMenu().findItem(R.id.print_menu).getIcon().setTint(getActivity().getColor(R.color.colorWhite));
                     if (selectedItem.equals(getString(R.string.last_week))) {
                         patientListCrv.setEmptyState(EmptyViewConstants.EMPTY_DOCTOR_VITAL_LAST_WEEK);
                         selectedFilter = VitalReportApiViewModel.LAST_WEEK;

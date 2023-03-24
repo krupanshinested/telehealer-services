@@ -11,6 +11,16 @@ public class BaseApiResponseModel implements Serializable {
     private String message;
     private String permissionCode;
 
+    public String getPath() {
+        return pdfpath;
+    }
+
+    public void setPath(String paths) {
+        this.pdfpath = paths;
+    }
+
+    private String pdfpath;
+
     public boolean isSuccess() {
         return success;
     }
