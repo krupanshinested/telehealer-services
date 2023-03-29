@@ -356,9 +356,18 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
             }
         }
-        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
-        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+
+        if (Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.S) {
+            if (TeleHealerApplication.isInForeGround){
+                registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
+                registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+                registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+            }
+        }else {
+            registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
+            registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+            registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+        }
         isScreenBroadcastRegistered = true;
 
         getFeedbackSetting();
