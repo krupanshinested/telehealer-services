@@ -189,8 +189,8 @@ public class OpenTok implements Session.SessionListener,
 
     private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive( Context context, Intent intent ) {
-            int level = intent.getIntExtra( BatteryManager.EXTRA_LEVEL, -1);
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             sendBattery(level);
         }
     };
@@ -198,7 +198,7 @@ public class OpenTok implements Session.SessionListener,
     private CallRequest callRequest;
 
     public static void didRecieveIncoming(APNSPayload apnsPayload, CallReceiveInterface callReceiveInterface) {
-        EventRecorder.recordCallUpdates("CALL_RECEIVED",null);
+        EventRecorder.recordCallUpdates("CALL_RECEIVED", null);
 
         new OpenTokViewModel(application).getTokenForSession(apnsPayload.getSessionId(), new OpenTokTokenFetcher() {
             @Override
@@ -209,7 +209,7 @@ public class OpenTok implements Session.SessionListener,
                 }
 
                 CallRequest callRequest = new CallRequest(apnsPayload.getUuid(),
-                        apnsPayload.getTo(), null, apnsPayload.getFrom(), apnsPayload.getFrom_name(), null, apnsPayload.getType(),false,null);
+                        apnsPayload.getTo(), null, apnsPayload.getFrom(), apnsPayload.getFrom_name(), null, apnsPayload.getType(), false, null);
                 callRequest.update(callSettings);
 
                 boolean isInWaitingRoom = WaitingRoomActivity.isActive;
@@ -218,7 +218,7 @@ public class OpenTok implements Session.SessionListener,
                 CallManager.shared.addCall(tokBox);
 
                 GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
-                getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(),true, new UserDetailFetcher() {
+                getUsersApiViewModel.getUserDetail(apnsPayload.getFrom(), true, new UserDetailFetcher() {
                     @Override
                     public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
 
@@ -233,7 +233,7 @@ public class OpenTok implements Session.SessionListener,
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        callReceiveInterface.didFetchedAllRequiredData(isInWaitingRoom,commonUserApiResponseModel.getDoctorDisplayName(),callRequest);
+                                        callReceiveInterface.didFetchedAllRequiredData(isInWaitingRoom, commonUserApiResponseModel.getDoctorDisplayName(), callRequest);
                                     }
                                 }, 100);
 
@@ -242,7 +242,7 @@ public class OpenTok implements Session.SessionListener,
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                         long[] mVibratePattern = new long[]{0, 400, 200, 400};
 
-                                        tokBox.vibrator.vibrate(VibrationEffect.createWaveform(mVibratePattern,0));
+                                        tokBox.vibrator.vibrate(VibrationEffect.createWaveform(mVibratePattern, 0));
                                     } else {
                                         //deprecated in API 26
                                         tokBox.vibrator.vibrate(500);
@@ -270,7 +270,7 @@ public class OpenTok implements Session.SessionListener,
             customAudioDevice = (CustomAudioDevice) AudioDeviceManager.getAudioDevice();
         } catch (Exception e) {
             customAudioDevice = null;
-            Log.d("TokBox","CustomAudioDevice exception");
+            Log.d("TokBox", "CustomAudioDevice exception");
         }
 
         if (callRequest.getCallSettings().isTranscription_enabled()) {
@@ -323,7 +323,7 @@ public class OpenTok implements Session.SessionListener,
             this.callState = OpenTokConstants.outGoingCallGoingOn;
 
             GetUsersApiViewModel getUsersApiViewModel = new GetUsersApiViewModel(application);
-            getUsersApiViewModel.getUserDetail(callRequest.getOtherUserGuid(),true, new UserDetailFetcher() {
+            getUsersApiViewModel.getUserDetail(callRequest.getOtherUserGuid(), true, new UserDetailFetcher() {
                 @Override
                 public void didFetchedDetails(CommonUserApiResponseModel commonUserApiResponseModel) {
 
@@ -426,9 +426,9 @@ public class OpenTok implements Session.SessionListener,
     }
 
     public void connectToSession() {
-        Log.d("TokBox","connectToSession");
+        Log.d("TokBox", "connectToSession");
         if (isSessionConnect) {
-            Log.d("TokBox","return since already connected");
+            Log.d("TokBox", "return since already connected");
             return;
         }
 
@@ -689,7 +689,7 @@ public class OpenTok implements Session.SessionListener,
         switch (callRequest.getCallType()) {
             case OpenTokConstants.audio:
                 isVideoNeed = false;
-               isAudioNeed = true;
+                isAudioNeed = true;
                 break;
             case OpenTokConstants.video:
             case OpenTokConstants.oneWay:
@@ -785,7 +785,7 @@ public class OpenTok implements Session.SessionListener,
     private void doSubscribe(Stream stream) {
         if (mSession != null) {
             mSubscriber = new Subscriber.Builder(application, stream)
-                     .renderer(new BasicCustomVideoRenderer(application))
+                    .renderer(new BasicCustomVideoRenderer(application))
                     .build();
             mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
             mSubscriber.setSubscriberListener(this);
@@ -811,7 +811,7 @@ public class OpenTok implements Session.SessionListener,
     }
 
     public void endCall(String callRejectionReason) {
-        Log.d("openTok", "endCall"+callRejectionReason );
+        Log.d("openTok", "endCall" + callRejectionReason);
         handlerRefreshToken.removeCallbacks(runnableRefreshToken);
         if (!isActive()) {
             CallManager.shared.removeCall(this);
@@ -830,7 +830,7 @@ public class OpenTok implements Session.SessionListener,
         if (tokBoxUIInterface != null) {
             tokBoxUIInterface.didEndCall(callRejectionReason);
         } else {
-            CallActivity.openFeedBackIfNeeded(callRequest,connectedDate,callRejectionReason, application);
+            CallActivity.openFeedBackIfNeeded(callRequest, connectedDate, callRejectionReason, application);
         }
 
 
@@ -887,7 +887,7 @@ public class OpenTok implements Session.SessionListener,
         }
 
         String expiredToken = callRequest.getCallSettings().getExpiredTokenWhileCallPlaced();
-        if ( expiredToken != null) {
+        if (expiredToken != null) {
             appPreference.setString(PreferenceConstants.USER_AUTH_TOKEN, expiredToken);
         }
 
@@ -928,7 +928,7 @@ public class OpenTok implements Session.SessionListener,
 
         currentTranscript = "";
         Intent endBroadcastIntent = new Intent(Constants.CALL_ENDED_BROADCAST);
-        endBroadcastIntent.putExtra(ArgumentKeys.IS_USER_ADMITTED,callRequest.isUserAdmitted());
+        endBroadcastIntent.putExtra(ArgumentKeys.IS_USER_ADMITTED, callRequest.isUserAdmitted());
         LocalBroadcastManager.getInstance(application).sendBroadcast(endBroadcastIntent);
         tokBoxUIInterface = null;
 
@@ -985,13 +985,13 @@ public class OpenTok implements Session.SessionListener,
 
 
     public void sendEndCallNotification(String callRejectionReason) {
-        if (callRequest.getCallType().equals(OpenTokConstants.oneWay)  || callRequest.getCallType().equals(OpenTokConstants.education)) {
+        if (callRequest.getCallType().equals(OpenTokConstants.oneWay) || callRequest.getCallType().equals(OpenTokConstants.education)) {
             return;
         }
 
         if (callRequest.getOtherPersonDetail() != null) {
             Log.d("openTok", "endCall");
-            CallChannel.shared.postEndCallToOtherPerson(callRequest.getOtherPersonDetail().getUser_guid(),callRequest.getCallUUID(),UserDetailPreferenceManager.getUserDisplayName(),UserDetailPreferenceManager.getUser_avatar(),callRejectionReason);
+            CallChannel.shared.postEndCallToOtherPerson(callRequest.getOtherPersonDetail().getUser_guid(), callRequest.getCallUUID(), UserDetailPreferenceManager.getUserDisplayName(), UserDetailPreferenceManager.getUser_avatar(), callRejectionReason);
             EventRecorder.recordNotification("DECLINE_CALL");
         }
     }
@@ -1009,7 +1009,7 @@ public class OpenTok implements Session.SessionListener,
             String value = Utils.serialize(message);
             sendMessage(type, value);
         } catch (Exception e) {
-            Log.d("TokBox","sendMessage : "+e.getLocalizedMessage());
+            Log.d("TokBox", "sendMessage : " + e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -1084,9 +1084,9 @@ public class OpenTok implements Session.SessionListener,
     }
 
     private void captureScreenshot() {
-        Log.d("Opentok","captureScreenshot");
+        Log.d("Opentok", "captureScreenshot");
         if (isScreenshotCaptured) {
-           return;
+            return;
         }
 
         if (callRequest.getCallType().equals(OpenTokConstants.audio)) {
@@ -1102,7 +1102,7 @@ public class OpenTok implements Session.SessionListener,
             return;
         }
 
-        Log.d("Opentok","captureScreenshot");
+        Log.d("Opentok", "captureScreenshot");
 
         if (mSubscriber == null) {
             ((BasicCustomVideoRenderer) mPublisher.getRenderer()).saveScreenshot(true, new ScreenCapturerInterface() {
@@ -1132,12 +1132,12 @@ public class OpenTok implements Session.SessionListener,
         isScreenshotCaptured = true;
     }
 
-    private void mergeBitmap(Bitmap publisher,@Nullable Bitmap subscriber) {
+    private void mergeBitmap(Bitmap publisher, @Nullable Bitmap subscriber) {
         if (subscriber != null) {
-            Bitmap combinedBitmap = Utils.mergeBitmap(publisher,subscriber);
-            uploadScreenshot(callRequest.getSessionId(),combinedBitmap);
+            Bitmap combinedBitmap = Utils.mergeBitmap(publisher, subscriber);
+            uploadScreenshot(callRequest.getSessionId(), combinedBitmap);
         } else {
-            uploadScreenshot(callRequest.getSessionId(),publisher);
+            uploadScreenshot(callRequest.getSessionId(), publisher);
         }
     }
 
@@ -1178,7 +1178,7 @@ public class OpenTok implements Session.SessionListener,
 
     private void uploadScreenshot(String sessionId, Bitmap bitmap) {
         if (callRequest.getCallType().equals(OpenTokConstants.education)) {
-           new EducationalVideoViewModel(application).uploadScreenshot(callRequest.getAdditionalId(),bitmap);
+            new EducationalVideoViewModel(application).uploadScreenshot(callRequest.getAdditionalId(), bitmap);
         } else {
             openTokViewModel.updateScreenshot(sessionId, bitmap);
         }
@@ -1428,8 +1428,8 @@ public class OpenTok implements Session.SessionListener,
     }
 
     public void sendBattery(int battery) {
-        Log.d("TokBox","battery "+battery);
-        Float bvalue = Float.parseFloat(battery+"");
+        Log.d("TokBox", "battery " + battery);
+        Float bvalue = Float.parseFloat(battery + "");
         bvalue = bvalue / 100;
         HashMap<String, Float> message = new HashMap<>();
         message.put(OpenTokConstants.battery, bvalue);
@@ -1449,7 +1449,7 @@ public class OpenTok implements Session.SessionListener,
             HashMap<String, Float> map = Utils.deserialize(message, type);
             Float battery = map.get(OpenTokConstants.battery);
             this.otherPersonBatteryLevel = battery;
-            Log.d("TokBox","other battery "+battery);
+            Log.d("TokBox", "other battery " + battery);
             if (tokBoxUIInterface != null)
                 this.tokBoxUIInterface.didChangedBattery();
 
@@ -1610,9 +1610,9 @@ public class OpenTok implements Session.SessionListener,
 
 
     private void callStarted() {
-        if (!callRequest.getCallType().equals(OpenTokConstants.oneWay) && !(callRequest.getCallType().equals(OpenTokConstants.education)) && !isBatteryObserverAdded){
+        if (!callRequest.getCallType().equals(OpenTokConstants.oneWay) && !(callRequest.getCallType().equals(OpenTokConstants.education)) && !isBatteryObserverAdded) {
             isBatteryObserverAdded = true;
-            Intent batteryStatus = application.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );
+            Intent batteryStatus = application.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             if (batteryStatus != null)
                 sendBattery(batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1));
         }
@@ -1687,7 +1687,7 @@ public class OpenTok implements Session.SessionListener,
 
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-        Log.d("TokBox", "onError subscriber " + opentokError.getMessage()+"   "+opentokError.getMessage());
+        Log.d("TokBox", "onError subscriber " + opentokError.getMessage() + "   " + opentokError.getMessage());
 
         HashMap<String, String> detail = new HashMap<>();
         detail.put("status", "fail");
@@ -2107,7 +2107,7 @@ public class OpenTok implements Session.SessionListener,
             case AudioManager.AUDIOFOCUS_GAIN:
                 if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
                     Log.d("TokBox", "ringTonePlayer start");
-                     ringTonePlayer.play();
+                    ringTonePlayer.play();
                 }
 
                 break;
@@ -2115,14 +2115,14 @@ public class OpenTok implements Session.SessionListener,
             case AudioManager.AUDIOFOCUS_LOSS:
                 if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
                     Log.d("TokBox", "ringTonePlayer stop");
-                     ringTonePlayer.stop();
+                    ringTonePlayer.stop();
                 }
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                 if (ringTonePlayer != null && ringTonePlayer.isPlaying()) {
                     Log.d("TokBox", "ringTonePlayer stop");
-                     ringTonePlayer.stop();
+                    ringTonePlayer.stop();
                 }
 
                 break;
