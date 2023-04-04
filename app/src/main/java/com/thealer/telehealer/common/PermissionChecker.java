@@ -384,7 +384,7 @@ public class PermissionChecker {
                 }
             case PermissionConstants.PERMISSION_CAM_MIC:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,Manifest.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.FOREGROUND_SERVICE,Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND,Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS};
                 }else {
                     return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
                 }

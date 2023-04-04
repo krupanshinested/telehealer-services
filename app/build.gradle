@@ -13,8 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 56
-        versionName "2.9.27"
+        versionCode 57
+        versionName "2.9.28"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
@@ -45,8 +45,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 33
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 56
-            versionName "2.9.27"
+            versionCode 57
+            versionName "2.9.28"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
@@ -139,6 +139,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.wear:wear:1.0.0'
+    implementation 'androidx.work:work-runtime:2.8.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.3.0-rc02'

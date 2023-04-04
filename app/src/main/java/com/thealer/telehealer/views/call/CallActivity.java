@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
@@ -53,8 +54,11 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
-import com.google.firebase.messaging.FirebaseMessagingService;
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.R;
@@ -69,17 +73,14 @@ import com.thealer.telehealer.apilayer.models.feedback.question.FeedbackQuestion
 import com.thealer.telehealer.apilayer.models.feedback.setting.FeedbackSettingModel;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalDevice;
 import com.thealer.telehealer.apilayer.models.vitals.vitalCreation.VitalPairedDevices;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
-import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.Animation.ConstrainSetUtil;
 import com.thealer.telehealer.common.Animation.MoveViewTouchListener;
 import com.thealer.telehealer.common.Animation.OnSwipeTouchListener;
 import com.thealer.telehealer.common.ArgumentKeys;
-import com.thealer.telehealer.common.CommonObject;
 import com.thealer.telehealer.common.CompleteListener;
 import com.thealer.telehealer.common.Constants;
-import com.thealer.telehealer.common.Feedback.FeedbackCallback;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.MyWorker;
 import com.thealer.telehealer.common.OpenTok.CallManager;
 import com.thealer.telehealer.common.OpenTok.CallMinimizeService;
 import com.thealer.telehealer.common.OpenTok.CallNotificationService;
@@ -98,7 +99,6 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.common.VitalCommon.VitalInterfaces.VitalManagerInstance;
 import com.thealer.telehealer.common.VitalCommon.VitalsManager;
 import com.thealer.telehealer.common.pubNub.PubNubNotificationPayload;
-import com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.base.BaseActivity;
@@ -108,8 +108,8 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.CustomDialogs.ItemPickerDialog;
 import com.thealer.telehealer.views.common.CustomDialogs.PickerListener;
 import com.thealer.telehealer.views.common.RoundCornerConstraintLayout;
+import com.thealer.telehealer.views.common.SplashActivity;
 import com.thealer.telehealer.views.guestlogin.screens.GuestUserSignupActivity;
-import com.thealer.telehealer.views.home.DoctorPatientDetailViewFragment;
 import com.thealer.telehealer.views.home.HomeActivity;
 import com.thealer.telehealer.views.home.UserDetailActivity;
 
@@ -119,8 +119,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -147,11 +146,40 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
 
 
     public static Intent getIntent(Application application, CallRequest callRequest) {
-        Intent intent = new Intent(application, CallActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(CALL_INITIATE_MODEL, callRequest);
-        return intent;
+        if (TeleHealerApplication.isInForeGround){
+            Intent intent = new Intent(application, CallActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra(CALL_INITIATE_MODEL, callRequest);
+            return intent;
+        }else {
+            ActivityManager activityManager = (ActivityManager) application.getSystemService( ACTIVITY_SERVICE );
+            List<ActivityManager.RunningTaskInfo> taskList = activityManager.getRunningTasks( 10 );
+            if ( !taskList.isEmpty() ) {
+                ActivityManager.RunningTaskInfo runningTaskInfo = taskList.get(0);
+                if (runningTaskInfo.topActivity != null && !runningTaskInfo.topActivity.getClassName().contains(application.getPackageName())) {
+                    Intent intent = new Intent(application, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra(CALL_INITIATE_MODEL, callRequest);
+                    intent.putExtra("isappkill", true);
+                    return intent;
+                }else {
+                    Intent intent = new Intent(application, CallActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra(CALL_INITIATE_MODEL, callRequest);
+                    return intent;
+                }
+            }else {
+                Intent intent = new Intent(application, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.putExtra(CALL_INITIATE_MODEL, callRequest);
+                intent.putExtra("isappkill", true);
+                return intent;
+            }
+        }
     }
 
     public static Intent getCallIntent(Application application, Boolean isWaitingRoom, @Nullable Boolean accept, CallRequest callRequest) {
@@ -166,13 +194,6 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
         }
 
         return fullScreenIntent;
-    }
-
-    public static void createNotificationBarCall(Application application, Boolean isWaitingRoom, String doctorName, CallRequest callRequest) {
-        Log.d("CallActivity", "createNotificationBarCall");
-        final Class<? extends Service> notificationService = CallNotificationService.class;
-        final Intent notificationIntent = new Intent(application, notificationService);
-        ContextCompat.startForegroundService(application, notificationIntent);
     }
 
     private LinearLayout bigView;
@@ -227,7 +248,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     @Nullable
     private CompleteListener lastTaskToDo;
 
-    private OpenTok activeCall;
+    private static OpenTok activeCall;
     private CallRequest callRequest;
     private boolean isScreenBroadcastRegistered = false;
 
@@ -335,9 +356,18 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                     break;
             }
         }
-        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
-        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+
+        if (Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.S) {
+            if (TeleHealerApplication.isInForeGround){
+                registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
+                registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+                registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+            }
+        }else {
+            registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_ON));
+            registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+            registerReceiver(screenbroadcast, new IntentFilter(Intent.ACTION_USER_PRESENT));
+        }
         isScreenBroadcastRegistered = true;
 
         getFeedbackSetting();
@@ -416,8 +446,11 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
     public void onStop() {
         super.onStop();
 
-        if (currentShowingDialog != null && currentShowingDialog.isShowing())
-            currentShowingDialog.dismiss();
+        if (currentShowingDialog != null) {
+            if (currentShowingDialog.isShowing()) {
+                currentShowingDialog.dismiss();
+            }
+        }
     }
 
     @Override
@@ -584,6 +617,97 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             } else {
                 minimize.setVisibility(View.VISIBLE);
             }
+
+        }
+    }
+
+    public static void createNotificationBarCall(Application application, Boolean isWaitingRoom, String doctorName, CallRequest callRequest) {
+        Log.d("CallActivity", "createNotificationBarCall");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+
+            if (TeleHealerApplication.isInForeGround){
+                final Class<? extends Service> notificationService = CallNotificationService.class;
+                final Intent notificationIntent = new Intent(application, notificationService);
+                ContextCompat.startForegroundService(application, notificationIntent);
+            }else {
+                createNotification(application);
+            }
+        } else {
+            final Class<? extends Service> notificationService = CallNotificationService.class;
+            final Intent notificationIntent = new Intent(application, notificationService);
+            ContextCompat.startForegroundService(application, notificationIntent);
+        }
+    }
+
+    public static void startServiceViaWorker(Application application) {
+        Log.d(TAG, "startServiceViaWorker called");
+        String UNIQUE_WORK_NAME = "StartMyServiceViaWorker";
+        WorkManager workManager = WorkManager.getInstance(application);
+
+        // As per Documentation: The minimum repeat interval that can be defined is 15 minutes
+        // (same as the JobScheduler API), but in practice 15 doesn't work. Using 16 here
+        PeriodicWorkRequest request =
+                new PeriodicWorkRequest.Builder(
+                        MyWorker.class,
+                        16,
+                        TimeUnit.MINUTES)
+                        .build();
+
+        // to schedule a unique work, no matter how many times app is opened i.e. startServiceViaWorker gets called
+        // do check for AutoStart permission
+        workManager.enqueueUniquePeriodicWork(UNIQUE_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request);
+
+    }
+
+    private static void createNotification(Application application) {
+        OpenTok currentCall = CallManager.shared.getActiveCallToShow();
+        activeCall = currentCall;
+        CallRequest callRequest = null;
+        if (currentCall != null)
+            callRequest = currentCall.getCallRequest();
+        boolean isWaitingRoom = false;
+        if (callRequest != null) {
+            Intent fullScreenIntent = CallActivity.getCallIntent(application, isWaitingRoom, null, callRequest);
+
+            PendingIntent fullScreenPendingIntent;/* = PendingIntent.getActivity(getApplication(), 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                fullScreenPendingIntent = PendingIntent.getActivity(application, 0, fullScreenIntent, PendingIntent.FLAG_MUTABLE);
+            } else {
+                fullScreenPendingIntent = PendingIntent.getActivity(application, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+
+            Intent acceptScreenIntent = CallActivity.getCallIntent(application, isWaitingRoom, true, callRequest);
+            PendingIntent acceptScreenPendingIntent; /* = PendingIntent.getActivity(application, 1, acceptScreenIntent, PendingIntent.FLAG_ONE_SHOT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                acceptScreenPendingIntent = PendingIntent.getActivity(application, 1, acceptScreenIntent, PendingIntent.FLAG_MUTABLE);
+            } else {
+                acceptScreenPendingIntent = PendingIntent.getActivity(application, 1, acceptScreenIntent, PendingIntent.FLAG_ONE_SHOT);
+            }
+
+            Intent rejectScreenIntent = CallActivity.getCallIntent(application, isWaitingRoom, false, callRequest);
+            PendingIntent rejectScreenPendingIntent; /*= PendingIntent.getActivity(application, 2,rejectScreenIntent, PendingIntent.FLAG_ONE_SHOT);*/
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                rejectScreenPendingIntent = PendingIntent.getActivity(application, 2, rejectScreenIntent, PendingIntent.FLAG_MUTABLE);
+            } else {
+                rejectScreenPendingIntent = PendingIntent.getActivity(application, 2, rejectScreenIntent, PendingIntent.FLAG_ONE_SHOT);
+            }
+
+            NotificationCompat.Builder notificationBuilder =
+                    new NotificationCompat.Builder(application, TeleHealerApplication.appConfig.getVoipChannel())
+                            .setSmallIcon(R.drawable.app_icon)
+                            .setContentTitle(application.getString(R.string.app_name) + " Incoming call")
+                            .setContentText(callRequest.getDoctorName())
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setCategory(NotificationCompat.CATEGORY_CALL)
+                            .setFullScreenIntent(fullScreenPendingIntent, true)
+                            .addAction(new NotificationCompat.Action.Builder(R.drawable.app_icon, "Reject", rejectScreenPendingIntent).build())
+                            .addAction(new NotificationCompat.Action.Builder(R.drawable.app_icon, "Accept", acceptScreenPendingIntent).build());
+
+            Notification incomingCallNotification = notificationBuilder.build();
+
+            Log.d("CallNotificationService", "start pending indent");
+            NotificationManager mNotificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(CallActivity.VOIP_NOTIFICATION_ID, incomingCallNotification);
 
         }
     }
@@ -1522,8 +1646,8 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 dismissProgressDialog();
                 try {
                     feedbackQuestionModel = response.body();
-                }catch (Exception e){
-                    Log.d("TAG", "onResponse: "+e.getMessage());
+                } catch (Exception e) {
+                    Log.d("TAG", "onResponse: " + e.getMessage());
                 }
 
             }
@@ -1903,7 +2027,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null && (errorModel.getMessage() != null || !errorModel.getMessage().isEmpty())) {
-                    if (errorModel.geterrorCode() == null){
+                    if (errorModel.geterrorCode() == null) {
                         String message = errorModel.getMessage();
                         if (message != null) {
                             currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
@@ -1913,7 +2037,7 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                                 }
                             }, null);
                         }
-                    }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                    } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         String message = errorModel.getMessage();
                         if (message != null) {
                             currentShowingDialog = Utils.showAlertDialog(CallActivity.this, getString(R.string.app_name), message, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
