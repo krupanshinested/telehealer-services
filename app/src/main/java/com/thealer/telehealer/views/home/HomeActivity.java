@@ -1073,7 +1073,7 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
 
         } else if (!isPropserShown) {
 
-            if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+            if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION)) {
                 Log.d("HelpScreen", "Permission");
                 isPropserShown = true;
             }
