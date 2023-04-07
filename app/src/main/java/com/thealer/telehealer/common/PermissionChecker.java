@@ -78,6 +78,11 @@ public class PermissionChecker {
                     return true;
                 }
                 break;
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+                if (isCamerPermissionGranted() && isMicPermissionGranted() && isNotiPermissionGranted()) {
+                    return true;
+                }
+                break;
             case PermissionConstants.PERMISSION_CAM_MIC:
                 if (isCamerPermissionGranted() && isMicPermissionGranted()) {
                     return true;
@@ -119,6 +124,13 @@ public class PermissionChecker {
         TeleLogger.shared.log(TeleLogCapability.mic, isGranted);
         return isGranted;
     }
+
+    private boolean isNotiPermissionGranted(){
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+//        TeleLogger.shared.log(TeleLogCapability., isGranted);
+        return isGranted;
+    }
+
 
     private boolean isGalleryPermissionGranted() {
         Boolean isGranted;
@@ -202,6 +214,14 @@ public class PermissionChecker {
                     return PermissionConstants.PERMISSION_MICROPHONE;
                 if (!isCamerPermissionGranted() && isMicPermissionGranted())
                     return PermissionConstants.PERMISSION_CAMERA;
+                break;
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+                if (isCamerPermissionGranted() && !isMicPermissionGranted() && isNotiPermissionGranted())
+                    return PermissionConstants.PERMISSION_MICROPHONE;
+                if (!isCamerPermissionGranted() && isMicPermissionGranted() && isNotiPermissionGranted())
+                    return PermissionConstants.PERMISSION_CAMERA;
+                if (isCamerPermissionGranted() && isMicPermissionGranted() && !isNotiPermissionGranted())
+                    return PermissionConstants.PERMISSION_NOTIFICATION;
                 break;
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
                 if (!isLocationPermissionGranted() && !isWriteStoragePermissionGranted())
@@ -362,6 +382,8 @@ public class PermissionChecker {
                 return PermissionConstants.CONTACTS_REQUEST_CODE;
             case PermissionConstants.PERMISSION_GOOGLE_FIT:
                 return GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE;
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+                return PermissionConstants.PERMISSION_NOTIFICATION;
         }
         return 0;
     }
@@ -388,6 +410,12 @@ public class PermissionChecker {
                 }else {
                     return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
                 }
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,Manifest.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.FOREGROUND_SERVICE,Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND,Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,Manifest.permission.POST_NOTIFICATIONS};
+                }else {
+                    return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.POST_NOTIFICATIONS};
+                }
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
                 return new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             case PermissionConstants.PERMISSION_LOCATION_VITALS:
@@ -405,6 +433,8 @@ public class PermissionChecker {
                 return new String[]{Manifest.permission.READ_CONTACTS};
             case PermissionConstants.PERMISSION_GOOGLE_FIT:
                 return new String[]{Manifest.permission.ACTIVITY_RECOGNITION};
+                case PermissionConstants.PERMISSION_NOTIFICATION:
+                return new String[]{Manifest.permission.POST_NOTIFICATIONS};
 
         }
         return new String[0];
