@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -1072,10 +1073,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
 
         } else if (!isPropserShown) {
-
-            if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION)) {
-                Log.d("HelpScreen", "Permission");
-                isPropserShown = true;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION)) {
+                    isPropserShown = true;
+                }
+            }else {
+                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+                    isPropserShown = true;
+                }
             }
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 
