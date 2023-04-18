@@ -37,6 +37,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean recording_enabled = false;
     private String appt_start_time;
     private String appt_end_time;
+    private String alt_rpm_response_no;
     private List<PermissionBean> permissions;
     private List<VitalBean> vitals;
 
@@ -44,13 +45,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     }
 
     public CommonUserApiResponseModel(String first_name, String last_name, String status, String email, String user_guid, int user_id,
-                                      String user_avatar, String role, String phone, String gender, String dob, int appt_length, String appt_start_time, String appt_end_time,
+                                      String user_avatar, String role, String phone, String gender, String dob, int appt_length, String appt_start_time, String appt_end_time,String alt_rpm_response_no,
                                       String name, String connection_status, QuestionnaireBean questionnaire, List<HistoryBean> history, AppDetailBean appDetail,
                                       UserDetailBean user_detail,List<PermissionBean> permissions) {
         super(user_id, user_guid, first_name, last_name, email, user_avatar, role, dob, status, phone, gender, name);
         this.appt_length = appt_length;
         this.appt_start_time = appt_start_time;
         this.appt_end_time = appt_end_time;
+        this.alt_rpm_response_no = alt_rpm_response_no;
         this.connection_status = connection_status;
         this.questionnaire = questionnaire;
         this.history = history;
@@ -263,6 +265,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public void setAppt_end_time(String appt_end_time) {
         this.appt_end_time = appt_end_time;
+    }
+
+    public String getAlt_rpm_response_no() {
+        return alt_rpm_response_no;
+    }
+
+    public void setAlt_rpm_response_no(String alt_rpm_response_no) {
+        this.alt_rpm_response_no = alt_rpm_response_no;
     }
 
     public UserDetailBean getUser_detail() {

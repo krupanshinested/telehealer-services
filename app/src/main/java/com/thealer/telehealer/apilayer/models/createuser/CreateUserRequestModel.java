@@ -161,6 +161,7 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
     public static class UserDataBean extends ViewModel implements Serializable {
 
         private String phone;
+        private String alt_rpm_response_no;
         private String first_name;
         private String last_name;
         private String password;
@@ -199,6 +200,7 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
 
         public UserDataBean(WhoAmIApiResponseModel whoAmIApiResponseModel) {
             this.phone = whoAmIApiResponseModel.getPhone();
+            this.alt_rpm_response_no = whoAmIApiResponseModel.getAlt_rpm_response_no();
             this.first_name = whoAmIApiResponseModel.getFirst_name();
             this.last_name = whoAmIApiResponseModel.getLast_name();
             this.password = "";
@@ -217,6 +219,14 @@ public class CreateUserRequestModel extends ViewModel implements Serializable {
 
         public void setPhone(String phone) {
             this.phone = phone;
+        }
+
+        public String getAlt_rpm_response_no() {
+            return alt_rpm_response_no;
+        }
+
+        public void setAlt_rpm_response_no(String alt_rpm_response_no) {
+            this.alt_rpm_response_no = alt_rpm_response_no;
         }
 
         public String getFirst_name() {

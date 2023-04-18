@@ -80,6 +80,7 @@
     <string name="first_name">Nombre de pila</string>
     <string name="last_name">Apellido</string>
     <string name="date_of_birth">Fecha de nacimiento</string>
+    <string name="alternate_number">Número secundario</string>
     <string name="gender">Género</string>
     <string name="email_hint">usuario@dominio.com</string>
     <string name="email_address">Dirección de correo electrónico</string>
@@ -852,6 +853,7 @@
     <string name="stethIO">Steth IO</string>
     <string name="registration_email_phone_verify_info">Antes de crear su cuenta, asegúrese de que hemos capturado correctamente su número de teléfono móvil y correo electrónico</string>
     <string name="enter_your_mobile_number">Ingrese su numero celular</string>
+    <string name="enter_your_alternate_mobile_number">Introduce tu número de móvil alternativo</string>
     <string name="confirm_your_mobile_number_and_email">Confirme su número de móvil y correo electrónico</string>
     <string name="do_you_want_to_close">¿Quieres cerrar?</string>
     <string name="search_practices">Prácticas de búsqueda</string>
@@ -893,6 +895,7 @@
     <string name="join">unirse</string>
     <string name="dismiss">despedir</string>
     <string name="call_pop_up_title">Su cita con %s está en progreso.</string>
+    <string name="call_on">teléfono encendido %s</string>
     <string name="network_error">Error de red</string>
     <string name="please_check_your_network_connection">Por favor revise su conexión de red</string>
     <string name="EMPTY_NO_NETWORK_TITLE">Sin conexión a Internet</string>
