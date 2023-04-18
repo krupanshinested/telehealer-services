@@ -54,11 +54,15 @@ import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,7 +98,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private RippleBackground contentpreviouss;
     private CardView vwprevious, vwnext;
     private AppCompatTextView tvtandc;
-    private CheckBox checkboxsms,checkboxcall;
+    private CheckBox checkboxsms,checkboxcall,checkboxcallalt;
 
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
@@ -228,6 +232,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         deviceLink2 = findViewById(R.id.device_link2);
         checkboxsms = findViewById(R.id.checkboxsms);
         checkboxcall = findViewById(R.id.checkboxcall);
+        checkboxcallalt = findViewById(R.id.checkboxcall_alt);
         tvtandc = findViewById(R.id.tv_tandc);
 
         backIv.setOnClickListener(this);
@@ -236,11 +241,47 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         previousPhysician.setOnClickListener(this);
         nextPhysician.setOnClickListener(this);
 
+        checkboxcall.setText(String.format(getString(R.string.call_on), UserDetailPreferenceManager.getPhone()));
+
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null || !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
+            try {
+                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject altnumber = jsonArray.getJSONObject(i);
+                    if (jsonArray.length() == i) {
+                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+                    } else if (i == 0) {
+                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+                    } else {
+                        sb.append(altnumber.getString("code") + altnumber.getString("number") + ", ");
+                    }
+                }
+                checkboxcallalt.setText(String.format(getString(R.string.call_on), sb));
+            } catch (Exception e) {
+                Log.d("TAG", "initView: " + e.getMessage());
+            }
+        }
         checkboxcall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
                     checkboxcall.setClickable(false);
+                    checkboxsms.setChecked(false);
+                    checkboxsms.setClickable(true);
+                    checkboxcallalt.setChecked(false);
+                    checkboxcallalt.setClickable(true);
+                }
+            }
+        });
+
+        checkboxcallalt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    checkboxcallalt.setClickable(false);
+                    checkboxcall.setChecked(false);
+                    checkboxcall.setClickable(true);
                     checkboxsms.setChecked(false);
                     checkboxsms.setClickable(true);
                 }
@@ -254,6 +295,8 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                     checkboxsms.setClickable(false);
                     checkboxcall.setChecked(false);
                     checkboxcall.setClickable(true);
+                    checkboxcallalt.setChecked(false);
+                    checkboxcallalt.setClickable(true);
                 }
             }
         });
