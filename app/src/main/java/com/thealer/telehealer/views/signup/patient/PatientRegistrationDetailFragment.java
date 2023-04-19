@@ -1,8 +1,6 @@
 package com.thealer.telehealer.views.signup.patient;
 
 import android.app.Activity;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -17,8 +15,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
-
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -32,8 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.material.textfield.TextInputLayout;
-import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
@@ -65,15 +59,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.michaelrocks.libphonenumber.android.NumberParseException;
-import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
-import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 import static com.thealer.telehealer.common.Constants.TYPE_DOB;
-import static com.thealer.telehealer.common.UserType.isUserPatient;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * Created by Aswin on 11,October,2018
@@ -127,11 +114,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private ImageView backIv;
     private TextView toolbarTitle;
     private TextView nextTv;
-    private EditText numberAltEt;
-    private CountryCodePicker countyAltCode;
-    private TextInputLayout numberAltTil;
-    private PhoneNumberFormattingTextWatcher altphoneNumberFormattingTextWatcher = null;
-    private PhoneNumberUtil phoneNumberUtil;
 
     @Override
     public void onAttach(Context context) {
@@ -247,11 +229,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         profileCiv = (CircleImageView) view.findViewById(R.id.profile_civ);
         firstnameEt = (EditText) view.findViewById(R.id.firstname_et);
         lastnameEt = (EditText) view.findViewById(R.id.lastname_et);
-
-        countyAltCode = (CountryCodePicker) view.findViewById(R.id.county_alt_code);
-        numberAltEt = (EditText) view.findViewById(R.id.number_alt_et);
-        numberAltTil = (TextInputLayout) view.findViewById(R.id.number_alt_til);
-        phoneNumberUtil = PhoneNumberUtil.createInstance(getActivity());
         dobEt = (EditText) view.findViewById(R.id.dob_et);
         genderSp = view.findViewById(R.id.gender_sp);
         gender_value = view.findViewById(R.id.gender_value);
@@ -277,7 +254,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         addTextWatcher(firstnameEt);
         addTextWatcher(lastnameEt);
         addTextWatcher(dobEt);
-        addTextWatcher(numberAltEt);
 
         profileCiv.setOnClickListener(this);
 
@@ -305,40 +281,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         firstnameEt.setText(UserDetailPreferenceManager.getFirst_name());
         lastnameEt.setText(UserDetailPreferenceManager.getLast_name());
 
-        countyAltCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
-            @Override
-            public void onCountrySelected() {
-                setAltHint();
-            }
-        });
         updateUI();
     }
 
-    private void setAltHint() {
-
-        if (altphoneNumberFormattingTextWatcher != null) {
-            numberAltEt.removeTextChangedListener(altphoneNumberFormattingTextWatcher);
-        }
-
-        altphoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher(countyAltCode.getSelectedCountryNameCode()) {
-            @Override
-            public synchronized void afterTextChanged(Editable s) {
-                super.afterTextChanged(s);
-            }
-        };
-
-        numberAltEt.addTextChangedListener(altphoneNumberFormattingTextWatcher);
-
-        try {
-            String countryNameCode = countyAltCode.getSelectedCountryNameCode();
-            String hintNumber = String.valueOf(phoneNumberUtil.getExampleNumber(countryNameCode).getNationalNumber());
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(hintNumber, countyAltCode.getSelectedCountryNameCode());
-            hintNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).replace(countyAltCode.getSelectedCountryCodeWithPlus(), "").trim();
-            numberAltEt.setHint(hintNumber);
-        } catch (NumberParseException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void setupViewPagerAdapter() {
         insuranceViewPagerAdapter = new InsuranceViewPagerAdapter(getActivity(),
@@ -427,8 +372,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private void updateAllViews(Boolean enabled) {
         Utils.setEditable(firstnameEt, enabled);
         Utils.setEditable(lastnameEt, enabled);
-        Utils.setEditable(numberAltEt, enabled);
-        countyAltCode.setCcpClickable(enabled);
 
         if (enabled) {
             gender_value.setVisibility(View.GONE);
@@ -472,27 +415,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         firstnameEt.setText(createUserRequestModel.getUser_data().getFirst_name());
         lastnameEt.setText(createUserRequestModel.getUser_data().getLast_name());
         dobEt.setText(createUserRequestModel.getUser_data().getDob());
-
-        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
-            try {
-                JSONArray jsonArray = new JSONArray(createUserRequestModel.getUser_data().getAlt_rpm_response_no());
-                StringBuilder sb=new StringBuilder();
-                for (int i = 0;i<jsonArray.length();i++){
-                    JSONObject altnumber = jsonArray.getJSONObject(i);
-                    countyAltCode.setCountryForPhoneCode(Integer.parseInt(altnumber.getString("code").replace("+","")));
-                    if (jsonArray.length()==i){
-                        sb.append(altnumber.getString("number"));
-                    }else if (i == 0){
-                        sb.append(altnumber.getString("number"));
-                    }else {
-                        sb.append(altnumber.getString("number")+", ");
-                    }
-                }
-                numberAltEt.setText(sb);
-            }catch (Exception e) {
-
-            }
-        }
 
         try {
             String gender = createUserRequestModel.getUser_data().getGenderKey();
@@ -573,18 +495,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         userDataBean.setLast_name(lastnameEt.getText().toString());
         userDataBean.setDob(dobEt.getText().toString());
         userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
-        if (isUserPatient()) {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
-                jsonObject.put("number", numberAltEt.getText().toString());
-                JSONArray array = new JSONArray();
-                array.put(jsonObject);
-                userDataBean.setAlt_rpm_response_no(array.toString());
-            } catch (Exception e) {
-                Log.d("TAG", "proceed: " + e.getMessage());
-            }
-        }
 
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_avatar_path(profileImgPath);
