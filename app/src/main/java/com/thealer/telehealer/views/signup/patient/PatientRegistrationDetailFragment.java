@@ -478,7 +478,8 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 JSONArray jsonArray = new JSONArray(createUserRequestModel.getUser_data().getAlt_rpm_response_no());
                 StringBuilder sb=new StringBuilder();
                 for (int i = 0;i<jsonArray.length();i++){
-                    JSONObject altnumber = jsonArray.getJSONObject(i);
+                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
+
                     countyAltCode.setCountryForPhoneCode(Integer.parseInt(altnumber.getString("code").replace("+","")));
                     if (jsonArray.length()==i){
                         sb.append(altnumber.getString("number"));
@@ -490,7 +491,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 }
                 numberAltEt.setText(sb);
             }catch (Exception e) {
-
+                Log.d("TAG", "updateUI: "+e.getMessage());
             }
         }
 

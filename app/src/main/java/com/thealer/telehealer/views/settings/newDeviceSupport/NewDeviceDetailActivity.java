@@ -248,7 +248,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject altnumber = jsonArray.getJSONObject(i);
+                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
                     if (jsonArray.length() == i) {
                         sb.append(altnumber.getString("code") + altnumber.getString("number"));
                     } else if (i == 0) {
