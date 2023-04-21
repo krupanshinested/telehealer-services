@@ -8,7 +8,7 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="date_of_birth">Date of birth</string>
-    <string name="alternate_number">Alternate Number</string>
+    <string name="alternate_number">Alternate RPM Response No.</string>
     <string name="gender">Gender</string>
     <string name="email_hint">user@domain.com</string>
     <string name="email_address">Email Address</string>
