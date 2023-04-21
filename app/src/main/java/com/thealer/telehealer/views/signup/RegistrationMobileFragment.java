@@ -284,19 +284,19 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
         }
         mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
 
-        if (isUserPatient()) {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
-                jsonObject.put("number", numberAltEt.getText().toString());
-
-                JSONArray array = new JSONArray();
-                array.put(jsonObject);
-                createUserRequestModel.getUser_data().setAlt_rpm_response_no(array.toString());
-            } catch (Exception e) {
-                Log.d("TAG", "proceed: " + e.getMessage());
-            }
-        }
+//        if (isUserPatient()) {
+//            try {
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
+//                jsonObject.put("number", numberAltEt.getText().toString());
+//
+//                JSONArray array = new JSONArray();
+//                array.put(jsonObject);
+//                createUserRequestModel.getUser_data().setAlt_rpm_response_no(array.toString());
+//            } catch (Exception e) {
+//                Log.d("TAG", "proceed: " + e.getMessage());
+//            }
+//        }
         createUserRequestModel.getUser_data().setPhone(mobileNumber);
 
         onActionCompleteInterface.onCompletionResult(null, true, null);
