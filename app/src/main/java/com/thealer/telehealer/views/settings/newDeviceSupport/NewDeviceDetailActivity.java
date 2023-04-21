@@ -243,25 +243,27 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
         checkboxcall.setText(String.format(getString(R.string.call_on), UserDetailPreferenceManager.getPhone()));
 
-        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null || !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
-            try {
-                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
-                    if (jsonArray.length() == i) {
-                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
-                    } else if (i == 0) {
-                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
-                    } else {
-                        sb.append(altnumber.getString("code") + altnumber.getString("number") + ", ");
-                    }
-                }
-                checkboxcallalt.setText(String.format(getString(R.string.call_on), sb));
-            } catch (Exception e) {
-                Log.d("TAG", "initView: " + e.getMessage());
-            }
-        }
+        checkboxcallalt.setText(String.format(getString(R.string.call_on), getAltNumber()));
+
+//        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null || !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
+//            try {
+//                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
+//                StringBuilder sb = new StringBuilder();
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
+////                    if (jsonArray.length() == i) {
+//                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+////                    } else if (i == 0) {
+////                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+////                    } else {
+////                        sb.append(altnumber.getString("code") + altnumber.getString("number") + ", ");
+////                    }
+//                }
+//                checkboxcallalt.setText(String.format(getString(R.string.call_on), sb));
+//            } catch (Exception e) {
+//                Log.d("TAG", "initView: " + e.getMessage());
+//            }
+//        }
         checkboxcall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -396,6 +398,40 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         devicestep.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    private String getAltNumber(){
+
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null || !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
+            checkboxcallalt.setVisibility(View.VISIBLE);
+            try {
+                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
+//                    if (jsonArray.length() == i) {
+
+                    if (altnumber.getString("number").isEmpty()){
+                        checkboxcallalt.setVisibility(View.GONE);
+                    }else {
+                        checkboxcallalt.setVisibility(View.VISIBLE);
+                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+                    }
+//                    } else if (i == 0) {
+//                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+//                    } else {
+//                        sb.append(altnumber.getString("code") + altnumber.getString("number") + ", ");
+//                    }
+                }
+                return sb.toString();
+            } catch (Exception e) {
+                Log.d("TAG", "initView: " + e.getMessage());
+                return "";
+            }
+        }else {
+            checkboxcallalt.setVisibility(View.GONE);
+        }
+        return "";
+    }
+
     private void setNewDevice() {
         txtSubmit.setClickable(false);
         ArrayList<String> smsList = new ArrayList<>();
@@ -423,6 +459,14 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             param.put(ApiInterface.SMS_ENABLED, false);
             param.put(ApiInterface.CALL_ENABLED, true);
             param.put(ApiInterface.PHYSICIAN_NOTIFICATION_CALL, smsList);
+
+            if (checkboxcall.isChecked()) {
+                param.put(ApiInterface.PHONE, UserDetailPreferenceManager.getPhone());
+            }
+
+            if (checkboxcallalt.isChecked()){
+                param.put(ApiInterface.PHONE, getAltNumber());
+            }
         }
         newDeviceSetApiViewModel.setDevice(param);
     }
