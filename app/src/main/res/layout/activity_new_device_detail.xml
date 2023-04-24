@@ -317,59 +317,6 @@
                             android:textSize="@dimen/_12ssp"
                             tools:text="@string/key_device_sms_enabled" />
 
-
-                        <HorizontalScrollView
-                            android:id="@+id/horizontalScrollView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:foregroundGravity="center_vertical">
-
-                            <LinearLayout
-                                android:layout_marginTop="@dimen/_5sdp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <androidx.appcompat.widget.AppCompatCheckBox
-                                    android:id="@+id/checkboxsms"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="SMS"
-                                    android:checked="true"
-                                    android:visibility="visible"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-                                <androidx.appcompat.widget.AppCompatCheckBox
-                                    android:id="@+id/checkboxcall"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginStart="@dimen/_8sdp"
-                                    android:text="CALL"
-                                    android:visibility="visible"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-                                <androidx.appcompat.widget.AppCompatCheckBox
-                                    android:id="@+id/checkboxcall_alt"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginStart="@dimen/_8sdp"
-                                    android:text="CALL"
-                                    android:visibility="visible"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                            </LinearLayout>
-
-                        </HorizontalScrollView>
-
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -463,6 +410,79 @@
                         <!--                            android:fitsSystemWindows="true"-->
                         <!--                            android:padding="@dimen/_5sdp"-->
                         <!--                            android:scrollbars="horizontal" />-->
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@color/colorGrey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/device_sms_call"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:ellipsize="end"
+                            android:ems="3"
+                            android:fontFamily="@font/open_sans_semibold"
+                            android:gravity="center|left"
+                            android:text="@string/key_device_sms_call_view"
+                            android:textColor="@color/colorBlack_85"
+                            android:textSize="@dimen/_12ssp"
+                            tools:text="@string/key_device_sms_enabled" />
+
+                        <HorizontalScrollView
+                            android:id="@+id/horizontalScrollView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="none"
+                            android:foregroundGravity="center_vertical">
+
+                            <LinearLayout
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <androidx.appcompat.widget.AppCompatCheckBox
+                                    android:id="@+id/checkboxsms"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="SMS"
+                                    android:checked="true"
+                                    android:visibility="visible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.appcompat.widget.AppCompatCheckBox
+                                    android:id="@+id/checkboxcall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="@dimen/_8sdp"
+                                    android:text="CALL"
+                                    android:visibility="visible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.appcompat.widget.AppCompatCheckBox
+                                    android:id="@+id/checkboxcall_alt"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="@dimen/_8sdp"
+                                    android:text="CALL"
+                                    android:visibility="visible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                            </LinearLayout>
+
+                        </HorizontalScrollView>
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/device_description_vital"

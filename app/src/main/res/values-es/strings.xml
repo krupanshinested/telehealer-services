@@ -1556,6 +1556,7 @@
     <string name="key_device_delete_confirmation">Estás segura de que quieres eliminar este dispositivo?</string>
     <string name="key_device_sms_enabled">4. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
     <string name="key_device_sms_enabled_view">SMS para la siguiente médica:</string>
+    <string name="key_device_sms_call_view">5. Select medium to regarding your vitals:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
     <string name="key_to_find_number">Click here.</string>
