@@ -400,7 +400,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
     private String getAltNumber(){
 
-        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null || !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null && !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
             checkboxcallalt.setVisibility(View.VISIBLE);
             try {
                 JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
