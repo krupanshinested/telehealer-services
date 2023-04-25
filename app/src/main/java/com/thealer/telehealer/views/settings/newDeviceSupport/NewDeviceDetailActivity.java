@@ -334,11 +334,20 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 if (myDeviceDetail.getsms_enabled().equals("true")){
                     checkboxsms.setChecked(true);
                     checkboxcall.setChecked(false);
+                    checkboxcallalt.setChecked(false);
                     checkboxsms.setClickable(false);
                 }else {
-                    checkboxcall.setChecked(true);
-                    checkboxsms.setChecked(false);
-                    checkboxcall.setClickable(false);
+                    if (myDeviceDetail.getPhone().equals(UserDetailPreferenceManager.getPhone())){
+                        checkboxcall.setChecked(true);
+                        checkboxsms.setChecked(false);
+                        checkboxcallalt.setChecked(false);
+                        checkboxcall.setClickable(false);
+                    }else {
+                        checkboxcallalt.setChecked(true);
+                        checkboxsms.setChecked(false);
+                        checkboxcall.setChecked(false);
+                        checkboxcallalt.setClickable(false);
+                    }
                 }
             }
 

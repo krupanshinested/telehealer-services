@@ -62,6 +62,16 @@ public class MyDeviceListApiResponseModel extends BaseApiResponseModel {
 
         private String id;
 
+        private String phone;
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
         public String gettermAndConditionLink() {
             return termAndConditionLink;
         }
