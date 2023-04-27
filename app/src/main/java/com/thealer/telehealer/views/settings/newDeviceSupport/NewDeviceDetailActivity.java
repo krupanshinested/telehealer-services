@@ -451,6 +451,11 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 }
             }
 
+        if (smsList.size() < 1){
+            Toast.makeText(activity, "Please select physician", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         HashMap<String, Object> param = new HashMap<>();
         param.put(ApiInterface.HEALTHCARE_DEVICE_ID, healthCareId);
         param.put(ApiInterface.DEVICE_ID, edtDeviceId.getText().toString().trim());
