@@ -896,6 +896,7 @@
     <string name="dismiss">despedir</string>
     <string name="call_pop_up_title">Su cita con %s está en progreso.</string>
     <string name="call_on">teléfono encendido %s</string>
+    <string name="sms_on">SMS on %s</string>
     <string name="network_error">Error de red</string>
     <string name="please_check_your_network_connection">Por favor revise su conexión de red</string>
     <string name="EMPTY_NO_NETWORK_TITLE">Sin conexión a Internet</string>
@@ -1556,7 +1557,7 @@
     <string name="key_device_delete_confirmation">Estás segura de que quieres eliminar este dispositivo?</string>
     <string name="key_device_sms_enabled">4. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
     <string name="key_device_sms_enabled_view">SMS para la siguiente médica:</string>
-    <string name="key_device_sms_call_view">5. Select medium to regarding your vitals:</string>
+    <string name="key_device_sms_call_view">5. Select your Vital Response no.:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
     <string name="key_to_find_number">Click here.</string>

@@ -896,6 +896,7 @@
     <string name="dismiss">खारिज</string>
     <string name="call_pop_up_title">%s साथ आपकी नियुक्ति अब प्रगति पर है।</string>
     <string name="call_on">%s पर कॉल करें</string>
+    <string name="sms_on">SMS on %s</string>
     <string name="device_disconnected_message">डिवाइस डिस्कनेक्ट हो गया!</string>
     <string name="type_your_message">अपना संदेश टाइप करें</string>
     <string name="choose_message">संदेश चुनें</string>
@@ -1543,7 +1544,7 @@
     <string name="key_add_new_device">नया उपकरण जोड़ें</string>
     <string name="key_device_delete_confirmation">क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?</string>
     <string name="key_device_sms_enabled">4. अपनी ज़रूरी जानकारी के बारे में फ़ीडबैक पाने के लिए प्रदाता का चयन करें:</string>
-    <string name="key_device_sms_call_view">5. Select medium to regarding your vitals:</string>
+    <string name="key_device_sms_call_view">5. Select your Vital Response no.:</string>
     <string name="key_device_sms_enabled_view">निम्नलिखित चिकित्सक के लिए एसएमएस:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>

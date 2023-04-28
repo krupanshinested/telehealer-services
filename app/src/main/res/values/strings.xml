@@ -970,6 +970,7 @@
     <string name="dismiss">dismiss</string>
     <string name="call_pop_up_title">Your appointment with %s is now in progress.</string>
     <string name="call_on">Call on %s</string>
+    <string name="sms_on">SMS on %s</string>
     <string name="device_disconnected_message">Device got disconnected!</string>
     <string name="type_your_message">Type your message</string>
     <string name="choose_message">Choose Message</string>
@@ -1644,7 +1645,7 @@
     <string name="key_device_delete_confirmation">Are you sure you want to delete this device?</string>
     <string name="key_device_sms_enabled">4. Select provider to receive feedback from regarding your vitals:</string>
     <string name="key_device_sms_enabled_view">SMS for following physician: </string>
-    <string name="key_device_sms_call_view">5. Select medium to regarding your vitals:</string>
+    <string name="key_device_sms_call_view">5. Select your Vital Response no.:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
     <string name="key_to_find_number">Click here.</string>

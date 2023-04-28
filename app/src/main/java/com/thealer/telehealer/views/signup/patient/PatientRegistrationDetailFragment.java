@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.hbb20.CountryCodePicker;
@@ -576,12 +577,18 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
         if (isUserPatient()) {
             try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
-                jsonObject.put("number", numberAltEt.getText().toString());
-                JSONArray array = new JSONArray();
-                array.put(jsonObject);
-                userDataBean.setAlt_rpm_response_no(array.toString());
+
+                if (validateNumber()){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
+                    jsonObject.put("number", numberAltEt.getText().toString());
+                    JSONArray array = new JSONArray();
+                    array.put(jsonObject);
+                    userDataBean.setAlt_rpm_response_no(array.toString());
+                }else {
+                    Toast.makeText(getActivity(), "Please update proper Alternate number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             } catch (Exception e) {
                 Log.d("TAG", "proceed: " + e.getMessage());
             }
@@ -589,6 +596,26 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_avatar_path(profileImgPath);
+    }
+
+    private boolean validateNumber() {
+        if (!numberAltEt.getText().toString().isEmpty()) {
+            try {
+                Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(numberAltEt.getText().toString(), countyAltCode.getSelectedCountryNameCode());
+                boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
+
+                if (isValid) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (NumberParseException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     public void setProfileCiv() {
