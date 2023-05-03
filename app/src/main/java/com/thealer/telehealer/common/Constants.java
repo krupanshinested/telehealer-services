@@ -258,4 +258,10 @@ public class Constants {
         int STRIPE = 1;
         int CASH = 2;
     }
+
+    public interface Defaultvital {
+        String primary = "primary";
+        String alternate = "alternate";
+    }
+
 }

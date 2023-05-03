@@ -38,6 +38,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private String appt_start_time;
     private String appt_end_time;
     private String alt_rpm_response_no;
+    private String default_vital_response;
     private List<PermissionBean> permissions;
     private List<VitalBean> vitals;
 
@@ -46,13 +47,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public CommonUserApiResponseModel(String first_name, String last_name, String status, String email, String user_guid, int user_id,
                                       String user_avatar, String role, String phone, String gender, String dob, int appt_length, String appt_start_time, String appt_end_time,String alt_rpm_response_no,
-                                      String name, String connection_status, QuestionnaireBean questionnaire, List<HistoryBean> history, AppDetailBean appDetail,
+                                      String default_vital_response,String name, String connection_status, QuestionnaireBean questionnaire, List<HistoryBean> history, AppDetailBean appDetail,
                                       UserDetailBean user_detail,List<PermissionBean> permissions) {
         super(user_id, user_guid, first_name, last_name, email, user_avatar, role, dob, status, phone, gender, name);
         this.appt_length = appt_length;
         this.appt_start_time = appt_start_time;
         this.appt_end_time = appt_end_time;
         this.alt_rpm_response_no = alt_rpm_response_no;
+        this.default_vital_response = default_vital_response;
         this.connection_status = connection_status;
         this.questionnaire = questionnaire;
         this.history = history;
@@ -273,6 +275,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public void setAlt_rpm_response_no(String alt_rpm_response_no) {
         this.alt_rpm_response_no = alt_rpm_response_no;
+    }
+
+    public String getDefault_vital_response() {
+        return default_vital_response;
+    }
+
+    public void setDefault_vital_response(String default_vital_response) {
+        this.default_vital_response = default_vital_response;
     }
 
     public UserDetailBean getUser_detail() {

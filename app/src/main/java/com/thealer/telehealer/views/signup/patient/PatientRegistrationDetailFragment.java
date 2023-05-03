@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -96,6 +97,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private TextView cash_tv, gender_value;
 
     private String[] genderList;
+    private String[] defaultList;
     private Bitmap profileImg = null;
     private String profileImgPath;
     private OnViewChangeInterface onViewChangeInterface;
@@ -133,6 +135,10 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private TextInputLayout numberAltTil;
     private PhoneNumberFormattingTextWatcher altphoneNumberFormattingTextWatcher = null;
     private PhoneNumberUtil phoneNumberUtil;
+    private Spinner defaultSp;
+    private TextView defaultvalue;
+    private boolean isFirstTime;
+    public static String defaultvital = Constants.Defaultvital.primary;
 
     @Override
     public void onAttach(Context context) {
@@ -261,7 +267,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         cash_tv = view.findViewById(R.id.cash_tv);
         insuranceViewPager = (ViewPager) view.findViewById(R.id.insurance_viewPager);
         pagerIndicator = (LinearLayout) view.findViewById(R.id.pager_indicator);
-
+        defaultSp = view.findViewById(R.id.default_sp);
+        defaultvalue = view.findViewById(R.id.default_value);
+        defaultvital = UserDetailPreferenceManager.getWhoAmIResponse().getDefault_vital_response();
         setupViewPagerAdapter();
 
         insurance_lay.setOnClickListener(this);
@@ -274,6 +282,44 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, genderList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderSp.setAdapter(arrayAdapter);
+
+        defaultList = getResources().getStringArray(R.array.vital_response_list);
+        ArrayAdapter defaultArrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, defaultList);
+        defaultArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        defaultSp.setAdapter(defaultArrayAdapter);
+        defaultSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (isFirstTime){
+                    if (adapterView.getSelectedItem().toString().equals(defaultList[1])){
+
+                        if (numberAltEt.getText().toString().isEmpty()){
+                            Toast.makeText(getActivity(), "Please update Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                            defaultSp.setSelection(0,false);
+                            defaultvital = Constants.Defaultvital.primary;
+                            defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                        }else {
+                            if (!validateNumber()){
+                                Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                                defaultSp.setSelection(0,false);
+                                defaultvital = Constants.Defaultvital.primary;
+                                defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                            }else {
+                                defaultvital = Constants.Defaultvital.alternate;
+                                defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                            }
+                        }
+                    }else {
+                        defaultvital = Constants.Defaultvital.primary;
+                        defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
 
         addTextWatcher(firstnameEt);
         addTextWatcher(lastnameEt);
@@ -309,9 +355,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         countyAltCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
             public void onCountrySelected() {
+                numberAltEt.setText("");
                 setAltHint();
             }
         });
+        setAltHint();
         updateUI();
     }
 
@@ -402,6 +450,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 updateNextTitle(getString(R.string.Save));
                 break;
             case Constants.EDIT_MODE:
+                isFirstTime = true;
                 updateAllViews(true);
                 onViewChangeInterface.updateNextTitle(getString(R.string.Save));
                 firstnameEt.requestFocus();
@@ -432,11 +481,15 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         countyAltCode.setCcpClickable(enabled);
 
         if (enabled) {
+            defaultSp.setVisibility(View.VISIBLE);
+            defaultvalue.setVisibility(View.GONE);
             gender_value.setVisibility(View.GONE);
             genderSp.setVisibility(View.VISIBLE);
         } else {
             gender_value.setVisibility(View.VISIBLE);
             genderSp.setVisibility(View.GONE);
+            defaultSp.setVisibility(View.GONE);
+            defaultvalue.setVisibility(View.VISIBLE);
         }
     }
 
@@ -473,7 +526,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         firstnameEt.setText(createUserRequestModel.getUser_data().getFirst_name());
         lastnameEt.setText(createUserRequestModel.getUser_data().getLast_name());
         dobEt.setText(createUserRequestModel.getUser_data().getDob());
-
         if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
             try {
                 JSONArray jsonArray = new JSONArray(createUserRequestModel.getUser_data().getAlt_rpm_response_no());
@@ -498,6 +550,10 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
         try {
             String gender = createUserRequestModel.getUser_data().getGenderKey();
+            List defaultVital = Arrays.asList(defaultList);
+            int defaultposition = this.defaultvital.equals(Constants.Defaultvital.primary) ? 0 : 1;
+            defaultSp.setSelection(defaultposition, false);
+            defaultvalue.setText(defaultSp.getSelectedItem().toString());
             List genders = Arrays.asList(genderList);
             genderSp.setSelection(genders.indexOf(gender), false);
             gender_value.setText(genderSp.getSelectedItem().toString());
@@ -577,7 +633,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
         if (isUserPatient()) {
             try {
-
                 if (validateNumber()){
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
@@ -586,14 +641,48 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                     array.put(jsonObject);
                     userDataBean.setAlt_rpm_response_no(array.toString());
                 }else {
-                    Toast.makeText(getActivity(), "Please update proper Alternate number", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
                     return;
                 }
             } catch (Exception e) {
                 Log.d("TAG", "proceed: " + e.getMessage());
             }
-        }
 
+            if (defaultvalue.getText().toString().equals(defaultList[1])){
+                if (numberAltEt.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(), "Please update Alternate RPM response number then select default vital response", Toast.LENGTH_SHORT).show();
+                    onViewChangeInterface.enableNext(true);
+                    enableNext(true);
+                    isFirstTime = true;
+                    defaultSp.setSelection(0);
+                    return;
+                }else{
+                    try {
+                        Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(numberAltEt.getText().toString(), countyAltCode.getSelectedCountryNameCode());
+                        boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
+
+                        if (!isValid) {
+                            Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                            onViewChangeInterface.enableNext(true);
+                            enableNext(true);
+                            isFirstTime = true;
+                            defaultSp.setSelection(0);
+                            return;
+                        }
+                    } catch (NumberParseException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
+                        onViewChangeInterface.enableNext(true);
+                        enableNext(true);
+                        isFirstTime = true;
+                        defaultSp.setSelection(0);
+                        return;
+                    }
+                }
+            }
+
+        }
+        userDataBean.setDefault_vital_response(defaultvital);
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_avatar_path(profileImgPath);
     }
@@ -745,6 +834,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         switch (currentDisplayType) {
             case Constants.SCHEDULE_CREATION_MODE:
             case Constants.EDIT_MODE:
+                isFirstTime = false;
                 onViewChangeInterface.enableNext(false);
                 enableNext(false);
                 updateUserRequestModel();

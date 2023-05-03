@@ -1596,4 +1596,5 @@
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">Subscription history</string>
+    <string name="default_vital">Default Vital Response on</string>
 </resources>

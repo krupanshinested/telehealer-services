@@ -476,7 +476,6 @@
                             android:layout_height="match_parent">
 
                             <HorizontalScrollView
-                                android:layout_toLeftOf="@id/add_alternate_no"
                                 android:id="@+id/horizontalScrollViewfifth"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -499,34 +498,62 @@
                                         app:layout_constraintEnd_toEndOf="parent"
                                         app:layout_constraintTop_toTopOf="parent" />
 
-                                    <androidx.appcompat.widget.AppCompatCheckBox
-                                        android:id="@+id/checkboxsmscall2"
+                                    <LinearLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:layout_marginStart="@dimen/_8sdp"
-                                        android:text="CALL"
-                                        android:visibility="visible"
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent" />
+                                        app:layout_constraintTop_toTopOf="parent">
+
+                                        <androidx.appcompat.widget.AppCompatCheckBox
+                                            android:id="@+id/checkboxsmscall2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:visibility="visible" />
+
+                                        <RelativeLayout
+                                            android:id="@+id/number_alt_rl"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content">
+
+                                            <com.hbb20.CountryCodePicker
+                                                android:id="@+id/county_alt_code"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_alignParentStart="true"
+                                                android:layout_centerInParent="true"
+                                                app:ccp_autoDetectCountry="true"
+                                                app:ccp_autoDetectLanguage="true"
+                                                app:ccp_autoFormatNumber="true"
+                                                app:ccp_defaultNameCode="US"
+                                                app:ccp_showFlag="false"
+                                                app:ccp_showNameCode="false"
+                                                app:ccp_textSize="@dimen/_10ssp" />
+
+                                            <com.google.android.material.textfield.TextInputLayout
+                                                android:id="@+id/number_alt_til"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginEnd="@dimen/_5sdp"
+                                                android:layout_toEndOf="@+id/county_alt_code"
+                                                app:hintEnabled="false">
+
+                                                <EditText
+                                                    android:id="@+id/number_alt_et"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:gravity="center"
+                                                    android:inputType="phone"
+                                                    android:textSize="@dimen/_10ssp" />
+                                            </com.google.android.material.textfield.TextInputLayout>
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
 
 
                                 </LinearLayout>
                             </HorizontalScrollView>
-
-                            <ImageView
-                                android:layout_centerVertical="true"
-                                android:layout_alignParentEnd="true"
-                                android:id="@+id/add_alternate_no"
-                                android:layout_width="@dimen/_19sdp"
-                                android:layout_height="@dimen/_19sdp"
-                                android:layout_gravity="center"
-                                android:visibility="visible"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/add" />
 
                         </RelativeLayout>
 

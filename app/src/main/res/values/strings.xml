@@ -128,6 +128,12 @@
         <item>Others</item>
     </string-array>
 
+    <!--Vital Response List-->
+    <string-array name="vital_response_list">
+        <item>Registration Number</item>
+        <item>Alternate RPM Response Number</item>
+    </string-array>
+
     <!--Medical Assistant Title list-->
     <string-array name="assistant_title_list">
         <item>RN</item>
@@ -1682,4 +1688,5 @@
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">Subscription history</string>
+    <string name="default_vital">Default Vital Response on</string>
 </resources>
