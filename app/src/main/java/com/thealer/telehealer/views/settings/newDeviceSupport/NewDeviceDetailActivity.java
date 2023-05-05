@@ -479,6 +479,14 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         }
 
         if (deviceFlag) {
+            checkboxsms.setClickable(false);
+//            checkboxsms.setEnabled(false);
+            checkboxcall.setClickable(false);
+//            checkboxcall.setEnabled(false);
+            checkboxsmscall1.setClickable(false);
+//            checkboxsmscall1.setEnabled(false);
+            checkboxsmscall2.setClickable(false);
+//            checkboxsmscall2.setEnabled(false);
             txtSubmit.setVisibility(View.GONE);
 //            deviceDescription1.setVisibility(View.GONE);
 //            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled_view));
