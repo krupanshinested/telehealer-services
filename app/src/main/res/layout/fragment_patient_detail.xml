@@ -152,7 +152,7 @@
                         android:id="@+id/number_alt_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:inputType="phone" />
                 </com.google.android.material.textfield.TextInputLayout>
             </RelativeLayout>
