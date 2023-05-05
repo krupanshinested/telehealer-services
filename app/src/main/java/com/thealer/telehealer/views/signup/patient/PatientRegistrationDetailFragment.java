@@ -522,7 +522,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
     private void updateUI(CreateUserRequestModel createUserRequestModel) {
         setProfileCiv();
-
+        defaultvital = createUserRequestModel.getUser_data().getDefault_vital_response();
         firstnameEt.setText(createUserRequestModel.getUser_data().getFirst_name());
         lastnameEt.setText(createUserRequestModel.getUser_data().getLast_name());
         dobEt.setText(createUserRequestModel.getUser_data().getDob());
