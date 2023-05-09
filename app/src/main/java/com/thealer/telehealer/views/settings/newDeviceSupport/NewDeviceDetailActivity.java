@@ -455,10 +455,10 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             newDeviceCrv.setAdapter(myPhysicianListAdapter);
         }
 
-        if (getOnlyAltNumber().isEmpty()) {
-            numberaltrl.setVisibility(View.GONE);
-            checkboxsmscall2.setVisibility(View.GONE);
-        } else {
+//        if (getOnlyAltNumber().isEmpty()) {
+//            numberaltrl.setVisibility(View.GONE);
+//            checkboxsmscall2.setVisibility(View.GONE);
+//        } else {
             if (deviceFlag) {
                 numberaltrl.setVisibility(View.GONE);
                 checkboxsmscall2.setVisibility(View.VISIBLE);
@@ -471,7 +471,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 numberaltrl.setVisibility(View.VISIBLE);
                 checkboxsmscall2.setVisibility(View.VISIBLE);
             }
-        }
+//        }
         toolbarTitle.setText(title);
         deviceDescription2.setText(description);
         if (image != null) {
