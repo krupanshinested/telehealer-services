@@ -6,14 +6,18 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
@@ -137,7 +141,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private PhoneNumberUtil phoneNumberUtil;
     private Spinner defaultSp;
     private TextView defaultvalue;
-    private boolean isFirstTime;
+    private boolean isFirstTime,isfromedittext;
     public static String defaultvital = Constants.Defaultvital.primary;
 
     @Override
@@ -290,28 +294,30 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         defaultSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (isFirstTime){
-                    if (adapterView.getSelectedItem().toString().equals(defaultList[1])){
+                if (!isfromedittext) {
+                    if (isFirstTime) {
+                        if (adapterView.getSelectedItem().toString().equals(defaultList[1])) {
 
-                        if (numberAltEt.getText().toString().isEmpty()){
-                            Toast.makeText(getActivity(), "Please update Alternate RPM response number", Toast.LENGTH_SHORT).show();
-                            defaultSp.setSelection(0,false);
-                            defaultvital = Constants.Defaultvital.primary;
-                            defaultvalue.setText(defaultSp.getSelectedItem().toString());
-                        }else {
-                            if (!validateNumber()){
-                                Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
-                                defaultSp.setSelection(0,false);
+                            if (numberAltEt.getText().toString().isEmpty()) {
+                                Toast.makeText(getActivity(), "Please update Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                                defaultSp.setSelection(0, false);
                                 defaultvital = Constants.Defaultvital.primary;
                                 defaultvalue.setText(defaultSp.getSelectedItem().toString());
-                            }else {
-                                defaultvital = Constants.Defaultvital.alternate;
-                                defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                            } else {
+                                if (!validateNumber()) {
+                                    Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                                    defaultSp.setSelection(0, false);
+                                    defaultvital = Constants.Defaultvital.primary;
+                                    defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                                } else {
+                                    defaultvital = Constants.Defaultvital.alternate;
+                                    defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                                }
                             }
+                        } else {
+                            defaultvital = Constants.Defaultvital.primary;
+                            defaultvalue.setText(defaultSp.getSelectedItem().toString());
                         }
-                    }else {
-                        defaultvital = Constants.Defaultvital.primary;
-                        defaultvalue.setText(defaultSp.getSelectedItem().toString());
                     }
                 }
             }
@@ -373,6 +379,21 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             @Override
             public synchronized void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
+                Log.d("TAG", "afterTextChanged: "+defaultvital);
+                isfromedittext = true;
+                if (numberAltEt.getText().toString().isEmpty()) {
+                    if (defaultvital.equals(Constants.Defaultvital.alternate)) {
+                        defaultvital = Constants.Defaultvital.primary;
+                        defaultSp.setSelection(0, false);
+                        defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                    }
+                } else {
+                    if (defaultvital.equals(Constants.Defaultvital.primary)) {
+                        defaultvital = Constants.Defaultvital.alternate;
+                        defaultSp.setSelection(1, false);
+                        defaultvalue.setText(defaultSp.getSelectedItem().toString());
+                    }
+                }
             }
         };
 
@@ -526,25 +547,25 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         firstnameEt.setText(createUserRequestModel.getUser_data().getFirst_name());
         lastnameEt.setText(createUserRequestModel.getUser_data().getLast_name());
         dobEt.setText(createUserRequestModel.getUser_data().getDob());
-        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)){
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
             try {
                 JSONArray jsonArray = new JSONArray(createUserRequestModel.getUser_data().getAlt_rpm_response_no());
-                StringBuilder sb=new StringBuilder();
-                for (int i = 0;i<jsonArray.length();i++){
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject altnumber = new JSONObject(jsonArray.getString(i));
 
-                    countyAltCode.setCountryForPhoneCode(Integer.parseInt(altnumber.getString("code").replace("+","")));
-                    if (jsonArray.length()==i){
+                    countyAltCode.setCountryForPhoneCode(Integer.parseInt(altnumber.getString("code").replace("+", "")));
+                    if (jsonArray.length() == i) {
                         sb.append(altnumber.getString("number"));
-                    }else if (i == 0){
+                    } else if (i == 0) {
                         sb.append(altnumber.getString("number"));
-                    }else {
-                        sb.append(altnumber.getString("number")+", ");
+                    } else {
+                        sb.append(altnumber.getString("number") + ", ");
                     }
                 }
                 numberAltEt.setText(sb);
-            }catch (Exception e) {
-                Log.d("TAG", "updateUI: "+e.getMessage());
+            } catch (Exception e) {
+                Log.d("TAG", "updateUI: " + e.getMessage());
             }
         }
 
@@ -625,7 +646,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         cash_tv.setVisibility(View.GONE);
     }
 
-    private void updateUserRequestModel() {
+    private boolean updateUserRequestModel() {
         CreateUserRequestModel.UserDataBean userDataBean = new CreateUserRequestModel.UserDataBean(createUserRequestModel.getUser_data().getPhone(), createUserRequestModel.getUser_data().getEmail());
         userDataBean.setFirst_name(firstnameEt.getText().toString());
         userDataBean.setLast_name(lastnameEt.getText().toString());
@@ -633,30 +654,42 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         userDataBean.setGender(Constants.genderList.get(genderSp.getSelectedItemPosition()));
         if (isUserPatient()) {
             try {
-                if (validateNumber()){
+                if (validateNumber()) {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
                     jsonObject.put("number", numberAltEt.getText().toString());
                     JSONArray array = new JSONArray();
                     array.put(jsonObject);
-                    userDataBean.setAlt_rpm_response_no(array.toString());
-                }else {
+
+                    if (defaultvital.equals(Constants.Defaultvital.primary)) {
+                        userDataBean.setAlt_rpm_response_no(numberAltEt.getText().toString().trim().isEmpty() ? "null" : array.toString());
+                    } else {
+                        userDataBean.setAlt_rpm_response_no(array.toString());
+                    }
+                } else {
                     Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
-                    return;
+                    onViewChangeInterface.enableNext(true);
+                    enableNext(true);
+                    isFirstTime = true;
+                    return false;
                 }
             } catch (Exception e) {
                 Log.d("TAG", "proceed: " + e.getMessage());
+                onViewChangeInterface.enableNext(true);
+                enableNext(true);
+                isFirstTime = true;
+                return false;
             }
 
-            if (defaultvalue.getText().toString().equals(defaultList[1])){
-                if (numberAltEt.getText().toString().isEmpty()){
+            if (defaultvalue.getText().toString().equals(defaultList[1])) {
+                if (numberAltEt.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "Please update Alternate RPM response number then select default vital response", Toast.LENGTH_SHORT).show();
                     onViewChangeInterface.enableNext(true);
                     enableNext(true);
                     isFirstTime = true;
                     defaultSp.setSelection(0);
-                    return;
-                }else{
+                    return false;
+                } else {
                     try {
                         Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(numberAltEt.getText().toString(), countyAltCode.getSelectedCountryNameCode());
                         boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
@@ -667,7 +700,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                             enableNext(true);
                             isFirstTime = true;
                             defaultSp.setSelection(0);
-                            return;
+                            return false;
                         }
                     } catch (NumberParseException e) {
                         e.printStackTrace();
@@ -676,7 +709,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         enableNext(true);
                         isFirstTime = true;
                         defaultSp.setSelection(0);
-                        return;
+                        return false;
                     }
                 }
             }
@@ -685,6 +718,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         userDataBean.setDefault_vital_response(defaultvital);
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_avatar_path(profileImgPath);
+        return true;
     }
 
     private boolean validateNumber() {
@@ -835,9 +869,12 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case Constants.SCHEDULE_CREATION_MODE:
             case Constants.EDIT_MODE:
                 isFirstTime = false;
+                isfromedittext = false;
                 onViewChangeInterface.enableNext(false);
                 enableNext(false);
-                updateUserRequestModel();
+                if (!updateUserRequestModel()){
+                    break;
+                }
 
                 if (isPrimaryDeleted || isSecondaryDeleted) {
                     updateProfile = true;
@@ -882,7 +919,9 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                 reloadUI();
                 break;
             case Constants.CREATE_MODE:
-                updateUserRequestModel();
+                if (!updateUserRequestModel()){
+                    break;
+                }
                 bundle = new Bundle();
                 bundle.putString(ArgumentKeys.HEADER, getResources().getString(R.string.terms_and_conditions));
                 bundle.putString(ArgumentKeys.PAGEHINT, getResources().getString(R.string.terms_and_conditions_info));
