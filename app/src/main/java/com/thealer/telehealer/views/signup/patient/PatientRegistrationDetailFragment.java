@@ -107,6 +107,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private OnViewChangeInterface onViewChangeInterface;
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnCloseActionInterface onCloseActionInterface;
+    String alternateNumber = "";
 
     private DateBroadcastReceiver dateBroadcastReceiver = new DateBroadcastReceiver() {
         @Override
@@ -141,7 +142,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
     private PhoneNumberUtil phoneNumberUtil;
     private Spinner defaultSp;
     private TextView defaultvalue;
-    private boolean isFirstTime,isfromedittext;
+    private boolean isFirstTime;
     public static String defaultvital = Constants.Defaultvital.primary;
 
     @Override
@@ -294,7 +295,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
         defaultSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!isfromedittext) {
                     if (isFirstTime) {
                         if (adapterView.getSelectedItem().toString().equals(defaultList[1])) {
 
@@ -319,7 +319,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                             defaultvalue.setText(defaultSp.getSelectedItem().toString());
                         }
                     }
-                }
             }
 
             @Override
@@ -379,21 +378,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             @Override
             public synchronized void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
-                Log.d("TAG", "afterTextChanged: "+defaultvital);
-                isfromedittext = true;
-                if (numberAltEt.getText().toString().isEmpty()) {
-                    if (defaultvital.equals(Constants.Defaultvital.alternate)) {
-                        defaultvital = Constants.Defaultvital.primary;
-                        defaultSp.setSelection(0, false);
-                        defaultvalue.setText(defaultSp.getSelectedItem().toString());
-                    }
-                } else {
-                    if (defaultvital.equals(Constants.Defaultvital.primary)) {
-                        defaultvital = Constants.Defaultvital.alternate;
-                        defaultSp.setSelection(1, false);
-                        defaultvalue.setText(defaultSp.getSelectedItem().toString());
-                    }
-                }
             }
         };
 
@@ -563,9 +547,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         sb.append(altnumber.getString("number") + ", ");
                     }
                 }
+                alternateNumber = sb.toString();
                 numberAltEt.setText(sb);
             } catch (Exception e) {
                 Log.d("TAG", "updateUI: " + e.getMessage());
+                alternateNumber = "";
             }
         }
 
@@ -715,6 +701,19 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             }
 
         }
+
+        if (numberAltEt.getText().toString().isEmpty()){
+            defaultSp.setSelection(0);
+            defaultvital = Constants.Defaultvital.primary;
+            defaultvalue.setText(defaultSp.getSelectedItem().toString());
+        }else {
+            if (!numberAltEt.getText().toString().equals(alternateNumber)){
+                defaultSp.setSelection(1);
+                defaultvital = Constants.Defaultvital.alternate;
+                defaultvalue.setText(defaultSp.getSelectedItem().toString());
+            }
+        }
+
         userDataBean.setDefault_vital_response(defaultvital);
         createUserRequestModel.setUser_data(userDataBean);
         createUserRequestModel.setUser_avatar_path(profileImgPath);
@@ -869,7 +868,6 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
             case Constants.SCHEDULE_CREATION_MODE:
             case Constants.EDIT_MODE:
                 isFirstTime = false;
-                isfromedittext = false;
                 onViewChangeInterface.enableNext(false);
                 enableNext(false);
                 if (!updateUserRequestModel()){
