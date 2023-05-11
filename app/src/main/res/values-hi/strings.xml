@@ -80,6 +80,7 @@
     <string name="first_name">पहला नाम</string>
     <string name="last_name">अंतिम नाम</string>
     <string name="date_of_birth">जन्म की तारीख</string>
+    <string name="alternate_number">दूसरा नंबर</string>
     <string name="gender">लिंग</string>
     <string name="email_hint">user@domain.com</string>
     <string name="email_address">ईमेल पता</string>
@@ -851,6 +852,7 @@
     <string name="stethIO">स्टेथ आईओ</string>
     <string name="registration_email_phone_verify_info">इससे पहले कि हम आपका खाता बनाएँ, हम यह सुनिश्चित कर लें कि हमने आपका मोबाइल नंबर और ईमेल सही से पकड़ लिया है</string>
     <string name="enter_your_mobile_number">अपना मोबाइल नंबर दर्ज करें</string>
+    <string name="enter_your_alternate_mobile_number">अपना दूसरा मोबाइल नंबर दर्ज करें</string>
     <string name="confirm_your_mobile_number_and_email">अपने मोबाइल नंबर और ईमेल की पुष्टि करें</string>
     <string name="do_you_want_to_close">क्या आप बंद करना चाहते हैं?</string>
     <string name="search_practices">अभ्यास खोजें</string>
@@ -893,6 +895,8 @@
     <string name="join">में शामिल होने के</string>
     <string name="dismiss">खारिज</string>
     <string name="call_pop_up_title">%s साथ आपकी नियुक्ति अब प्रगति पर है।</string>
+    <string name="call_on">%s पर कॉल करें</string>
+    <string name="sms_on">SMS on %s</string>
     <string name="device_disconnected_message">डिवाइस डिस्कनेक्ट हो गया!</string>
     <string name="type_your_message">अपना संदेश टाइप करें</string>
     <string name="choose_message">संदेश चुनें</string>
@@ -1540,6 +1544,7 @@
     <string name="key_add_new_device">नया उपकरण जोड़ें</string>
     <string name="key_device_delete_confirmation">क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?</string>
     <string name="key_device_sms_enabled">4. अपनी ज़रूरी जानकारी के बारे में फ़ीडबैक पाने के लिए प्रदाता का चयन करें:</string>
+    <string name="key_device_sms_call_view">5. Select your Vital Response no.:</string>
     <string name="key_device_sms_enabled_view">निम्नलिखित चिकित्सक के लिए एसएमएस:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
@@ -1579,4 +1584,5 @@
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">Subscription history</string>
+    <string name="default_vital">Default Vital Response on</string>
 </resources>

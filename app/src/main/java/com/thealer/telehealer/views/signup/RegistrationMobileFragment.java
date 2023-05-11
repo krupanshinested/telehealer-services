@@ -1,21 +1,29 @@
 package com.thealer.telehealer.views.signup;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputLayout;
+
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.hbb20.CountryCodePicker;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
@@ -32,24 +40,30 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 import static com.thealer.telehealer.TeleHealerApplication.appConfig;
+import static com.thealer.telehealer.common.UserType.isUserPatient;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Created by Aswin on 12,October,2018
  */
 public class RegistrationMobileFragment extends BaseFragment implements DoCurrentTransactionInterface {
-    private CountryCodePicker countyCode;
-    private EditText numberEt;
-    private TextView pageHintTv;
+    private CountryCodePicker countyCode, countyAltCode;
+    private EditText numberEt, numberAltEt;
+    private TextView pageHintTv, pageHintAltTv;
     private TextView nextTv;
     private CheckUserEmailMobileApiViewModel checkUserEmailMobileApiViewModel;
-    private TextInputLayout numberTil;
+    private TextInputLayout numberTil, numberAltTil;
     private OnActionCompleteInterface onActionCompleteInterface;
     private OnViewChangeInterface onViewChangeInterface;
     private String mobileNumber;
     private PhoneNumberUtil phoneNumberUtil;
     private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher = null;
+    private PhoneNumberFormattingTextWatcher altphoneNumberFormattingTextWatcher = null;
     private Phonenumber.PhoneNumber phoneNumber;
     private CreateUserRequestModel createUserRequestModel;
+    private ConstraintLayout altLayout;
 
     @Nullable
     @Override
@@ -97,6 +111,16 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
         pageHintTv = (TextView) view.findViewById(R.id.page_hint_tv);
         numberTil = (TextInputLayout) view.findViewById(R.id.number_til);
 
+        altLayout = (ConstraintLayout) view.findViewById(R.id.alt_cl);
+        countyAltCode = (CountryCodePicker) view.findViewById(R.id.county_alt_code);
+        numberAltEt = (EditText) view.findViewById(R.id.number_alt_et);
+        pageHintAltTv = (TextView) view.findViewById(R.id.page_hint_alt_tv);
+        numberAltTil = (TextInputLayout) view.findViewById(R.id.number_alt_til);
+
+        if (!isUserPatient()) {
+            altLayout.setVisibility(View.GONE);
+        }
+
         if (isDeviceXLarge() && isModeLandscape())
             pageHintTv.setVisibility(View.GONE);
         else
@@ -109,6 +133,7 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
             Code = appConfig.getLocaleCountry();
         }
         countyCode.setCountryForNameCode(Code);
+        countyAltCode.setCountryForNameCode(Code);
         setInstallTypeAndCode();
 
         countyCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
@@ -119,8 +144,16 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
             }
         });
 
-        setHint();
+        countyAltCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+            @Override
+            public void onCountrySelected() {
+//                setInstallTypeAndCode();
+                setAltHint();
+            }
+        });
 
+        setHint();
+        setAltHint();
         validateNumber();
 
         numberEt.requestFocus();
@@ -161,6 +194,39 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
             hintNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).replace(countyCode.getSelectedCountryCodeWithPlus(), "").trim();
 
             numberEt.setHint(hintNumber);
+
+        } catch (NumberParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setAltHint() {
+
+        if (altphoneNumberFormattingTextWatcher != null) {
+            numberAltEt.removeTextChangedListener(altphoneNumberFormattingTextWatcher);
+        }
+
+        altphoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher(countyAltCode.getSelectedCountryNameCode()) {
+
+            @Override
+            public synchronized void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+//                validateNumber();
+            }
+
+
+        };
+
+        numberAltEt.addTextChangedListener(altphoneNumberFormattingTextWatcher);
+
+        try {
+
+            String countryNameCode = countyAltCode.getSelectedCountryNameCode();
+            String hintNumber = String.valueOf(phoneNumberUtil.getExampleNumber(countryNameCode).getNationalNumber());
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(hintNumber, countyAltCode.getSelectedCountryNameCode());
+            hintNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).replace(countyAltCode.getSelectedCountryCodeWithPlus(), "").trim();
+
+            numberAltEt.setHint(hintNumber);
 
         } catch (NumberParseException e) {
             e.printStackTrace();
@@ -217,7 +283,22 @@ public class RegistrationMobileFragment extends BaseFragment implements DoCurren
             UserDetailPreferenceManager.setCountryCode(countyCode.getSelectedCountryNameCode());
         }
         mobileNumber = countyCode.getSelectedCountryCodeWithPlus() + "" + phoneNumber.getNationalNumber();
+
+//        if (isUserPatient()) {
+//            try {
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
+//                jsonObject.put("number", numberAltEt.getText().toString());
+//
+//                JSONArray array = new JSONArray();
+//                array.put(jsonObject);
+//                createUserRequestModel.getUser_data().setAlt_rpm_response_no(array.toString());
+//            } catch (Exception e) {
+//                Log.d("TAG", "proceed: " + e.getMessage());
+//            }
+//        }
         createUserRequestModel.getUser_data().setPhone(mobileNumber);
+
         onActionCompleteInterface.onCompletionResult(null, true, null);
     }
 }

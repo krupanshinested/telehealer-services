@@ -8,6 +8,7 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="date_of_birth">Date of birth</string>
+    <string name="alternate_number">Alternate RPM Response No.</string>
     <string name="gender">Gender</string>
     <string name="email_hint">user@domain.com</string>
     <string name="email_address">Email Address</string>
@@ -125,6 +126,12 @@
         <item>Male</item>
         <item>Female</item>
         <item>Others</item>
+    </string-array>
+
+    <!--Vital Response List-->
+    <string-array name="vital_response_list">
+        <item>Registration Number</item>
+        <item>Alternate RPM Response Number</item>
     </string-array>
 
     <!--Medical Assistant Title list-->
@@ -925,6 +932,7 @@
     <string name="stethIO">Steth IO</string>
     <string name="registration_email_phone_verify_info">Before we create your account, let us make sure that we have correctly captured your mobile number and email</string>
     <string name="enter_your_mobile_number">Enter your mobile number</string>
+    <string name="enter_your_alternate_mobile_number">Enter your alternate mobile number</string>
     <string name="confirm_your_mobile_number_and_email">Confirm your mobile number and email</string>
     <string name="do_you_want_to_close">Do you want to close ?</string>
     <string name="search_practices">Search Practices</string>
@@ -967,6 +975,8 @@
     <string name="join">join</string>
     <string name="dismiss">dismiss</string>
     <string name="call_pop_up_title">Your appointment with %s is now in progress.</string>
+    <string name="call_on">Call on %s</string>
+    <string name="sms_on">SMS on %s</string>
     <string name="device_disconnected_message">Device got disconnected!</string>
     <string name="type_your_message">Type your message</string>
     <string name="choose_message">Choose Message</string>
@@ -1641,6 +1651,7 @@
     <string name="key_device_delete_confirmation">Are you sure you want to delete this device?</string>
     <string name="key_device_sms_enabled">4. Select provider to receive feedback from regarding your vitals:</string>
     <string name="key_device_sms_enabled_view">SMS for following physician: </string>
+    <string name="key_device_sms_call_view">5. Select your Vital Response no.:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
     <string name="key_to_find_number">Click here.</string>
@@ -1677,4 +1688,5 @@
     <string name="lbl_subscriptions_plan">Subscription Plan</string>
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">Subscription history</string>
+    <string name="default_vital">Default Vital Response on</string>
 </resources>
