@@ -456,8 +456,13 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         }
 
         if (getOnlyAltNumber().isEmpty()) {
-//            numberaltrl.setVisibility(View.GONE);
-//            checkboxsmscall2.setVisibility(View.GONE);
+            if (deviceFlag) {
+                numberaltrl.setVisibility(View.GONE);
+                checkboxsmscall2.setVisibility(View.GONE);
+            }else {
+                numberaltrl.setVisibility(View.VISIBLE);
+                checkboxsmscall2.setVisibility(View.VISIBLE);
+            }
         } else {
             if (deviceFlag) {
                 numberaltrl.setVisibility(View.GONE);
