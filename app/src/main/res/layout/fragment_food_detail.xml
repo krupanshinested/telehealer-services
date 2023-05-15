@@ -375,7 +375,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="16dp"
-                android:text="@string/delete"
+                android:text="@string/Delete"
                 android:textAllCaps="true"
                 android:textColor="@android:color/holo_red_light"
                 android:textSize="16sp"

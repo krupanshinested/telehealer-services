@@ -15,7 +15,7 @@
     <string name="mobile_number">Mobile number</string>
 
     <string name="notification_intent_action">android.media.action.DISPLAY_NOTIFICATION</string>
-    <string name="touch_id_agreement_info">The mobile application is now compatible with fingerprint and face-recognition authentication features built into your smartphone device. This means that you may now be able to use your fingerprint or face-scan to access the mobile app from your smartphone device instead of entering your PIN or username/password.\n\nBelow is important information about this fingerprint and face-recognition authentication capability for you to review, understand, and to which you must agree before enabling this capability for the mobile app on your device.\n\nWhen you enable fingerprint or face-recognition authentication on your smartphone device, your fingerprint or face-scan is stored on your device. To access the mobile app using your fingerprint or face-scan, your smartphone device’s operating system sends a secure token to the mobile app confirming that your fingerprint or face-scan matches a registered fingerprint or face-scan on your device. The mobile app does not receive, review, store, transmit, or disclose your fingerprint or face-scan as part of this process. The mobile app relies on your device’s operating system and your device’s fingerprint or face-recognition authentication features. Your device could erroneously confirm to the mobile app that a fingerprint or face-scan matches a registered fingerprint or face-scan on your device (by erroneously sending the mobile app a secure token), or erroneously fail to recognize or fail to approve a registered fingerprint or face-scan (by not sending the mobile app a secure token). The mobile app is not responsible for any fingerprint or face-recognition authentication errors by your device, including errors that cause secure tokens to be erroneously sent (or to not be sent). If your device erroneously fails to send a secure token, you may access the mobile app by using your username/password for the mobile app.\n\nSome smartphone devices allow you to store fingerprints or face-scans from multiple people. By using fingerprint or and face-recognition authentication on your device for the mobile app, you understand and agree that anyone with a fingerprint or face-scan registered to your smartphone device will be able to access your accounts and other information accessible through the mobile app. You should review and confirm that you have authorized all the registered fingerprints or face-scans on your smartphone device to access your accounts and perform any activity enabled by or accessible through the mobile app.\n\nIf you wish to disable fingerprint or and face-recognition authentication for the mobile app in the future, you can do so within the settings page of the mobile app.\n\nFor security reasons, we may disable fingerprint or and face-recognition authentication for the mobile app at any time, for any and all devices, without prior notice. For security reasons, we may require you to agree to fingerprint and and face-recognition authentication terms and conditions that are in effect from time to time as a condition of reinstating or continuing the fingerprint and face-recognition authentication capability of the mobile app on any and all of your devices.\n\nIf you want to enable fingerprint or face-recognition authentication capability for the mobile app on more than one device, you will have to agree to the terms above for each such device.\n\nYou will still have access to these terms if you disable fingerprint or face-recognition authentication. These terms only apply to a device on which you have enabled fingerprint or face-recognition authentication for the device and the mobile app, and only for the period during which fingerprint or face-recognition authentication is enabled for that device and the mobile app.</string>
+    <string name="touch_id_agreement_info">The mobile application is now compatible with fingerprint and face-recognition authentication features built into your smartphone device. This means that you may now be able to use your fingerprint or face-scan to access the mobile app from your smartphone device instead of entering your PIN or username/password.\n\nBelow is important information about this fingerprint and face-recognition authentication capability for you to review, understand, and to which you must agree before enabling this capability for the mobile app on your device.\n\nWhen you enable fingerprint or face-recognition authentication on your smartphone device, your fingerprint or face-scan is stored on your device. To access the mobile app using your fingerprint or face-scan, your smartphone device’s operating system sends a secure token to the mobile app confirming that your fingerprint or face-scan matches a registered fingerprint or face-scan on your device. The mobile app does not receive, review, store, transmit, or disclose your fingerprint or face-scan as part of this process. The mobile app relies on your device’s operating system and your device’s fingerprint or face-recognition authentication features. Your device could erroneously confirm to the mobile app that a fingerprint or face-scan matches a registered fingerprint or face-scan on your device (by erroneously sending the mobile app a secure token), or erroneously fail to recognize or fail to approve a registered fingerprint or face-scan (by not sending the mobile app a secure token). The mobile app is not responsible for any fingerprint or face-recognition authentication errors by your device, including errors that cause secure tokens to be erroneously sent (or to not be sent). If your device erroneously fails to send a secure token, you may access the mobile app by using your username/password for the mobile app.\n\nSome smartphone devices allow you to store fingerprints or face-scans from multiple people. By using fingerprint or and face-recognition authentication on your device for the mobile app, you understand and agree that anyone with a fingerprint or face-scan registered to your smartphone device will be able to access your accounts and other information accessible through the mobile app. You should review and confirm that you have authorized all the registered fingerprints or face-scans on your smartphone device to access your accounts and perform any activity enabled by or accessible through the mobile app.\n\nIf you wish to disable fingerprint or and face-recognition authentication for the mobile app in the future, you can do so within the settings page of the mobile app.\n\nFor security reasons, we may disable fingerprint or and face-recognition authentication for the mobile app at any time, for any and all devices, without prior notice. For security reasons, we may require you to agree to fingerprint and face-recognition authentication terms and conditions that are in effect from time to time as a condition of reinstating or continuing the fingerprint and face-recognition authentication capability of the mobile app on any and all of your devices.\n\nIf you want to enable fingerprint or face-recognition authentication capability for the mobile app on more than one device, you will have to agree to the terms above for each such device.\n\nYou will still have access to these terms if you disable fingerprint or face-recognition authentication. These terms only apply to a device on which you have enabled fingerprint or face-recognition authentication for the device and the mobile app, and only for the period during which fingerprint or face-recognition authentication is enabled for that device and the mobile app.</string>
 
     //Password requirements
     <string name="requirement_1">8 to 20 characters long</string>
@@ -89,7 +89,6 @@
     <string name="liability_insurance">Liability Insurance Name</string>
     <string name="add_address">Add Address</string>
     <string name="website">Website</string>
-    <string name="delete">DELETE</string>
     <string name="Delete">Delete</string>
     <string name="street">Street</string>
     <string name="street2">Street2</string>
@@ -311,7 +310,7 @@
     <string name="add_connection_failure">Your connection request for %s has been failed.</string>
     <string name="add_connection_pending">PENDING</string>
     <string name="add_connection_connect">CONNECT</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="please_wait">Please wait…</string>
     <string name="add_connection_requesting">Posting your connection request.</string>
     <string name="Add_connections">Add Connections</string>
     <string name="more">more</string>
@@ -365,7 +364,7 @@
     <string name="feedback">Feedback</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_procedure">Privacy and Procedures</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="otp">Otp</string>
     <string name="update">Update</string>
     <string name="edit">Edit</string>
@@ -511,7 +510,6 @@
     <string name="START">START</string>
     <string name="failed_to_connect">Failed to Connect</string>
     <string name="save_and_close"><![CDATA[SAVE & CLOSE]]></string>
-    <string name="close">CLOSE</string>
     <string name="remeasure">REMEASURE</string>
     <string name="STOP">STOP</string>
     <string name="CLOSE">CLOSE</string>
@@ -533,7 +531,7 @@
     <string name="bluetooth_enable_title">Bluetooth Needed</string>
     <string name="bluetooth_enable_description">Bluetoot is need to be enable inorder to connect with your vital devices.</string>
     <string name="bluetooth_disabled">Bluetooth_disabled</string>
-    <string name="bluetooth_enabled">bluetooth_enabled</string>
+    <string name="bluetooth_enabled">Bluetooth_enabled</string>
     <string name="blood_pressure">Blood Pressure</string>
     <string name="blood_pressure_heart_rate">BP &amp; Pulse Rate</string>
     <string name="weight">Weight</string>

@@ -150,7 +150,7 @@ public class MyDeviceListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onItemDeleteClick(int position) {
                 Utils.showAlertDialog(activity, getString(R.string.alert), getString(R.string.key_device_delete_confirmation),
-                        getString(R.string.delete),
+                        getString(R.string.Delete).toUpperCase(),
                         getString(R.string.cancel),
                         (dialog, which) -> {
                                 deleteDevice(deviceList.get(position).getId());
