@@ -114,7 +114,12 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
                             size = String.format("%.2f %s", ((float) resource.length() / kb), " KB");
                         }
                         Log.d("TAG", "onResourceReady: "+size);
-                        viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName(activity) == null ? "" : resultBeanList.get(i).getCreator().getUserName(activity) + " - " + size);
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                viewHolder.sizeTv.setText(resultBeanList.get(i).getCreator().getUserName(activity) == null ? "" : resultBeanList.get(i).getCreator().getUserName(activity) + " - " + size);
+                            }
+                        });
 
                         return false;
                     }

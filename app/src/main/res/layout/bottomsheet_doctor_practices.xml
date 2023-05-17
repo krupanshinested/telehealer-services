@@ -24,7 +24,8 @@
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:padding="@dimen/padding_default"
-                android:text="@string/delete"
+                android:textAllCaps="true"
+                android:text="@string/Delete"
                 android:textColor="@color/red"
                 android:visibility="gone" />
 

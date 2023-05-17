@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffffff">
+
+    <TextView
+        android:id="@+id/text_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:gravity="center_horizontal"
+        android:text="@string/alternate_number"
+        android:textColor="@color/app_gradient_start"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_below="@id/text_dialog"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:id="@+id/number_alt_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/county_alt_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:ccp_autoDetectCountry="true"
+            app:ccp_autoDetectLanguage="true"
+            app:ccp_autoFormatNumber="true"
+            app:ccp_defaultNameCode="US"
+            app:ccp_showFlag="false"
+            app:ccp_textSize="@dimen/_12ssp"
+            app:ccp_showNameCode="false" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/number_alt_til"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/county_alt_code"
+            app:hintEnabled="false">
+
+            <EditText
+                android:textSize="@dimen/_12ssp"
+                android:id="@+id/number_alt_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:inputType="phone" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_below="@id/number_alt_rl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp">
+
+        <Button
+            android:background="@android:color/transparent"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:text="Cancel"
+            android:id="@+id/cancel"
+            android:textStyle="bold"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/app_gradient_start"
+            android:layout_height="match_parent"/>
+
+        <Button
+            android:textSize="@dimen/_14ssp"
+        android:id="@+id/number_add"
+            android:textColor="@color/bt_white"
+            android:text="@string/add"
+            android:background="@drawable/round_corner"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

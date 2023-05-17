@@ -1,16 +1,20 @@
 package com.thealer.telehealer.views.settings.newDeviceSupport;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
@@ -19,10 +23,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.hbb20.CountryCodePicker;
 import com.skyfishjy.library.RippleBackground;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
@@ -52,17 +61,28 @@ import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiResp
 import com.thealer.telehealer.apilayer.models.newDeviceSetup.NewDeviceSetApiViewModel;
 import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiResponseModel;
+import com.thealer.telehealer.apilayer.models.whoami.WhoAmIApiViewModel;
 import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.Constants;
+import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.UserType;
 import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.views.base.BaseActivity;
 import com.thealer.telehealer.views.common.SuccessViewDialogFragment;
 import com.thealer.telehealer.views.common.SuccessViewInterface;
+import com.thealer.telehealer.views.signup.patient.PatientRegistrationDetailFragment;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class NewDeviceDetailActivity extends BaseActivity implements View.OnClickListener, SuccessViewInterface {
     private ImageView backIv, previousPhysician, nextPhysician;
@@ -94,16 +114,24 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
     private RippleBackground contentpreviouss;
     private CardView vwprevious, vwnext;
     private AppCompatTextView tvtandc;
-    private CheckBox checkboxsms,checkboxcall;
+    private CheckBox checkboxsms, checkboxcall;
+    private CheckBox checkboxsmscall1, checkboxsmscall2;
+    private CountryCodePicker countyAltCode;
+    private PhoneNumberFormattingTextWatcher altphoneNumberFormattingTextWatcher = null;
+    private EditText numberAltEt;
+    private PhoneNumberUtil phoneNumberUtil;
+    private RelativeLayout numberaltrl;
+    private WhoAmIApiViewModel whoAmIApiViewModel;
 
     private void initObservers() {
         newDeviceSetApiViewModel = new ViewModelProvider(this).get(NewDeviceSetApiViewModel.class);
+        whoAmIApiViewModel = new ViewModelProvider(this).get(WhoAmIApiViewModel.class);
 
         newDeviceSetApiViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(@Nullable ErrorModel errorModel) {
-
-                if (!errorModel.geterrorCode().isEmpty() && errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                txtSubmit.setClickable(true);
+                if (errorModel.geterrorCode() == null) {
                     SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
@@ -112,6 +140,17 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                     bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
                     successViewDialogFragment.setArguments(bundle);
                     successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+                }else {
+                    if (!errorModel.geterrorCode().isEmpty() && errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                        SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, false);
+                        bundle.putString(Constants.SUCCESS_VIEW_TITLE, getString(R.string.failure));
+                        bundle.putString(Constants.SUCCESS_VIEW_DESCRIPTION, errorModel.getMessage());
+                        bundle.putBoolean(Constants.SUCCESS_VIEW_DONE_BUTTON, false);
+                        successViewDialogFragment.setArguments(bundle);
+                        successViewDialogFragment.show(getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
+                    }
                 }
             }
         });
@@ -128,6 +167,13 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 //                        Constants.NEW_DEVICE_SUPPORT_ACTIVITY.finishScreen();
 //                    }
 //                });
+
+                try {
+                    whoAmIApiViewModel.checkWhoAmI();
+                } catch (Exception e) {
+                    Log.d("TAG", "proceed: " + e.getMessage());
+                }
+
                 SuccessViewDialogFragment successViewDialogFragment = new SuccessViewDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
@@ -139,6 +185,17 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 
             }
         });
+
+        whoAmIApiViewModel.baseApiResponseModelMutableLiveData.observe(this,
+                new Observer<BaseApiResponseModel>() {
+                    @Override
+                    public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
+                        if (baseApiResponseModel != null) {
+                            WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
+                            UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
+                        }
+                    }
+                });
 
         associationApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
         associationUniqueApiViewModel = new ViewModelProvider(this).get(AssociationApiViewModel.class);
@@ -228,6 +285,14 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         deviceLink2 = findViewById(R.id.device_link2);
         checkboxsms = findViewById(R.id.checkboxsms);
         checkboxcall = findViewById(R.id.checkboxcall);
+
+        checkboxsmscall1 = findViewById(R.id.checkboxsmscall1);
+        checkboxsmscall2 = findViewById(R.id.checkboxsmscall2);
+        numberaltrl = findViewById(R.id.number_alt_rl);
+        countyAltCode = findViewById(R.id.county_alt_code);
+        numberAltEt = findViewById(R.id.number_alt_et);
+        phoneNumberUtil = PhoneNumberUtil.createInstance(this);
+
         tvtandc = findViewById(R.id.tv_tandc);
 
         backIv.setOnClickListener(this);
@@ -236,24 +301,111 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         previousPhysician.setOnClickListener(this);
         nextPhysician.setOnClickListener(this);
 
+        addTextWatcher(numberAltEt);
+        setAltHint();
+        countyAltCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+            @Override
+            public void onCountrySelected() {
+                setAltHint();
+            }
+        });
+
+        if (checkboxsms.isChecked()) {
+            checkboxsmscall1.setText(String.format(getString(R.string.sms_on), UserDetailPreferenceManager.getPhone()));
+            checkboxsmscall2.setText(String.format(getString(R.string.sms_on), ""));
+        } else {
+            checkboxsmscall1.setText(String.format(getString(R.string.call_on), UserDetailPreferenceManager.getPhone()));
+            checkboxsmscall2.setText(String.format(getString(R.string.call_on), ""));
+        }
+
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getDefault_vital_response().equals(Constants.Defaultvital.primary)) {
+            checkboxsmscall1.setChecked(true);
+            checkboxsmscall2.setChecked(false);
+        } else {
+            checkboxsmscall1.setChecked(false);
+            checkboxsmscall2.setChecked(true);
+        }
+
+//        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null || !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
+//            try {
+//                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
+//                StringBuilder sb = new StringBuilder();
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
+////                    if (jsonArray.length() == i) {
+//                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+////                    } else if (i == 0) {
+////                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+////                    } else {
+////                        sb.append(altnumber.getString("code") + altnumber.getString("number") + ", ");
+////                    }
+//                }
+//                checkboxcallalt.setText(String.format(getString(R.string.call_on), sb));
+//            } catch (Exception e) {
+//                Log.d("TAG", "initView: " + e.getMessage());
+//            }
+//        }
         checkboxcall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     checkboxcall.setClickable(false);
                     checkboxsms.setChecked(false);
                     checkboxsms.setClickable(true);
+                    checkboxsmscall1.setText(String.format(getString(R.string.call_on), UserDetailPreferenceManager.getPhone()));
+                    checkboxsmscall2.setText(String.format(getString(R.string.call_on), ""));
+//                    checkboxcallalt.setChecked(false);
+//                    checkboxcallalt.setClickable(true);
                 }
             }
         });
 
+        checkboxsmscall1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    checkboxsmscall1.setClickable(false);
+                    checkboxsmscall2.setClickable(true);
+                    checkboxsmscall2.setChecked(false);
+                }
+            }
+        });
+
+        checkboxsmscall2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    checkboxsmscall2.setClickable(false);
+                    checkboxsmscall1.setClickable(true);
+                    checkboxsmscall1.setChecked(false);
+                }
+            }
+        });
+
+//        checkboxcallalt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                if (b){
+//                    checkboxcallalt.setClickable(false);
+//                    checkboxcall.setChecked(false);
+//                    checkboxcall.setClickable(true);
+//                    checkboxsms.setChecked(false);
+//                    checkboxsms.setClickable(true);
+//                }
+//            }
+//        });
+
         checkboxsms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     checkboxsms.setClickable(false);
                     checkboxcall.setChecked(false);
                     checkboxcall.setClickable(true);
+                    checkboxsmscall1.setText(String.format(getString(R.string.sms_on), UserDetailPreferenceManager.getPhone()));
+                    checkboxsmscall2.setText(String.format(getString(R.string.sms_on), ""));
+//                    checkboxcallalt.setChecked(false);
+//                    checkboxcallalt.setClickable(true);
                 }
             }
         });
@@ -286,11 +438,11 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 edtDeviceId.setText(myDeviceDetail.getDevice_id());
                 edtDeviceId.setEnabled(false);
                 edtDeviceId.setClickable(false);
-                if (myDeviceDetail.getsms_enabled().equals("true")){
+                if (myDeviceDetail.getsms_enabled().equals("true")) {
                     checkboxsms.setChecked(true);
                     checkboxcall.setChecked(false);
                     checkboxsms.setClickable(false);
-                }else {
+                } else {
                     checkboxcall.setChecked(true);
                     checkboxsms.setChecked(false);
                     checkboxcall.setClickable(false);
@@ -303,7 +455,28 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
             newDeviceCrv.setAdapter(myPhysicianListAdapter);
         }
 
-
+        if (getOnlyAltNumber().isEmpty()) {
+            if (deviceFlag) {
+                numberaltrl.setVisibility(View.GONE);
+                checkboxsmscall2.setVisibility(View.GONE);
+            }else {
+                numberaltrl.setVisibility(View.VISIBLE);
+                checkboxsmscall2.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (deviceFlag) {
+                numberaltrl.setVisibility(View.GONE);
+                checkboxsmscall2.setVisibility(View.VISIBLE);
+                if (checkboxsms.isChecked()) {
+                    checkboxsmscall2.setText(String.format(getString(R.string.sms_on), getAltNumber(checkboxsmscall2)));
+                } else {
+                    checkboxsmscall2.setText(String.format(getString(R.string.call_on), getAltNumber(checkboxsmscall2)));
+                }
+            } else {
+                numberaltrl.setVisibility(View.VISIBLE);
+                checkboxsmscall2.setVisibility(View.VISIBLE);
+            }
+        }
         toolbarTitle.setText(title);
         deviceDescription2.setText(description);
         if (image != null) {
@@ -311,6 +484,14 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         }
 
         if (deviceFlag) {
+            checkboxsms.setClickable(false);
+//            checkboxsms.setEnabled(false);
+            checkboxcall.setClickable(false);
+//            checkboxcall.setEnabled(false);
+            checkboxsmscall1.setClickable(false);
+//            checkboxsmscall1.setEnabled(false);
+            checkboxsmscall2.setClickable(false);
+//            checkboxsmscall2.setEnabled(false);
             txtSubmit.setVisibility(View.GONE);
 //            deviceDescription1.setVisibility(View.GONE);
 //            deviceSmsPhysician.setText(getString(R.string.key_device_sms_enabled_view));
@@ -353,6 +534,64 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
         devicestep.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    private String getOnlyAltNumber() {
+
+        if (UserDetailPreferenceManager.getRole().equals(Constants.ROLE_PATIENT)) {
+            try {
+                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
+
+                    countyAltCode.setCountryForPhoneCode(Integer.parseInt(altnumber.getString("code").replace("+", "")));
+                    if (jsonArray.length() == i) {
+                        sb.append(altnumber.getString("number"));
+                    } else if (i == 0) {
+                        sb.append(altnumber.getString("number"));
+                    } else {
+                        sb.append(altnumber.getString("number") + ", ");
+                    }
+                }
+                numberAltEt.setText(sb);
+                return sb.toString();
+            } catch (Exception e) {
+                Log.d("TAG", "updateUI: " + e.getMessage());
+                return "";
+            }
+        }
+
+        return "";
+    }
+
+    private String getAltNumber(CheckBox checkboxcallalt) {
+
+        if (UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no() != null && !UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no().isEmpty()) {
+            checkboxcallalt.setVisibility(View.VISIBLE);
+            try {
+                JSONArray jsonArray = new JSONArray(UserDetailPreferenceManager.getWhoAmIResponse().getAlt_rpm_response_no());
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject altnumber = new JSONObject(jsonArray.getString(i));
+//                    if (jsonArray.length() == i) {
+
+                    if (altnumber.getString("number").isEmpty()) {
+                        checkboxcallalt.setVisibility(View.GONE);
+                    } else {
+                        checkboxcallalt.setVisibility(View.VISIBLE);
+                        sb.append(altnumber.getString("code") + altnumber.getString("number"));
+                    }
+                }
+                return sb.toString();
+            } catch (Exception e) {
+                Log.d("TAG", "initView: " + e.getMessage());
+                return "";
+            }
+        } else {
+            checkboxcallalt.setVisibility(View.GONE);
+        }
+        return "";
+    }
+
     private void setNewDevice() {
         txtSubmit.setClickable(false);
         ArrayList<String> smsList = new ArrayList<>();
@@ -363,6 +602,11 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                 }
             }
 
+        if (smsList.size() < 1) {
+            Toast.makeText(activity, "Please select physician", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         HashMap<String, Object> param = new HashMap<>();
         param.put(ApiInterface.HEALTHCARE_DEVICE_ID, healthCareId);
         param.put(ApiInterface.DEVICE_ID, edtDeviceId.getText().toString().trim());
@@ -372,14 +616,44 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
 //        else
 //            param.put(ApiInterface.SMS_ENABLED, true);
 
-        if (checkboxsms.isChecked()){
+        if (checkboxsms.isChecked()) {
             param.put(ApiInterface.SMS_ENABLED, true);
             param.put(ApiInterface.CALL_ENABLED, false);
             param.put(ApiInterface.PHYSICIAN_NOTIFICATION_SMS, smsList);
-        }else {
+        } else {
             param.put(ApiInterface.SMS_ENABLED, false);
             param.put(ApiInterface.CALL_ENABLED, true);
             param.put(ApiInterface.PHYSICIAN_NOTIFICATION_CALL, smsList);
+
+//            if (checkboxcall.isChecked()) {
+//                param.put(ApiInterface.PHONE, UserDetailPreferenceManager.getPhone());
+//            }
+
+//            if (checkboxcallalt.isChecked()){
+//                param.put(ApiInterface.PHONE, getAltNumber());
+//            }
+        }
+        Log.d("TAG", "setNewDevice: " + param);
+        if (validateNumber()) {
+            try {
+                param.put(ApiInterface.PHONE, checkboxsmscall1.isChecked() ? Constants.Defaultvital.primary : Constants.Defaultvital.alternate);
+                param.put(ApiInterface.default_vital, UserDetailPreferenceManager.getWhoAmIResponse().getDefault_vital_response());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code", countyAltCode.getSelectedCountryCodeWithPlus());
+                jsonObject.put("number", numberAltEt.getText().toString());
+                JSONArray array = new JSONArray();
+                array.put(jsonObject);
+                param.put(ApiInterface.alt_no, array.toString());
+            } catch (Exception e) {
+                Log.d("TAG", "proceed: " + e.getMessage());
+                txtSubmit.setClickable(true);
+                Toast.makeText(this, "Some technical error. Please try again", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else {
+            txtSubmit.setClickable(true);
+            Toast.makeText(this, "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
+            return;
         }
         newDeviceSetApiViewModel.setDevice(param);
     }
@@ -463,6 +737,113 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                     newDeviceCrv.scrollToPosition(CurrentPosition + 1);
                 break;
         }
+    }
+
+//    public void showDialog(Activity activity){
+//        final Dialog dialog = new Dialog(activity);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setCancelable(false);
+//        dialog.setContentView(R.layout.custom_add_alternate_no);
+//
+//        countyAltCode = (CountryCodePicker) dialog.findViewById(R.id.county_alt_code);
+//        numberAltEt = (EditText) dialog.findViewById(R.id.number_alt_et);
+//        phoneNumberUtil = PhoneNumberUtil.createInstance(activity);
+//        addTextWatcher(numberAltEt);
+//        setAltHint();
+//        countyAltCode.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+//            @Override
+//            public void onCountrySelected() {
+//                setAltHint();
+//            }
+//        });
+//
+//        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+//        Button numberadd = (Button) dialog.findViewById(R.id.number_add);
+//        cancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        numberadd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (validateNumber()){
+//                    dialog.dismiss();
+//                }
+//            }
+//        });
+//
+//        dialog.show();
+//
+//    }
+
+    private void setAltHint() {
+
+        if (altphoneNumberFormattingTextWatcher != null) {
+            numberAltEt.removeTextChangedListener(altphoneNumberFormattingTextWatcher);
+        }
+
+        altphoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher(countyAltCode.getSelectedCountryNameCode()) {
+            @Override
+            public synchronized void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+            }
+        };
+
+        numberAltEt.addTextChangedListener(altphoneNumberFormattingTextWatcher);
+
+        try {
+            String countryNameCode = countyAltCode.getSelectedCountryNameCode();
+            String hintNumber = String.valueOf(phoneNumberUtil.getExampleNumber(countryNameCode).getNationalNumber());
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(hintNumber, countyAltCode.getSelectedCountryNameCode());
+            hintNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).replace(countyAltCode.getSelectedCountryCodeWithPlus(), "").trim();
+            numberAltEt.setHint(hintNumber);
+        } catch (NumberParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean validateNumber() {
+        if (!numberAltEt.getText().toString().isEmpty()) {
+            try {
+                Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(numberAltEt.getText().toString(), countyAltCode.getSelectedCountryNameCode());
+                boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
+
+                if (isValid) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (NumberParseException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private void addTextWatcher(EditText editText) {
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
 
     private void setClipboard(Context context, String text) {

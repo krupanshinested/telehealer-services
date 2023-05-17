@@ -203,6 +203,8 @@ public interface ApiInterface {
     String PHYSICIAN_NOTIFICATION_SMS = "physicianNotificationForSMS";
     String PHYSICIAN_NOTIFICATION_CALL = "physicianNotificationForCall";
     String FEEDBACK_TYPE = "feedback_type";
+    String default_vital = "default_vital_response";
+    String alt_no = "alt_no";
 
     @GET("users/check")
     Observable<CheckUserEmailMobileResponseModel> checkUserEmail(@Query(EMAIL) String email, @Query(APP_TYPE) String app_type);
