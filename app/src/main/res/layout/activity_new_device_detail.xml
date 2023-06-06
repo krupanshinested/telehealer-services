@@ -273,6 +273,7 @@
                             android:layout_marginTop="@dimen/_7sdp"
                             android:ellipsize="end"
                             android:ems="3"
+                            android:visibility="gone"
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
                             android:linksClickable="true"
@@ -288,6 +289,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:ellipsize="end"
+                            android:visibility="gone"
                             android:ems="3"
                             android:fontFamily="@font/open_sans"
                             android:gravity="center|left"
@@ -300,6 +302,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
+                            android:visibility="gone"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:background="@color/colorGrey" />
 

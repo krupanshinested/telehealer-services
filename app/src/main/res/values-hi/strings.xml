@@ -1541,8 +1541,8 @@
     <string name="key_manage_devices">टेलीहेल्थ डिवाइस प्रबंधित करें</string>
     <string name="key_add_new_device">नया उपकरण जोड़ें</string>
     <string name="key_device_delete_confirmation">क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?</string>
-    <string name="key_device_sms_enabled">4. अपनी ज़रूरी जानकारी के बारे में फ़ीडबैक पाने के लिए प्रदाता का चयन करें:</string>
-    <string name="key_device_sms_call_view">5. अपनी महत्वपूर्ण प्रतिक्रिया संख्या का चयन करें:</string>
+    <string name="key_device_sms_enabled">3. अपनी ज़रूरी जानकारी के बारे में फ़ीडबैक पाने के लिए प्रदाता का चयन करें:</string>
+    <string name="key_device_sms_call_view">4. अपनी महत्वपूर्ण प्रतिक्रिया संख्या का चयन करें:</string>
     <string name="key_device_sms_enabled_view">निम्नलिखित चिकित्सक के लिए एसएमएस:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
