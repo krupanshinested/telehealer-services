@@ -1553,9 +1553,9 @@
     <string name="key_manage_devices">Administrar dispositivos Tellihealth</string>
     <string name="key_add_new_device">Agrega un nuevo dispositivo</string>
     <string name="key_device_delete_confirmation">Estás segura de que quieres eliminar este dispositivo?</string>
-    <string name="key_device_sms_enabled">4. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
+    <string name="key_device_sms_enabled">3. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
     <string name="key_device_sms_enabled_view">SMS para la siguiente médica:</string>
-    <string name="key_device_sms_call_view">5. Seleccione su número de Respuesta Vital:</string>
+    <string name="key_device_sms_call_view">4. Seleccione su número de Respuesta Vital:</string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
     <string name="key_to_find_number">Click here.</string>
