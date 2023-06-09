@@ -233,7 +233,7 @@ public class NewDeviceDetailActivity extends BaseActivity implements View.OnClic
                         });
                     }
                 } else {
-                    String linkedText = "By click on submit, you agreed to the " + String.format("<a href=\"%s\">Terms of Service.</a>", termandconditions);
+                    String linkedText = getString(R.string.byclickingonsubmit)+" " + String.format("<a href=\"%s\">"+getString(R.string.termofservice)+"</a>", termandconditions)+" "+getString(R.string.hindibyclickingonsubmit);
                     tvtandc.setText(Html.fromHtml(linkedText));
                     tvtandc.setMovementMethod(new TextViewLinkHandler() {
                         @Override
