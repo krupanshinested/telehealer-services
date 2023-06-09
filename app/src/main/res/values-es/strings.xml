@@ -1555,7 +1555,10 @@
     <string name="key_device_delete_confirmation">Estás segura de que quieres eliminar este dispositivo?</string>
     <string name="key_device_sms_enabled">3. Seleccione el proveedor para recibir comentarios sobre sus signos vitales:</string>
     <string name="key_device_sms_enabled_view">SMS para la siguiente médica:</string>
-    <string name="key_device_sms_call_view">4. Seleccione su número de Respuesta Vital:</string>
+    <string name="key_device_sms_call_view">4. Número de teléfono con respecto a su vital:</string>
+    <string name="byclickingonsubmit">Al hacer clic en enviar, aceptaste los</string>
+    <string name="termofservice">Términos de servicio.</string>
+    <string name="hindibyclickingonsubmit"></string>
     <string name="key_download_product_sheet"><u>Download Product Sheet</u></string>
     <string name="key_download_user_manual"><u>Download User Manual</u></string>
     <string name="key_to_find_number">Click here.</string>
