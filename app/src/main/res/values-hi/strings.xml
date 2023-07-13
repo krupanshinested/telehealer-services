@@ -267,6 +267,8 @@
     <string name="permission_loc_vitals_message">%s आपके iHealth उपकरणों से जुड़ने के लिए आपके स्थान के इनवर्टर तक पहुंचना चाहेगा।</string>
     <string name="permission_storage_vitals_message">%s आपके iHealth उपकरणों से डेटा को बचाने के लिए आपके संग्रहण इनवर्टर तक पहुंचना चाहेगा।</string>
     <string name="permission_contact_message">%s उपयोगकर्ताओं को आपके संपर्क से आमंत्रित करने के लिए आपके संपर्क इनवर्टर तक पहुँचना चाहेंगे</string>
+    <string name="permission_photo_microphone_cam_noti_message">आपको इष्टतम चिकित्सा देखभाल प्रदान करने के लिए जिसके लिए फोटो, ऑडियो रिकॉर्डिंग और सूचनाओं के अपडेट की आवश्यकता होती है।</string>
+    <string name="permission_photo_microphone_cam_noti_tittle">ग्रांट फोटो, कैमरा, माइक्रोफोन, नोटिफिकेशन एक्सेस</string>
     <string name="permission_camera_title">ग्रांट कैमरा एक्सेस</string>
     <string name="permission_gallery_title">ग्रांट फोटो एक्सेस</string>
     <string name="permission_mic_title">ग्रांट माइक्रोफोन एक्सेस</string>
@@ -330,6 +332,7 @@
     <string name="medical_history">चिकित्सा का इतिहास</string>
     <string name="settings">सेटिंग्स</string>
     <string name="preference">पसंद</string>
+    <string name="privacy_setting">गोपनीयता व्यवस्था</string>
     <string name="phone_no">फोन नंबर</string>
     <string name="terms">मामले</string>
     <string name="privacy_procedure">गोपनीयता और प्रक्रिया</string>
@@ -1586,4 +1589,24 @@
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">सदस्यता इतिहास</string>
     <string name="default_vital">डिफ़ॉल्ट महत्वपूर्ण प्रतिक्रिया चालू</string>
+    <string name="photo_permissions">फोटो अनुमति</string>
+    <string name="allow_photo_permissions">- छवियों और किसी भी आवश्यक दस्तावेज़ को कैप्चर करने के लिए फ़ोटो की आवश्यकता होती है।</string>
+    <string name="disallow_photo_permissions">- इस समय, आपने फोटो की अनुमति नहीं दी है, इसलिए छवि कैप्चर फ़ंक्शन काम नहीं करेगा। लेकिन आप इसे सेटिंग्स में बदल सकते हैं।</string>
+    <string name="camera_permissions">कैमरा अनुमति</string>
+    <string name="allow_camera_permissions">"- छवियों और किसी भी आवश्यक दस्तावेज़ को कैप्चर करने के लिए कैमरे की आवश्यकता होती है।</string>
+    <string name="disallow_camera_permissions">- इस समय, आपने कैमरा अनुमति प्रदान नहीं की है, इसलिए वीडियो कॉल, छवि कैप्चर फ़ंक्शन काम नहीं करेगा। लेकिन आप इसे सेटिंग्स में बदल सकते हैं।</string>
+    <string name="microphone_permissions">माइक्रोफ़ोन अनुमति</string>
+    <string name="allow_microphone_permissions">- आपकी आवाज़ को प्रसारित करने और रिकॉर्ड करने के लिए माइक्रोफ़ोन की आवश्यकता होती है।</string>
+    <string name="disallow_microphone_permissions">- इस समय, आपने माइक्रोफ़ोन अनुमति प्रदान नहीं की है, इसलिए ऑडियो और वीडियो कॉल फ़ंक्शन काम नहीं करेंगे। लेकिन आप इसे सेटिंग्स में बदल सकते हैं।</string>
+    <string name="notification_permissions">अधिसूचना अनुमति</string>
+    <string name="allow_notification_permissions">- अधिसूचना में अलर्ट, ध्वनियाँ और आइकन बैज शामिल हो सकते हैं।</string>
+    <string name="disallow_notification_permissions">- इस समय, आपने अधिसूचना की अनुमति नहीं दी है, इसलिए फ़ोन कॉल के लिए कोई भी अलर्ट/ध्वनि काम नहीं करती है। लेकिन आप इसे सेटिंग्स में बदल सकते हैं।</string>
+    <string name="bluetooth_permissions">ब्लूटूथ अनुमति</string>
+    <string name="allow_bluetooth_permissions">- ब्लूटूथ विभिन्न उपकरणों के उपयोग की अनुमति देता है।</string>
+    <string name="location_permissions">स्थान अनुमति</string>
+    <string name="allow_location_permissions">- लक्षित चिकित्सा देखभाल और लाइसेंसिंग आवश्यकताओं के लिए स्थान आवश्यक है।</string>
+    <string name="contact_permissions">संपर्क अनुमति</string>
+    <string name="allow_contact_permissions">- संपर्क उपयोगकर्ताओं के बीच आसान कनेक्शन की अनुमति देता है।</string>
+    <string name="health_permissions">स्वास्थ्य अनुमति</string>
+    <string name="allow_health_permissions">- स्वास्थ्य आपके प्रदाता को आपके समग्र स्वास्थ्य और जीवनशैली की बेहतर तस्वीर देता है।</string>
 </resources>

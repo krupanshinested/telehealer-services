@@ -125,7 +125,7 @@ public class PermissionChecker {
         return isGranted;
     }
 
-    private boolean isNotiPermissionGranted(){
+    private boolean isNotiPermissionGranted() {
         Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
 //        TeleLogger.shared.log(TeleLogCapability., isGranted);
         return isGranted;
@@ -136,7 +136,7 @@ public class PermissionChecker {
         Boolean isGranted;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        }else {
+        } else {
             isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
         TeleLogger.shared.log(TeleLogCapability.photo, isGranted);
@@ -147,7 +147,7 @@ public class PermissionChecker {
         Boolean isGranted;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
-        }else {
+        } else {
             isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         }
         TeleLogger.shared.log(TeleLogCapability.camera, isGranted);
@@ -164,7 +164,7 @@ public class PermissionChecker {
         Boolean isGranted;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        }else {
+        } else {
             isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
         TeleLogger.shared.log(TeleLogCapability.photo, isGranted);
@@ -239,26 +239,19 @@ public class PermissionChecker {
 //            case PermissionConstants.PERMISSION_CAMERA:
 //                return String.format(context.getString(R.string.permission_camera_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_GALLERY:
-                return String.format(context.getString(R.string.permission_gallery_message), context.getString(R.string.app_name));
+            case PermissionConstants.PERMISSION_CAMERA:
             case PermissionConstants.PERMISSION_MICROPHONE:
-                return String.format(context.getString(R.string.permission_mic_message), context.getString(R.string.app_name));
+            case PermissionConstants.PERMISSION_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_PHOTOS:
+            case PermissionConstants.PERMISSION_CAM_MIC:
+            case PermissionConstants.PERMISSION_MIC_NITIFICATION:
+            case PermissionConstants.PERMISSION_CAM_NOTIFICAITON:
+                return context.getString(R.string.permission_photo_microphone_cam_noti_message);
             case PermissionConstants.PERMISSION_LOCATION:
                 return String.format(context.getString(R.string.permission_location_message), context.getString(R.string.app_name));
-            case PermissionConstants.PERMISSION_NOTIFICATION:
-                return String.format(context.getString(R.string.permission_notification_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_HEALTH:
                 return String.format(context.getString(R.string.permission_health_message), context.getString(R.string.app_name));
-            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
-                return String.format(context.getString(R.string.permission_cam_mic_noti_message), context.getString(R.string.app_name));
-            case PermissionConstants.PERMISSION_CAMERA:
-            case PermissionConstants.PERMISSION_CAM_PHOTOS:
-                return String.format(context.getString(R.string.permission_cam_photos_message), context.getString(R.string.app_name));
-            case PermissionConstants.PERMISSION_CAM_MIC:
-                return String.format(context.getString(R.string.permission_cam_mic_message), context.getString(R.string.app_name));
-            case PermissionConstants.PERMISSION_CAM_NOTIFICAITON:
-                return String.format(context.getString(R.string.permission_cam_noti_message), context.getString(R.string.app_name));
-            case PermissionConstants.PERMISSION_MIC_NITIFICATION:
-                return String.format(context.getString(R.string.permission_mic_noti_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_STORAGE:
                 return String.format(context.getString(R.string.permission_storage_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
@@ -269,10 +262,27 @@ public class PermissionChecker {
                 return String.format(context.getString(R.string.permission_storage_vitals_message), context.getString(R.string.app_name));
             case PermissionConstants.PERMISSION_CONTACTS:
                 return String.format(context.getString(R.string.permission_contact_message), context.getString(R.string.app_name));
-             case PermissionConstants.PERMISSION_GOOGLE_FIT:
-                 return String.format(context.getString(R.string.permission_google_fit), context.getString(R.string.app_name));
+            case PermissionConstants.PERMISSION_GOOGLE_FIT:
+                return String.format(context.getString(R.string.permission_google_fit), context.getString(R.string.app_name));
         }
         return null;
+    }
+
+    public boolean isCamPhoMicNoti (int permissionFor) {
+        switch (permissionFor) {
+            case PermissionConstants.PERMISSION_GALLERY:
+            case PermissionConstants.PERMISSION_CAMERA:
+            case PermissionConstants.PERMISSION_MICROPHONE:
+            case PermissionConstants.PERMISSION_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_PHOTOS:
+            case PermissionConstants.PERMISSION_CAM_MIC:
+            case PermissionConstants.PERMISSION_MIC_NITIFICATION:
+            case PermissionConstants.PERMISSION_CAM_NOTIFICAITON:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private String getTitle(int permissionFor) {
@@ -280,26 +290,19 @@ public class PermissionChecker {
 //            case PermissionConstants.PERMISSION_CAMERA:
 //                return context.getString(R.string.permission_camera_title);
             case PermissionConstants.PERMISSION_GALLERY:
-                return context.getString(R.string.permission_gallery_title);
+            case PermissionConstants.PERMISSION_CAMERA:
             case PermissionConstants.PERMISSION_MICROPHONE:
-                return context.getString(R.string.permission_mic_title);
+            case PermissionConstants.PERMISSION_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
+            case PermissionConstants.PERMISSION_CAM_PHOTOS:
+            case PermissionConstants.PERMISSION_CAM_MIC:
+            case PermissionConstants.PERMISSION_MIC_NITIFICATION:
+            case PermissionConstants.PERMISSION_CAM_NOTIFICAITON:
+                return context.getString(R.string.permission_photo_microphone_cam_noti_tittle);
             case PermissionConstants.PERMISSION_LOCATION:
                 return context.getString(R.string.permission_location_title);
-            case PermissionConstants.PERMISSION_NOTIFICATION:
-                return context.getString(R.string.permission_notification_title);
             case PermissionConstants.PERMISSION_HEALTH:
                 return context.getString(R.string.permission_health_title);
-            case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
-                return context.getString(R.string.permission_cam_mic_noti_title);
-            case PermissionConstants.PERMISSION_CAMERA:
-            case PermissionConstants.PERMISSION_CAM_PHOTOS:
-                return context.getString(R.string.permission_cam_photos_title);
-            case PermissionConstants.PERMISSION_CAM_MIC:
-                return context.getString(R.string.permission_cam_mic_title);
-            case PermissionConstants.PERMISSION_CAM_NOTIFICAITON:
-                return context.getString(R.string.permission_cam_noti_title);
-            case PermissionConstants.PERMISSION_MIC_NITIFICATION:
-                return context.getString(R.string.permission_mic_noti_title);
             case PermissionConstants.PERMISSION_STORAGE:
                 return context.getString(R.string.permission_storage_title);
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
@@ -388,32 +391,35 @@ public class PermissionChecker {
         return 0;
     }
 
-    private String[] getPermissions(int permissionFor) {
+    public String[] getPermissions(int permissionFor) {
         switch (permissionFor) {
+
+            case PermissionConstants.PERMISSION_CAMERAS:
+                return new String[]{Manifest.permission.CAMERA};
             case PermissionConstants.PERMISSION_CAM_PHOTOS:
             case PermissionConstants.PERMISSION_CAMERA:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA};
-                }else {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.CAMERA};
+                } else {
                     return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 }
             case PermissionConstants.PERMISSION_GALLERY:
             case PermissionConstants.PERMISSION_STORAGE:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO};
-                }else {
+                } else {
                     return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 }
             case PermissionConstants.PERMISSION_CAM_MIC:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,Manifest.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.FOREGROUND_SERVICE,Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND,Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS};
-                }else {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND, Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND, Manifest.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS};
+                } else {
                     return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
                 }
             case PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO,Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO,Manifest.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.FOREGROUND_SERVICE,Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND,Manifest.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND,Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,Manifest.permission.POST_NOTIFICATIONS};
-                }else {
+                    return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND, Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND, Manifest.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Manifest.permission.POST_NOTIFICATIONS};
+                } else {
                     return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.POST_NOTIFICATIONS};
                 }
             case PermissionConstants.PERMISSION_LOCATION_STORAGE_VITALS:
@@ -424,7 +430,7 @@ public class PermissionChecker {
             case PermissionConstants.PERMISSION_WRITE_STORAGE_VITALS:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     return new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO};
-                }else {
+                } else {
                     return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 }
             case PermissionConstants.PERMISSION_MICROPHONE:
@@ -433,7 +439,7 @@ public class PermissionChecker {
                 return new String[]{Manifest.permission.READ_CONTACTS};
             case PermissionConstants.PERMISSION_GOOGLE_FIT:
                 return new String[]{Manifest.permission.ACTIVITY_RECOGNITION};
-                case PermissionConstants.PERMISSION_NOTIFICATION:
+            case PermissionConstants.PERMISSION_NOTIFICATION:
                 return new String[]{Manifest.permission.POST_NOTIFICATIONS};
 
         }

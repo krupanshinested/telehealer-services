@@ -268,7 +268,8 @@
     <string name="permission_loc_vitals_message">%s desea acceder a su ubicación para conectarse con sus dispositivos iHealth.</string>
     <string name="permission_storage_vitals_message">%s desea acceder a su almacenamiento para guardar los datos de sus dispositivos iHealth.</string>
     <string name="permission_contact_message">%s desea acceder a sus contactos para invitar a usuarios de su contacto</string>
-
+    <string name="permission_photo_microphone_cam_noti_message">Para brindarle una atención médica óptima que requiere el uso de fotos, grabaciones de audio y actualizaciones de notificaciones.</string>
+    <string name="permission_photo_microphone_cam_noti_tittle">Otorgar foto, cámara, micrófono, acceso a notificaciones</string>
     <string name="permission_camera_title">Conceder acceso a la cámara</string>
     <string name="permission_gallery_title">Otorgar acceso a fotos</string>
     <string name="permission_mic_title">Conceder acceso de micrófono</string>
@@ -332,6 +333,7 @@
     <string name="medical_history">Historial médico</string>
     <string name="settings">Ajustes</string>
     <string name="preference">Preferencias</string>
+    <string name="privacy_setting">Configuración de privacidad</string>
     <string name="phone_no">Telefono no</string>
     <string name="terms">Condiciones</string>
     <string name="privacy_procedure">Privacidad y procedimientos</string>
@@ -1598,4 +1600,24 @@
     <string name="symbol_dollar">$</string>
     <string name="subscription_history">historial de suscripciones</string>
     <string name="default_vital">Respuesta vital predeterminada activada</string>
+    <string name="photo_permissions">Permiso de foto</string>
+    <string name="allow_photo_permissions">- Se necesita foto para capturar imágenes y cualquier documentación requerida.</string>
+    <string name="disallow_photo_permissions">- En este momento, no ha proporcionado permiso de foto, por lo que las funciones de captura de imágenes no funcionarán. Pero puedes cambiarlo en Ajustes.</string>
+    <string name="camera_permissions">Permiso de cámara</string>
+    <string name="allow_camera_permissions">"- Se necesita cámara para capturar imágenes y cualquier documentación requerida.</string>
+    <string name="disallow_camera_permissions">- En este momento, no ha proporcionado el permiso de la cámara, por lo que las funciones de videollamada y captura de imágenes no funcionarán. Pero puedes cambiarlo en Ajustes.</string>
+    <string name="microphone_permissions">Permiso de micrófono</string>
+    <string name="allow_microphone_permissions">- Se necesita un micrófono para transmitir y grabar su voz.</string>
+    <string name="disallow_microphone_permissions">- En este momento, no ha proporcionado permiso de micrófono, por lo que las funciones de llamada de audio y video no funcionarán. Pero puedes cambiarlo en Ajustes.</string>
+    <string name="notification_permissions">Permiso de notificación</string>
+    <string name="allow_notification_permissions">- La notificación puede incluir alertas, sonidos e íconos distintivos.</string>
+    <string name="disallow_notification_permissions">- En este momento, no ha proporcionado permiso de Notificación, por lo que las alertas/sonidos de las llamadas telefónicas no funcionarán. Pero puedes cambiarlo en Ajustes.</string>
+    <string name="bluetooth_permissions">Permiso Bluetooth</string>
+    <string name="allow_bluetooth_permissions">- Bluetooth permite usos de varios dispositivos.</string>
+    <string name="location_permissions">Permiso de ubicación</string>
+    <string name="allow_location_permissions">- La ubicación es necesaria para la atención médica específica y los requisitos de licencia.</string>
+    <string name="contact_permissions">Permiso de contacto</string>
+    <string name="allow_contact_permissions">- El contacto permite conexiones más fáciles entre los usuarios.</string>
+    <string name="health_permissions">Permiso de salud</string>
+    <string name="allow_health_permissions">- Salud le da a su proveedor una mejor imagen de su salud y estilo de vida en general.</string>
 </resources>
