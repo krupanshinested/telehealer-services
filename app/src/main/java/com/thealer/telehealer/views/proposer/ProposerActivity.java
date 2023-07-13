@@ -1,7 +1,6 @@
 package com.thealer.telehealer.views.proposer;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -9,13 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -23,11 +15,16 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.AppPreference;
@@ -360,6 +357,31 @@ public class ProposerActivity extends BaseActivity {
                 appPreference.setBoolean("isNotificationPermissionAsk", true);
                 break;
             default:
+                for (String permission :
+                        permissions) {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                        appPreference.setBoolean(permission, true);
+                    }
+                }
+
+                int resultCode = RESULT_OK;
+
+                for (int grantResult : grantResults) {
+                    if (grantResult == PackageManager.PERMISSION_DENIED) {
+                        resultCode = RESULT_CANCELED;
+                        break;
+                    }
+                }
+
+                if (requestCode ==  GoogleFitManager.REQUEST_OAUTH_REQUEST_CODE) {
+                    Log.d("ProposerActivity", "googleFitManager req");
+                    googleFitManager = new GoogleFitManager(this);
+                    googleFitManager.requestPermission();
+                } else {
+                    sendProposerResultBroadCast(resultCode);
+                    setResult(resultCode);
+                    finish();
+                }
                 break;
         }
     }
