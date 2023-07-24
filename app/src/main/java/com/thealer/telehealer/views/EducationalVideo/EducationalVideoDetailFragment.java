@@ -203,7 +203,7 @@ public class EducationalVideoDetailFragment extends BaseFragment {
                         }
                     }, null);
                 } else {
-                    Utils.showAlertDialog(getActivity(), getString(R.string.delete), getString(R.string.delete_educational_video), getString(R.string.delete), getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    Utils.showAlertDialog(getActivity(), getString(R.string.Delete).toUpperCase(), getString(R.string.delete_educational_video), getString(R.string.Delete).toUpperCase(), getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String currentUserGuid = UserDetailPreferenceManager.getUser_guid();

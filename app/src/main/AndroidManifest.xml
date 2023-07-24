@@ -16,11 +16,15 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND" />
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -30,6 +34,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
         <intent>
@@ -51,38 +56,52 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".views.settings.PrivacySettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.settings.DateFilterActivity"
             android:exported="false" />
+
+        <receiver
+            android:name=".common.MyReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
             android:name=".views.subscription.SubscriptionHistoryActivity"
             android:exported="false" />
-        <activity android:name=".views.subscription.SubscriptionActivity"
-            android:exported="false"/>
-        <activity android:name=".views.inviteUser.InvitedListActivity"
-            android:exported="false"/>
-        <activity android:name=".views.home.broadcastMessages.ChoosePatientActivity"
-            android:exported="false"/>
+        <activity
+            android:name=".views.subscription.SubscriptionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.inviteUser.InvitedListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.home.broadcastMessages.ChoosePatientActivity"
+            android:exported="false" />
         <activity
             android:name=".views.home.broadcastMessages.BroadcastMessagesActivity"
             android:exported="false"
             android:label="@string/title_activity_broadcast_messages" />
-        <activity android:name=".views.guestlogin.screens.PatientWaitingRoom"
-            android:exported="false"/>
-        <activity android:name=".views.guestlogin.screens.GuestUserSignupActivity"
-            android:exported="false"/>
+        <activity
+            android:name=".views.guestlogin.screens.PatientWaitingRoom"
+            android:exported="false" />
+        <activity
+            android:name=".views.guestlogin.screens.GuestUserSignupActivity"
+            android:exported="false" />
         <activity
             android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity
             android:name=".views.guestlogin.GuestLoginActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".views.common.SplashActivity"
-            android:screenOrientation="portrait"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -100,8 +119,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.signup.SignUpActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.signup.PasswordRequirementActivity"
@@ -184,13 +203,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.call.CallActivity"
+            android:exported="true"
             android:immersive="true"
             android:inheritShowWhenLocked="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:exported="true"
             android:turnScreenOn="true" />
         <activity
             android:name=".views.settings.SignatureActivity"
@@ -210,8 +229,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
-            android:launchMode="singleTask"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -224,9 +243,9 @@
         </activity>
         <activity
             android:name=".views.notification.NotificationActivity"
+            android:exported="false"
             android:parentActivityName=".views.home.HomeActivity"
             android:screenOrientation="portrait"
-            android:exported="false"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".views.notification.NotificationDetailActivity"
@@ -311,8 +330,8 @@
 
         <receiver
             android:name=".common.BTStateChangedBroadcastReceiver"
-            android:exported="true"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
@@ -338,10 +357,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".views.notification.NotificationCancelAppointmentReceiver"
-            android:exported="true"/>
+        <receiver
+            android:name=".views.notification.NotificationCancelAppointmentReceiver"
+            android:exported="true" />
 
-        <service android:name=".common.pubNub.TelehealerFirebaseMessagingService"
+        <service
+            android:name=".common.pubNub.TelehealerFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -352,7 +373,8 @@
             android:exported="false" />
         <service
             android:name=".common.OpenTok.CallNotificationService"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".views.guestlogin.WaitingRoomHearBeatService"
             android:enabled="true"

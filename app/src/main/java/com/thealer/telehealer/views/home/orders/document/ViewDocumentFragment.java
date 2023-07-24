@@ -199,7 +199,7 @@ public class ViewDocumentFragment extends BaseFragment implements Toolbar.OnMenu
                 break;
             case R.id.menu_delete:
                 Utils.showAlertDialog(getActivity(), getString(R.string.alert), getString(R.string.are_you_sure_to_delete_document),
-                        getString(R.string.delete),
+                        getString(R.string.Delete).toUpperCase(),
                         getString(R.string.cancel),
                         new DialogInterface.OnClickListener() {
                             @Override

@@ -1,6 +1,7 @@
 package com.thealer.telehealer.views.home;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -60,6 +62,7 @@ import com.thealer.telehealer.common.Utils;
 import com.thealer.telehealer.stripe.AppPaymentCardUtils;
 import com.thealer.telehealer.stripe.PaymentContentActivity;
 import com.thealer.telehealer.views.base.BaseActivity;
+import com.thealer.telehealer.views.call.CallActivity;
 import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.ContentActivity;
@@ -98,6 +101,7 @@ import static com.thealer.telehealer.TeleHealerApplication.appConfig;
 import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import static com.thealer.telehealer.TeleHealerApplication.application;
 import static com.thealer.telehealer.TeleHealerApplication.isInForeGround;
+import static com.thealer.telehealer.common.ArgumentKeys.CALL_INITIATE_MODEL;
 
 public class HomeActivity extends BaseActivity implements AttachObserverInterface,
         OnActionCompleteInterface, NavigationView.OnNavigationItemSelectedListener, OnOrientationChangeInterface,
@@ -157,8 +161,27 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
         if (savedInstanceState != null) {
             isChildVisible = savedInstanceState.getBoolean(IS_CHILD_VISIBLE);
             selecteMenuItem = savedInstanceState.getInt(SELECTED_MENU_ITEM);
+            if (savedInstanceState.getBoolean("isappkill")){
+                Intent intent = new Intent(application, CallActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.putExtra(CALL_INITIATE_MODEL, getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL));
+                startActivity(intent);
+            }
         } else {
             selecteMenuItem = getIntent().getIntExtra(ArgumentKeys.SELECTED_MENU_ITEM, 0);
+            if (getIntent().getBooleanExtra("isappkill",false)){
+                NotificationManager mNotificationManager = (NotificationManager)
+                        getSystemService(NOTIFICATION_SERVICE);
+                mNotificationManager.cancel(CallActivity.VOIP_NOTIFICATION_ID);
+                Intent intent = new Intent(application, CallActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.putExtra(CALL_INITIATE_MODEL, getIntent().getSerializableExtra(ArgumentKeys.CALL_INITIATE_MODEL));
+                intent.putExtra(ArgumentKeys.TRIGGER_ANSWER, getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_ANSWER, false));
+                intent.putExtra(ArgumentKeys.TRIGGER_END, getIntent().getBooleanExtra(ArgumentKeys.TRIGGER_END, false));
+                startActivity(intent);
+            }
         }
 
         if (checkIsUserActivated()) {
@@ -1050,10 +1073,14 @@ public class HomeActivity extends BaseActivity implements AttachObserverInterfac
                     .putExtra(ArgumentKeys.IS_BUTTON_NEEDED, true), RequestID.REQ_LICENSE_EXPIRED);
 
         } else if (!isPropserShown) {
-
-            if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
-                Log.d("HelpScreen", "Permission");
-                isPropserShown = true;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC_NOTIFICATION)) {
+                    isPropserShown = true;
+                }
+            }else {
+                if (!PermissionChecker.with(this).checkPermission(PermissionConstants.PERMISSION_CAM_MIC)) {
+                    isPropserShown = true;
+                }
             }
         } else if (!appPreference.getBoolean(PreferenceConstants.IS_HEALTH_SUMMARY_SHOWN) && (!application.isFromRegistration) && UserType.isUserPatient() && UserDetailPreferenceManager.getWhoAmIResponse() != null && (UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire() == null || !UserDetailPreferenceManager.getWhoAmIResponse().getQuestionnaire().isQuestionariesEmpty())) {
 

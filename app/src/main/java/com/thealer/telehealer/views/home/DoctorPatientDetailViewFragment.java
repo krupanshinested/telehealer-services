@@ -1,11 +1,13 @@
 package com.thealer.telehealer.views.home;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -13,13 +15,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -173,6 +173,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
             orderTab = 4, monitorTab = 5, vitalTab = 6, documentTab = 7, paymentHistoryTab = 8;
     private List<String> designationList = new ArrayList<>();
     public static boolean isABoutclick = false;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     @Override
     public void onAttach(Context context) {
@@ -542,12 +543,22 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             if (UserType.isUserAssistant() && doctorModel != null) {
                                 boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
                                 if (isPermissionAllowed && Constants.isCallEnable) {
-                                    setUpMakeCall();
+                                    if (checkPermission()){
+                                        setUpMakeCall();
+                                    }else  {
+                                        requestPermission();
+                                    }
                                 } else {
                                     Utils.displayPermissionMsg(getContext());
                                 }
-                            } else
-                                setUpMakeCall();
+                            } else {
+                                if (checkPermission()){
+                                    setUpMakeCall();
+                                }else  {
+                                    requestPermission();
+                                }
+                            }
+
                         }
                         break;
                     case R.id.menu_upload:
@@ -680,6 +691,18 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                 onCloseActionInterface.onClose(false);
             }
         });
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.BLUETOOTH_CONNECT);
+
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_REQUEST_CODE);
+
     }
 
 
@@ -1318,6 +1341,9 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         Log.d("requestCode", "" + requestCode);
         switch (requestCode) {
 
+            case PERMISSION_REQUEST_CODE:
+                setUpMakeCall();
+                break;
             case RequestID.REQ_SELECT_PATIENT:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getExtras() != null) {
