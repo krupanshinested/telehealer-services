@@ -45,7 +45,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     private OnViewChangeInterface onViewChangeInterface;
 
     private ProfileCellView profile, medical_history, settings, email_id,
-            phone_number, change_password, checkCallQuality, logs,
+            phone_number, change_password, checkCallQuality, logs,privacysetting,
             feedback, terms_and_condition, privacy_policy, add_card,telehealer_billings, educational_video, patient_payments,subscription, newDeviceSetup;
 
     private View signOut;
@@ -96,6 +96,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
     }
 
     private void initView(View baseView) {
+        privacysetting = baseView.findViewById(R.id.privacy_setting);
         checkCallQuality = baseView.findViewById(R.id.check_call_quality);
         logs = baseView.findViewById(R.id.logs);
         profile = baseView.findViewById(R.id.profile);
@@ -175,6 +176,7 @@ public class ProfileSettingFragment extends BaseFragment implements View.OnClick
         medicalAssistantLl.setOnClickListener(this);
         patient_payments.setOnClickListener(this);
         newDeviceSetup.setOnClickListener(this);
+        privacysetting.setOnClickListener(this);
 
         email_id.updateValue(UserDetailPreferenceManager.getEmail());
         phone_number.updateValue(UserDetailPreferenceManager.getPhone());

@@ -391,6 +391,9 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
             case R.id.new_device_setup:
                 startActivity(new Intent(this, MyDeviceListActivity.class));
                 break;
+            case R.id.privacy_setting:
+                startActivity(new Intent(this, PrivacySettingActivity.class));
+                break;
             case R.id.patient_payments: {
                 bundle = new Bundle();
                 TransactionListFragment transactionListFragment = new TransactionListFragment();

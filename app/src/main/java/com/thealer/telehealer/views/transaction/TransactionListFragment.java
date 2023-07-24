@@ -67,6 +67,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import retrofit2.HttpException;
+
 public class TransactionListFragment extends BaseFragment {
 
     private TransactionListViewModel transactionListViewModel;
@@ -186,7 +188,7 @@ public class TransactionListFragment extends BaseFragment {
                     showEmptyState();
                     transactionListViewModel.setApiRequested(false);
                     progressBar.setVisibility(View.GONE);
-                    String errorMessage = errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
+                    String errorMessage = errorModel.getCode() == 404 ? getString(R.string.EMPTY_TRANSACTIONS) : errorModel.getMessage() != null ? errorModel.getMessage() : getString(R.string.failed_to_connect);
                     Utils.showAlertDialog(getContext(), getString(R.string.app_name), errorMessage, getString(R.string.ok), null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

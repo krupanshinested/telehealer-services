@@ -71,9 +71,16 @@
                     android:id="@+id/settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hideSpiltter="true"
                     app:icon="@drawable/ic_settings"
                     app:title="@string/preference" />
+
+                <com.thealer.telehealer.views.settings.cellView.ProfileCellView
+                    android:id="@+id/privacy_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hideSpiltter="true"
+                    app:icon="@drawable/privacy_setting"
+                    app:title="@string/privacy_setting" />
 
                 <View
                     android:layout_width="fill_parent"
