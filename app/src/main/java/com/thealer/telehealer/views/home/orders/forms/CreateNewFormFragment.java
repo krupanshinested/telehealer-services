@@ -85,7 +85,13 @@ public class CreateNewFormFragment extends OrdersBaseFragment implements View.On
                     if (baseApiResponseModels.size() > 0) {
 
                         formsList.clear();
-                        formsList = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
+                        for (OrdersUserFormsApiResponseModel form:(ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels) {
+                            if (form.getForm_id() != 2){
+//                                formsList = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
+                                 formsList.add(form);
+                            }
+                        }
+
 
                         formsListAdapter.setFormsApiResponseModelArrayList(formsList);
                         formsLl.setVisibility(View.VISIBLE);
