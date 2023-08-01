@@ -126,7 +126,7 @@ public class SplashActivity extends BaseActivity {
                     FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
                         @Override
                         public void onComplete(@NonNull Task<String> task) {
-                            if (task.isComplete()) {
+                            if (task.isSuccessful()) {
                                 TelehealerFirebaseMessagingService.assignToken(task.getResult());
                             }
                         }
