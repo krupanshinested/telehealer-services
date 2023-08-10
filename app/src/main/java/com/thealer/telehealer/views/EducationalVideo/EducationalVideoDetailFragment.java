@@ -147,10 +147,10 @@ public class EducationalVideoDetailFragment extends BaseFragment {
 
         if (educationalVideoOrder != null && !UserType.isUserPatient()) {
             edit_tv.setVisibility(View.GONE);
-            delete_iv.setVisibility(View.VISIBLE);
+            delete_iv.setVisibility(View.GONE);
         } else if (educationalVideo != null && educationalVideo.getCreated_by() == UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()) {
             edit_tv.setVisibility(View.VISIBLE);
-            delete_iv.setVisibility(View.VISIBLE);
+            delete_iv.setVisibility(View.GONE);
         } else {
             edit_tv.setVisibility(View.GONE);
             delete_iv.setVisibility(View.GONE);
