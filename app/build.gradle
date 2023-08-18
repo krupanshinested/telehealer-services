@@ -13,8 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 62
-        versionName "2.9.30"
+        versionCode 59
+        versionName "2.9.29"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
