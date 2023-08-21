@@ -177,7 +177,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                 scheduleDetails(baseApiResponseModel);
                             } else {
                                 if (baseApiResponseModel.isSuccess()) {
-                                    Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), getString(R.string.schedule_deleted), getString(R.string.ok).toUpperCase(), null,
+                                    Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), baseApiResponseModel.getMessage(), getString(R.string.ok).toUpperCase(), null,
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
