@@ -38,7 +38,7 @@ public class PatientWaitingRoomModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().kickOutPatient(patientinfo.getSessionId(),true)
+                    getAuthApiService().kickOutPatient(patientinfo.getSessionId(),true,false)
                             .compose(applySchedulers())
                             .subscribe(new BaseApiViewModel.RAObserver<BaseApiResponseModel>(Constants.SHOW_PROGRESS) {
                                 @Override
