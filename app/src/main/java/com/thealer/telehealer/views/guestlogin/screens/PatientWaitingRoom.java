@@ -85,6 +85,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 Log.d("PatientWaitingRoom", "onChanged");
+                dismissProgressDialog();
                 if (baseApiResponseModel != null) {
                     Log.d("PatientWaitingRoom", "callKickOut");
                     if (selectedPaitentinfo != null) {
@@ -141,6 +142,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         selectedPaitentinfo = data;
+                        showProgressDialog();
                         patientWaitingRoomModel.kickOutPatient(data);
                     }
                 }, new DialogInterface.OnClickListener() {
@@ -177,7 +179,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
         askToAddCardViewModel.getErrorModelLiveData().observe(this, new Observer<ErrorModel>() {
             @Override
             public void onChanged(ErrorModel errorModel) {
-                if (errorModel.geterrorCode() == null){
+                if (errorModel.geterrorCode() == null) {
                     Utils.showAlertDialog(PatientWaitingRoom.this, getString(R.string.app_name),
                             errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                             null, getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -191,7 +193,7 @@ public class PatientWaitingRoom extends BaseActivity implements View.OnClickList
                                     dialog.dismiss();
                                 }
                             });
-                }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
+                } else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                     Utils.showAlertDialog(PatientWaitingRoom.this, getString(R.string.app_name),
                             errorModel.getMessage() != null && !errorModel.getMessage().isEmpty() ? errorModel.getMessage() : getString(R.string.failed_to_connect),
                             null, getString(R.string.ok), new DialogInterface.OnClickListener() {
