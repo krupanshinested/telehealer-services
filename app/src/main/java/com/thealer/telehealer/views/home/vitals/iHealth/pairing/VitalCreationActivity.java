@@ -135,7 +135,7 @@ public class VitalCreationActivity extends BaseActivity implements
 
     private void requestPermission() {
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_REQUEST_CODE);
 
     }
 
