@@ -177,7 +177,26 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                 scheduleDetails(baseApiResponseModel);
                             } else {
                                 if (baseApiResponseModel.isSuccess()) {
-                                    Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), baseApiResponseModel.getMessage(), getString(R.string.ok).toUpperCase(), null,
+
+                                    if (baseApiResponseModel.getMessage().equals("You cannot delete this appointment once appointment call done")){
+                                        Utils.showAlertDialog(getActivity(), getString(R.string.alert).toUpperCase(), baseApiResponseModel.getMessage(), getString(R.string.ok).toUpperCase(), null,
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        onCloseActionInterface.onClose(true);
+                                                    }
+                                                }, null);
+                                    }else {
+                                        Utils.showAlertDialog(getActivity(), getString(R.string.success).toUpperCase(), baseApiResponseModel.getMessage(), getString(R.string.ok).toUpperCase(), null,
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        onCloseActionInterface.onClose(true);
+                                                    }
+                                                }, null);
+                                    }
+                                }else {
+                                    Utils.showAlertDialog(getActivity(), getString(R.string.failure).toUpperCase(), baseApiResponseModel.getMessage(), getString(R.string.ok).toUpperCase(), null,
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
