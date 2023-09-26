@@ -183,7 +183,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                                 new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
-                                                        onCloseActionInterface.onClose(true);
+//                                                        onCloseActionInterface.onClose(true);
                                                     }
                                                 }, null);
                                     }else {
@@ -200,7 +200,7 @@ public class ScheduleDetailViewFragment extends BaseFragment implements View.OnC
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    onCloseActionInterface.onClose(true);
+//                                                    onCloseActionInterface.onClose(true);
                                                 }
                                             }, null);
                                 }
