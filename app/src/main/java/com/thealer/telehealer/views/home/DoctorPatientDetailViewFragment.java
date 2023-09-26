@@ -139,6 +139,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
     public static Button actionBtn;
     private ViewPagerAdapter viewPagerAdapter;
     private FloatingActionButton addFab;
+    boolean isfromwaiting = false;
 
     private GetUsersApiViewModel getUsersApiViewModel;
     private CommonUserApiResponseModel resultBean, doctorModel;
@@ -541,6 +542,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                             return false;
                         } else {
 //                            if (UserType.isUserAssistant() && doctorModel != null && doctorModel.getPermissions() != null && doctorModel.getPermissions().size() > 0) {
+                            isfromwaiting = false;
                             if (UserType.isUserAssistant() && doctorModel != null) {
                                 boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
                                 if (isPermissionAllowed && Constants.isCallEnable) {
@@ -571,7 +573,12 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                         startActivity(new Intent(getActivity(), CreateOrderActivity.class).putExtras(bundle));
                         break;
                     case R.id.menu_wating_room:
-                        enterWaitingRoom();
+                        isfromwaiting = true;
+                        if (checkPermission()){
+                            enterWaitingRoom();
+                        }else  {
+                            requestPermission();
+                        }
                         break;
                 }
                 return false;
@@ -1346,7 +1353,11 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
         switch (requestCode) {
 
             case PERMISSION_REQUEST_CODE:
-                setUpMakeCall();
+                if (isfromwaiting) {
+                    enterWaitingRoom();
+                } else {
+                    setUpMakeCall();
+                }
                 break;
             case RequestID.REQ_SELECT_PATIENT:
                 if (resultCode == RESULT_OK) {
