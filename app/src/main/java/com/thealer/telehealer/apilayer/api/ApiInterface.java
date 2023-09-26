@@ -194,6 +194,7 @@ public interface ApiInterface {
     String DOWNLOAD_SUMMARY = "download_summary";
     String PROFILE_COMPLETE = "profile_complete";
     String REJECT = "reject";
+    String isDelete = "isDelete";
     String SESSIONID = "session_id";
     String HEALTHCARE_DEVICE_ID = "healthcare_device_id";
     String DEVICE_ID = "device_id";
@@ -770,7 +771,7 @@ public interface ApiInterface {
     Observable<GuestLoginApiResponseModel> guestLogin(@Body HashMap<String, Object> params);
 
     @PUT("api/call/{session_id}")
-    Observable<BaseApiResponseModel> kickOutPatient(@Path(SESSIONID) String sessionId, @Query(REJECT) boolean status);
+    Observable<BaseApiResponseModel> kickOutPatient(@Path(SESSIONID) String sessionId, @Query(REJECT) boolean status,@Query(isDelete) boolean isdelete);
 
     @POST("api/virtual-rooms/join-v2")
     Observable<GuestLoginApiResponseModel> registerUserEnterWaitingRoom(@Body HashMap<String, Object> params);
