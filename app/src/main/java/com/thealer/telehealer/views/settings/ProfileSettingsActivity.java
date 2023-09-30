@@ -243,7 +243,7 @@ public class ProfileSettingsActivity extends BaseActivity implements SettingClic
                 if (baseApiResponseModel != null) {
                     WhoAmIApiResponseModel whoAmIApiResponseModel = (WhoAmIApiResponseModel) baseApiResponseModel;
                     UserDetailPreferenceManager.insertUserDetail(whoAmIApiResponseModel);
-                    showMedicalHistory();
+//                    showMedicalHistory();
                 }
             }
         });
