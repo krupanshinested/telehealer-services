@@ -85,7 +85,7 @@ public class InviteUserBaseFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     if (errorModel.geterrorCode() == null){
-                        sendFailureMessage(errorModel.getMessage());
+                        sendFailureMessage(String.format(getActivity().getString(R.string.demographic_invite_error),getActivity().getString(R.string.app_name),getActivity().getString(R.string.app_name)));
                     }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         sendFailureMessage(errorModel.getMessage());
                     }
