@@ -341,7 +341,13 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
                 if(searchView.getCurrentSearchResult()!=null){
                     search=searchView.getCurrentSearchResult();
                 }
-                showSearchResult(search);
+                String finalSearch = search;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        showSearchResult(finalSearch);
+                    }
+                },500);
             }
         });
     }
