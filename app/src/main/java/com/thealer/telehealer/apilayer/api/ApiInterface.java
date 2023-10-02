@@ -153,6 +153,7 @@ public interface ApiInterface {
     String USER_FORM_ID = "user_form_id";
     String CANCEL = "cancel";
     String SEARCH = "search";
+    String temp_SEARCH = "filter_fullname__icontains";
     String SEARCH_FILTER = "filter_fullname__icontains";
     String SEARCH_TITLE_FILTER = "filter_title__icontains";
     String SEARCH_FILTER_PRESCIPTION = "filter_drug_name__icontains";
@@ -320,7 +321,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(temp_SEARCH) String name, /*@Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role,*/ @Query("specialty") String speciality);
 
     @GET("api/designations")
     Observable<DesignationResponseModel> getDesignationList();
