@@ -1712,4 +1712,5 @@
     <string name="allow_contact_permissions">- Contact allows easier connections between users.</string>
     <string name="health_permissions">Health Permission</string>
     <string name="allow_health_permissions">- Health gives your provider a better picture of your overall health and lifestyle.</string>
+    <string name="demographic_invite_error">We were unable to find a registered patient on %s using the demographics provided. You can invite the patient to register on the %s platform by providing a valid mobile number and/or email of the patient.</string>
 </resources>

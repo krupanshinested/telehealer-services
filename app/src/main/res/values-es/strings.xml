@@ -1620,4 +1620,6 @@
     <string name="allow_contact_permissions">- El contacto permite conexiones más fáciles entre los usuarios.</string>
     <string name="health_permissions">Permiso de salud</string>
     <string name="allow_health_permissions">- Salud le da a su proveedor una mejor imagen de su salud y estilo de vida en general.</string>
+    <string name="demographic_invite_error">No pudimos encontrar un paciente registrado en %s utilizando los datos demográficos proporcionados. Puede invitar al paciente a registrarse en la plataforma %s proporcionando un número de teléfono móvil y/o correo electrónico válido del paciente.</string>
+
 </resources>

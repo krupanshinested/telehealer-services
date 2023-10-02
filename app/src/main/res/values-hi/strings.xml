@@ -1609,4 +1609,6 @@
     <string name="allow_contact_permissions">- संपर्क उपयोगकर्ताओं के बीच आसान कनेक्शन की अनुमति देता है।</string>
     <string name="health_permissions">स्वास्थ्य अनुमति</string>
     <string name="allow_health_permissions">- स्वास्थ्य आपके प्रदाता को आपके समग्र स्वास्थ्य और जीवनशैली की बेहतर तस्वीर देता है।</string>
+    <string name="demographic_invite_error">उपलब्ध कराए गए जनसांख्यिकी का उपयोग करके हम %s पर एक पंजीकृत रोगी को खोजने में असमर्थ थे। आप रोगी को एक मान्य मोबाइल नंबर और / या रोगी का ईमेल प्रदान करके %s मंच पर पंजीकरण करने के लिए आमंत्रित कर सकते हैं।</string>
+
 </resources>
