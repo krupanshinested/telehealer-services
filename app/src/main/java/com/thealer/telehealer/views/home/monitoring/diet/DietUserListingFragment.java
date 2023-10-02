@@ -140,6 +140,8 @@ public class DietUserListingFragment extends BaseFragment {
         bottomView = (View) view.findViewById(R.id.bottom_view);
         doctorPatientListCrv = (CustomRecyclerView) view.findViewById(R.id.doctor_patient_list_crv);
 
+        searchEt.setHint(getString(R.string.lbl_search_patient));
+
         toolbar.inflateMenu(R.menu.filter_menu);
         MenuItem filterItem = toolbar.getMenu().findItem(R.id.menu_filter);
         View filterView = filterItem.getActionView();
