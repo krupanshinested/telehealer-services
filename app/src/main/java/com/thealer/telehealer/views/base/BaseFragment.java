@@ -10,16 +10,23 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +38,7 @@ import com.thealer.telehealer.common.ArgumentKeys;
 import com.thealer.telehealer.common.CallPopupDialogFragment;
 import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.common.FireBase.EventRecorder;
+import com.thealer.telehealer.common.Logs;
 import com.thealer.telehealer.common.PermissionConstants;
 import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserType;
@@ -50,6 +58,8 @@ public class BaseFragment extends Fragment {
 
     public static final String TAG = "aswin";
     public Dialog dialog;
+    private RelativeLayout relativeLayout;
+    private int count = 0;
 
     @Nullable
     @Override
@@ -134,6 +144,62 @@ public class BaseFragment extends Fragment {
         successViewDialogFragment.show(getActivity().getSupportFragmentManager(), successViewDialogFragment.getClass().getSimpleName());
     }
 
+    public void showProgressDialog() {
+        count = count + 1;
+
+        Logs.D(TAG, "inside showProgressDialog");
+        dismissProgressDialog();
+
+        relativeLayout = new RelativeLayout(getActivity());
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        relativeLayout.setLayoutParams(layoutParams);
+        relativeLayout.setGravity(Gravity.CENTER);
+        relativeLayout.setClickable(true);
+
+        CardView cardView = new CardView(getActivity());
+        cardView.setCardBackgroundColor(getActivity().getColor(R.color.colorWhite));
+        cardView.setAlpha(0.9f);
+        cardView.setRadius(12.0f);
+
+
+        ImageView imageView = new ImageView(getActivity());
+        DrawableImageViewTarget drawableImageViewTarget = new DrawableImageViewTarget(imageView);
+
+
+        Glide.with(getActivity())
+                .load(R.raw.throbber)
+                .into(drawableImageViewTarget);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(160, 160);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        imageView.setLayoutParams(params);
+        cardView.setLayoutParams(params);
+
+        relativeLayout.addView(cardView);
+        cardView.addView(imageView);
+
+        getActivity().addContentView(relativeLayout, layoutParams);
+        relativeLayout.setVisibility(View.VISIBLE);
+
+    }
+
+    public void dismissProgressDialog() {
+        Logs.D(TAG, "inside dismissProgressDialog " + count);
+        if (count > 0) {
+            count--;
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (relativeLayout != null && relativeLayout.getVisibility() == View.VISIBLE) {
+                        relativeLayout.setVisibility(View.GONE);
+                    }
+                }
+            }, 2000);
+        }
+    }
 
 
     public void sendSuccessViewBroadCast(Context context, boolean status, String title, String description) {
