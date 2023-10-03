@@ -1477,7 +1477,7 @@
     <string name="message">MESSAGE</string>
     <string name="waiting_room">Waiting Room</string>
     <string name="put_app_in_back">You colud put this app in the background while you wait , but not more than 5 mins at a time ,for otherwise , you may lose your spot and rejoin at the end of the queue.</string>
-    <string name="guest_login_bottom_title">you will be entering a virtual waiting room . Proceed only if you have a scheduled appointment today or your provider has suggested using the waiting room for same day consults .</string>
+    <string name="guest_login_bottom_title">You will be entering a virtual waiting room . Proceed only if you have a scheduled appointment today or your provider has suggested using the waiting room for same day consults .</string>
     <string name="entering_you_waiting_room">Entering you waiting room request</string>
     <string name="validating_your_waiting_room">Validating your waiting room request</string>
     <string name="waiting_screen_msg">By Pressing Enter you will be  agreeing to <a href="https://www.google.com/">Terms and conditions</a> and <a href="https://www.google.com/">Notice to consumers</a></string>
