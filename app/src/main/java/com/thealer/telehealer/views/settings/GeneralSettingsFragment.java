@@ -110,7 +110,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 whoAmIApiViewModel.assignWhoAmI();
-                manageSwitches();
+
             }
         });
 
@@ -129,6 +129,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                         available_time.updateUI(false);
                         updateAvaibleTime(whoAmIApiResponseModel.getAppt_start_time(), whoAmIApiResponseModel.getAppt_end_time());
                     }
+                    manageSwitches();
                 }
             }
         });
