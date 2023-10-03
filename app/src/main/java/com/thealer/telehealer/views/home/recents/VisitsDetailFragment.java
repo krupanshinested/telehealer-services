@@ -918,7 +918,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private void showPdfViewFragment(String pdfUrl) {
         PdfViewerFragment pdfViewerFragment = new PdfViewerFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.orders));
+        bundle.putString(ArgumentKeys.PDF_TITLE, getString(R.string.visit));
         bundle.putString(ArgumentKeys.PDF_URL, pdfUrl);
         bundle.putBoolean(ArgumentKeys.IS_PDF_DECRYPT, true);
 

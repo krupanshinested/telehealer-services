@@ -1,13 +1,7 @@
 package com.thealer.telehealer.views.common;
 
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
+import com.google.android.material.appbar.AppBarLayout;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.models.FileSavedInterface;
 import com.thealer.telehealer.apilayer.models.PdfReceiverApiViewModel;
@@ -75,7 +76,6 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
         backIv.setOnClickListener(this);
         printBt.setOnClickListener(this);
         printBt.setEnabled(false);
-
         if (getArguments() != null) {
 
             boolean isFromDetail = getArguments().getBoolean(ArgumentKeys.IS_FROM_PRESCRIPTION_DETAIL);
@@ -95,6 +95,7 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
                 htmlFile = getArguments().getString(ArgumentKeys.HTML_FILE);
                 loadPdf(htmlFile);
             } else {
+                showProgressDialog();
                 String fileUrl = getArguments().getString(ArgumentKeys.PDF_URL);
                 pdfReceiverApiViewModel.getPdfFile(fileUrl, isPdfDecrypt,
                         new FileSavedInterface() {
@@ -125,8 +126,8 @@ public class PdfViewerFragment extends BaseFragment implements View.OnClickListe
     }
 
     private void loadPdf(File file) {
-        pdfView.fromFile(file)
-                .defaultPage(0)
+
+        pdfView.fromFile(file).onLoad(nbPages -> dismissProgressDialog()).defaultPage(0)
                 .enableSwipe(true)
                 .load();
 
