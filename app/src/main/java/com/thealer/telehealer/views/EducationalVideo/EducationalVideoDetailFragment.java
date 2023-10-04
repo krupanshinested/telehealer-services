@@ -178,6 +178,7 @@ public class EducationalVideoDetailFragment extends BaseFragment {
                     EducationalCreateFragment fragment = new EducationalCreateFragment();
                     Bundle bundle =new Bundle();
                     bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    bundle.putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO, getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO));
                     fragment.setArguments(bundle);
                     ((ShowSubFragmentInterface) getActivity()).onShowFragment(fragment);
                 }
