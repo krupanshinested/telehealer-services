@@ -406,7 +406,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 } else {
                     appPreference.setInt(Constants.QUICK_LOGIN_TYPE, QuickLoginUtil.getAvailableQuickLoginType(getActivity()));
                     appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
-                    startActivityForResult(new Intent(getActivity(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_CREATE_PIN, true), RequestID.REQ_CREATE_QUICK_LOGIN);
+                    startActivityForResult(new Intent(getActivity(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_CREATE_PIN, true).putExtra(ArgumentKeys.is_from_setting, true), RequestID.REQ_CREATE_QUICK_LOGIN);
                 }
                 break;
             case R.id.signature:
