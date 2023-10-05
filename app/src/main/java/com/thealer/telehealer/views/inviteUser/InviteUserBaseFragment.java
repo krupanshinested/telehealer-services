@@ -85,7 +85,13 @@ public class InviteUserBaseFragment extends BaseFragment {
             public void onChanged(@Nullable ErrorModel errorModel) {
                 if (errorModel != null) {
                     if (errorModel.geterrorCode() == null){
-                        sendFailureMessage(String.format(getActivity().getString(R.string.demographic_invite_error),getActivity().getString(R.string.app_name),getActivity().getString(R.string.app_name)));
+                        if (errorModel.getMessage().contains("User with provided attributes not found")){
+                            sendFailureMessage(String.format(getActivity().getString(R.string.demographic_invite_error_not_found),getActivity().getString(R.string.app_name),getActivity().getString(R.string.app_name)));
+                        }else if (errorModel.getMessage().contains("User with provided attributes exists")){
+                            sendFailureMessage(String.format(getActivity().getString(R.string.demographic_invite_error),errorModel.getMessage()));
+                        }else {
+                            sendFailureMessage(errorModel.getMessage());
+                        }
                     }else if (!errorModel.geterrorCode().isEmpty() && !errorModel.geterrorCode().equals("SUBSCRIPTION")) {
                         sendFailureMessage(errorModel.getMessage());
                     }
