@@ -261,6 +261,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 } else {
                     selectedItem = parent.getItemAtPosition(position).toString();
                     profileUpdate.updateAppointmentSlot(getAppointmentSlotValue(selectedItem));
+                    appointment_slots.updateValue(getAppointmentSlotValue(selectedItem));
                 }
             }
 
