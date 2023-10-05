@@ -120,6 +120,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private String currentUpdateType = null, updateType;
     List<Integer> removeList = new ArrayList<>();
     List<Integer> addList = new ArrayList<>();
+    private boolean isdataUpdate = false;
 
     @Override
     public void onAttach(Context context) {
@@ -235,6 +236,14 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         } else {
                             isPrimaryApiCalled = true;
                         }
+
+                        if (isdataUpdate){
+                            if (visitDetailListAdapter!=null){
+                                visitDetailListAdapter.notifyDataSetChanged();
+                                isdataUpdate = false;
+                            }
+                        }
+
                     } else {
                         if (baseApiResponseModel.isSuccess()) {
                             updatePrescription();
@@ -816,7 +825,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         addList.clear();
         currentUpdateType = null;
 
-        if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || !visitDetailViewModel.getMiscellaneousAddList().isEmpty()) {
+        if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || ! ) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS;
             removeList = visitDetailViewModel.getMiscellaneousRemoveList();
             addList = visitDetailViewModel.getMiscellaneousAddList();
@@ -1087,7 +1096,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         switch (requestCode) {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
-                    visitDetailListAdapter.setData();
+//                    visitDetailListAdapter.setData();
+                    isdataUpdate = true;
+                    visitsApiViewModel.getVisitApiDetail(recentDetail.getOrder_id(), (UserType.isUserAssistant() ? doctorGuid : null), true);
+                    visitDetailListAdapter.notifyDataSetChanged();
                 }
                 break;
             case RequestID.REQ_SELECT_CPT_CODE:
