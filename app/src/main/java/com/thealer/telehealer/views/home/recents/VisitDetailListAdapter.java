@@ -684,7 +684,7 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 VisitOrdersAdapterModel visitOrdersAdapterModel = adapterModelList.get(i).getVisitOrdersAdapterModel();
                 orderViewHolder.orderListIv.setImageResource(visitOrdersAdapterModel.getDisplayImage());
                 orderViewHolder.orderListTitleTv.setText(visitOrdersAdapterModel.getDisplayTitle());
-                orderViewHolder.orderListSubTitleTv.setText(UserType.isUserPatient() ? detailViewModel.getDoctorDetailModel().getUserDisplay_name() : detailViewModel.getPatientDetailModel().getUserDisplay_name());
+                orderViewHolder.orderListSubTitleTv.setText(UserType.isUserPatient() ? detailViewModel.getDoctorDetailModel() == null ? "" :detailViewModel.getDoctorDetailModel().getUserDisplay_name() : detailViewModel.getPatientDetailModel() == null ? "" :detailViewModel.getPatientDetailModel().getUserDisplay_name());
                 int statusImage = 0;
                 switch (visitOrdersAdapterModel.getOrderType()) {
                     case OrderConstant.ORDER_PRESCRIPTIONS:

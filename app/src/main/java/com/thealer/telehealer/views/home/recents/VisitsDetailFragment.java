@@ -118,6 +118,8 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private int mode = Constants.VIEW_MODE;
     private boolean isSecondaryApisCalled = false, isSuccessViewShown = false, isVisitUpdated = false, isPrimaryApiCalled = false;
     private String currentUpdateType = null, updateType;
+    List<Integer> removeList = new ArrayList<>();
+    List<Integer> addList = new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
@@ -235,103 +237,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         }
                     } else {
                         if (baseApiResponseModel.isSuccess()) {
-                            if (currentUpdateType != null && ordersIdListApiResponseModel != null) {
-                                switch (currentUpdateType) {
-                                    case VisitDetailConstants.VISIT_TYPE_VITALS:
-                                        visitDetailViewModel.removeVital();
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_DIETS:
-                                        visitDetailViewModel.removeDiets();
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_FORMS:
-                                        visitDetailViewModel.removeForms();
-                                        formsApiResponseModels.clear();
-                                        formsApiResponseModels.addAll(visitDetailViewModel.getFormsApiResponseModels());
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_FILES:
-                                        visitDetailViewModel.removeFiles();
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_LABS:
-                                        visitDetailViewModel.removeLabs();
-                                        ordersIdListApiResponseModel.setLabs(visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs());
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_XRAYS:
-                                        visitDetailViewModel.removeXrays();
-                                        ordersIdListApiResponseModel.setXrays(visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays());
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_SPECIALIST:
-                                        visitDetailViewModel.removeSpecialist();
-                                        ordersIdListApiResponseModel.setSpecialists(visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists());
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS:
-                                        visitDetailViewModel.removePrescription();
-                                        ordersIdListApiResponseModel.setPrescriptions(visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions());
-                                        break;
-                                    case VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS:
-                                        visitDetailViewModel.removeMiscellaneous();
-                                        ordersIdListApiResponseModel.setMiscellaneous(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
-                                        break;
-                                }
-                            }
-                            if (isHasNextRequest()) {
-//                                updateVisit();
-                                getVisitDetail();
-                                isSuccessViewShown = false;
-                                sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
-                                setMode(Constants.VIEW_MODE);
-                            } else {
-                                if (visitDetailViewModel.isInstructionUpdated()) {
-                                    visitDetailViewModel.setInstructionUpdated(false);
-                                    visitsDetailApiResponseModel.getResult().setInstructions(visitDetailViewModel.getInstruction());
-                                    visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
-                                }
-
-                                if (visitDetailViewModel.isDiagnosisUpdated()) {
-                                    visitDetailViewModel.setDiagnosisUpdated(false);
-                                    visitsDetailApiResponseModel.getResult().setDiagnosis(visitDetailViewModel.getDiagnosis());
-                                    visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
-                                }
-
-                                if (visitDetailViewModel.isTranscriptUpdated() || visitDetailViewModel.isTranscriptEdited()) {
-
-                                    DownloadTranscriptResponseModel updatedTranscript = new DownloadTranscriptResponseModel();
-                                    updatedTranscript.setTranscripts(visitDetailViewModel.getUpdatedTranscriptResponseModel().getTranscripts());
-                                    List<DownloadTranscriptResponseModel.SpeakerLabelsBean> updatedLabels = new ArrayList<>();
-
-                                    for (int i = 0; i < visitDetailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().size(); i++) {
-                                        if (!visitDetailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().get(i).isRemoved()) {
-                                            updatedLabels.add(visitDetailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().get(i));
-                                        }
-                                    }
-                                    updatedTranscript.setSpeakerLabels(updatedLabels);
-
-                                    downloadTranscriptResponseModel = updatedTranscript;
-                                    visitDetailViewModel.setDownloadTranscriptResponseModel(updatedTranscript);
-                                    visitDetailViewModel.setUpdatedTranscriptResponseModel(updatedTranscript);
-
-                                    Log.e(TAG, "onChanged: " + new Gson().toJson(updatedTranscript.getSpeakerLabels()));
-
-                                }
-
-                                if (visitDetailViewModel.isHistoryUpdate()) {
-                                    List<HistoryBean> historyBeanList = new ArrayList<>();
-                                    for (int i = 0; i < visitDetailViewModel.getHistoryList().size(); i++) {
-                                        historyBeanList.add(new HistoryBean(visitDetailViewModel.getHistoryList().get(i).isIsYes(),
-                                                visitDetailViewModel.getHistoryList().get(i).getQuestion(),
-                                                visitDetailViewModel.getHistoryList().get(i).getReason()));
-                                    }
-                                    visitDetailViewModel.getPatientDetailModel().setHistory(historyBeanList);
-                                }
-
-
-                                if (visitDetailViewModel.isProcedureUpdated()) {
-                                    visitsDetailApiResponseModel.getResult().setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
-                                }
-
-                                isSuccessViewShown = false;
-                                sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
-                                setMode(Constants.VIEW_MODE);
-                            }
+                            updatePrescription();
                         }
                     }
                 }
@@ -480,10 +386,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             nextTv.setVisibility(View.GONE);
         }
 
-        setDetailAdapter();
-
-        setMode(mode);
-
         if (getArguments() != null) {
             recentDetail = (RecentsApiResponseModel.ResultBean) getArguments().getSerializable(ArgumentKeys.SELECTED_RECENT_DETAIL);
             visitDetailViewModel.setRecentResponseModel(recentDetail);
@@ -498,6 +400,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 checkForDoctorDetail();
             }
         }
+
+        setDetailAdapter();
+
+        setMode(mode);
 
     }
 
@@ -734,7 +640,8 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         setMode(Constants.EDIT_MODE);
                         break;
                     case Constants.EDIT_MODE:
-                        updateVisit();
+//                        updateVisit();
+                        updateVitals();
                         break;
                 }
                 break;
@@ -775,47 +682,295 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
-    private void updateVisit() {
-        List<Integer> removeList = new ArrayList<>();
-        List<Integer> addList = new ArrayList<>();
+    private void updateVitals(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
 
         if (!visitDetailViewModel.getVitalsRemoveList().isEmpty() || !visitDetailViewModel.getVitalsAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_VITALS;
             removeList = visitDetailViewModel.getVitalsRemoveList();
             addList = visitDetailViewModel.getVitalsAddList();
-        } else if (!visitDetailViewModel.getPrescriptionRemoveList().isEmpty() || !visitDetailViewModel.getPrescriptionAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updatePrescription();
+        }
+    }
+
+    private void updatePrescription(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getPrescriptionRemoveList().isEmpty() || !visitDetailViewModel.getPrescriptionAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS;
             removeList = visitDetailViewModel.getPrescriptionRemoveList();
             addList = visitDetailViewModel.getPrescriptionAddList();
-        } else if (!visitDetailViewModel.getSpecialistRemoveList().isEmpty() || !visitDetailViewModel.getSpecialistAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateSpecialist();
+        }
+    }
+
+    private void updateSpecialist(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getSpecialistRemoveList().isEmpty() || !visitDetailViewModel.getSpecialistAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_SPECIALIST;
             removeList = visitDetailViewModel.getSpecialistRemoveList();
             addList = visitDetailViewModel.getSpecialistAddList();
-        } else if (!visitDetailViewModel.getLabRemoveList().isEmpty() || !visitDetailViewModel.getLabAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateLab();
+        }
+    }
+
+    private void updateLab(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getLabRemoveList().isEmpty() || !visitDetailViewModel.getLabAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_LABS;
             removeList = visitDetailViewModel.getLabRemoveList();
             addList = visitDetailViewModel.getLabAddList();
-        } else if (!visitDetailViewModel.getXrayRemoveList().isEmpty() || !visitDetailViewModel.getXrayAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateXray();
+        }
+    }
+
+    private void updateXray(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getXrayRemoveList().isEmpty() || !visitDetailViewModel.getXrayAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_XRAYS;
             removeList = visitDetailViewModel.getXrayRemoveList();
             addList = visitDetailViewModel.getXrayAddList();
-        } else if (!visitDetailViewModel.getFormsRemoveList().isEmpty() || !visitDetailViewModel.getFormsAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateForms();
+        }
+    }
+
+    private void updateForms(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getFormsRemoveList().isEmpty() || !visitDetailViewModel.getFormsAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_FORMS;
             removeList = visitDetailViewModel.getFormsRemoveList();
             addList = visitDetailViewModel.getFormsAddList();
-        } else if (!visitDetailViewModel.getFilesRemoveList().isEmpty() || !visitDetailViewModel.getFilesAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateFiles();
+        }
+    }
+
+    private void updateFiles(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getFilesRemoveList().isEmpty() || !visitDetailViewModel.getFilesAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_FILES;
             removeList = visitDetailViewModel.getFilesRemoveList();
             addList = visitDetailViewModel.getFilesAddList();
-        } else if (!visitDetailViewModel.getDietRemoveList().isEmpty() || !visitDetailViewModel.getDietAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateDiet();
+        }
+    }
+
+    private void updateDiet(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getDietRemoveList().isEmpty() || !visitDetailViewModel.getDietAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_DIETS;
             removeList = visitDetailViewModel.getDietRemoveList();
             addList = visitDetailViewModel.getDietAddList();
-        } else if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || !visitDetailViewModel.getMiscellaneousAddList().isEmpty()) {
+            updateVisit();
+        }else {
+            updateMiscellaneous();
+        }
+    }
+
+    private void updateMiscellaneous(){
+
+        removeList.clear();
+        addList.clear();
+        currentUpdateType = null;
+
+        if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || !visitDetailViewModel.getMiscellaneousAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS;
             removeList = visitDetailViewModel.getMiscellaneousRemoveList();
             addList = visitDetailViewModel.getMiscellaneousAddList();
+            updateVisit();
+        }else {
+            if (isSuccessViewShown){
+                updateFinalStatus();
+            }else {
+                setMode(Constants.VIEW_MODE);
+            }
         }
+    }
+
+    private void updateFinalStatus(){
+        if (currentUpdateType != null && ordersIdListApiResponseModel != null) {
+            switch (currentUpdateType) {
+                case VisitDetailConstants.VISIT_TYPE_VITALS:
+                    visitDetailViewModel.removeVital();
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_DIETS:
+                    visitDetailViewModel.removeDiets();
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_FORMS:
+                    visitDetailViewModel.removeForms();
+                    formsApiResponseModels.clear();
+                    formsApiResponseModels.addAll(visitDetailViewModel.getFormsApiResponseModels());
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_FILES:
+                    visitDetailViewModel.removeFiles();
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_LABS:
+                    visitDetailViewModel.removeLabs();
+                    ordersIdListApiResponseModel.setLabs(visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs());
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_XRAYS:
+                    visitDetailViewModel.removeXrays();
+                    ordersIdListApiResponseModel.setXrays(visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays());
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_SPECIALIST:
+                    visitDetailViewModel.removeSpecialist();
+                    ordersIdListApiResponseModel.setSpecialists(visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists());
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS:
+                    visitDetailViewModel.removePrescription();
+                    ordersIdListApiResponseModel.setPrescriptions(visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions());
+                    break;
+                case VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS:
+                    visitDetailViewModel.removeMiscellaneous();
+                    ordersIdListApiResponseModel.setMiscellaneous(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
+                    break;
+            }
+        }
+        if (isHasNextRequest()) {
+//                                updateVisit();
+            getVisitDetail();
+            isSuccessViewShown = false;
+            sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
+            setMode(Constants.VIEW_MODE);
+        } else {
+            if (visitDetailViewModel.isInstructionUpdated()) {
+                visitDetailViewModel.setInstructionUpdated(false);
+                visitsDetailApiResponseModel.getResult().setInstructions(visitDetailViewModel.getInstruction());
+                visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
+            }
+
+            if (visitDetailViewModel.isDiagnosisUpdated()) {
+                visitDetailViewModel.setDiagnosisUpdated(false);
+                visitsDetailApiResponseModel.getResult().setDiagnosis(visitDetailViewModel.getDiagnosis());
+                visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
+            }
+
+            if (visitDetailViewModel.isTranscriptUpdated() || visitDetailViewModel.isTranscriptEdited()) {
+
+                DownloadTranscriptResponseModel updatedTranscript = new DownloadTranscriptResponseModel();
+                updatedTranscript.setTranscripts(visitDetailViewModel.getUpdatedTranscriptResponseModel().getTranscripts());
+                List<DownloadTranscriptResponseModel.SpeakerLabelsBean> updatedLabels = new ArrayList<>();
+
+                for (int i = 0; i < visitDetailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().size(); i++) {
+                    if (!visitDetailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().get(i).isRemoved()) {
+                        updatedLabels.add(visitDetailViewModel.getUpdatedTranscriptResponseModel().getSpeakerLabels().get(i));
+                    }
+                }
+                updatedTranscript.setSpeakerLabels(updatedLabels);
+
+                downloadTranscriptResponseModel = updatedTranscript;
+                visitDetailViewModel.setDownloadTranscriptResponseModel(updatedTranscript);
+                visitDetailViewModel.setUpdatedTranscriptResponseModel(updatedTranscript);
+
+                Log.e(TAG, "onChanged: " + new Gson().toJson(updatedTranscript.getSpeakerLabels()));
+
+            }
+
+            if (visitDetailViewModel.isHistoryUpdate()) {
+                List<HistoryBean> historyBeanList = new ArrayList<>();
+                for (int i = 0; i < visitDetailViewModel.getHistoryList().size(); i++) {
+                    historyBeanList.add(new HistoryBean(visitDetailViewModel.getHistoryList().get(i).isIsYes(),
+                            visitDetailViewModel.getHistoryList().get(i).getQuestion(),
+                            visitDetailViewModel.getHistoryList().get(i).getReason()));
+                }
+                visitDetailViewModel.getPatientDetailModel().setHistory(historyBeanList);
+            }
+
+
+            if (visitDetailViewModel.isProcedureUpdated()) {
+                visitsDetailApiResponseModel.getResult().setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
+            }
+
+            isSuccessViewShown = false;
+            sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
+            setMode(Constants.VIEW_MODE);
+        }
+    }
+
+    private void updateVisit() {
+//        List<Integer> removeList = new ArrayList<>();
+//        List<Integer> addList = new ArrayList<>();
+//
+//        if (!visitDetailViewModel.getVitalsRemoveList().isEmpty() || !visitDetailViewModel.getVitalsAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_VITALS;
+//            removeList = visitDetailViewModel.getVitalsRemoveList();
+//            addList = visitDetailViewModel.getVitalsAddList();
+//        } else if (!visitDetailViewModel.getPrescriptionRemoveList().isEmpty() || !visitDetailViewModel.getPrescriptionAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS;
+//            removeList = visitDetailViewModel.getPrescriptionRemoveList();
+//            addList = visitDetailViewModel.getPrescriptionAddList();
+//        } else if (!visitDetailViewModel.getSpecialistRemoveList().isEmpty() || !visitDetailViewModel.getSpecialistAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_SPECIALIST;
+//            removeList = visitDetailViewModel.getSpecialistRemoveList();
+//            addList = visitDetailViewModel.getSpecialistAddList();
+//        } else if (!visitDetailViewModel.getLabRemoveList().isEmpty() || !visitDetailViewModel.getLabAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_LABS;
+//            removeList = visitDetailViewModel.getLabRemoveList();
+//            addList = visitDetailViewModel.getLabAddList();
+//        } else if (!visitDetailViewModel.getXrayRemoveList().isEmpty() || !visitDetailViewModel.getXrayAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_XRAYS;
+//            removeList = visitDetailViewModel.getXrayRemoveList();
+//            addList = visitDetailViewModel.getXrayAddList();
+//        } else if (!visitDetailViewModel.getFormsRemoveList().isEmpty() || !visitDetailViewModel.getFormsAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_FORMS;
+//            removeList = visitDetailViewModel.getFormsRemoveList();
+//            addList = visitDetailViewModel.getFormsAddList();
+//        } else if (!visitDetailViewModel.getFilesRemoveList().isEmpty() || !visitDetailViewModel.getFilesAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_FILES;
+//            removeList = visitDetailViewModel.getFilesRemoveList();
+//            addList = visitDetailViewModel.getFilesAddList();
+//        } else if (!visitDetailViewModel.getDietRemoveList().isEmpty() || !visitDetailViewModel.getDietAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_DIETS;
+//            removeList = visitDetailViewModel.getDietRemoveList();
+//            addList = visitDetailViewModel.getDietAddList();
+//        } else if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || !visitDetailViewModel.getMiscellaneousAddList().isEmpty()) {
+//            currentUpdateType = VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS;
+//            removeList = visitDetailViewModel.getMiscellaneousRemoveList();
+//            addList = visitDetailViewModel.getMiscellaneousAddList();
+//        }
 
         if ((currentUpdateType != null && ((removeList != null && !removeList.isEmpty()) || (addList != null && !addList.isEmpty())))
                 || visitDetailViewModel.isInstructionUpdated() || visitDetailViewModel.isDiagnosisUpdated() || visitDetailViewModel.isTranscriptUpdated() ||
