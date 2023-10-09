@@ -144,12 +144,7 @@ public class PermissionChecker {
     }
 
     private boolean isCamerPermissionGranted() {
-        Boolean isGranted;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-        }
+        Boolean isGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         TeleLogger.shared.log(TeleLogCapability.camera, isGranted);
         return isGranted;
     }
