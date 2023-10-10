@@ -214,6 +214,8 @@
     <string name="success_reset_password">नए समय में लॉग इन करते समय उपयोगकर्ता को अपना नया पासवर्ड याद रखें</string>
     <string name="sign_in_info">अपने ईमेल और पासवर्ड से लॉगिन करें। यदि पहले से पंजीकृत उपयोगकर्ता नहीं है, तो कृपया साइन अप बटन के साथ हमें पंजीकृत करें।</string>
     <string name="firstname_empty_error">पहला नाम खाली नहीं हो सकता</string>
+    <string name="alternate_response_no">ALTERNATE RPM RESPONSE NO. can\'t be empty</string>
+    <string name="update_alternate_response_no">Please update proper Alternate RPM response number</string>
     <string name="lastname_empty_error">अंतिम नाम रिक्त नहीं हो सकता</string>
     <string name="password_empty_error">पासवर्ड खाली नहीं हो सकता</string>
     <string name="title_empty_error">शीर्षक खाली नहीं हो सकता</string>
