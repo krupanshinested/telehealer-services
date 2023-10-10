@@ -215,7 +215,7 @@
     <string name="sign_in_info">Inicie sesión con su correo electrónico y contraseña. Si no es un usuario ya registrado, regístrese con nosotros con el botón de registro.</string>
     <string name="firstname_empty_error">El primer nombre no puede estar vacío</string>
     <string name="alternate_response_no">ALTERNATE RPM RESPONSE NO. can\'t be empty</string>
-    <string name="update_alternate_response_no">Please update proper Alternate RPM response number</string>
+    <string name="update_alternate_response_no">Please update proper ALTERNATE RPM RESPONSE NO.</string>
     <string name="lastname_empty_error">El apellido no puede estar vacío</string>
     <string name="password_empty_error">La contraseña no puede estar vacía</string>
     <string name="title_empty_error">El título no puede estar vacío</string>
