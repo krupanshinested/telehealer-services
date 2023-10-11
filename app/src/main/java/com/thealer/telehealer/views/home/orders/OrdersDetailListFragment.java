@@ -150,7 +150,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         ArrayList<OrdersUserFormsApiResponseModel> formsApiResponseModels = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
 
-        setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), formsApiResponseModels.size()));
+//        setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), formsApiResponseModels.size()));
 
         for (OrdersUserFormsApiResponseModel formsApiResponseModel : formsApiResponseModels) {
             String date = Utils.getDayMonthYear(formsApiResponseModel.getCreated_at());
@@ -214,7 +214,7 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
 
         if (page == 1) {
             OrdersApiResponseModel ordersBaseApiResponseModel = (OrdersApiResponseModel) baseApiResponseModel;
-            setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), ordersBaseApiResponseModel.getCount()));
+//            setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), ordersBaseApiResponseModel.getCount()));
         }
         if (baseApiResponseModel instanceof OrdersLabApiResponseModel) {
 
@@ -380,9 +380,9 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                     Utils.showOverlay(getActivity(), addFab, OverlayViewConstants.OVERLAY_NO_RADIOLOGY, dismissListener);
                 }
             }
+            int count = 0;
             for (int i = 0; i < getRadiologyResponseModel.getResultBeanList().size(); i++) {
                 String date = Utils.getDayMonthYear(getRadiologyResponseModel.getResultBeanList().get(i).getCreated_at());
-
                 OrdersDetailListAdapterModel ordersDetailListAdapterModel = new OrdersDetailListAdapterModel();
 
                 StringBuilder title = null;
@@ -393,32 +393,37 @@ public class OrdersDetailListFragment extends BaseFragment implements View.OnCli
                         title.append(",").append(getRadiologyResponseModel.getResultBeanList().get(i).getDetail().getLabs().get(0).getXRayTests().get(j).getDisplayText());
                     }
                 }
-                ordersDetailListAdapterModel.setSubTitle(title.toString());
-                ordersDetailListAdapterModel.setCommonResultResponseModel(getRadiologyResponseModel.getResultBeanList().get(i));
 
-                if (!headerList.contains(date)) {
-                    headerList.add(date);
-                }
+                if (title != null){
+                    count++;
+                    ordersDetailListAdapterModel.setSubTitle(title == null ? "" : title.toString());
+                    ordersDetailListAdapterModel.setCommonResultResponseModel(getRadiologyResponseModel.getResultBeanList().get(i));
 
-                List<OrdersDetailListAdapterModel> childListData = new ArrayList<>();
+                    if (!headerList.contains(date)) {
+                        headerList.add(date);
+                    }
 
-                if (childList.containsKey(date)) {
-                    childListData.addAll(childList.get(date));
-                }
+                    List<OrdersDetailListAdapterModel> childListData = new ArrayList<>();
 
-                childListData.add(ordersDetailListAdapterModel);
+                    if (childList.containsKey(date)) {
+                        childListData.addAll(childList.get(date));
+                    }
 
-                childList.put(date, childListData);
+                    childListData.add(ordersDetailListAdapterModel);
 
-                if (getRadiologyResponseModel.getResultBeanList().get(i).getDoctor() != null &&
-                        getRadiologyResponseModel.getResultBeanList().get(i).getDoctor().getUser_guid() != null) {
-                    addToUserGuidList(getRadiologyResponseModel.getResultBeanList().get(i).getDoctor().getUser_guid());
-                }
-                if (getRadiologyResponseModel.getResultBeanList().get(i).getPatient() != null &&
-                        getRadiologyResponseModel.getResultBeanList().get(i).getPatient().getUser_guid() != null) {
-                    addToUserGuidList(getRadiologyResponseModel.getResultBeanList().get(i).getPatient().getUser_guid());
+                    childList.put(date, childListData);
+
+                    if (getRadiologyResponseModel.getResultBeanList().get(i).getDoctor() != null &&
+                            getRadiologyResponseModel.getResultBeanList().get(i).getDoctor().getUser_guid() != null) {
+                        addToUserGuidList(getRadiologyResponseModel.getResultBeanList().get(i).getDoctor().getUser_guid());
+                    }
+                    if (getRadiologyResponseModel.getResultBeanList().get(i).getPatient() != null &&
+                            getRadiologyResponseModel.getResultBeanList().get(i).getPatient().getUser_guid() != null) {
+                        addToUserGuidList(getRadiologyResponseModel.getResultBeanList().get(i).getPatient().getUser_guid());
+                    }
                 }
             }
+            setTitle(Utils.getPaginatedTitle(OrderConstant.getDislpayTitle(getContext(), selectedItem), count));
         } else if (baseApiResponseModel instanceof MiscellaneousApiResponseModel) {
             MiscellaneousApiResponseModel miscellaneousApiResponseModel = (MiscellaneousApiResponseModel) baseApiResponseModel;
             if (miscellaneousApiResponseModel.getCount() > 0) {

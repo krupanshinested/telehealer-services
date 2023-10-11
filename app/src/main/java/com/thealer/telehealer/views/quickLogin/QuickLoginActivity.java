@@ -49,6 +49,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     private boolean isViewShown = false;
     private static final java.lang.String IS_VIEW_SHOWN = "isViewShown";
     boolean isCreateQuickLogin = false;
+    boolean isFromSetting = false;
     private SigninApiViewModel signinApiViewModel;
 
     private QuickLoginBroadcastReceiver quickLoginBroadcastReceiver = new QuickLoginBroadcastReceiver() {
@@ -59,7 +60,11 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
             if (status == ArgumentKeys.QUICK_LOGIN_CREATED) {
                 int quickLoginType = appPreference.getInt(Constants.QUICK_LOGIN_TYPE);
                 if (quickLoginType == Constants.QUICK_LOGIN_TYPE_NONE) {
-                    goToMainActivity();
+                    if (isFromSetting){
+                        finish();
+                    }else {
+                        goToMainActivity();
+                    }
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Constants.SUCCESS_VIEW_STATUS, true);
@@ -149,6 +154,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
                 isFromSignup = getIntent().getExtras().getBoolean(ArgumentKeys.IS_FROM_SIGNUP);
 
             isCreateQuickLogin = getIntent().getBooleanExtra(ArgumentKeys.IS_CREATE_PIN, false);
+            isFromSetting = getIntent().getBooleanExtra(ArgumentKeys.is_from_setting, false);
         }
 
         switch (loginType) {

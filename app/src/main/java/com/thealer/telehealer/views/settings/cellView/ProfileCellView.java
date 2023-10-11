@@ -142,7 +142,7 @@ public class ProfileCellView extends ConstraintLayout {
     }
 
     public void openSpinner() {
-        updateUI(true);
+        updateUI(false);
         spinner.performClick();
     }
 

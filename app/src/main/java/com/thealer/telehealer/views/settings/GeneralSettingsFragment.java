@@ -110,7 +110,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
             @Override
             public void onChanged(BaseApiResponseModel baseApiResponseModel) {
                 whoAmIApiViewModel.assignWhoAmI();
-                manageSwitches();
+
             }
         });
 
@@ -129,6 +129,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                         available_time.updateUI(false);
                         updateAvaibleTime(whoAmIApiResponseModel.getAppt_start_time(), whoAmIApiResponseModel.getAppt_end_time());
                     }
+                    manageSwitches();
                 }
             }
         });
@@ -260,6 +261,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 } else {
                     selectedItem = parent.getItemAtPosition(position).toString();
                     profileUpdate.updateAppointmentSlot(getAppointmentSlotValue(selectedItem));
+                    appointment_slots.updateValue(getAppointmentSlotValue(selectedItem));
                 }
             }
 
@@ -405,7 +407,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 } else {
                     appPreference.setInt(Constants.QUICK_LOGIN_TYPE, QuickLoginUtil.getAvailableQuickLoginType(getActivity()));
                     appPreference.setString(Constants.QUICK_LOGIN_PIN, null);
-                    startActivityForResult(new Intent(getActivity(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_CREATE_PIN, true), RequestID.REQ_CREATE_QUICK_LOGIN);
+                    startActivityForResult(new Intent(getActivity(), QuickLoginActivity.class).putExtra(ArgumentKeys.IS_CREATE_PIN, true).putExtra(ArgumentKeys.is_from_setting, true), RequestID.REQ_CREATE_QUICK_LOGIN);
                 }
                 break;
             case R.id.signature:

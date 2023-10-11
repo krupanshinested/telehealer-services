@@ -495,11 +495,19 @@ public class OrdersBaseFragment extends BaseFragment {
         switch (requestCode) {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
-                    if (getActivity() instanceof HomeActivity) {
-                        getActivity().onBackPressed();
-                        getActivity().onBackPressed();
-                    } else {
-                        getActivity().finish();
+                    if (UserType.isUserAssistant()) {
+                        if (getActivity() instanceof HomeActivity) {
+                            getActivity().onBackPressed();
+                        } else {
+                            getActivity().finish();
+                        }
+                    }else {
+                        if (getActivity() instanceof HomeActivity) {
+                            getActivity().onBackPressed();
+                            getActivity().onBackPressed();
+                        } else {
+                            getActivity().finish();
+                        }
                     }
                     if (getTargetFragment() != null) {
                         getTargetFragment().onActivityResult(requestCode, resultCode, data);

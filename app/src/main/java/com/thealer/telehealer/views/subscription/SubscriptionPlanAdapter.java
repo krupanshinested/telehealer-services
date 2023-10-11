@@ -204,7 +204,7 @@ public class SubscriptionPlanAdapter extends RecyclerView.Adapter<SubscriptionPl
             @Override
             public void onClick(View v) {
 //                if (position == 0) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://telehealer.coruscate.work/doctors/#Features"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentPlan.getFeatureLink() == null? "https://www.telehealer.com/doctors/#Features" : currentPlan.getFeatureLink()));
                 fragmentActivity.startActivity(browserIntent);
 //                }
             }

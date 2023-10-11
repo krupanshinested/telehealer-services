@@ -1,27 +1,19 @@
 package com.thealer.telehealer.views.home.recents;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.bumptech.glide.Glide;
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
@@ -43,10 +35,6 @@ import com.thealer.telehealer.views.common.ChangeTitleInterface;
 import com.thealer.telehealer.views.common.OnOrientationChangeInterface;
 import com.thealer.telehealer.views.common.SearchCellView;
 import com.thealer.telehealer.views.common.SearchInterface;
-
-import java.util.ArrayList;
-
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 14,November,2018
@@ -88,8 +76,9 @@ public class RecentFragment extends BaseFragment {
 
                     recentsApiResponseModel = (RecentsApiResponseModel) baseApiResponseModel;
 
-                    if (context instanceof ChangeTitleInterface){
-                        ((ChangeTitleInterface)context).onTitleChange(Utils.getPaginatedTitle(getString(R.string.visits), recentsApiResponseModel.getCount()));
+                    if (context instanceof ChangeTitleInterface) {
+                        if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false) == false)
+                            ((ChangeTitleInterface) context).onTitleChange(Utils.getPaginatedTitle(getString(R.string.visits), recentsApiResponseModel.getCount()));
                     }
 
                     recentsCrv.setNextPage(recentsApiResponseModel.getNext());
@@ -124,7 +113,7 @@ public class RecentFragment extends BaseFragment {
         recentsCrv = (CustomRecyclerView) view.findViewById(R.id.recents_crv);
         throbberIv = (ImageView) view.findViewById(R.id.throbber_iv);
         searchView = view.findViewById(R.id.search_view);
-       // Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbberIv);
+        // Glide.with(getActivity().getApplicationContext()).load(R.raw.throbber).into(throbberIv);
 
         recentsCrv.setEmptyState(EmptyViewConstants.EMPTY_CALLS);
 
@@ -146,7 +135,7 @@ public class RecentFragment extends BaseFragment {
         recentsCrv.getRecyclerView().setAdapter(recentListAdapter);
 
         if (getArguments() != null) {
-            if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)){
+            if (getArguments().getBoolean(ArgumentKeys.HIDE_SEARCH, false)) {
                 searchView.setVisibility(View.GONE);
             }
         }
@@ -208,26 +197,26 @@ public class RecentFragment extends BaseFragment {
                             doctorGuid = doctorDetail.getUser_guid();
                         }
 
-                        if (UserType.isUserAssistant() && userGuid == null && doctorGuid != null){
+                        if (UserType.isUserAssistant() && userGuid == null && doctorGuid != null) {
                             isCalls = true;
                         }
 
-                        if (UserType.isUserPatient() && userGuid == null){
+                        if (UserType.isUserPatient() && userGuid == null) {
                             userGuid = doctorGuid;
                             doctorGuid = null;
                         }
-                        if(UserType.isUserAssistant() && doctorDetail.getPermissions()!= null && doctorDetail.getPermissions().size()>0){
-                            boolean isPermissionAllowed =Utils.checkPermissionStatus(doctorDetail.getPermissions(),ArgumentKeys.VIEW_CALLS_CODE);
+                        if (UserType.isUserAssistant() && doctorDetail.getPermissions() != null && doctorDetail.getPermissions().size() > 0) {
+                            boolean isPermissionAllowed = Utils.checkPermissionStatus(doctorDetail.getPermissions(), ArgumentKeys.VIEW_CALLS_CODE);
                             Constants.isVitalsAddEnable = Utils.checkPermissionStatus(doctorDetail.getPermissions(), ArgumentKeys.ADD_VITALS_CODE);
                             Constants.isVitalsViewEnable = Utils.checkPermissionStatus(doctorDetail.getPermissions(), ArgumentKeys.VIEW_VITALS_CODE);
 
-                            if(isPermissionAllowed){
+                            if (isPermissionAllowed) {
                                 recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
-                            }else{
+                            } else {
                                 recentsCrv.showOrhideEmptyState(true);
                                 Utils.displayPermissionMsg(getContext());
                             }
-                        }else {
+                        } else {
                             recentsApiViewModel.getUserCorrespondentList(userGuid, doctorGuid, null, page, isCalls, isShowProgress);
                         }
                     }
