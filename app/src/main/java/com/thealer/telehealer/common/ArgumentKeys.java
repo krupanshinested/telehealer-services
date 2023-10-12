@@ -308,4 +308,6 @@ public class ArgumentKeys {
     public static String show_rpm="show_rpm";
     public static String buser_id="buser_id";
 
+    public static String is_from_setting="is_from_setting";
+
 }

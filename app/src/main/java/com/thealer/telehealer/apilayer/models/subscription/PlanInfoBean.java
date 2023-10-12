@@ -33,6 +33,7 @@ public class PlanInfoBean extends BaseApiResponseModel {
         private String name;
         private String description;
         private String price;
+        private String feature_link;
         private String currency;
         private String billing_cycle;
         private String billing_interval;
@@ -102,6 +103,14 @@ public class PlanInfoBean extends BaseApiResponseModel {
 
         public void setPrice(String price) {
             this.price = price;
+        }
+
+        public String getFeatureLink() {
+            return feature_link;
+        }
+
+        public void setFeatureLink(String feature_link) {
+            this.feature_link = feature_link;
         }
 
         public String getCurrency() {

@@ -299,14 +299,14 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         if (adapterView.getSelectedItem().toString().equals(defaultList[1])) {
 
                             if (numberAltEt.getText().toString().isEmpty()) {
-                                Toast.makeText(getActivity(), "Please update Alternate RPM response number", Toast.LENGTH_SHORT).show();
-                                defaultSp.setSelection(0, false);
+                                 Toast.makeText(getActivity(), getString(R.string.alternate_response_no), Toast.LENGTH_SHORT).show();
+//                                defaultSp.setSelection(0, false);
                                 defaultvital = Constants.Defaultvital.primary;
                                 defaultvalue.setText(defaultSp.getSelectedItem().toString());
                             } else {
                                 if (!validateNumber()) {
-                                    Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
-                                    defaultSp.setSelection(0, false);
+                                     Toast.makeText(getActivity(), getString(R.string.update_alternate_response_no), Toast.LENGTH_SHORT).show();
+//                                    defaultSp.setSelection(0, false);
                                     defaultvital = Constants.Defaultvital.primary;
                                     defaultvalue.setText(defaultSp.getSelectedItem().toString());
                                 } else {
@@ -653,7 +653,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         userDataBean.setAlt_rpm_response_no(array.toString());
                     }
                 } else {
-                    Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.update_alternate_response_no), Toast.LENGTH_SHORT).show();
                     onViewChangeInterface.enableNext(true);
                     enableNext(true);
                     isFirstTime = true;
@@ -669,11 +669,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
 
             if (defaultvalue.getText().toString().equals(defaultList[1])) {
                 if (numberAltEt.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "Please update Alternate RPM response number then select default vital response", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.alternate_response_no), Toast.LENGTH_SHORT).show();
                     onViewChangeInterface.enableNext(true);
                     enableNext(true);
                     isFirstTime = true;
-                    defaultSp.setSelection(0);
+//                    defaultSp.setSelection(0);
                     return false;
                 } else {
                     try {
@@ -681,11 +681,11 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
 
                         if (!isValid) {
-                            Toast.makeText(getActivity(), "Please update proper Alternate RPM response number", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), getString(R.string.update_alternate_response_no), Toast.LENGTH_SHORT).show();
                             onViewChangeInterface.enableNext(true);
                             enableNext(true);
                             isFirstTime = true;
-                            defaultSp.setSelection(0);
+//                            defaultSp.setSelection(0);
                             return false;
                         }
                     } catch (NumberParseException e) {
@@ -694,7 +694,7 @@ public class PatientRegistrationDetailFragment extends BaseFragment implements
                         onViewChangeInterface.enableNext(true);
                         enableNext(true);
                         isFirstTime = true;
-                        defaultSp.setSelection(0);
+//                        defaultSp.setSelection(0);
                         return false;
                     }
                 }

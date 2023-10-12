@@ -229,6 +229,8 @@
     <string name="sign_in_info">Login with your Email and Password. If not an already registered user, please register to us with sign up button.</string>
 
     //empty error strings
+    <string name="alternate_response_no">Alternate RPM Response No. can\'t be empty</string>
+    <string name="update_alternate_response_no">Please update proper Alternate RPM Response No.</string>
     <string name="firstname_empty_error">First Name can\'t be empty</string>
     <string name="lastname_empty_error">Last Name can\'t be empty</string>
     <string name="password_empty_error">Password can\'t be empty</string>
@@ -1477,7 +1479,7 @@
     <string name="message">MESSAGE</string>
     <string name="waiting_room">Waiting Room</string>
     <string name="put_app_in_back">You colud put this app in the background while you wait , but not more than 5 mins at a time ,for otherwise , you may lose your spot and rejoin at the end of the queue.</string>
-    <string name="guest_login_bottom_title">you will be entering a virtual waiting room . Proceed only if you have a scheduled appointment today or your provider has suggested using the waiting room for same day consults .</string>
+    <string name="guest_login_bottom_title">You will be entering a virtual waiting room . Proceed only if you have a scheduled appointment today or your provider has suggested using the waiting room for same day consults .</string>
     <string name="entering_you_waiting_room">Entering you waiting room request</string>
     <string name="validating_your_waiting_room">Validating your waiting room request</string>
     <string name="waiting_screen_msg">By Pressing Enter you will be  agreeing to <a href="https://www.google.com/">Terms and conditions</a> and <a href="https://www.google.com/">Notice to consumers</a></string>
@@ -1712,4 +1714,6 @@
     <string name="allow_contact_permissions">- Contact allows easier connections between users.</string>
     <string name="health_permissions">Health Permission</string>
     <string name="allow_health_permissions">- Health gives your provider a better picture of your overall health and lifestyle.</string>
+    <string name="demographic_invite_error_not_found">We were unable to find a registered patient on %s using the demographics provided. You can invite the patient to register on the %s platform by providing a valid mobile number and/or email of the patient.</string>
+    <string name="demographic_invite_error">Your invite request has been failed due to %s.</string>
 </resources>

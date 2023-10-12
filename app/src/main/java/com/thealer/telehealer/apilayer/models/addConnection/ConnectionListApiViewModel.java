@@ -25,7 +25,7 @@ public class ConnectionListApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getUnConnectedUsers(paginate,true, page, page_size, name, isMedicalAssistant, Constants.ROLE_DOCTOR, speciality)
+                    getAuthApiService().getUnConnectedUsers(paginate,true, page, page_size, name, isMedicalAssistant,/*, Constants.ROLE_DOCTOR,*/ speciality)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override

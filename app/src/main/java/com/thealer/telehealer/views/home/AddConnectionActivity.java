@@ -101,6 +101,7 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     @Nullable
     private TimerRunnable uiToggleTimer;
     private List<String> designationList = new ArrayList<>();
+    private boolean isPageoneUse = true;
 
 
     @Override
@@ -336,10 +337,17 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
             @Override
             public void doSearch() {
                 String search="";
+                isPageoneUse = false;
                 if(searchView.getCurrentSearchResult()!=null){
                     search=searchView.getCurrentSearchResult();
                 }
-                showSearchResult(search);
+                String finalSearch = search;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        showSearchResult(finalSearch);
+                    }
+                },500);
             }
         });
     }
@@ -347,11 +355,20 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
     private void getApiData(boolean showProgress) {
         String search="";
         if(searchView.getCurrentSearchResult()!=null){
+            if (!searchView.getCurrentSearchResult().isEmpty()){
+                if (!isPageoneUse){
+                    page = 1;
+                    isPageoneUse = true;
+                }
+            }
             search=searchView.getCurrentSearchResult();
         }
         if (!isApiRequested) {
             if (speciality != null && speciality.equals(getString(R.string.all))) {
                 speciality = null;
+            }
+            if (search.isEmpty()){
+                search = null;
             }
             connectionListApiViewModel.getUnconnectedList(search, speciality, page, showProgress, isMedicalAssistant);
             if(designationList==null || designationList.isEmpty())
@@ -441,7 +458,11 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
         if (searchResult.size() > 0) {
             connectionListCrv.showOrhideEmptyState(false);
-            connectionListAdapter.setData(searchResult, -1);
+            if (search.isEmpty()){
+                getApiData(true);
+            }else {
+                connectionListAdapter.setData(searchResult, -1);
+            }
         } else {
             connectionListCrv.showOrhideEmptyState(true);
         }
