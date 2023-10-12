@@ -213,6 +213,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/_30sdp"
             android:text="@string/skip"
+            android:textAllCaps="true"
             android:textColor="@color/colorBlack"
             android:textStyle="bold" />
 
