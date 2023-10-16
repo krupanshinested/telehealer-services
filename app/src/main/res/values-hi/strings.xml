@@ -1488,6 +1488,7 @@
     <string name="str_refresh_token_expired">रीफ़्रेश टोकन समाप्त हो गया</string>
     <string name="str_invalid_refresh_token">अमान्य रीफ़्रेश टोकन भेजा गया.</string>
     <string name="token_expired">टोकन समाप्त हो गया.</string>
+    <string name="invalid_token">अमान्य टोकन.</string>
     <string name="lbl_remote_patient_monitoring">दूरस्थ रोगी निगरानी</string>
     <string name="rpm_desc">पूर्व-निर्धारित शारीरिक मापदंडों के लिए अलर्ट प्राप्त करें और अपने रोगियों को अनुरूप प्रतिक्रिया प्रदान करें।</string>
     <string name="notifications_alert">अधिसूचना अलर्ट</string>
