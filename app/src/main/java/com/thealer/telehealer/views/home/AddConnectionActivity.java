@@ -449,9 +449,10 @@ public class AddConnectionActivity extends BaseActivity implements OnCloseAction
 
         List<CommonUserApiResponseModel> searchResult = new ArrayList<>();
         for (CommonUserApiResponseModel userModel : commonUserApiResponseModelList) {
-            if (userModel.getFirst_name().toLowerCase().contains(search) ||
-                    userModel.getLast_name().toLowerCase().contains(search) ||
-                    userModel.getUserDisplay_name().toLowerCase().contains(search)) {
+            Log.d("TAG", "showSearchResult: First Name " + userModel.getFirst_name()+" LastName "+userModel.getLast_name()+" getUserDisplayName "+userModel.getUserDisplay_name());
+            if (userModel.getFirst_name().toLowerCase().contains(search.toLowerCase()) ||
+                    userModel.getLast_name().toLowerCase().contains(search.toLowerCase()) ||
+                    userModel.getUserDisplay_name().toLowerCase().contains(search.toLowerCase())) {
                 searchResult.add(userModel);
             }
         }
