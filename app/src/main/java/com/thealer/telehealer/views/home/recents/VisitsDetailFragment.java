@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -117,6 +118,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     private String patientGuid, doctorGuid;
     private int mode = Constants.VIEW_MODE;
     private boolean isSecondaryApisCalled = false, isSuccessViewShown = false, isVisitUpdated = false, isPrimaryApiCalled = false;
+    private List<String> currentUpdateTypeList = new ArrayList<>();
     private String currentUpdateType = null, updateType;
     List<Integer> removeList = new ArrayList<>();
     List<Integer> addList = new ArrayList<>();
@@ -696,9 +698,11 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
+        currentUpdateTypeList.clear();
 
         if (!visitDetailViewModel.getVitalsRemoveList().isEmpty() || !visitDetailViewModel.getVitalsAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_VITALS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_VITALS);
             removeList = visitDetailViewModel.getVitalsRemoveList();
             addList = visitDetailViewModel.getVitalsAddList();
             updateVisit();
@@ -715,6 +719,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getPrescriptionRemoveList().isEmpty() || !visitDetailViewModel.getPrescriptionAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS);
             removeList = visitDetailViewModel.getPrescriptionRemoveList();
             addList = visitDetailViewModel.getPrescriptionAddList();
             updateVisit();
@@ -731,6 +736,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getSpecialistRemoveList().isEmpty() || !visitDetailViewModel.getSpecialistAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_SPECIALIST;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_SPECIALIST);
             removeList = visitDetailViewModel.getSpecialistRemoveList();
             addList = visitDetailViewModel.getSpecialistAddList();
             updateVisit();
@@ -747,6 +753,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getLabRemoveList().isEmpty() || !visitDetailViewModel.getLabAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_LABS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_LABS);
             removeList = visitDetailViewModel.getLabRemoveList();
             addList = visitDetailViewModel.getLabAddList();
             updateVisit();
@@ -763,6 +770,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getXrayRemoveList().isEmpty() || !visitDetailViewModel.getXrayAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_XRAYS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_XRAYS);
             removeList = visitDetailViewModel.getXrayRemoveList();
             addList = visitDetailViewModel.getXrayAddList();
             updateVisit();
@@ -779,6 +787,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getFormsRemoveList().isEmpty() || !visitDetailViewModel.getFormsAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_FORMS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_FORMS);
             removeList = visitDetailViewModel.getFormsRemoveList();
             addList = visitDetailViewModel.getFormsAddList();
             updateVisit();
@@ -795,6 +804,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getFilesRemoveList().isEmpty() || !visitDetailViewModel.getFilesAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_FILES;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_FILES);
             removeList = visitDetailViewModel.getFilesRemoveList();
             addList = visitDetailViewModel.getFilesAddList();
             updateVisit();
@@ -811,6 +821,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
         if (!visitDetailViewModel.getDietRemoveList().isEmpty() || !visitDetailViewModel.getDietAddList().isEmpty()) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_DIETS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_DIETS);
             removeList = visitDetailViewModel.getDietRemoveList();
             addList = visitDetailViewModel.getDietAddList();
             updateVisit();
@@ -825,14 +836,17 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         addList.clear();
         currentUpdateType = null;
 
-        if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || ! ) {
+        if (!visitDetailViewModel.getMiscellaneousRemoveList().isEmpty() || !visitDetailViewModel.getMiscellaneousAddList().isEmpty() ) {
             currentUpdateType = VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS;
+            currentUpdateTypeList.add(VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS);
             removeList = visitDetailViewModel.getMiscellaneousRemoveList();
             addList = visitDetailViewModel.getMiscellaneousAddList();
             updateVisit();
         }else {
             if (isSuccessViewShown){
                 updateFinalStatus();
+            }else if (visitDetailViewModel.isProcedureUpdated()){
+                updateVisit();
             }else {
                 setMode(Constants.VIEW_MODE);
             }
@@ -840,47 +854,51 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void updateFinalStatus(){
-        if (currentUpdateType != null && ordersIdListApiResponseModel != null) {
-            switch (currentUpdateType) {
-                case VisitDetailConstants.VISIT_TYPE_VITALS:
-                    visitDetailViewModel.removeVital();
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_DIETS:
-                    visitDetailViewModel.removeDiets();
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_FORMS:
-                    visitDetailViewModel.removeForms();
-                    formsApiResponseModels.clear();
-                    formsApiResponseModels.addAll(visitDetailViewModel.getFormsApiResponseModels());
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_FILES:
-                    visitDetailViewModel.removeFiles();
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_LABS:
-                    visitDetailViewModel.removeLabs();
-                    ordersIdListApiResponseModel.setLabs(visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs());
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_XRAYS:
-                    visitDetailViewModel.removeXrays();
-                    ordersIdListApiResponseModel.setXrays(visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays());
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_SPECIALIST:
-                    visitDetailViewModel.removeSpecialist();
-                    ordersIdListApiResponseModel.setSpecialists(visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists());
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS:
-                    visitDetailViewModel.removePrescription();
-                    ordersIdListApiResponseModel.setPrescriptions(visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions());
-                    break;
-                case VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS:
-                    visitDetailViewModel.removeMiscellaneous();
-                    ordersIdListApiResponseModel.setMiscellaneous(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
-                    break;
+        if (currentUpdateTypeList != null) {
+            for (int i =0;i<currentUpdateTypeList.size();i++){
+                switch (currentUpdateTypeList.get(i)) {
+                    case VisitDetailConstants.VISIT_TYPE_VITALS:
+                        visitDetailViewModel.removeVital();
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_DIETS:
+                        visitDetailViewModel.removeDiets();
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_FORMS:
+                        visitDetailViewModel.removeForms();
+                        formsApiResponseModels.clear();
+                        formsApiResponseModels.addAll(visitDetailViewModel.getFormsApiResponseModels());
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_FILES:
+                        visitDetailViewModel.removeFiles();
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_LABS:
+                        visitDetailViewModel.removeLabs();
+                        ordersIdListApiResponseModel.setLabs(visitDetailViewModel.getOrdersIdListApiResponseModel().getLabs());
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_XRAYS:
+                        visitDetailViewModel.removeXrays();
+                        ordersIdListApiResponseModel.setXrays(visitDetailViewModel.getOrdersIdListApiResponseModel().getXrays());
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_SPECIALIST:
+                        visitDetailViewModel.removeSpecialist();
+                        ordersIdListApiResponseModel.setSpecialists(visitDetailViewModel.getOrdersIdListApiResponseModel().getSpecialists());
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_PRESCRIPTIONS:
+                        visitDetailViewModel.removePrescription();
+                        ordersIdListApiResponseModel.setPrescriptions(visitDetailViewModel.getOrdersIdListApiResponseModel().getPrescriptions());
+                        break;
+                    case VisitDetailConstants.VISIT_TYPE_MISCELLANEOUS:
+                        visitDetailViewModel.removeMiscellaneous();
+                        ordersIdListApiResponseModel.setMiscellaneous(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
+                        break;
+                }
             }
         }
         if (isHasNextRequest()) {
 //                                updateVisit();
-            getVisitDetail();
+            if (visitDetailListAdapter != null){
+                visitDetailListAdapter.setData();
+            }
             isSuccessViewShown = false;
             sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
             setMode(Constants.VIEW_MODE);
@@ -932,7 +950,9 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             if (visitDetailViewModel.isProcedureUpdated()) {
                 visitsDetailApiResponseModel.getResult().setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
             }
-
+            if (visitDetailListAdapter != null){
+                visitDetailListAdapter.setData();
+            }
             isSuccessViewShown = false;
             sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
             setMode(Constants.VIEW_MODE);
