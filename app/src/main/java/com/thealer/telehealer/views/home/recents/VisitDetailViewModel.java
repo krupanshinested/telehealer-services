@@ -537,7 +537,7 @@ public class VisitDetailViewModel extends ViewModel {
         getVisitsDetailApiResponseModel().getResult().getUser_vitals().removeAll(getVitalsRemoveList());
         ArrayList<VitalsApiResponseModel> vitalsList = new ArrayList<>();
         for (int i = 0; i < getVitalsApiResponseModels().size(); i++) {
-            if (!getVitalsRemoveList().contains(getVitalsApiResponseModels().get(i).getUser_vital_id())) {
+            if (!getVitalsRemoveList().toString().contains(""+getVitalsApiResponseModels().get(i).getUser_vital_id())) {
                 vitalsList.add(getVitalsApiResponseModels().get(i));
             }
         }
@@ -550,7 +550,7 @@ public class VisitDetailViewModel extends ViewModel {
         getVisitsDetailApiResponseModel().getResult().getUser_diets().removeAll(getDietRemoveList());
         ArrayList<DietApiResponseModel> dietModels = new ArrayList<>();
         for (int i = 0; i < getDietApiResponseModels().size(); i++) {
-            if (!getDietRemoveList().contains(getDietApiResponseModels().get(i).getUser_diet_id())) {
+            if (!getDietRemoveList().toString().contains(""+getDietApiResponseModels().get(i).getUser_diet_id())) {
                 dietModels.add(getDietApiResponseModels().get(i));
             }
         }
@@ -564,7 +564,7 @@ public class VisitDetailViewModel extends ViewModel {
         getVisitsDetailApiResponseModel().getResult().getUser_forms().removeAll(getFormsRemoveList());
         ArrayList<OrdersUserFormsApiResponseModel> formsList = new ArrayList<>();
         for (int i = 0; i < getFormsApiResponseModels().size(); i++) {
-            if (!getFormsRemoveList().contains(getFormsApiResponseModels().get(i).getUser_form_id())) {
+            if (!getFormsRemoveList().toString().contains(""+getFormsApiResponseModels().get(i).getUser_form_id())) {
                 formsList.add(getFormsApiResponseModels().get(i));
             }
         }
@@ -578,7 +578,7 @@ public class VisitDetailViewModel extends ViewModel {
         getVisitsDetailApiResponseModel().getResult().getUser_files().removeAll(getFilesRemoveList());
         ArrayList<DocumentsApiResponseModel.ResultBean> documentList = new ArrayList<>();
         for (int i = 0; i < getDocumentsApiResponseModels().size(); i++) {
-            if (!getFilesRemoveList().contains(getDocumentsApiResponseModels().get(i).getUser_file_id())) {
+            if (!getFilesRemoveList().toString().contains(""+getDocumentsApiResponseModels().get(i).getUser_file_id())) {
                 documentList.add(getDocumentsApiResponseModels().get(i));
             }
         }
@@ -593,7 +593,7 @@ public class VisitDetailViewModel extends ViewModel {
         List<OrdersLabApiResponseModel.LabsResponseBean> labsResponseBeanList = new ArrayList<>();
 
         for (int i = 0; i < getOrdersIdListApiResponseModel().getLabs().size(); i++) {
-            if (!getLabRemoveList().contains(getOrdersIdListApiResponseModel().getLabs().get(i).getReferral_id())) {
+            if (!getLabRemoveList().toString().contains(""+getOrdersIdListApiResponseModel().getLabs().get(i).getReferral_id())) {
                 labsResponseBeanList.add(getOrdersIdListApiResponseModel().getLabs().get(i));
             }
         }
@@ -609,7 +609,7 @@ public class VisitDetailViewModel extends ViewModel {
         List<GetRadiologyResponseModel.ResultBean> xrayList = new ArrayList<>();
 
         for (int i = 0; i < getOrdersIdListApiResponseModel().getXrays().size(); i++) {
-            if (!getXrayRemoveList().contains(getOrdersIdListApiResponseModel().getXrays().get(i).getReferral_id())) {
+            if (!getXrayRemoveList().toString().contains(""+getOrdersIdListApiResponseModel().getXrays().get(i).getReferral_id())) {
                 xrayList.add(getOrdersIdListApiResponseModel().getXrays().get(i));
             }
         }
@@ -625,7 +625,7 @@ public class VisitDetailViewModel extends ViewModel {
         List<OrdersSpecialistApiResponseModel.ResultBean> list = new ArrayList<>();
 
         for (int i = 0; i < getOrdersIdListApiResponseModel().getSpecialists().size(); i++) {
-            if (!getSpecialistRemoveList().contains(getOrdersIdListApiResponseModel().getSpecialists().get(i).getReferral_id())) {
+            if (!getSpecialistRemoveList().toString().contains(""+getOrdersIdListApiResponseModel().getSpecialists().get(i).getReferral_id())) {
                 list.add(getOrdersIdListApiResponseModel().getSpecialists().get(i));
             }
         }
@@ -642,7 +642,7 @@ public class VisitDetailViewModel extends ViewModel {
         List<OrdersPrescriptionApiResponseModel.OrdersResultBean> list = new ArrayList<>();
 
         for (int i = 0; i < getOrdersIdListApiResponseModel().getPrescriptions().size(); i++) {
-            if (!getPrescriptionRemoveList().contains(getOrdersIdListApiResponseModel().getPrescriptions().get(i).getReferral_id())) {
+            if (!getPrescriptionRemoveList().toString().contains(""+getOrdersIdListApiResponseModel().getPrescriptions().get(i).getReferral_id())) {
                 list.add(getOrdersIdListApiResponseModel().getPrescriptions().get(i));
             }
         }
@@ -659,7 +659,7 @@ public class VisitDetailViewModel extends ViewModel {
         List<MiscellaneousApiResponseModel.ResultBean> list = new ArrayList<>();
 
         for (int i = 0; i < getOrdersIdListApiResponseModel().getMiscellaneous().size(); i++) {
-            if (!getMiscellaneousRemoveList().contains(getOrdersIdListApiResponseModel().getMiscellaneous().get(i).getReferral_id())) {
+            if (!getMiscellaneousRemoveList().toString().contains(""+getOrdersIdListApiResponseModel().getMiscellaneous().get(i).getReferral_id())) {
                 list.add(getOrdersIdListApiResponseModel().getMiscellaneous().get(i));
             }
         }

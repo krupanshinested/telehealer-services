@@ -1080,14 +1080,14 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return adapterModelList.get(position).getViewType();
     }
 
-    public void setData() {
+    public void setData(VisitDetailViewModel visitsApiViewModel) {
         adapterModelList = generateAdapterModelList();
         notifyDataSetChanged();
     }
 
     public void setMode(int mode) {
         this.mode = mode;
-        setData();
+        setData(this.detailViewModel);
     }
 
     public class ProcedureViewHolder extends RecyclerView.ViewHolder {

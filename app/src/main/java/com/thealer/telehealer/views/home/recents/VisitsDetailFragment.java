@@ -16,11 +16,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -144,7 +142,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 if (baseApiResponseModels != null) {
                     dietApiResponseModels = (ArrayList<DietApiResponseModel>) (Object) baseApiResponseModels;
                     visitDetailViewModel.setDietApiResponseModels(dietApiResponseModels);
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                 }
             }
         });
@@ -157,7 +155,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 if (baseApiResponseModel != null) {
                     schedulesApiResponseModel = (SchedulesApiResponseModel.ResultBean) baseApiResponseModel;
                     visitDetailViewModel.setSchedulesApiResponseModel(schedulesApiResponseModel);
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                     isPrimaryApiCalled = true;
                 }
             }
@@ -198,8 +196,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
                         if (visitsDetailApiResponseModel.getResult().getProcedure() != null)
                             visitDetailViewModel.setSelectedCptCodeList(visitsDetailApiResponseModel.getResult().getProcedure().getCPT_codes());
-
-                        visitDetailListAdapter.setData();
 
                         String updatedTranscript = visitsDetailApiResponseModel.getResult().getUpdated_transcript();
                         if (updatedTranscript != null && !updatedTranscript.isEmpty()) {
@@ -246,6 +242,8 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                             }
                         }
 
+                        visitDetailListAdapter.setData(visitDetailViewModel);
+
                     } else {
                         if (baseApiResponseModel.isSuccess()) {
                             updatePrescription();
@@ -282,7 +280,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         visitsDetailApiResponseModel = (VisitsDetailApiResponseModel) baseApiResponseModel;
 
                         visitDetailViewModel.setVisitsDetailApiResponseModel(visitsDetailApiResponseModel);
-                        visitDetailListAdapter.setData();
+                        visitDetailListAdapter.setData(visitDetailViewModel);
 
                         if (visitsDetailApiResponseModel.getResult().getStatus() != null &&
                                 visitsDetailApiResponseModel.getResult().getTranscript() != null) {
@@ -293,7 +291,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                     } else if (baseApiResponseModel instanceof DownloadTranscriptResponseModel) {
                         downloadTranscriptResponseModel = (DownloadTranscriptResponseModel) baseApiResponseModel;
                         visitDetailViewModel.setDownloadTranscriptResponseModel(downloadTranscriptResponseModel);
-                        visitDetailListAdapter.setData();
+                        visitDetailListAdapter.setData(visitDetailViewModel);
                     }
                 }
             }
@@ -321,7 +319,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 if (baseApiResponseModels != null) {
                     vitalsApiResponseModel = (ArrayList<VitalsApiResponseModel>) (Object) baseApiResponseModels;
                     visitDetailViewModel.setVitalsApiResponseModels(vitalsApiResponseModel);
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                 }
             }
         });
@@ -333,7 +331,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 if (baseApiResponseModel != null) {
                     ordersIdListApiResponseModel = (OrdersIdListApiResponseModel) baseApiResponseModel;
                     visitDetailViewModel.setOrdersIdListApiResponseModel((OrdersIdListApiResponseModel) baseApiResponseModel);
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                 }
             }
         });
@@ -348,7 +346,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         formsApiResponseModels = (ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels;
                         visitDetailViewModel.setFormsApiResponseModels((ArrayList<OrdersUserFormsApiResponseModel>) (Object) baseApiResponseModels);
                     }
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                 }
             }
         });
@@ -433,7 +431,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                                 if (stringCommonUserApiResponseModelHashMap != null) {
                                     if (stringCommonUserApiResponseModelHashMap.containsKey(doctorGuid)) {
                                         visitDetailViewModel.setDoctorDetailModel(stringCommonUserApiResponseModelHashMap.get(doctorGuid));
-                                        visitDetailListAdapter.setData();
+                                        visitDetailListAdapter.setData(visitDetailViewModel);
                                     }
                                 }
                             }
@@ -450,7 +448,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 WhoAmIApiResponseModel whoAmIApiResponseModel = UserDetailPreferenceManager.getWhoAmIResponse();
                 visitDetailViewModel.setPatientDetailModel(whoAmIApiResponseModel);
                 visitDetailViewModel.setHistoryList(visitDetailViewModel.getUpdatedHistoryModelList(whoAmIApiResponseModel.getHistory()));
-                visitDetailListAdapter.setData();
+                visitDetailListAdapter.setData(visitDetailViewModel);
             } else {
                 Set<String> guidSet = new HashSet<>();
                 guidSet.add(patientGuid);
@@ -471,7 +469,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                                             visitDetailViewModel.setPatientDetailModel(userModel);
 
                                             visitDetailViewModel.setHistoryList(visitDetailViewModel.getUpdatedHistoryModelList(userModel.getHistory()));
-                                            visitDetailListAdapter.setData();
+                                            visitDetailListAdapter.setData(visitDetailViewModel);
                                         }
                                     }
                                 }
@@ -713,6 +711,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updatePrescription(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -729,7 +728,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void updateSpecialist(){
-
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -747,6 +746,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updateLab(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -764,6 +764,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updateXray(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -781,6 +782,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updateForms(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -798,6 +800,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updateFiles(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -815,6 +818,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updateDiet(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -832,6 +836,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
 
     private void updateMiscellaneous(){
 
+        refreshVitalList();
         removeList.clear();
         addList.clear();
         currentUpdateType = null;
@@ -853,10 +858,9 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
-    private void updateFinalStatus(){
-        if (currentUpdateTypeList != null) {
-            for (int i =0;i<currentUpdateTypeList.size();i++){
-                switch (currentUpdateTypeList.get(i)) {
+    void refreshVitalList(){
+        if (currentUpdateType != null) {
+                switch (currentUpdateType) {
                     case VisitDetailConstants.VISIT_TYPE_VITALS:
                         visitDetailViewModel.removeVital();
                         break;
@@ -892,13 +896,13 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         ordersIdListApiResponseModel.setMiscellaneous(visitDetailViewModel.getOrdersIdListApiResponseModel().getMiscellaneous());
                         break;
                 }
-            }
         }
+    }
+
+    private void updateFinalStatus(){
+
         if (isHasNextRequest()) {
 //                                updateVisit();
-            if (visitDetailListAdapter != null){
-                visitDetailListAdapter.setData();
-            }
             isSuccessViewShown = false;
             sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
             setMode(Constants.VIEW_MODE);
@@ -950,9 +954,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
             if (visitDetailViewModel.isProcedureUpdated()) {
                 visitsDetailApiResponseModel.getResult().setProcedure(new ProcedureModel(visitDetailViewModel.getSelectedCptCodeList()));
             }
-            if (visitDetailListAdapter != null){
-                visitDetailListAdapter.setData();
-            }
+
             isSuccessViewShown = false;
             sendSuccessViewBroadCast(getActivity(), true, getString(R.string.success), getString(R.string.visit_updated_successfully));
             setMode(Constants.VIEW_MODE);
@@ -1116,10 +1118,10 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         switch (requestCode) {
             case RequestID.REQ_SHOW_SUCCESS_VIEW:
                 if (resultCode == Activity.RESULT_OK) {
-//                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                     isdataUpdate = true;
                     visitsApiViewModel.getVisitApiDetail(recentDetail.getOrder_id(), (UserType.isUserAssistant() ? doctorGuid : null), true);
-                    visitDetailListAdapter.notifyDataSetChanged();
+//                    visitDetailListAdapter.notifyDataSetChanged();
                 }
                 break;
             case RequestID.REQ_SELECT_CPT_CODE:
@@ -1132,7 +1134,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         codesBeanList.add(new ProcedureModel.CPTCodesBean(selectedCptCode.get(i), ProcedureConstants.getDescription(getActivity(), selectedCptCode.get(i))));
                     }
                     visitDetailViewModel.setSelectedCptCodeList(codesBeanList);
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                 }
                 break;
             case RequestID.REQ_SELECT_ICD_CODE:
@@ -1172,7 +1174,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                     }
                 }
 
-                visitDetailListAdapter.setData();
+                visitDetailListAdapter.setData(visitDetailViewModel);
 
                 break;
             case RequestID.REQ_VISIT_UPDATE:
@@ -1308,7 +1310,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                         case VisitDetailConstants.VISIT_TYPE_FORMS:
                             break;
                     }
-                    visitDetailListAdapter.setData();
+                    visitDetailListAdapter.setData(visitDetailViewModel);
                 }
                 break;
         }
