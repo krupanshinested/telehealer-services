@@ -646,8 +646,20 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (vitalsApiResponseModel.isAbnormal()) {
                     vitalsViewHolder.abnormalIndicatorCl.setVisibility(View.VISIBLE);
                 }
-
-                vitalsViewHolder.visitCb.setChecked(true);
+                if (vitalsViewHolder.visitCb.isChecked()) {
+                    vitalsViewHolder.visitCb.setChecked(true);
+                } else {
+                    if (vitalsApiResponseModel != null){
+                        int id = vitalsApiResponseModel.getUser_vital_id();
+                        if (detailViewModel.getVitalsRemoveList().contains(id)) {
+                            vitalsViewHolder.visitCb.setChecked(false);
+                        } else {
+                            vitalsViewHolder.visitCb.setChecked(true);
+                        }
+                    }else {
+                        vitalsViewHolder.visitCb.setChecked(true);
+                    }
+                }
                 vitalsViewHolder.visitCb.setClickable(false);
 
                 switch (mode) {
@@ -722,7 +734,89 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     orderViewHolder.orderStatusIv.setVisibility(View.VISIBLE);
                 }
 
-                orderViewHolder.visitCb.setChecked(true);
+                if (orderViewHolder.visitCb.isChecked()) {
+                    orderViewHolder.visitCb.setChecked(true);
+                } else {
+                    if (visitOrdersAdapterModel != null){
+                        switch (visitOrdersAdapterModel.getOrderType()) {
+                            case OrderConstant.ORDER_PRESCRIPTIONS:
+                                if (visitOrdersAdapterModel.getPrescriptions() != null){
+                                    int id = visitOrdersAdapterModel.getPrescriptions().getReferral_id();
+                                    if (detailViewModel.getPrescriptionRemoveList().contains(id)) {
+                                        orderViewHolder.visitCb.setChecked(false);
+                                    } else {
+                                        orderViewHolder.visitCb.setChecked(true);
+                                    }
+                                }else {
+                                    orderViewHolder.visitCb.setChecked(true);
+                                }
+                                break;
+                            case OrderConstant.ORDER_REFERRALS:
+                                if (visitOrdersAdapterModel.getSpecialists()!=null){
+                                    int id = visitOrdersAdapterModel.getSpecialists().getReferral_id();
+                                    if (detailViewModel.getSpecialistRemoveList().contains(id)) {
+                                        orderViewHolder.visitCb.setChecked(false);
+                                    } else {
+                                        orderViewHolder.visitCb.setChecked(true);
+                                    }
+                                }else{
+                                    orderViewHolder.visitCb.setChecked(true);
+                                }
+                                break;
+                            case OrderConstant.ORDER_LABS:
+                                if (visitOrdersAdapterModel.getLabs()!=null){
+                                    int id = visitOrdersAdapterModel.getLabs().getReferral_id();
+                                    if (detailViewModel.getLabRemoveList().contains(id)) {
+                                        orderViewHolder.visitCb.setChecked(false);
+                                    } else {
+                                        orderViewHolder.visitCb.setChecked(true);
+                                    }
+                                }else{
+                                    orderViewHolder.visitCb.setChecked(true);
+                                }
+                                break;
+                            case OrderConstant.ORDER_RADIOLOGY:
+                                if (visitOrdersAdapterModel.getXrays()!=null){
+                                    int id = visitOrdersAdapterModel.getXrays().getReferral_id();
+                                    if (detailViewModel.getXrayRemoveList().contains(id)) {
+                                        orderViewHolder.visitCb.setChecked(false);
+                                    } else {
+                                        orderViewHolder.visitCb.setChecked(true);
+                                    }
+                                }else {
+                                    orderViewHolder.visitCb.setChecked(true);
+                                }
+                                break;
+                            case OrderConstant.ORDER_FORM:
+                                if (visitOrdersAdapterModel.getForms()!=null){
+                                    int id = visitOrdersAdapterModel.getForms().getUser_form_id();
+                                    if (detailViewModel.getFormsRemoveList().contains(id)) {
+                                        orderViewHolder.visitCb.setChecked(false);
+                                    } else {
+                                        orderViewHolder.visitCb.setChecked(true);
+                                    }
+                                }else {
+                                    orderViewHolder.visitCb.setChecked(true);
+                                }
+                                break;
+                            case OrderConstant.ORDER_MISC:
+                                if (visitOrdersAdapterModel.getMiscellaneous()!= null){
+                                    int id = visitOrdersAdapterModel.getMiscellaneous().getReferral_id();
+                                    if (detailViewModel.getMiscellaneousRemoveList().contains(id)) {
+                                        orderViewHolder.visitCb.setChecked(false);
+                                    } else {
+                                        orderViewHolder.visitCb.setChecked(true);
+                                    }
+                                }else {
+                                    orderViewHolder.visitCb.setChecked(true);
+                                }
+                                break;
+                        }
+
+                    }else {
+                        orderViewHolder.visitCb.setChecked(true);
+                    }
+                }
                 orderViewHolder.visitCb.setClickable(false);
                 switch (mode) {
                     case Constants.VIEW_MODE:
@@ -867,7 +961,20 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 documentViewHolder.sizeTv.setText(documentsApiResponseModel.getCreator().getUserName(activity));
 
-                documentViewHolder.visitCb.setChecked(true);
+                if (documentViewHolder.visitCb.isChecked()) {
+                    documentViewHolder.visitCb.setChecked(true);
+                } else {
+                    if (visitDetailAdapterModel != null && visitDetailAdapterModel.getDocumentModel() != null){
+                        int id = visitDetailAdapterModel.getDocumentModel().getUser_file_id();
+                        if (detailViewModel.getFilesRemoveList().contains(id)) {
+                            documentViewHolder.visitCb.setChecked(false);
+                        } else {
+                            documentViewHolder.visitCb.setChecked(true);
+                        }
+                    }else {
+                        documentViewHolder.visitCb.setChecked(true);
+                    }
+                }
                 documentViewHolder.visitCb.setClickable(false);
                 switch (mode) {
                     case Constants.VIEW_MODE:
@@ -958,7 +1065,22 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 dietViewHolder.proteinCountTv.setText(DietApiResponseModel.getDisplayValue(protien));
                 dietViewHolder.proteinUnitTv.setText(DietApiResponseModel.getDisplayUnit(activity, protien));
 
-                dietViewHolder.visitCb.setChecked(true);
+                if (dietViewHolder.visitCb.isChecked()) {
+                    dietViewHolder.visitCb.setChecked(true);
+                } else {
+                    if (dietApiResponseModelList != null && dietApiResponseModelList.size()>0){
+                        for (int j =0;j < dietApiResponseModelList.size();j++) {
+                            int id = dietApiResponseModelList.get(j).getUser_diet_id();
+                            if (detailViewModel.getDietRemoveList().contains(id)) {
+                                dietViewHolder.visitCb.setChecked(false);
+                            } else {
+                                dietViewHolder.visitCb.setChecked(true);
+                            }
+                        }
+                    }else {
+                        dietViewHolder.visitCb.setChecked(true);
+                    }
+                }
                 dietViewHolder.visitCb.setClickable(false);
                 switch (mode) {
                     case Constants.VIEW_MODE:

@@ -128,7 +128,7 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
         attachObserverInterface = (AttachObserverInterface) getActivity();
         onCloseActionInterface = (OnCloseActionInterface) getActivity();
         showSubFragmentInterface = (ShowSubFragmentInterface) getActivity();
-
+        ordersIdListApiResponseModel= new OrdersIdListApiResponseModel();
         icdCodesDataViewModel = new ViewModelProvider(getActivity()).get(IcdCodesDataViewModel.class);
         icdCodesDataViewModel.setSelectedIcdCodeList(new MediatorLiveData<>());
         icdCodesDataViewModel.setIcdCodeDetailHashMap(new MediatorLiveData<>());
@@ -1220,8 +1220,6 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                             ArrayList<OrdersSpecialistApiResponseModel.ResultBean> specialists = new ArrayList<>();
                             ArrayList<OrdersPrescriptionApiResponseModel.OrdersResultBean> prescriptions = new ArrayList<>();
                             ArrayList<MiscellaneousApiResponseModel.ResultBean> miscellaneous = new ArrayList<>();
-
-                            OrdersIdListApiResponseModel ordersIdListApiResponseModel = new OrdersIdListApiResponseModel();
 
                             if (this.ordersIdListApiResponseModel != null) {
                                 if (this.ordersIdListApiResponseModel.getLabs() != null)
