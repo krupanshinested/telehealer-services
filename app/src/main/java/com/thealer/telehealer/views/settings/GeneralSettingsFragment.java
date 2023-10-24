@@ -310,8 +310,8 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 encounterView.setVisibility(View.VISIBLE);
                 appointment_slots.updateValue(UserDetailPreferenceManager.getAppt_length() + "");
                 if (UserDetailPreferenceManager.getAppt_start_time().equals("08:00 AM") && UserDetailPreferenceManager.getAppt_end_time().equals("09:30 PM")) {
-                    startTime = DateUtil.getUTCfromLocal("08:00", "hh:mm", "hh:mm a");
-                    endTime = DateUtil.getUTCfromLocal("21:30", "hh:mm", "hh:mm a");
+                    startTime = DateUtil.getUTCfromLocal("08:00 AM", "hh:mm a", "hh:mm a");
+                    endTime = DateUtil.getUTCfromLocal("21:30 PM", "hh:mm a", "hh:mm a");
                 } else {
                     startTime = UserDetailPreferenceManager.getAppt_start_time();
                     endTime = UserDetailPreferenceManager.getAppt_end_time();
@@ -485,9 +485,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         Utils.showTimePickerDialog("Start time", getActivity(), startTime, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                boolean isPM = (hourOfDay >= 12);
                 calendar1.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar1.set(Calendar.MINUTE, minute);
-                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute, "hh:mm", "hh:mm a");
+                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":""), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
                 getAvailableEndTime();
             }
         });
@@ -497,9 +498,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         Utils.showTimePickerDialog("End time", getActivity(), endTime, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                boolean isPM = (hourOfDay >= 12);
                 calendar2.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar2.set(Calendar.MINUTE, minute);
-                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute, "hh:mm", "hh:mm a");
+                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":""), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
                 if (calendar2.getTimeInMillis() >= calendar1.getTimeInMillis()) {
                     postAvaibleTime();
                 } else {
