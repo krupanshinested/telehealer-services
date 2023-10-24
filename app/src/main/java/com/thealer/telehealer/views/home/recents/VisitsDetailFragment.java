@@ -359,8 +359,13 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void getVisitDetail() {
-        if (visitDetailViewModel.getVisitsDetailApiResponseModel() == null)
+        if (visitDetailViewModel.getVisitsDetailApiResponseModel() == null){
+            visitsApiViewModel = null;
+            visitDetailViewModel = null;
+            visitDetailViewModel = new ViewModelProvider(this).get(VisitDetailViewModel.class);
+            visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
             visitsApiViewModel.getVisitApiDetail(recentDetail.getOrder_id(), (UserType.isUserAssistant() ? doctorGuid : null), true);
+        }
     }
 
     @Nullable
@@ -1120,7 +1125,12 @@ public class VisitsDetailFragment extends BaseFragment implements View.OnClickLi
                 if (resultCode == Activity.RESULT_OK) {
                     visitDetailListAdapter.setData(visitDetailViewModel);
                     isdataUpdate = true;
+                    visitsApiViewModel = null;
+                    visitDetailViewModel = null;
+                    visitDetailViewModel = new ViewModelProvider(this).get(VisitDetailViewModel.class);
+                    visitsApiViewModel = new ViewModelProvider(this).get(VisitsApiViewModel.class);
                     visitsApiViewModel.getVisitApiDetail(recentDetail.getOrder_id(), (UserType.isUserAssistant() ? doctorGuid : null), true);
+                    callSecondaryApis();
 //                    visitDetailListAdapter.notifyDataSetChanged();
                 }
                 break;

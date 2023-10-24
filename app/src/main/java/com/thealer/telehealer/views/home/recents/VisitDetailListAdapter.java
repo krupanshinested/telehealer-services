@@ -1081,7 +1081,10 @@ class VisitDetailListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setData(VisitDetailViewModel visitsApiViewModel) {
+        adapterModelList.clear();
         adapterModelList = generateAdapterModelList();
+        this.detailViewModel = null;
+        this.detailViewModel = visitsApiViewModel;
         notifyDataSetChanged();
     }
 
