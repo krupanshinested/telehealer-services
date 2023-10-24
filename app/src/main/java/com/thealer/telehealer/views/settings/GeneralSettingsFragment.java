@@ -488,7 +488,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 boolean isPM = (hourOfDay >= 12);
                 calendar1.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar1.set(Calendar.MINUTE, minute);
-                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":"AM"), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
+                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":""), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
                 getAvailableEndTime();
             }
         });
@@ -501,7 +501,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 boolean isPM = (hourOfDay >= 12);
                 calendar2.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar2.set(Calendar.MINUTE, minute);
-                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":"AM"), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
+                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":""), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
                 if (calendar2.getTimeInMillis() >= calendar1.getTimeInMillis()) {
                     postAvaibleTime();
                 } else {
