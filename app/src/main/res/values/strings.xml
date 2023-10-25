@@ -1590,6 +1590,8 @@
     <string name="BIOMETRIC_CANCEL">Cancel</string>
     <string name="wrong_fingure">Fingure Print does not match. You have %s attempt left.  Please try again</string>
     <string name="str_refresh_token_expired">Refresh token expired.</string>
+    <string name="token_expired">Token expired.</string>
+    <string name="invalid_token">Invalid Token.</string>
     <string name="str_invalid_refresh_token">Invalid refresh token sent.</string>
     <string name="str_archive_id_not_found" translatable="false">Archive ID does not exist for the order</string>
     <string name="lbl_remote_patient_monitoring">Remote Patient Monitoring</string>

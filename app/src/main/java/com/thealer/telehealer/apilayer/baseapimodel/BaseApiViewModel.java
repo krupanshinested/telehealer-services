@@ -178,8 +178,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
         } else {
             Log.e("Error Quick login", "Error Quick login error message" + errorModel.getMessage());
 
-            if (errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
-                    errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token)))
+            if (errorModel.getMessage().equals(getApplication().getString(R.string.token_expired)) ||errorModel.getMessage().equals(getApplication().getString(R.string.str_refresh_token_expired)) ||
+                    errorModel.getMessage().equals(getApplication().getString(R.string.str_invalid_refresh_token)) ||
+                    errorModel.getMessage().equals(getApplication().getString(R.string.invalid_token)))
                 goToSigninActivity();
         }
     }

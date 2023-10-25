@@ -211,6 +211,7 @@ public class QuickLoginActivity extends BaseActivity implements BiometricInterfa
     @Override
     public void onBackPressed() {
         //back press disabled
+        finishAffinity();
     }
 
 

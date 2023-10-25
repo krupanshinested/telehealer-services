@@ -58,6 +58,7 @@ public class AccessLogActivity extends BaseActivity implements View.OnClickListe
                     logsCrv.setScrollable(true);
                     logsCrv.hideProgressBar();
                     logsCrv.getSwipeLayout().setRefreshing(false);
+                    dismissProgressDialog();
                 }
             }
         });
@@ -120,6 +121,7 @@ public class AccessLogActivity extends BaseActivity implements View.OnClickListe
 
         logsCrv.getRecyclerView().setAdapter(accessLogsAdapter);
 
+        showProgressDialog();
         getLogs(true);
     }
 

@@ -1497,6 +1497,8 @@
     <string name="BIOMETRIC_CANCEL">Cancelar</string>
     <string name="wrong_fingure">La huella dactilar no coincide. Te queda %s intento. Inténtalo de nuevo</string>
     <string name="str_refresh_token_expired">Token de actualización caducado.</string>
+    <string name="token_expired">El token expiró.</string>
+    <string name="invalid_token">Simbolo no valido.</string>
     <string name="str_invalid_refresh_token">Se envió un token de actualización no válido.</string>
     <string name="lbl_remote_patient_monitoring">Monitoreo remoto de pacientes</string>
     <string name="rpm_desc">Reciba alertas y proporcione comentarios personalizados a sus pacientes para parámetros fisiológicos predefinidos.</string>

@@ -59,6 +59,6 @@ public class GuestLoginScreensActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
     }
 }
