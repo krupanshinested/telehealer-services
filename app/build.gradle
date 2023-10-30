@@ -13,7 +13,7 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 69
+        versionCode 70
         versionName "2.9.34"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
@@ -45,7 +45,7 @@ android {
             minSdkVersion 23
             targetSdkVersion 33
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 69
+            versionCode 70
             versionName "2.9.34"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
