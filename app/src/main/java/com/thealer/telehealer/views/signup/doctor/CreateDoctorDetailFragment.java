@@ -246,6 +246,10 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
                                 startActivity(new Intent(getActivity(), DoctorOnBoardingActivity.class));
                             }
 
+                            if (whoAmIApiResponseModel.getStatus().equals(Constants.UPDATION_PENDING)) {
+                                startActivity(new Intent(getActivity(), DoctorOnBoardingActivity.class));
+                            }
+
 
                         }
                     }
@@ -1085,7 +1089,7 @@ public class CreateDoctorDetailFragment extends BaseFragment implements View.OnC
             case Constants.EDIT_MODE:
                 createUserRequestModel();
                 if (needToPutDoctorInOnboarding()) {
-                    createUserRequestModel.getUser_data().setStatus(Constants.ONBOARDING_PENDING);
+                    createUserRequestModel.getUser_data().setStatus(Constants.UPDATION_PENDING);
                 }
                 updateProfileModel.updateDoctor(createUserRequestModel, null);
                 break;

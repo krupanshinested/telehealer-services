@@ -56,6 +56,7 @@ public class Constants {
     //User Activation status
     public static final String ACTIVATION_PENDING = "ACTIVATION_PENDING";
     public static final String ONBOARDING_PENDING = "ONBOARDING_PENDING";
+    public static final String UPDATION_PENDING = "UPDATION_PENDING";
     public static final String OFFLINE = "OFFLINE";
     public static final String AVAILABLE = "AVAILABLE";
     public static final String ACTIVATED = "ACTIVATED";
