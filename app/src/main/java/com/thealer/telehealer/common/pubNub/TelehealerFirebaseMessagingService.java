@@ -210,6 +210,7 @@ public class TelehealerFirebaseMessagingService extends FirebaseMessagingService
                 sendNewNotificationBroadCast();
                 break;
             case APNSPayload.kickOutwaitingRoom:
+            case APNSPayload.kickOut:
                 LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ArgumentKeys.USER_KIKCOUT));
                 break;
         }

@@ -36,6 +36,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thealer.telehealer.R;
 import com.thealer.telehealer.common.ArgumentKeys;
@@ -99,6 +100,17 @@ public class VitalCreationActivity extends BaseActivity implements
     private VitalsManager vitalsManager;
     private String detailTitle = "";
     private BluetoothAdapter bluetoothAdapter;
+    String[] PERMISSIONS_LOCATION = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_PRIVILEGED
+    };
+    private final int REQUEST_ENABLE_BT = 001;
+    private boolean isFromClick = false;
+    private NewVitalDeviceSetUpFragment deviceSetUpFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,7 +135,11 @@ public class VitalCreationActivity extends BaseActivity implements
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (checkPermission()) {
             if (bluetoothAdapter != null) {
-                bluetoothAdapter.enable();
+                if (!bluetoothAdapter.isEnabled()){
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                        bluetoothAdapter.enable();
+                    }
+                }
             }
         } else {
             requestPermission();
@@ -135,12 +151,12 @@ public class VitalCreationActivity extends BaseActivity implements
 
     private void requestPermission() {
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, PERMISSIONS_LOCATION, PERMISSION_REQUEST_CODE);
 
     }
 
     private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT);
+        int result = ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN);;
 
         return result == PackageManager.PERMISSION_GRANTED;
     }
@@ -155,7 +171,11 @@ public class VitalCreationActivity extends BaseActivity implements
 
                     if (bluetoothAccepted) {
                         if (bluetoothAdapter != null) {
-                            bluetoothAdapter.enable();
+                            if (!bluetoothAdapter.isEnabled()){
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                                    bluetoothAdapter.enable();
+                                }
+                            }
                         }
                     } else {
 
@@ -165,9 +185,7 @@ public class VitalCreationActivity extends BaseActivity implements
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{BLUETOOTH_CONNECT}, PERMISSION_REQUEST_CODE);
-                                                }
+                                                requestPermissions(PERMISSIONS_LOCATION, PERMISSION_REQUEST_CODE);
                                             }
                                         });
                                 return;
@@ -296,9 +314,17 @@ public class VitalCreationActivity extends BaseActivity implements
                 break;
             case RequestID.SET_UP_DEVICE:
                 updateDetailTitle(getString(R.string.setup_new_devices));
-                NewVitalDeviceSetUpFragment deviceSetUpFragment = new NewVitalDeviceSetUpFragment();
+
+                deviceSetUpFragment = new NewVitalDeviceSetUpFragment();
                 deviceSetUpFragment.setArguments(bundle);
-                setFragment(deviceSetUpFragment, true);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                    setFragment(deviceSetUpFragment, true);
+                }else{
+                    isFromClick = true;
+                    Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(intent, REQUEST_ENABLE_BT);
+                }
+
                 break;
             case RequestID.OPEN_CONNECTED_DEVICE:
                 EventRecorder.recordLastUpdate("last_vitals_measured_date");
@@ -377,6 +403,15 @@ public class VitalCreationActivity extends BaseActivity implements
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode == RESULT_OK) {
+                    if (isFromClick){
+                        setFragment(deviceSetUpFragment, true);
+                    }
+                } else {
+                    showToast("Failed to connect to bluetooth");
+                }
+                break;
             case QRCodeReaderActivity.RequestID:
                 if (data != null) {
                     String qr = data.getStringExtra(ArgumentKeys.RESULT);

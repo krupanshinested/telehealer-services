@@ -2,6 +2,7 @@ package com.thealer.telehealer.views.call;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -64,7 +65,7 @@ import org.json.JSONObject;
 
 public class CallFeedBackActivity extends BaseActivity implements View.OnClickListener, OnListItemSelectInterface {
 
-    private TextView app_name_tv, info_tv, quality_tv, ccm_tv;
+    private TextView app_name_tv, info_tv, quality_tv, ccm_tv, skip_btn;
     private ImageView close_iv;
     private RatingBar rating_bar;
     private EditText rating_et;
@@ -290,6 +291,8 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
         rating_et = findViewById(R.id.rating_et);
         ccm_view = findViewById(R.id.ccm_view);
         submit_btn = findViewById(R.id.submit_btn);
+        skip_btn = findViewById(R.id.skip_btn);
+        skip_btn.setPaintFlags(skip_btn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         fourth_item = (CCMItemView) findViewById(R.id.fourth_item);
         first_item = findViewById(R.id.first_item);
@@ -313,6 +316,7 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     private void initListeners() {
         close_iv.setOnClickListener(this);
         submit_btn.setOnClickListener(this);
+        skip_btn.setOnClickListener(this);
 
         rating_bar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -389,6 +393,9 @@ public class CallFeedBackActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.skip_btn:
+                finish();
+                break;
             case R.id.submit_btn:
 
                 submit_btn.setEnabled(false);

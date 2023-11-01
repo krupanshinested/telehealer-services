@@ -94,7 +94,7 @@ public class PaitentWaitingListRecyclerAdaper extends RecyclerView.Adapter<Paite
         if (patientinfo.isGuestUser()) {
             viewHolder.im_kickout.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.im_kickout.setVisibility(View.GONE);
+            viewHolder.im_kickout.setVisibility(View.VISIBLE);
             viewHolder.hasCardIV.setVisibility(View.VISIBLE);
             if (UserDetailPreferenceManager.getWhoAmIResponse().isCan_view_card_status()) {
                 if (patientinfo.isHasValidCard()) {

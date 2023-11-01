@@ -214,6 +214,8 @@
     <string name="success_reset_password">Recuerde utilizar su nueva contraseña al iniciar sesión en el nuevo tiempo</string>
     <string name="sign_in_info">Inicie sesión con su correo electrónico y contraseña. Si no es un usuario ya registrado, regístrese con nosotros con el botón de registro.</string>
     <string name="firstname_empty_error">El primer nombre no puede estar vacío</string>
+    <string name="alternate_response_no">Número secundario no puede estar vacío</string>
+    <string name="update_alternate_response_no">Actualice el número secundario adecuado</string>
     <string name="lastname_empty_error">El apellido no puede estar vacío</string>
     <string name="password_empty_error">La contraseña no puede estar vacía</string>
     <string name="title_empty_error">El título no puede estar vacío</string>
@@ -1495,6 +1497,8 @@
     <string name="BIOMETRIC_CANCEL">Cancelar</string>
     <string name="wrong_fingure">La huella dactilar no coincide. Te queda %s intento. Inténtalo de nuevo</string>
     <string name="str_refresh_token_expired">Token de actualización caducado.</string>
+    <string name="token_expired">El token expiró.</string>
+    <string name="invalid_token">Simbolo no valido.</string>
     <string name="str_invalid_refresh_token">Se envió un token de actualización no válido.</string>
     <string name="lbl_remote_patient_monitoring">Monitoreo remoto de pacientes</string>
     <string name="rpm_desc">Reciba alertas y proporcione comentarios personalizados a sus pacientes para parámetros fisiológicos predefinidos.</string>
@@ -1620,4 +1624,6 @@
     <string name="allow_contact_permissions">- El contacto permite conexiones más fáciles entre los usuarios.</string>
     <string name="health_permissions">Permiso de salud</string>
     <string name="allow_health_permissions">- Salud le da a su proveedor una mejor imagen de su salud y estilo de vida en general.</string>
+    <string name="demographic_invite_error_not_found">No pudimos encontrar un paciente registrado en %s utilizando los datos demográficos proporcionados. Puede invitar al paciente a registrarse en la plataforma %s proporcionando un número de teléfono móvil y/o correo electrónico válido del paciente.</string>
+    <string name="demographic_invite_error">Tu solicitud de invitación ha fallado debido a %s .</string>
 </resources>

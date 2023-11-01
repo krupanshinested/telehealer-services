@@ -147,10 +147,10 @@ public class EducationalVideoDetailFragment extends BaseFragment {
 
         if (educationalVideoOrder != null && !UserType.isUserPatient()) {
             edit_tv.setVisibility(View.GONE);
-            delete_iv.setVisibility(View.VISIBLE);
+            delete_iv.setVisibility(View.GONE);
         } else if (educationalVideo != null && educationalVideo.getCreated_by() == UserDetailPreferenceManager.getWhoAmIResponse().getUser_id()) {
             edit_tv.setVisibility(View.VISIBLE);
-            delete_iv.setVisibility(View.VISIBLE);
+            delete_iv.setVisibility(View.GONE);
         } else {
             edit_tv.setVisibility(View.GONE);
             delete_iv.setVisibility(View.GONE);
@@ -178,6 +178,7 @@ public class EducationalVideoDetailFragment extends BaseFragment {
                     EducationalCreateFragment fragment = new EducationalCreateFragment();
                     Bundle bundle =new Bundle();
                     bundle.putString(ArgumentKeys.DOCTOR_GUID, doctorGuid);
+                    bundle.putSerializable(ArgumentKeys.EDUCATIONAL_VIDEO, getArguments().getSerializable(ArgumentKeys.EDUCATIONAL_VIDEO));
                     fragment.setArguments(bundle);
                     ((ShowSubFragmentInterface) getActivity()).onShowFragment(fragment);
                 }

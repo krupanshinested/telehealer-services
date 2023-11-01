@@ -425,7 +425,9 @@ public class CallActivity extends BaseActivity implements TokBoxUIInterface,
                 stopNotificationService();
             }
         }, 1000);
-        activeCall.setUIListener(this);
+        if (this != null){
+            activeCall.setUIListener(this);
+        }
         smallView.setOnTouchListener(new MoveViewTouchListener(smallView));
         didChangedAudioInput(activeCall.getCurrentAudioState());
         LocalBroadcastManager.getInstance(application).sendBroadcast(new Intent(Constants.CALL_ACTIVITY_RESUMED));

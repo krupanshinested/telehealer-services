@@ -153,6 +153,7 @@ public interface ApiInterface {
     String USER_FORM_ID = "user_form_id";
     String CANCEL = "cancel";
     String SEARCH = "search";
+    String temp_SEARCH = "filter_fullname__icontains";
     String SEARCH_FILTER = "filter_fullname__icontains";
     String SEARCH_TITLE_FILTER = "filter_title__icontains";
     String SEARCH_FILTER_PRESCIPTION = "filter_drug_name__icontains";
@@ -194,6 +195,7 @@ public interface ApiInterface {
     String DOWNLOAD_SUMMARY = "download_summary";
     String PROFILE_COMPLETE = "profile_complete";
     String REJECT = "reject";
+    String isDelete = "isDelete";
     String SESSIONID = "session_id";
     String HEALTHCARE_DEVICE_ID = "healthcare_device_id";
     String DEVICE_ID = "device_id";
@@ -319,7 +321,7 @@ public interface ApiInterface {
     Observable<RecentsApiResponseModel> getMyCorrespondentHistory(@Query(SEARCH_FILTER) String search, @Query(CALLS) boolean calls, @Query(DOCTOR_GUID) String doctorGuid, @Query(PAGINATE) boolean paginate, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize);
 
     @GET("api/unconnected-users")
-    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, @Query("role") String role, @Query("specialty") String speciality);
+    Observable<ConnectionListResponseModel> getUnConnectedUsers(@Query(PAGINATE) boolean paginate, @Query("connection_requests") boolean connection_requests, @Query(PAGE) int page, @Query(PAGE_SIZE) int pageSize, @Query(temp_SEARCH) String name, @Query(MEDICAL_ASSISTANT) boolean isMedicalAssistant, /*@Query("role") String role,*/ @Query("specialty") String speciality);
 
     @GET("api/designations")
     Observable<DesignationResponseModel> getDesignationList();
@@ -770,7 +772,7 @@ public interface ApiInterface {
     Observable<GuestLoginApiResponseModel> guestLogin(@Body HashMap<String, Object> params);
 
     @PUT("api/call/{session_id}")
-    Observable<BaseApiResponseModel> kickOutPatient(@Path(SESSIONID) String sessionId, @Query(REJECT) boolean status);
+    Observable<BaseApiResponseModel> kickOutPatient(@Path(SESSIONID) String sessionId, @Query(REJECT) boolean status,@Query(isDelete) boolean isdelete);
 
     @POST("api/virtual-rooms/join-v2")
     Observable<GuestLoginApiResponseModel> registerUserEnterWaitingRoom(@Body HashMap<String, Object> params);
