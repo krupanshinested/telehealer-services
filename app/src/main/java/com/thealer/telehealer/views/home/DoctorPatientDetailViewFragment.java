@@ -981,7 +981,7 @@ public class DoctorPatientDetailViewFragment extends BaseFragment implements Vie
                                 case Constants.ROLE_DOCTOR:
 //
 //
-                                    Log.d("Data Model", "Data Model" + doctorModel.getPermissions() + UserType.isUserAssistant());
+//                                    Log.d("Data Model", "Data Model" + doctorModel.getPermissions() + UserType.isUserAssistant());
 //                                        if(UserType.isUserAssistant()) {
 //                                            isCallEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.MAKE_CALLS_CODE);
 //                                            isScheduleEnable = Utils.checkPermissionStatus(doctorModel.getPermissions(), ArgumentKeys.SCHEDULING_CODE);
