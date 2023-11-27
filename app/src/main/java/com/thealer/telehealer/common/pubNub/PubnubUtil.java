@@ -1,5 +1,7 @@
 package com.thealer.telehealer.common.pubNub;
 
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -29,6 +31,7 @@ import com.thealer.telehealer.TeleHealerApplication;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubMessage;
 import com.thealer.telehealer.apilayer.models.Pubnub.PubNubViewModel;
 import com.thealer.telehealer.common.Config;
+import com.thealer.telehealer.common.PreferenceConstants;
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogExternalAPI;
 import com.thealer.telehealer.common.Util.InternalLogging.TeleLogger;
@@ -69,12 +72,18 @@ public class PubnubUtil extends SubscribeCallback {
         PNConfiguration pnConfiguration = new PNConfiguration();
         pnConfiguration.setPublishKey(Config.getPubNubPublisherKey());
         pnConfiguration.setSubscribeKey(Config.getPubNubSubscriberKey());
+        if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty() && appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
+            pnConfiguration.setUuid(UserDetailPreferenceManager.getUser_guid());
+        }
         pubnub = new PubNub(pnConfiguration);
         pubnub.addListener(this);
 
         PNConfiguration voipConfiguration = new PNConfiguration();
         voipConfiguration.setPublishKey(Config.getVoipPublisherKey());
         voipConfiguration.setSubscribeKey(Config.getVoipSubscriberKey());
+        if (UserDetailPreferenceManager.getUser_guid() != null && !UserDetailPreferenceManager.getUser_guid().isEmpty() && appPreference.getBoolean(PreferenceConstants.IS_USER_LOGGED_IN)) {
+            voipConfiguration.setUuid(UserDetailPreferenceManager.getUser_guid());
+        }
         voipPubnub = new PubNub(voipConfiguration);
     }
 

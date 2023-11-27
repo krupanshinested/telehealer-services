@@ -96,7 +96,7 @@ public class EditableFormFragment extends OrdersBaseFragment implements View.OnC
             public void onChanged(@Nullable BaseApiResponseModel baseApiResponseModel) {
                 if (baseApiResponseModel != null) {
                     if (baseApiResponseModel.isSuccess()) {
-                        if (submitBtn.getText().equals(getString(R.string.submit))){
+                        if (submitBtn.getVisibility() != View.GONE && submitBtn.getText().equals(getString(R.string.submit))){
                             showToast(getString(R.string.form_updated_successfully));
                             onCloseActionInterface.onClose(false);
                         }else {
