@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ihealth.communication.control.UpgradeControl;
+import com.ihealth.communication.manager.DiscoveryTypeEnum;
 import com.ihealth.communication.manager.iHealthDevicesCallback;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 import com.ihealth.communication.manager.iHealthDevicesUpgradeManager;
@@ -501,36 +502,32 @@ public class iHealthVitalManager extends VitalsManager {
         iHealthDevicesManager.getInstance().addCallbackFilterForDeviceType(callbackId, filterTypes);*/
     }
 
-    private Long getDiscovery(String type) {
+    private DiscoveryTypeEnum getDiscovery(String type) {
         switch (type) {
             case iHealthDevicesManager.TYPE_BP3L:
-                return iHealthDevicesManager.DISCOVERY_BP3L;
+                return DiscoveryTypeEnum.BP3L;
             case iHealthDevicesManager.TYPE_550BT:
-                return iHealthDevicesManager.DISCOVERY_BP550BT;
+                return DiscoveryTypeEnum.BP550BT;
             case iHealthDevicesManager.TYPE_BP5:
-                return iHealthDevicesManager.DISCOVERY_BP5;
-            case iHealthDevicesManager.TYPE_BPM1:
-                return 12L;//TODO need to work
+                return DiscoveryTypeEnum.BP5;
             case iHealthDevicesManager.TYPE_PO3:
-                return iHealthDevicesManager.DISCOVERY_PO3;
-            case iHealthDevicesManager.TYPE_HS6:
-                return 12L;//TODO need to work
+                return DiscoveryTypeEnum.PO3;
             case iHealthDevicesManager.TYPE_BP7:
-                return iHealthDevicesManager.DISCOVERY_BP7;
+                return DiscoveryTypeEnum.BP7;
             case iHealthDevicesManager.TYPE_HS4S:
-                return iHealthDevicesManager.DISCOVERY_HS4S;
+                return DiscoveryTypeEnum.HS4S;
             case iHealthDevicesManager.TYPE_BG5:
-                return iHealthDevicesManager.DISCOVERY_BG5;
+                return DiscoveryTypeEnum.BG5;
             case iHealthDevicesManager.TYPE_FDIR_V3:
-                return iHealthDevicesManager.DISCOVERY_FDIR_V3;
+                return DiscoveryTypeEnum.FDIR_V3;
             case iHealthDevicesManager.TYPE_TS28B:
-                return iHealthDevicesManager.DISCOVERY_TS28B;
+                return DiscoveryTypeEnum.TS28B;
             case iHealthDevicesManager.TYPE_BP7S:
-                return iHealthDevicesManager.DISCOVERY_BP7S;
+                return DiscoveryTypeEnum.BP7S;
             case iHealthDevicesManager.TYPE_HS2:
-                return iHealthDevicesManager.DISCOVERY_HS2;
+                return DiscoveryTypeEnum.HS2;
             default:
-                return 124L;
+                return DiscoveryTypeEnum.All;
         }
     }
 
