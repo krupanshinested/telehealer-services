@@ -13,8 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 72
-        versionName "2.9.35"
+        versionCode 74
+        versionName "2.9.37"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
@@ -45,8 +45,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 33
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 73
-            versionName "2.9.36"
+            versionCode 74
+            versionName "2.9.37"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
@@ -204,9 +204,6 @@ dependencies {
 
     //signature pad
     implementation 'com.github.gcacace:signature-pad:1.2.1'
-
-    /*//Brain Tree
-    implementation 'com.braintreepayments.api:drop-in:3.7.1'*/
 
     //wave animation
     implementation 'com.github.Jay-Goo:WaveLineView:v1.0.3'
