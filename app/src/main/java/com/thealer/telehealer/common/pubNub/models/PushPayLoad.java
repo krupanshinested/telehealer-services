@@ -7,27 +7,27 @@ package com.thealer.telehealer.common.pubNub.models;
 public class PushPayLoad {
 
     private APNSPayload pn_apns;
-    private GCMPayload pn_gcm;
+    private FCMPayload pn_fcm;
 
     public APNSPayload getPn_apns() {
         return pn_apns;
     }
 
-    public GCMPayload getPn_gcm() {
-        return pn_gcm;
+    public FCMPayload getPn_fcm() {
+        return pn_fcm;
     }
 
     public void setPn_apns(APNSPayload pn_apns) {
         this.pn_apns = pn_apns;
     }
 
-    public void setPn_gcm(GCMPayload pn_gcm) {
-        this.pn_gcm = pn_gcm;
+    public void setPn_fcm(FCMPayload pn_fcm) {
+        this.pn_fcm = pn_fcm;
     }
 
     public PushPayLoad(APNSPayload pn_apns) {
         this.pn_apns = pn_apns;
-        this.pn_gcm = new GCMPayload(pn_apns);
+        this.pn_fcm = new FCMPayload(pn_apns);
     }
 
     public PushPayLoad() {

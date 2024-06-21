@@ -185,7 +185,7 @@ dependencies {
         exclude group: 'com.google.protobuf'
     }
     //pubnub
-    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.29.2'
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.0.0'
 
     //calendar view
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'

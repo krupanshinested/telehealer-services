@@ -1,9 +1,10 @@
 package com.thealer.telehealer.common.pubNub.models;
 
-import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.BuildConfig;
 import com.thealer.telehealer.TeleHealerApplication;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;

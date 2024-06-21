@@ -18,7 +18,7 @@ import com.thealer.telehealer.common.pubNub.models.APNSPayload;
 import com.thealer.telehealer.common.OpenTok.OpenTok;
 import com.thealer.telehealer.common.OpenTok.OpenTokConstants;
 import com.thealer.telehealer.common.Utils;
-import com.thealer.telehealer.common.pubNub.models.GCMPayload;
+import com.thealer.telehealer.common.pubNub.models.FCMPayload;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
 import com.thealer.telehealer.views.home.HomeActivity;
 
@@ -91,8 +91,9 @@ public class CallChannel {
         apnsPayload.setPn_push(APNSPayload.getPnPushObject());
 
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
+        Log.d("Payload","Payload"+pushPayLoad);
         PubnubUtil.shared.publishPushMessage(pushPayLoad,null);
     }
 

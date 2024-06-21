@@ -6,21 +6,21 @@ import java.io.Serializable;
  * Created by rsekar on 12/26/18.
  */
 
-public class GCMPayload implements Serializable {
-    private GCMData data;
+public class FCMPayload implements Serializable {
+    private FCMData data;
 
-    public GCMData getData() {
+    public FCMData getData() {
         return data;
     }
 
-    public GCMPayload(APNSPayload body) {
-        this.data = new GCMData(body);
+    public FCMPayload(APNSPayload body) {
+        this.data = new FCMData(body);
     }
 
-    public class GCMData implements Serializable {
+    public class FCMData implements Serializable {
         private APNSPayload body;
 
-        public GCMData(APNSPayload apnsPayload) {
+        public FCMData(APNSPayload apnsPayload) {
             this.body = apnsPayload;
         }
 

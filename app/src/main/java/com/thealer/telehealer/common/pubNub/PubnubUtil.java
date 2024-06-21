@@ -50,6 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.annotations.Nullable;
+
 /**
  * Created by rsekar on 12/25/18.
  */
@@ -98,7 +100,7 @@ public class PubnubUtil extends SubscribeCallback {
             public void onSuccessViewCompletion(boolean success) {
                 Log.d("PubnubUtil", "enablePushOnChannel " + channelName);
                 pubnub.addPushNotificationsOnChannels()
-                        .pushType(PNPushType.GCM)
+                        .pushType(PNPushType.FCM)
                         .channels(Collections.singletonList(channelName))
                         .deviceId(token)
                         .async(new PNCallback<PNPushAddChannelResult>() {
@@ -135,7 +137,7 @@ public class PubnubUtil extends SubscribeCallback {
             public void onSuccessViewCompletion(boolean success) {
                 Log.d("PubnubUtil", "enableVoipOnChannel " + channelName);
                 voipPubnub.addPushNotificationsOnChannels()
-                        .pushType(PNPushType.GCM)
+                        .pushType(PNPushType.FCM)
                         .channels(Collections.singletonList(channelName))
                         .deviceId(token)
                         .async(new PNCallback<PNPushAddChannelResult>() {
@@ -233,7 +235,7 @@ public class PubnubUtil extends SubscribeCallback {
 
         voipPubnub.removeAllPushNotificationsFromDeviceWithPushToken()
                 .deviceId(TelehealerFirebaseMessagingService.getCurrentToken())
-                .pushType(PNPushType.GCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
+                .pushType(PNPushType.FCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
             @Override
             public void onResponse(PNPushRemoveAllChannelsResult result, PNStatus status) {
                 if (!status.isError()) {
@@ -251,7 +253,7 @@ public class PubnubUtil extends SubscribeCallback {
 
         pubnub.removeAllPushNotificationsFromDeviceWithPushToken()
                 .deviceId(TelehealerFirebaseMessagingService.getCurrentToken())
-                .pushType(PNPushType.GCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
+                .pushType(PNPushType.FCM).async(new PNCallback<PNPushRemoveAllChannelsResult>() {
             @Override
             public void onResponse(PNPushRemoveAllChannelsResult result, PNStatus status) {
                 if (!status.isError()) {

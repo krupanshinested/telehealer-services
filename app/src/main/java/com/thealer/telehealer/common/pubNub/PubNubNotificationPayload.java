@@ -2,7 +2,7 @@ package com.thealer.telehealer.common.pubNub;
 
 import com.thealer.telehealer.common.UserDetailPreferenceManager;
 import com.thealer.telehealer.common.pubNub.models.APNSPayload;
-import com.thealer.telehealer.common.pubNub.models.GCMPayload;
+import com.thealer.telehealer.common.pubNub.models.FCMPayload;
 import com.thealer.telehealer.common.pubNub.models.PatientInvite;
 import com.thealer.telehealer.common.pubNub.models.Patientinfo;
 import com.thealer.telehealer.common.pubNub.models.PushPayLoad;
@@ -48,7 +48,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setFrom_name(displayName);
         apnsPayload.setDoctor_guid(doctor_guid);
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
@@ -65,7 +65,7 @@ public class PubNubNotificationPayload {
 
         apnsPayload.setAps(aps);
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
@@ -90,7 +90,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setSessionId(scheduleId);
 
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
@@ -118,7 +118,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setCreatedAt(date);
 
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
@@ -145,7 +145,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setContent(message);
 
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
@@ -168,7 +168,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setPn_push(APNSPayload.getPnPushObject());
 
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
@@ -194,7 +194,7 @@ public class PubNubNotificationPayload {
         apnsPayload.setPn_push(APNSPayload.getPnPushObject());
 
         pushPayLoad.setPn_apns(apnsPayload);
-        pushPayLoad.setPn_gcm(new GCMPayload(apnsPayload));
+        pushPayLoad.setPn_fcm(new FCMPayload(apnsPayload));
 
         return pushPayLoad;
     }
