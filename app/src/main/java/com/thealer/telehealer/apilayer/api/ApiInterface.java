@@ -6,6 +6,7 @@ import com.thealer.telehealer.apilayer.models.Braintree.BrainTreeCustomer;
 import com.thealer.telehealer.apilayer.models.Braintree.DefaultCardResp;
 import com.thealer.telehealer.apilayer.models.Braintree.OAuthURLResp;
 import com.thealer.telehealer.apilayer.models.CheckUserEmailMobileModel.CheckUserEmailMobileResponseModel;
+import com.thealer.telehealer.apilayer.models.DefaultPhysicianModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.DeleteEducationalVideoResponse;
 import com.thealer.telehealer.apilayer.models.EducationalVideo.EducationalFetchModel;
@@ -851,5 +852,11 @@ public interface ApiInterface {
 
     @GET("/api/forms/generate/{user_form_id}")
     Observable<BaseApiResponseModel> printform(@Path(USER_FORM_ID) int formId);
+
+    @GET("/api/monitoring_physician/patient")
+    Observable<DefaultPhysicianModel> getDefaultPhysician();
+
+    @POST("/api/monitoring_physician/save")
+    Observable<DefaultPhysicianModel> saveDefaultPhysician(@Body HashMap<String, Object> req);
 
 }

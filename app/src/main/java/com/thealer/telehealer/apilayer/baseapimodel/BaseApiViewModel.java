@@ -23,6 +23,7 @@ import com.thealer.telehealer.R;
 import com.thealer.telehealer.apilayer.api.ApiInterface;
 import com.thealer.telehealer.apilayer.manager.RetrofitManager;
 import com.thealer.telehealer.apilayer.manager.helper.NoConnectivityException;
+import com.thealer.telehealer.apilayer.models.DefaultPhysicianModel;
 import com.thealer.telehealer.apilayer.models.setDevice.SetDeviceResponseModel;
 import com.thealer.telehealer.apilayer.models.signin.SigninApiResponseModel;
 import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
@@ -236,6 +237,9 @@ public class BaseApiViewModel extends AndroidViewModel implements LifecycleOwner
     public MutableLiveData<BaseApiResponseModel> baseApiResponseModelMutableLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<BaseApiResponseModel>> baseApiArrayListMutableLiveData = new MutableLiveData<>();
+
+    public MutableLiveData<DefaultPhysicianModel> defaultPhysicianMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DefaultPhysicianModel> updateDefaultPhysicianMutableLiveData = new MutableLiveData<>();
 
     public MutableLiveData<SetDeviceResponseModel> baseApiSetDeviceResponseModelMutableLiveData = new MutableLiveData<>();
 

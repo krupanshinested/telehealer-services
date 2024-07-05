@@ -54,11 +54,13 @@ import com.thealer.telehealer.views.common.AttachObserverInterface;
 import com.thealer.telehealer.views.common.OnActionCompleteInterface;
 import com.thealer.telehealer.views.common.OnCloseActionInterface;
 import com.thealer.telehealer.views.common.ShowSubFragmentInterface;
+import com.thealer.telehealer.views.common.imagePreview.ImagePreviewDialogFragment;
 import com.thealer.telehealer.views.quickLogin.QuickLoginActivity;
 import com.thealer.telehealer.views.quickLogin.QuickLoginUtil;
 import com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity;
 import com.thealer.telehealer.views.settings.cellView.ProfileCellView;
 import com.thealer.telehealer.views.settings.cellView.SettingsCellView;
+import com.thealer.telehealer.views.settings.primaryPhysician.PrimaryPhysicianFragment;
 
 import java.util.Calendar;
 
@@ -71,8 +73,8 @@ import static com.thealer.telehealer.views.home.orders.forms.EditableFormFragmen
 
 public class GeneralSettingsFragment extends BaseFragment implements View.OnClickListener {
 
-    private SettingsCellView presence, quickLogin, secure_message, connection_request, appointment_request, order_request, integration_request, record_encounter, transcribe_encounter, enable_patient_card;
-    private ProfileCellView signature, appointment_slots, available_time,rpmView;
+    private SettingsCellView presence, quickLogin, primaryPhysician, secure_message, connection_request, appointment_request, order_request, integration_request, record_encounter, transcribe_encounter, enable_patient_card;
+    private ProfileCellView signature, appointment_slots, available_time, rpmView;
     private LinearLayout deleteView, rpmLl, appointmentView, encounterView;
 
     private WhoAmIApiViewModel whoAmIApiViewModel;
@@ -215,6 +217,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
     private void initView(View view) {
         presence = view.findViewById(R.id.presence);
         quickLogin = view.findViewById(R.id.quick_login);
+        primaryPhysician = view.findViewById(R.id.primary_physician);
         signature = view.findViewById(R.id.signature);
         deleteView = view.findViewById(R.id.delete_view);
         rpmLl = view.findViewById(R.id.rpm_ll);
@@ -274,6 +277,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         notification.setOnClickListener(this);
         presence.setOnClickListener(this);
         quickLogin.setOnClickListener(this);
+        primaryPhysician.setOnClickListener(this);
         signature.setOnClickListener(this);
         deleteView.setOnClickListener(this);
         backIv.setOnClickListener(this);
@@ -415,6 +419,13 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                     showSignatureView();
                 }
                 break;
+            case R.id.primary_physician:
+                PrimaryPhysicianFragment primaryPhysicianFragment = new PrimaryPhysicianFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, primaryPhysicianFragment, "primaryPhysicianFragment")
+                        .addToBackStack(null)
+                        .commit();
+                break;
             case R.id.appointment_slots:
                 appointment_slots.openSpinner();
                 break;
@@ -460,10 +471,10 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 startActivity(intent);
                 break;
             case R.id.secure_message:
-                String msg=String.format(getString(R.string.disclaimer_for_secure_messaging), getString(R.string.organization_name));
+                String msg = String.format(getString(R.string.disclaimer_for_secure_messaging), getString(R.string.organization_name));
                 secure_message.toggleSwitch();
                 profileUpdate.updateSecureMessage(secure_message.getSwitchStatus(), true);
-                if(secure_message.getSwitchStatus())
+                if (secure_message.getSwitchStatus())
                     customToast(msg);
                 break;
             case R.id.enable_patient_card:
@@ -477,7 +488,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 break;
             case R.id.rpm_view:
                 showRemotePatientMonitoring();
-            break;
+                break;
         }
     }
 
@@ -488,7 +499,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 boolean isPM = (hourOfDay >= 12);
                 calendar1.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar1.set(Calendar.MINUTE, minute);
-                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":""), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
+                startTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute + " " + (hourOfDay == 12 ? "PM" : ""), "hh:mm" + " " + (hourOfDay == 12 ? "a" : ""), "hh:mm a");
                 getAvailableEndTime();
             }
         });
@@ -501,7 +512,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
                 boolean isPM = (hourOfDay >= 12);
                 calendar2.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar2.set(Calendar.MINUTE, minute);
-                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute +" "+(hourOfDay == 12 ? "PM":""), "hh:mm"+" "+(hourOfDay == 12 ? "a":""), "hh:mm a");
+                endTime = DateUtil.getUTCfromLocal(hourOfDay + ":" + minute + " " + (hourOfDay == 12 ? "PM" : ""), "hh:mm" + " " + (hourOfDay == 12 ? "a" : ""), "hh:mm a");
                 if (calendar2.getTimeInMillis() >= calendar1.getTimeInMillis()) {
                     postAvaibleTime();
                 } else {
@@ -532,6 +543,7 @@ public class GeneralSettingsFragment extends BaseFragment implements View.OnClic
         RemotePatientMonitoringFragment remotePatientMonitoringFragment = new RemotePatientMonitoringFragment();
         showSubFragmentInterface.onShowFragment(remotePatientMonitoringFragment);
     }
+
     private void showSignatureView() {
         SignatureViewFragment signatureViewFragment = new SignatureViewFragment();
         showSubFragmentInterface.onShowFragment(signatureViewFragment);

@@ -72,6 +72,13 @@
                     app:settings_title="@string/presence" />
 
                 <com.thealer.telehealer.views.settings.cellView.SettingsCellView
+                    android:id="@+id/primary_physician"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isSwitchNeed="false"
+                    app:settings_title="@string/primary_physician" />
+
+                <com.thealer.telehealer.views.settings.cellView.SettingsCellView
                     android:id="@+id/order_request"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -91,6 +98,7 @@
                     android:layout_height="wrap_content"
                     app:isSwitchNeed="true"
                     app:settings_title="@string/lbl_receive_patient_payments" />
+
                 <LinearLayout
                     android:id="@+id/rpm_ll"
                     android:layout_width="fill_parent"
@@ -285,4 +293,12 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
