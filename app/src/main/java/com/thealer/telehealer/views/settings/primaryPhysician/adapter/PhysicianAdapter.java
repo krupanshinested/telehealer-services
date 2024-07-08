@@ -61,7 +61,10 @@ public class PhysicianAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         String title, specialization = "-";
 
-        title = commonUserApiResponseModel.getFirst_name() + " " + commonUserApiResponseModel.getLast_name() + ", " + commonUserApiResponseModel.getUser_detail().getData().getTitle().toUpperCase();
+        title = commonUserApiResponseModel.getFirst_name() + " " + commonUserApiResponseModel.getLast_name() + ", " +
+                (commonUserApiResponseModel.getUser_detail().getData().getTitle() != null
+                        ? commonUserApiResponseModel.getUser_detail().getData().getTitle().toUpperCase()
+                        : "");
         if (!(commonUserApiResponseModel.getUser_detail().getData().getSpecialties().isEmpty())) {
             specialization = commonUserApiResponseModel.getUser_detail().getData().getSpecialties().get(0).getName();
         }
