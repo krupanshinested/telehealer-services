@@ -8,13 +8,13 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     defaultConfig {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
-        targetSdkVersion 33
-        versionCode 74
-        versionName "2.9.37"
+        targetSdkVersion 34
+        versionCode 75
+        versionName "2.9.38"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
@@ -43,17 +43,17 @@ android {
         }
         patient {
             minSdkVersion 23
-            targetSdkVersion 33
+            targetSdkVersion 34
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 74
-            versionName "2.9.37"
+            versionCode 75
+            versionName "2.9.38"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
         }
         pepTalkHealth {
             minSdkVersion 23
-            targetSdkVersion 33
+            targetSdkVersion 34
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 9
             versionName '2.8.3'
@@ -63,7 +63,7 @@ android {
         }
         pepTalkMd {
             minSdkVersion 23
-            targetSdkVersion 33
+            targetSdkVersion 34
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 9
             versionName '2.8.3'
