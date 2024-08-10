@@ -1,5 +1,9 @@
 package com.thealer.telehealer.views.home.schedules;
 
+import static android.content.Context.ALARM_SERVICE;
+import static android.content.Context.RECEIVER_EXPORTED;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
+
 import android.animation.Animator;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.RectF;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +30,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.EventClickListener;
@@ -82,9 +86,6 @@ import java.util.Map;
 import java.util.Set;
 
 import me.toptas.fancyshowcase.listener.DismissListener;
-
-import static android.content.Context.ALARM_SERVICE;
-import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 
 /**
  * Created by Aswin on 02,January,2019
@@ -312,7 +313,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
             localNotificationReceiver = new LocalNotificationReceiver();
             if (getActivity() != null) {
-                getActivity().registerReceiver(localNotificationReceiver, intentFilter);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    getActivity().registerReceiver(localNotificationReceiver, intentFilter, RECEIVER_EXPORTED);
+                }
             }
         }
     }
@@ -678,7 +681,7 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
         super.onResume();
         addFab.setClickable(true);
         if (getUserVisibleHint()) {
-            if (!schduleDetailVisible){
+            if (!schduleDetailVisible) {
                 setUserVisibleHint(true);
             }
         }
