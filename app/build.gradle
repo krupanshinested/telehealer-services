@@ -13,8 +13,8 @@ android {
         applicationId 'com.thealer.pro'
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 77
-        versionName "2.9.40"
+        versionCode 78
+        versionName "2.9.41"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
     }
@@ -44,8 +44,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 34
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 77
-            versionName "2.9.40"
+            versionCode 78
+            versionName "2.9.41"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")
