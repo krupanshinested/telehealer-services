@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/app_gradient_start</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent"> true </item>
         <item name="android:screenOrientation">portrait</item>
     </style>
 

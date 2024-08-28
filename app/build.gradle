@@ -16,7 +16,6 @@ android {
         versionCode 77
         versionName "2.9.40"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//       buildConfigField("String", "STRIPE_KEY", "\"pk_test_53GgqkDGWa4LC5sKjS5fp7zU00thKb6Or6\"")
         buildConfigField("String", "STRIPE_KEY", "\"pk_live_t1eTFSQIJvEAvh47FeakxnqW00qHjqnGw4\"")
     }
     buildTypes {
@@ -45,8 +44,8 @@ android {
             minSdkVersion 23
             targetSdkVersion 34
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-            versionCode 76
-            versionName "2.9.39"
+            versionCode 77
+            versionName "2.9.40"
             applicationId 'com.thealer'
             buildConfigField("String", "FLAVOR_TYPE", "\"patient\"")
             buildConfigField("String", "PARENT_APP", "\"telehealer\"")

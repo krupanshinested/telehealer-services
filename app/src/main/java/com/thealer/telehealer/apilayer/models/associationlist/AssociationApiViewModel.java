@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiResponseModel;
 import com.thealer.telehealer.apilayer.baseapimodel.BaseApiViewModel;
+import com.thealer.telehealer.apilayer.models.DefaultPhysicianModel;
 import com.thealer.telehealer.apilayer.models.DoctorGroupedAssociations;
 import com.thealer.telehealer.apilayer.models.commonResponseModel.CommonUserApiResponseModel;
 import com.thealer.telehealer.apilayer.models.unique.UniqueResponseModel;
@@ -15,6 +16,7 @@ import com.thealer.telehealer.common.Constants;
 import com.thealer.telehealer.views.base.BaseViewInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -31,7 +33,7 @@ public class AssociationApiViewModel extends BaseApiViewModel {
             @Override
             public void onStatus(boolean status) {
                 if (status) {
-                    getAuthApiService().getAssociations(search, true, page, Constants.PAGINATION_SIZE,  isMedicalAssistant, doctorGuid)
+                    getAuthApiService().getAssociations(search, true, page, Constants.PAGINATION_SIZE, isMedicalAssistant, doctorGuid)
                             .compose(applySchedulers())
                             .subscribe(new RAObserver<BaseApiResponseModel>(getProgress(showProgress)) {
                                 @Override
@@ -62,6 +64,44 @@ public class AssociationApiViewModel extends BaseApiViewModel {
             }
         });
     }
+
+    public void getDefaultPhysician() {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().getDefaultPhysician()
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<DefaultPhysicianModel>(getProgress(true)) {
+                                @Override
+                                public void onSuccess(DefaultPhysicianModel data) {
+                                    defaultPhysicianMutableLiveData.setValue(data);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    public void saveDefaultPhysician(HashMap<String, Object> req) {
+        fetchToken(new BaseViewInterface() {
+            @Override
+            public void onStatus(boolean status) {
+                if (status) {
+                    getAuthApiService().saveDefaultPhysician(req)
+                            .compose(applySchedulers())
+                            .subscribe(new RAObserver<DefaultPhysicianModel>(getProgress(true)) {
+                                @Override
+                                public void onSuccess(DefaultPhysicianModel data) {
+                                    updateDefaultPhysicianMutableLiveData.setValue(data);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+
     public void getUniqueUrl() {
         fetchToken(status -> getAuthApiService().getUniqueUrl()
                 .compose(applySchedulers())

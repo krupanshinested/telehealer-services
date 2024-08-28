@@ -255,6 +255,7 @@
     <string name="back_image_path">back_img_path</string>
     <string name="failure">Failure</string>
     <string name="success">Success</string>
+    <string name="physician_seleted">Default monitoring physician selected successful</string>
     <string name="partially_success">Partially Success</string>
     <string name="enter_valid_email">Invalid email address</string>
     <string name="email_already_taken">Email id already taken</string>
@@ -379,6 +380,8 @@
     <string name="notification">Notification</string>
     <string name="presence">Presence</string>
     <string name="quick_login">Quick Login</string>
+    <string name="primary_physician">Primary Physician</string>
+    <string name="select_primary_physician">Select Primary Physician</string>
     <string name="signature">Signature</string>
     <string name="account_deletion">Account Deletion</string>
     <string name="account_deletion_description">To Delete account permanantly,enter the text \'DELETE\'</string>

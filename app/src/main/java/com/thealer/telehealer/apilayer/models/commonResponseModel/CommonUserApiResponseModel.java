@@ -35,6 +35,7 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
     private Boolean show_bhi = false;
     private Boolean transcription_enabled = false;
     private Boolean recording_enabled = false;
+    private Boolean isSelected = false;
     private String appt_start_time;
     private String appt_end_time;
     private String alt_rpm_response_no;
@@ -392,6 +393,14 @@ public class CommonUserApiResponseModel extends UserBean implements Serializable
 
     public Boolean getShow_rpm() {
         return show_rpm;
+    }
+
+    public void setSelection(Boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    public Boolean getSelected() {
+        return isSelected;
     }
 
     public void setShow_rpm(Boolean show_rpm) {

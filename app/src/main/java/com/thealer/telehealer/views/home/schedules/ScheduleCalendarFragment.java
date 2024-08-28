@@ -1,5 +1,7 @@
 package com.thealer.telehealer.views.home.schedules;
-
+import static android.content.Context.ALARM_SERVICE;
+import static android.content.Context.RECEIVER_EXPORTED;
+import static com.thealer.telehealer.TeleHealerApplication.appPreference;
 import android.animation.Animator;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -19,7 +21,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -312,7 +314,9 @@ public class ScheduleCalendarFragment extends BaseFragment implements EventClick
 
             localNotificationReceiver = new LocalNotificationReceiver();
             if (getActivity() != null) {
-                getActivity().registerReceiver(localNotificationReceiver, intentFilter);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    getActivity().registerReceiver(localNotificationReceiver, intentFilter, RECEIVER_EXPORTED);
+                }
             }
         }
     }
