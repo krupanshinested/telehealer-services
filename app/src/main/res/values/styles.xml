@@ -5,6 +5,7 @@
         <item name="android:statusBarColor">@color/app_status_bar_color1</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:screenOrientation">portrait</item>
+        <item name="android:windowIsTranslucent"> true </item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
     </style>
 
