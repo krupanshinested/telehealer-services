@@ -1,1 +1,9 @@
 include ':app'
+dependencyResolutionManagement{
+    repositories{
+        google()
+        mavenCentral() // Make sure Maven Central is included
+        maven { url 'https://jitpack.io' } // Ensure JitPack is included
+        jcenter()  // Optional, but may help with some dependencies
+    }
+}
