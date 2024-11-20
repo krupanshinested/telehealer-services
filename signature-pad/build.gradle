@@ -1,0 +1,19 @@
+apply plugin: 'com.android.library'
+
+Properties properties = new Properties()
+final def bintrayPropertiesFile = project.rootProject.file('bintray.properties')
+if (bintrayPropertiesFile.exists()) properties.load(bintrayPropertiesFile.newDataInputStream())
+
+android {
+    compileSdk 35
+    namespace 'com.github.gcacace.signaturepad'
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 35
+        consumerProguardFiles 'proguard-rules-consumer.pro'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}

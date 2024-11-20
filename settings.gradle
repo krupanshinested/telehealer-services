@@ -1,4 +1,6 @@
-include ':app'
+//rootProject.name = ''
+include ':app', ':fancyshowcaseview' ,':android-pdf-viewer', ':qrcodereaderview', ':signature-pad', ':compressor', ':ccp'
+include ':library'
 dependencyResolutionManagement{
     repositories{
         google()

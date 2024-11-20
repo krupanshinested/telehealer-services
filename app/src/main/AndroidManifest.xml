@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.thealer.telehealer">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
@@ -15,6 +14,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"    />
@@ -46,7 +49,7 @@
     </queries>
 
     <application
-        android:name=".TeleHealerApplication"
+        android:name="com.thealer.telehealer.TeleHealerApplication"
         android:allowBackup="false"
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
@@ -59,50 +62,50 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".views.settings.PrivacySettingActivity"
+            android:name="com.thealer.telehealer.views.settings.PrivacySettingActivity"
             android:exported="false" />
         <activity
-            android:name=".views.settings.DateFilterActivity"
+            android:name="com.thealer.telehealer.views.settings.DateFilterActivity"
             android:exported="false" />
 
         <receiver
-            android:name=".common.MyReceiver"
+            android:name="com.thealer.telehealer.common.MyReceiver"
             android:enabled="true"
             android:exported="false" />
 
         <activity
-            android:name=".views.subscription.SubscriptionHistoryActivity"
+            android:name="com.thealer.telehealer.views.subscription.SubscriptionHistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".views.subscription.SubscriptionActivity"
+            android:name="com.thealer.telehealer.views.subscription.SubscriptionActivity"
             android:exported="false" />
         <activity
-            android:name=".views.inviteUser.InvitedListActivity"
+            android:name="com.thealer.telehealer.views.inviteUser.InvitedListActivity"
             android:exported="false" />
         <activity
-            android:name=".views.home.broadcastMessages.ChoosePatientActivity"
+            android:name="com.thealer.telehealer.views.home.broadcastMessages.ChoosePatientActivity"
             android:exported="false" />
         <activity
-            android:name=".views.home.broadcastMessages.BroadcastMessagesActivity"
+            android:name="com.thealer.telehealer.views.home.broadcastMessages.BroadcastMessagesActivity"
             android:exported="false"
             android:label="@string/title_activity_broadcast_messages" />
         <activity
-            android:name=".views.guestlogin.screens.PatientWaitingRoom"
+            android:name="com.thealer.telehealer.views.guestlogin.screens.PatientWaitingRoom"
             android:exported="false" />
         <activity
-            android:name=".views.guestlogin.screens.GuestUserSignupActivity"
+            android:name="com.thealer.telehealer.views.guestlogin.screens.GuestUserSignupActivity"
             android:exported="false" />
         <activity
-            android:name=".views.guestlogin.screens.GuestLoginScreensActivity"
+            android:name="com.thealer.telehealer.views.guestlogin.screens.GuestLoginScreensActivity"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity
-            android:name=".views.guestlogin.GuestLoginActivity"
+            android:name="com.thealer.telehealer.views.guestlogin.GuestLoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".views.common.SplashActivity"
+            android:name="com.thealer.telehealer.views.common.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
@@ -113,99 +116,99 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.home.HomeActivity"
+            android:name="com.thealer.telehealer.views.home.HomeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.onboarding.OnBoardingActivity"
+            android:name="com.thealer.telehealer.views.onboarding.OnBoardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.signup.SignUpActivity"
+            android:name="com.thealer.telehealer.views.signup.SignUpActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".views.signup.PasswordRequirementActivity"
+            android:name="com.thealer.telehealer.views.signup.PasswordRequirementActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.quickLogin.QuickLoginActivity"
+            android:name="com.thealer.telehealer.views.quickLogin.QuickLoginActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.signin.SigninActivity"
+            android:name="com.thealer.telehealer.views.signin.SigninActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.signin.ForgotPassword"
+            android:name="com.thealer.telehealer.views.signin.ForgotPassword"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.common.QRCodeReaderActivity"
+            android:name="com.thealer.telehealer.views.common.QRCodeReaderActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.proposer.ProposerActivity"
+            android:name="com.thealer.telehealer.views.proposer.ProposerActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".views.home.AddConnectionActivity"
+            android:name="com.thealer.telehealer.views.home.AddConnectionActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.settings.ProfileSettingsActivity"
+            android:name="com.thealer.telehealer.views.settings.ProfileSettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.settings.DeleteAccountActivity"
+            android:name="com.thealer.telehealer.views.settings.DeleteAccountActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.orders.CreateOrderActivity"
+            android:name="com.thealer.telehealer.views.home.orders.CreateOrderActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.DoctorOnBoardingActivity"
+            android:name="com.thealer.telehealer.views.home.DoctorOnBoardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.vitals.BluetoothEnableActivity"
+            android:name="com.thealer.telehealer.views.home.vitals.BluetoothEnableActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.schedules.CreateNewScheduleActivity"
+            android:name="com.thealer.telehealer.views.home.schedules.CreateNewScheduleActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.inviteUser.InviteUserActivity"
+            android:name="com.thealer.telehealer.views.inviteUser.InviteUserActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.common.ContentActivity"
+            android:name="com.thealer.telehealer.views.common.ContentActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".views.call.CallMessageActivity"
+            android:name="com.thealer.telehealer.views.call.CallMessageActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.call.CallFeedBackActivity"
+            android:name="com.thealer.telehealer.views.call.CallFeedBackActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.EmailVerificationActivity"
+            android:name="com.thealer.telehealer.views.home.EmailVerificationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.common.AppUpdateActivity"
+            android:name="com.thealer.telehealer.views.common.AppUpdateActivity"
             android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.call.CallActivity"
+            android:name="com.thealer.telehealer.views.call.CallActivity"
             android:exported="true"
             android:immersive="true"
             android:inheritShowWhenLocked="true"
@@ -215,110 +218,109 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
         <activity
-            android:name=".views.settings.SignatureActivity"
+            android:name="com.thealer.telehealer.views.settings.SignatureActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".views.common.CallPlacingActivity"
+            android:name="com.thealer.telehealer.views.common.CallPlacingActivity"
             android:exported="false"
             android:theme="@style/AppTheme.Transparent" />
         <activity
-            android:name=".views.home.UserDetailActivity"
+            android:name="com.thealer.telehealer.views.home.UserDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.vitals.iHealth.pairing.VitalCreationActivity"
+            android:name="com.thealer.telehealer.views.home.vitals.iHealth.pairing.VitalCreationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.notification.NotificationActivity"
+            android:name="com.thealer.telehealer.views.notification.NotificationActivity"
             android:exported="false"
-            android:parentActivityName=".views.home.HomeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".views.notification.NotificationDetailActivity"
+            android:name="com.thealer.telehealer.views.notification.NotificationDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.call.CallNetworkTestActivity"
+            android:name="com.thealer.telehealer.views.call.CallNetworkTestActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.monitoring.diet.SelectDietActivity"
+            android:name="com.thealer.telehealer.views.home.monitoring.diet.SelectDietActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.inviteUser.InviteContactUserActivity"
+            android:name="com.thealer.telehealer.views.inviteUser.InviteContactUserActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.pendingInvites.PendingInvitesActivity"
+            android:name="com.thealer.telehealer.views.home.pendingInvites.PendingInvitesActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.quickLogin.QuickLoginAgreementActivity"
+            android:name="com.thealer.telehealer.views.quickLogin.QuickLoginAgreementActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.vitals.LandscapeImageView"
+            android:name="com.thealer.telehealer.views.home.vitals.LandscapeImageView"
             android:exported="false"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".views.home.chat.ChatActivity"
+            android:name="com.thealer.telehealer.views.home.chat.ChatActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".views.common.RecentsSelectionActivity"
+            android:name="com.thealer.telehealer.views.common.RecentsSelectionActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.home.schedules.WaitingRoomActivity"
+            android:name="com.thealer.telehealer.views.home.schedules.WaitingRoomActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.settings.accessLogs.AccessLogActivity"
+            android:name="com.thealer.telehealer.views.settings.accessLogs.AccessLogActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.transaction.AddChargeActivity"
+            android:name="com.thealer.telehealer.views.transaction.AddChargeActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".stripe.PaymentContentActivity"
+            android:name="com.thealer.telehealer.stripe.PaymentContentActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".views.transaction.TransactionFilterActivity"
+            android:name="com.thealer.telehealer.views.transaction.TransactionFilterActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".common.fragmentcontainer.FragmentContainerActivity"
+            android:name="com.thealer.telehealer.common.fragmentcontainer.FragmentContainerActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.transaction.TransactionDetailsActivity"
+            android:name="com.thealer.telehealer.views.transaction.TransactionDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.settings.newDeviceSupport.NewDeviceSupportActivity"
+            android:name="com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceSupportActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.settings.newDeviceSupport.MyDeviceListActivity"
+            android:name="com.thealer.telehealer.views.settings.newDeviceSupport.MyDeviceListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.settings.newDeviceSupport.NewDeviceDetailActivity"
+            android:name="com.thealer.telehealer.views.settings.newDeviceSupport.NewDeviceDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
         <receiver
-            android:name=".common.BTStateChangedBroadcastReceiver"
+            android:name="com.thealer.telehealer.common.BTStateChangedBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -326,7 +328,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".views.common.LockScreenReceiver"
+            android:name="com.thealer.telehealer.views.common.LockScreenReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -336,7 +338,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".views.home.schedules.LocalNotificationReceiver"
+            android:name="com.thealer.telehealer.views.home.schedules.LocalNotificationReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -347,25 +349,25 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".views.notification.NotificationCancelAppointmentReceiver"
+            android:name="com.thealer.telehealer.views.notification.NotificationCancelAppointmentReceiver"
             android:exported="true" />
 
         <service
-            android:name=".common.pubNub.TelehealerFirebaseMessagingService"
+            android:name="com.thealer.telehealer.common.pubNub.TelehealerFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".common.OpenTok.CallMinimizeService"
+            android:name="com.thealer.telehealer.common.OpenTok.CallMinimizeService"
             android:exported="false" />
         <service
-            android:name=".common.OpenTok.CallNotificationService"
+            android:name="com.thealer.telehealer.common.OpenTok.CallNotificationService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".views.guestlogin.WaitingRoomHearBeatService"
+            android:name="com.thealer.telehealer.views.guestlogin.WaitingRoomHearBeatService"
             android:enabled="true"
             android:exported="true" />
 

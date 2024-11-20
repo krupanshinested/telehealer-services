@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    namespace 'com.thealer.pro'
-    compileSdkVersion 34
+    namespace 'com.thealer.telehealer'
+    compileSdk 34
     buildFeatures {
         buildConfig = true
     }
@@ -35,9 +35,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
+    kotlinOptions {
+        jvmTarget = "17" // Ensure this is valid
+    }
+
     flavorDimensions "telehealer"
     productFlavors {
         doctor {
@@ -46,7 +50,7 @@ android {
         }
         patient {
             minSdkVersion 23
-            targetSdkVersion 34
+            targetSdkVersion 35
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
             versionCode 77
             versionName "2.9.40"
@@ -118,29 +122,45 @@ android {
 
 }
 
+afterEvaluate {
+    android.applicationVariants.all { variant ->
+        if (variant.name.contains("DoctorDebug")) {
+            tasks.named("merge${variant.name.capitalize()}Resources").configure {
+                dependsOn("process${variant.name.capitalize()}GoogleServices")
+            }
+        }
+        // Ensure processGoogleServices completes before mapping paths
+        tasks.named("map${variant.name.capitalize()}SourceSetPaths").configure {
+            dependsOn("process${variant.name.capitalize()}GoogleServices")
+        }
+    }
+}
+
 dependencies {
 
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
     implementation 'com.google.android.material:material:1.13.0-alpha07'
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
-    implementation 'androidx.core:core:1.15.0'
+    implementation 'com.google.android.gms:play-services-location:21.2.0'
+    implementation 'androidx.core:core-ktx:1.6.0'
 
     //circular image view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //country code picker
-//    implementation 'com.hbb20:ccp:2.2.2'
+    implementation project(':ccp')
 
     //phone number validator
 //    implementation 'io.michaelrocks:libphonenumber-android:8.9.14'
+//    implementation project(':phonenumberlibrary')
 
     //Glide image loaded
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.wear:wear:1.3.0'
-    implementation 'androidx.work:work-runtime:2.10.0'
+    implementation 'androidx.work:work-runtime:2.9.0'
+    implementation project(':library')
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.6.2'
@@ -165,13 +185,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:19.0.0'
 
     //pdf viewer
-//    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    implementation project(':android-pdf-viewer')
 
     //jwt library
     implementation 'com.auth0.android:jwtdecode:1.2.0'
 
     //QR Code reader
-//    implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3'
+    implementation project(':qrcodereaderview')
+
 
     //mp char
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
@@ -186,7 +207,7 @@ dependencies {
         exclude group: 'com.google.protobuf'
     }
     //pubnub
-    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '6.4.5'
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '10.0.0'
 
     //calendar view
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
@@ -204,20 +225,20 @@ dependencies {
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
 
     //signature pad
-//    implementation 'com.github.gcacace:signature-pad:1.2.1'
+    implementation project(':signature-pad')
 
     //wave animation
     implementation 'com.github.Jay-Goo:WaveLineView:v1.0.3'
 
     //Overlay
-//    implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.1.5'
+    implementation project(':fancyshowcaseview')
 
     //kotlin support
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.72'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20"
 
     //Image compression
-//    implementation 'id.zelory:compressor:3.1.0'
+    implementation project(':compressor')
 
     //Screen Resolution Library
     implementation 'com.intuit.sdp:sdp-android:1.0.6'

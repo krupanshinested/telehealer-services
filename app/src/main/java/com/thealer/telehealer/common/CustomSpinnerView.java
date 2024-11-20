@@ -12,8 +12,6 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
-import com.thealer.telehealer.R;
-
 import java.util.List;
 
 /**

@@ -441,6 +441,7 @@ public class AddChargeActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.btnSubmit: {
                 if (isValid()) {
                     if(isRedirectedPayment){

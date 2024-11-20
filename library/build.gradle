@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+apply plugin: 'signing'
+
+def artifactName = rootProject.name
+group rootProject.group
+version rootProject.version
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+android {
+  namespace 'io.michaelrocks.libphonenumber.android'
+
+  defaultConfig {
+    compileSdk 35
+    buildToolsVersion = '35.0.0'
+
+    minSdkVersion 14
+    targetSdkVersion 35
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+
+
+  publishing {
+    singleVariant('release') {
+      withSourcesJar()
+      withJavadocJar()
+    }
+  }
+  lint {
+    abortOnError false
+  }
+}
+
+dependencies {
+  testImplementation "junit:junit:4.13.2"
+  testImplementation "org.mockito:mockito-core:5.14.1"
+}

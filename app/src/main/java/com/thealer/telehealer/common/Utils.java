@@ -166,7 +166,7 @@ public class Utils {
                 .clickableOn(view)
                 .build();
 
-        fancyShowCaseView.setDismissListener(dismissListener);
+        fancyShowCaseView.dismissListener(dismissListener);
         fancyShowCaseView.show();
 
         new Handler().postDelayed(new Runnable() {
